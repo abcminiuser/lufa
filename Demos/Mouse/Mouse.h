@@ -37,11 +37,18 @@
 #define _MOUSE_H_
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/wdt.h>
-		#include <avr/interrupt.h>
-		#include <stdbool.h>
-		#include <string.h>
+		#include <LUFA/Common/Common.h>
+
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/io.h>
+			#include <avr/wdt.h>
+			#include <avr/interrupt.h>
+			#include <avr/power.h>
+			#include <stdbool.h>
+			#include <string.h>
+		#else
+			#include <stdint.h>
+		#endif
 		
 		#include "Descriptors.h"
 

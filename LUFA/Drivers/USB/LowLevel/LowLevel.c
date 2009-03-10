@@ -28,7 +28,7 @@
   this software.
 */
 
-#include "USBMode.h"
+#include "../HighLevel/USBMode.h"
 
 #include "LowLevel.h"
 

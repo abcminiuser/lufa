@@ -77,7 +77,7 @@ int main(void)
 	wdt_disable();
 
 	/* Disable Clock Division */
-	SetSystemClockPrescaler(0);
+	clock_prescale_set(clock_div_1);
 
 	/* Hardware Initialization */
 	Joystick_Init();

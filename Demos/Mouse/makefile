@@ -58,9 +58,17 @@
 # To rebuild project do "make clean" then "make all".
 #----------------------------------------------------------------------------
 
+# Architecture name. This must be one of the following values:
+#	avr8   =   8-bit AVRs
+#   avr32  =   32-bit AVRs
+#   arm    =   ARM
+ARCH = avr8
+#ARCH = avr32
+
 
 # MCU name
 MCU = at90usb1287
+#MCU = uc3b0128
 
 
 # Target board (see library BoardTypes.h documentation, USER or blank for projects not requiring
@@ -389,16 +397,26 @@ DEBUG_HOST = localhost
 
 #============================================================================
 
+ifeq ($(ARCH),avr8)
+	TOOL_PREFIX = avr-
+	MCU_PARAM   = -mmcu=$(MCU)
+else ifeq ($(ARCH),avr32)
+	TOOL_PREFIX = avr32-
+	MCU_PARAM   = -mpart=$(MCU)
+else ifeq ($(ARCH),arm7)
+	TOOL_PREFIX = arm-elf-
+	MCU_PARAM   = -mcpu=$(MCU)
+endif
 
 # Define programs and commands.
 SHELL = sh
-CC = avr-gcc
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
-SIZE = avr-size
-AR = avr-ar rcs
-NM = avr-nm
-AVRDUDE = avrdude
+CC = $(TOOL_PREFIX)gcc
+OBJCOPY = $(TOOL_PREFIX)objcopy
+OBJDUMP = $(TOOL_PREFIX)objdump
+SIZE = $(TOOL_PREFIX)size
+AR = $(TOOL_PREFIX)ar rcs
+NM = $(TOOL_PREFIX)nm
+AVRDUDE = $(TOOL_PREFIX)avrdude
 REMOVE = rm -f
 REMOVEDIR = rm -rf
 COPY = cp
@@ -440,9 +458,9 @@ GENDEPFLAGS = -MMD -MP -MF .dep/$(@F).d
 
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
-ALL_CFLAGS = -mmcu=$(MCU) -I. $(CFLAGS) $(GENDEPFLAGS)
-ALL_CPPFLAGS = -mmcu=$(MCU) -I. -x c++ $(CPPFLAGS) $(GENDEPFLAGS)
-ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
+ALL_CFLAGS = $(MCU_PARAM) -I. $(CFLAGS) $(GENDEPFLAGS)
+ALL_CPPFLAGS = $(MCU_PARAM) -I. -x c++ $(CPPFLAGS) $(GENDEPFLAGS)
+ALL_ASFLAGS = $(MCU_PARAM) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 
@@ -669,7 +687,7 @@ $(OBJDIR)/%.o : %.S
 
 # Create preprocessed source for use in sending a bug report.
 %.i : %.c
-	$(CC) -E -mmcu=$(MCU) -I. $(CFLAGS) $< -o $@ 
+	$(CC) -E $(MCU_PARAM) -I. $(CFLAGS) $< -o $@ 
 	
 
 # Target: clean project.
