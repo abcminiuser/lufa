@@ -38,7 +38,12 @@
 #define __USBINTERRUPT_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/io.h>
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include <avr32/io.h>		
+		#endif
+		
 		#include <stdbool.h>
 		
 		#include "../../../Common/Common.h"

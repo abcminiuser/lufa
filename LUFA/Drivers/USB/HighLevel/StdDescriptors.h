@@ -48,7 +48,6 @@
 #define __USBDESCRIPTORS_H__
 
 	/* Includes: */
-		#include <avr/pgmspace.h>
 		#include <stdbool.h>
 
 		#include "../../../Common/Common.h"

@@ -38,9 +38,16 @@
 #define __USBTASK_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/interrupt.h>
-		#include <util/atomic.h>
+		#include "../../../Common/Common.h"
+		
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/io.h>
+			#include <avr/interrupt.h>
+			#include <util/atomic.h>
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include <avr32/io.h>		
+		#endif
+		
 		#include <stdbool.h>
 		#include <stddef.h>
 		

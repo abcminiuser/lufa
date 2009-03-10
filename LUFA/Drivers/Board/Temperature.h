@@ -42,11 +42,13 @@
 	#endif
 	
 	/* Includes: */
-		#include <avr/pgmspace.h>
-
-		#include "../AT90USBXXX/ADC.h"
 		#include "../../Common/Common.h"
+		#include "../AT90USBXXX/ADC.h"
 	
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/pgmspace.h>
+		#endif
+		
 		#if !defined(BOARD)
 			#error #error BOARD must be set in makefile to a value specified in BoardTypes.h.	
 		#elif (BOARD != BOARD_USBKEY) && (BOARD != BOARD_STK525) && (BOARD != BOARD_STK526)

@@ -37,9 +37,12 @@
 #define _DESCRIPTORS_H_
 
 	/* Includes: */
+		#include <LUFA/Common/Common.h>
 		#include <LUFA/Drivers/USB/USB.h>
 
-		#include <avr/pgmspace.h>
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/pgmspace.h>
+		#endif
 
 	/* Type Defines: */
 		/** Type define for the HID class specific HID descriptor, to describe the HID device's specifications. Refer to the HID

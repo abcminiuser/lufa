@@ -61,14 +61,14 @@
 # Architecture name. This must be one of the following values:
 #	avr8   =   8-bit AVRs
 #   avr32  =   32-bit AVRs
-#   arm    =   ARM
-ARCH = avr8
-#ARCH = avr32
+#   arm    =   ARM based microcontrollers
+#ARCH = avr8
+ARCH = avr32
 
 
 # MCU name
-MCU = at90usb1287
-#MCU = uc3b0128
+#MCU = at90usb1287
+MCU = uc3b0128
 
 
 # Target board (see library BoardTypes.h documentation, USER or blank for projects not requiring

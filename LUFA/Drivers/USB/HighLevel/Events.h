@@ -44,7 +44,7 @@
 #define __USBEVENTS_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <stdint.h>
 		
 		#include "../../../Common/Common.h"
 		#include "USBMode.h"

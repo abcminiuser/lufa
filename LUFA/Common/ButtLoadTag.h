@@ -41,8 +41,12 @@
 #define __BUTTLOADTAG_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/pgmspace.h>
+		#if (MCU_ARCHITECTURE == ARCH_AVR8)
+			#include <avr/io.h>
+			#include <avr/pgmspace.h>
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include <avr32/io.h>
+		#endif
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */

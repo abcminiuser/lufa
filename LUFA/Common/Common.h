@@ -41,6 +41,7 @@
 		#include "Architecture.h"
 		#include "FunctionAttributes.h"
 		#include "BoardTypes.h"
+		#include "DummyProgmem.h"
 		
 		#include <stdint.h>
 		#include <stdio.h>

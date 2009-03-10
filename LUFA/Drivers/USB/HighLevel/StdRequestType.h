@@ -123,14 +123,14 @@
 			 *  should have its stall condition cleared. If used in a similar manner inside a Set Feature
 			 *  request, this stalls an endpoint.
 			 */
-			#define FEATURE_ENDPOINT_HALT           0x00
+			#define FEATURE_ENDPOINT_HALT      0x00
 
 			/** Feature indicator for Clear Feature or Set Feature commands. When used in a Clear Feature
 			 *  request this indicates that the remote wakeup enabled device should not issue remote
 			 *  wakeup requests until further notice. If used in a similar manner inside a Set Feature
 			 *  request, this re-enabled the remote wakeup feature on the device.
 			 */
-			#define FEATURE_REMOTE_WAKEUP           0x01
+			#define FEATURE_REMOTE_WAKEUP      0x01
 
 		/* Enums: */
 			/** Enumeration for the various standard request commands. These commands are applicable when the

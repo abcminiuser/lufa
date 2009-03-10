@@ -44,12 +44,13 @@
 			#include <avr/wdt.h>
 			#include <avr/interrupt.h>
 			#include <avr/power.h>
-			#include <stdbool.h>
-			#include <string.h>
 		#else
-			#include <stdint.h>
+			#include <avr32/io.h>
 		#endif
 		
+		#include <stdbool.h>
+		#include <string.h>
+
 		#include "Descriptors.h"
 
 		#include <LUFA/Version.h>                    // Library Version Information
