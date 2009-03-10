@@ -47,7 +47,7 @@
 		#endif
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/Endpoint.h"
+			#include "AVR8/Endpoint.h"
 		#endif
 		
 #endif

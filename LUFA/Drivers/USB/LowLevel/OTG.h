@@ -43,7 +43,7 @@
 		#include "../../../Common/Common.h"
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/OTG.h"
+			#include "AVR8/OTG.h"
 		#endif
 		
 #endif

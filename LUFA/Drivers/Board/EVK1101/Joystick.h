@@ -30,18 +30,17 @@
 
 /** \file
  *
- *  Board specific HWB driver header for the STK525.
+ *  Board specific joystick driver header for the USBKEY.
  *
- *  \note This file should not be included directly. It is automatically included as needed by the HWB driver
- *        dispatch header located in LUFA/Drivers/Board/HWB.h.
+ *  \note This file should not be included directly. It is automatically included as needed by the joystick driver
+ *        dispatch header located in LUFA/Drivers/Board/Joystick.h.
  */
  
-#ifndef __HWB_STK525_H__
-#define __HWB_STK525_H__
+#ifndef __JOYSTICK_EVK1101_H__
+#define __JOYSTICK_EVK1101_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <stdbool.h>
+		#include <avr32/io.h>
 
 		#include "../../../Common/Common.h"
 
@@ -51,23 +50,49 @@
 		#endif
 
 	/* Preprocessor Checks: */
-		#if !defined(INCLUDE_FROM_HWB_H)
-			#error Do not include this file directly. Include LUFA/Drivers/Board/HWB.h instead.
+		#if !defined(INCLUDE_FROM_JOYSTICK_H)
+			#error Do not include this file directly. Include LUFA/Drivers/Board/Joystick.h instead.
 		#endif
-		
+
+	/* Private Interface - For use in library only: */
+	#if !defined(__DOXYGEN__)
+		/* Macros: */
+			#define JOY_BMASK                 ((1 << 5) | (1 << 6) | (1 << 7))
+			#define JOY_EMASK                 ((1 << 4) | (1 << 5))
+	#endif
+	
 	/* Public Interface - May be used in end-application: */
+		/* Macros: */
+			/** Mask for the joystick being pushed in the left direction. */
+			#define JOY_LEFT                 (1UL << 6)
+
+			/** Mask for the joystick being pushed in the right direction. */
+			#define JOY_RIGHT                (1UL << 7)
+
+			/** Mask for the joystick being pushed in the upward direction. */
+			#define JOY_UP                   (1UL << 8)
+
+			/** Mask for the joystick being pushed in the downward direction. */
+			#define JOY_DOWN                 (1UL << 9)
+
+			/** Mask for the joystick being pushed inward. */
+			#define JOY_PRESS                (1UL << 13)
+			
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
-			static inline void HWB_Init(void)
+			static inline void Joystick_Init(void)
 			{
-				DDRE  &= ~(1 << 2);
-				PORTE |=  (1 << 2);
-			}
+				DDRB  &= ~(JOY_BMASK);
+				DDRE  &= ~(JOY_EMASK);
 
-			static inline bool HWB_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline bool HWB_GetStatus(void)
+				PORTB |= JOY_BMASK;
+				PORTE |= JOY_EMASK;				
+			};
+			
+			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint8_t Joystick_GetStatus(void)
 			{
-				return (!(PINE & (1 << 2)));
+				return (((uint8_t)~PINB & JOY_BMASK) | (((uint8_t)~PINE & JOY_EMASK) >> 1));
 			}
 		#endif
 
@@ -75,5 +100,5 @@
 		#if defined(__cplusplus)
 			}
 		#endif
-				
+
 #endif

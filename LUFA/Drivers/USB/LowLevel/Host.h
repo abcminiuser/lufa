@@ -42,7 +42,7 @@
 		#include "../HighLevel/USBInterrupt.h"
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/Host.h"
+			#include "AVR8/Host.h"
 		#endif
 		
 #endif

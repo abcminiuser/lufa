@@ -82,7 +82,7 @@ int main(void)
 	/* Hardware Initialization */
 	Joystick_Init();
 	LEDs_Init();
-	HWB_Init();
+	Pushbuttons_Init();
 	
 	/* Millisecond timer initialization, with output compare interrupt enabled for the idle timing */
 	OCR0A  = 0x7D;
@@ -270,10 +270,10 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
  */
 bool GetNextReport(USB_MouseReport_Data_t* ReportData)
 {
-	static uint8_t PrevJoyStatus = 0;
-	static bool    PrevHWBStatus = false;
-	uint8_t        JoyStatus_LCL = Joystick_GetStatus();
-	bool           InputChanged  = false;
+	static uint8_t PrevJoyStatus        = 0;
+	static uint8_t PrevPushbuttonStatus = false;
+	uint8_t        JoyStatus_LCL        = Joystick_GetStatus();
+	bool           InputChanged         = false;
 	
 	/* Clear the report contents */
 	memset(ReportData, 0, sizeof(USB_MouseReport_Data_t));
@@ -295,11 +295,11 @@ bool GetNextReport(USB_MouseReport_Data_t* ReportData)
 	  ReportData->Button |= (1 << 1);
 
 	/* Check if the new report is different to the previous report */
-	InputChanged = ((uint8_t)(PrevJoyStatus ^ JoyStatus_LCL) | (uint8_t)(HWB_GetStatus() ^ PrevHWBStatus));
+	InputChanged = ((uint8_t)(PrevJoyStatus ^ JoyStatus_LCL) | (uint8_t)(Pushbuttons_GetStatus() ^ PrevPushbuttonStatus));
 
-	/* Save the current joystick and HWB status for later comparison */
-	PrevJoyStatus = JoyStatus_LCL;
-	PrevHWBStatus = HWB_GetStatus();
+	/* Save the current joystick and pushbutton status for later comparison */
+	PrevJoyStatus        = JoyStatus_LCL;
+	PrevPushbuttonStatus = Pushbuttons_GetStatus();
 
 	/* Return whether the new report is different to the previous report or not */
 	return InputChanged;

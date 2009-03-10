@@ -30,17 +30,17 @@
 
 /** \file
  *
- *  Board specific HWB driver header for the USBKEY.
+ *  Board specific pushbuttons driver header for the USBKEY.
  *
- *  \note This file should not be included directly. It is automatically included as needed by the HWB driver
- *        dispatch header located in LUFA/Drivers/Board/HWB.h.
+ *  \note This file should not be included directly. It is automatically included as needed by the pushbuttons driver
+ *        dispatch header located in LUFA/Drivers/Board/Pushbuttons.h.
  */
  
-#ifndef __HWB_USBKEY_H__
-#define __HWB_USBKEY_H__
+#ifndef __HWB_EVK1101_H__
+#define __HWB_EVK1101_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
 
 		#include "../../../Common/Common.h"
@@ -56,18 +56,28 @@
 		#endif
 		
 	/* Public Interface - May be used in end-application: */
+		/* Macros: */
+			/** Total number of pushbuttons on the selected board */
+			#define TOTAL_PUSHBUTTONS     2
+	
+			/** Mask of the first button on the board */
+			#define BUTTON_1              (1UL << 2)
+
+			/** Mask of the second button on the board */
+			#define BUTTON_2              (1UL << 3)
+
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
-			static inline void HWB_Init(void)
+			static inline void Pushbuttons_Init(void)
 			{
-				DDRE  &= ~(1 << 2);
-				PORTE |=  (1 << 2);
+				DDRB  &= ~(BUTTON_1 | BUTTON_2);
+				PORTB |=  (BUTTON_1 | BUTTON_2);
 			}
 
-			static inline bool HWB_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline bool HWB_GetStatus(void)
+			static inline uint8_t Pushbuttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint8_t Pushbuttons_GetStatus(void)
 			{
-				return (!(PINE & (1 << 2)));
+				return (!(PINB & (BUTTON_1 | BUTTON_2)));
 			}
 		#endif
 

@@ -60,6 +60,8 @@
 		#include "STK525/Joystick.h"
 	#elif (BOARD == BOARD_STK526)
 		#include "STK526/Joystick.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/Joystick.h"
 	#elif (BOARD == BOARD_USER)
 		#include "Board/Joystick.h"		
 	#else

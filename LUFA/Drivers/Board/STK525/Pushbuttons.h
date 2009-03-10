@@ -28,28 +28,21 @@
   this software.
 */
 
-/*
-   This is a stub driver header file, for implementing custom board
-   layout hardware with compatible LUFA board specific drivers. If
-   the library is configured to use the BOARD_USER board mode, this
-   driver file should be completed and copied into the "/Board/" folder
-   inside the application's folder.
-
-   This stub is for the board-specific component of the LUFA HWB (Hardware
-   Button, a physical button on most Atmel USB boards) driver. This could
-   alternately be driven from any button connected to the USB AVR.
-*/
+/** \file
+ *
+ *  Board specific pushbuttons driver header for the STK525.
+ *
+ *  \note This file should not be included directly. It is automatically included as needed by the pushbuttons driver
+ *        dispatch header located in LUFA/Drivers/Board/Pushbuttons.h.
+ */
  
-#ifndef __HWB_USER_H__
-#define __HWB_USER_H__
+#ifndef __PUSHBUTTONS_STK525_H__
+#define __PUSHBUTTONS_STK525_H__
 
 	/* Includes: */
 		#include <avr/io.h>
-		#include <stdbool.h>
 
 		#include "../../../Common/Common.h"
-
-		// TODO: Add any required includes here
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -57,22 +50,30 @@
 		#endif
 
 	/* Preprocessor Checks: */
-		#if !defined(INCLUDE_FROM_HWB_H)
-			#error Do not include this file directly. Include LUFA/Drivers/Board/HWB.h instead.
+		#if !defined(INCLUDE_FROM_PUSHBUTTONS_H)
+			#error Do not include this file directly. Include LUFA/Drivers/Board/Pushbuttons.h instead.
 		#endif
 		
 	/* Public Interface - May be used in end-application: */
+		/* Macros: */
+			/** Total number of pushbuttons on the selected board */
+			#define TOTAL_PUSHBUTTONS     1
+	
+			/** Mask of the first button on the board */
+			#define BUTTON_1              (1 << 2)
+
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
-			static inline void HWB_Init(void)
+			static inline void Pushbuttons_Init(void)
 			{
-				// TODO: Initialize the appropriate port pin as an input here, with pullup
+				DDRE  &= ~BUTTON_1;
+				PORTE |=  BUTTON_1;
 			}
 
-			static inline bool HWB_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
-			static inline bool HWB_GetStatus(void)
+			static inline uint8_t Pushbuttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint8_t Pushbuttons_GetStatus(void)
 			{
-				// TODO: Return current button status here, debounced if required
+				return (!(PINE & BUTTON_1));
 			}
 		#endif
 
@@ -80,5 +81,5 @@
 		#if defined(__cplusplus)
 			}
 		#endif
-			
+				
 #endif

@@ -74,8 +74,8 @@ MCU = uc3b0128
 # Target board (see library BoardTypes.h documentation, USER or blank for projects not requiring
 # LUFA board drivers). If USER is selected, put custom board drivers in a directory called 
 # "Board" inside the application directory.
-BOARD  = USBKEY
-
+#BOARD  = USBKEY
+BOARD = EVK1101
 
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the 

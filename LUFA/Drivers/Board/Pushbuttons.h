@@ -30,22 +30,22 @@
 
 /** \file
  *
- *  This file is the master dispatch header file for the board-specific HWB driver, for boards containing a
- *  physical pushbutton connected to the AVR's HWB IO pin.
+ *  This file is the master dispatch header file for the board-specific pushbuttons driver, for boards containing
+ *  one or more physical pushbuttons connected to the AVR's I/O pins.
  *
- *  User code should include this file, which will in turn include the correct HWB driver header file for the
+ *  User code should include this file, which will in turn include the correct pushbuttons driver header file for the
  *  currently selected board.
  *
- *  If the BOARD value is set to BOARD_USER, this will include the /Board/HWB.h file in the user project
+ *  If the BOARD value is set to BOARD_USER, this will include the /Board/Pushbuttons.h file in the user project
  *  directory.
  */
  
-#ifndef __HWB_H__
-#define __HWB_H__
+#ifndef __PUSHBUTTONS_H__
+#define __PUSHBUTTONS_H__
 
 	/* Macros: */
 	#if !defined(__DOXYGEN__)
-		#define INCLUDE_FROM_HWB_H
+		#define INCLUDE_FROM_PUSHBUTTONS_H
 		#define INCLUDE_FROM_BOARD_DRIVER
 	#endif
 
@@ -55,33 +55,35 @@
 	#if !defined(BOARD)
 		#error BOARD must be set in makefile to a value specified in BoardTypes.h.
 	#elif (BOARD == BOARD_USBKEY)
-		#include "USBKEY/HWB.h"
+		#include "USBKEY/Pushbuttons.h"
 	#elif (BOARD == BOARD_STK525)
-		#include "STK525/HWB.h"
+		#include "STK525/Pushbuttons.h"
 	#elif (BOARD == BOARD_STK526)
-		#include "STK526/HWB.h"
+		#include "STK526/Pushbuttons.h"
 	#elif (BOARD == BOARD_ATAVRUSBRF01)
-		#include "ATAVRUSBRF01/HWB.h"
+		#include "ATAVRUSBRF01/Pushbuttons.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/Pushbuttons.h"
 	#elif (BOARD == BOARD_USER)
-		#include "Board/HWB.h"		
+		#include "Board/Pushbuttons.h"		
 	#else
-		#error The selected board does not contain a HWB.
+		#error The selected board does not contain pushbuttons.
 	#endif
 	
 	/* Psudo-Functions for Doxygen: */
 	#if defined(__DOXYGEN__)
-		/** Initializes the HWB driver, so that the current button position can be read. This sets the appropriate
-		 *  I/O pin to an input with pull-up enabled.
+		/** Initializes the pushbuttons driver, so that the current button positions can be read. This sets the appropriate
+		 *  I/O pins to inputs with pull-ups enabled.
 		 *
-		 *  This must be called before any HWB functions are used.
+		 *  This must be called before any pushbutton functions are used.
 		 */
-		static inline void HWB_Init(void);
+		static inline void Pushbuttons_Init(void);
 		
-		/** Returns the current position of the HWB button on the board.
+		/** Returns the current position of the pushbuttons on the board.
 		 *
-		 *  \return Boolean true if the button is currently pressed, false otherwise
+		 *  \return BUTTON_* mask of currently pushed buttons
 		 */
-		static inline bool HWB_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+		static inline uint8_t Pushbuttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 	#endif
 
 #endif

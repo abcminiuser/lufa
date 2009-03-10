@@ -47,7 +47,7 @@
 		#endif
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/Pipe.h"
+			#include "AVR8/Pipe.h"
 		#endif
 		
 #endif

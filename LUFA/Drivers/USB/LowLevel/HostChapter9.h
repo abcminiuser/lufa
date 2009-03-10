@@ -44,7 +44,7 @@
 		#include "LowLevel.h"
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/HostChapter9.h"
+			#include "AVR8/HostChapter9.h"
 		#endif
 		
 #endif

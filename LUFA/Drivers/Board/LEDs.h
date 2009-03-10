@@ -64,8 +64,12 @@
 		#include "RZUSBSTICK/LEDs.h"
 	#elif (BOARD == BOARD_ATAVRUSBRF01)
 		#include "ATAVRUSBRF01/LEDs.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/LEDs.h"
 	#elif (BOARD == BOARD_USER)
 		#include "Board/LEDs.h"
+	#else
+		#error The selected board does not contain any LEDs.
 	#endif
 	
 	/* Psudo-Functions for Doxygen: */

@@ -42,7 +42,7 @@
 		#include "../HighLevel/StdDescriptors.h"
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AT90USBXXX/Device.h"
+			#include "AVR8/Device.h"
 		#endif
 		
 #endif

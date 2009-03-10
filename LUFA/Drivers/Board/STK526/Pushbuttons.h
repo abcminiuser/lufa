@@ -30,34 +30,56 @@
 
 /** \file
  *
- *  Main low level USB driver. This module manages the low level initialization and shut down of the USB AVR's
- *  USB interface in either device or (if supported) host mode.
+ *  Board specific pushbuttons driver header for the STK526.
+ *
+ *  \note This file should not be included directly. It is automatically included as needed by the pushbuttons driver
+ *        dispatch header located in LUFA/Drivers/Board/Pushbuttons.h.
  */
-
-#ifndef __USBLOWLEVEL_H__
-#define __USBLOWLEVEL_H__
+ 
+#ifndef __PUSHBUTTONS_STK526_H__
+#define __PUSHBUTTONS_STK526_H__
 
 	/* Includes: */
+		#include <avr/io.h>
+
 		#include "../../../Common/Common.h"
-		#include "../HighLevel/USBMode.h"
-		#include "../HighLevel/Events.h"
-		#include "../HighLevel/USBTask.h"
-		#include "../HighLevel/USBInterrupt.h"
-		
-		#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
-			#include "Host.h"
-			#include "Pipe.h"
-			#include "OTG.h"
+
+	/* Enable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			extern "C" {
+		#endif
+
+	/* Preprocessor Checks: */
+		#if !defined(INCLUDE_FROM_PUSHBUTTONS_H)
+			#error Do not include this file directly. Include LUFA/Drivers/Board/Pushbuttons.h instead.
 		#endif
 		
-		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
-			#include "Device.h"
-			#include "Endpoint.h"
-			#include "DevChapter9.h"
+	/* Public Interface - May be used in end-application: */
+		/* Macros: */
+			/** Total number of pushbuttons on the selected board */
+			#define TOTAL_PUSHBUTTONS     1
+	
+			/** Mask of the first button on the board */
+			#define BUTTON_1              (1 << 7)
+
+		/* Inline Functions: */
+		#if !defined(__DOXYGEN__)
+			static inline void Pushbuttons_Init(void)
+			{
+				DDRD  &= ~BUTTON_1;
+				PORTD |=  BUTTON_1;
+			}
+
+			static inline uint8_t Pushbuttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint8_t Pushbuttons_GetStatus(void)
+			{
+				return (!(PIND & BUTTON_1));
+			}
 		#endif
-		
-		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AVR8/LowLevel.h"
+			
+	/* Disable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			}
 		#endif
-		
+	
 #endif
