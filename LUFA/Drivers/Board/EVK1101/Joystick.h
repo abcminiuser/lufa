@@ -57,42 +57,47 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */
-			#define JOY_BMASK                 ((1 << 5) | (1 << 6) | (1 << 7))
-			#define JOY_EMASK                 ((1 << 4) | (1 << 5))
+			#define JOY_MOVE_PORT            1
+			#define JOY_MOVE_MASK            ((1 << 6) | (1 << 7) | (1 << 8) | (1 << 9))
+			#define JOY_PRESS_PORT           0
+			#define JOY_PRESS_MASK           (1 << 13)
+			
+			#define JOY_SHIFT_LEFT           6
 	#endif
 	
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Mask for the joystick being pushed in the left direction. */
-			#define JOY_LEFT                 (1UL << 6)
+			#define JOY_LEFT                 (1 << 1)
 
 			/** Mask for the joystick being pushed in the right direction. */
-			#define JOY_RIGHT                (1UL << 7)
+			#define JOY_RIGHT                (1 << 2)
 
 			/** Mask for the joystick being pushed in the upward direction. */
-			#define JOY_UP                   (1UL << 8)
+			#define JOY_UP                   (1 << 3)
 
 			/** Mask for the joystick being pushed in the downward direction. */
-			#define JOY_DOWN                 (1UL << 9)
+			#define JOY_DOWN                 (1 << 4)
 
 			/** Mask for the joystick being pushed inward. */
-			#define JOY_PRESS                (1UL << 13)
+			#define JOY_PRESS                (1 << 7)
 			
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
 			static inline void Joystick_Init(void)
 			{
-				DDRB  &= ~(JOY_BMASK);
-				DDRE  &= ~(JOY_EMASK);
+				AVR32_GPIO.port[JOY_MOVE_PORT].gpers  = JOY_MOVE_MASK;
+				AVR32_GPIO.port[JOY_PRESS_PORT].gpers = JOY_PRESS_MASK;
 
-				PORTB |= JOY_BMASK;
-				PORTE |= JOY_EMASK;				
+				AVR32_GPIO.port[JOY_MOVE_PORT].puers  = JOY_MOVE_MASK;
+				AVR32_GPIO.port[JOY_PRESS_PORT].puers = JOY_PRESS_MASK;
 			};
 			
 			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Joystick_GetStatus(void)
 			{
-				return (((uint8_t)~PINB & JOY_BMASK) | (((uint8_t)~PINE & JOY_EMASK) >> 1));
+				return (uint8_t)(~(((AVR32_GPIO.port[JOY_MOVE_PORT].pvr  & JOY_MOVE_MASK) |
+				                    (AVR32_GPIO.port[JOY_PRESS_PORT].pvr & JOY_PRESS_MASK)) << JOY_SHIFT_LEFT));
 			}
 		#endif
 

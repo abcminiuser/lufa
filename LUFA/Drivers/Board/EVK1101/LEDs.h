@@ -54,6 +54,12 @@
 			#error Do not include this file directly. Include LUFA/Drivers/Board/LEDS.h instead.
 		#endif
 
+	/* Private Interface - For use in library only: */
+	#if !defined(__DOXYGEN__)
+		/* Macros: */
+			#define LEDS_PORT        0
+	#endif
+
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** LED mask for the first LED on the board. */
@@ -78,34 +84,37 @@
 		#if !defined(__DOXYGEN__)
 			static inline void LEDs_Init(void)
 			{
-				DDRA  |=  LEDS_ALL_LEDS;
-				PORTA &= ~LEDS_ALL_LEDS;
+				AVR32_GPIO.port[LEDS_PORT].gpers = LEDS_ALL_LEDS;
+				AVR32_GPIO.port[LEDS_PORT].oders = LEDS_ALL_LEDS;
+				AVR32_GPIO.port[LEDS_PORT].ovrs  = LEDS_ALL_LEDS;
 			}
 			
-			static inline void LEDs_TurnOnLEDs(const uint8_t LedMask)
+			static inline void LEDs_TurnOnLEDs(const uint32_t LedMask)
 			{
-				PORTA |= LedMask;
+				AVR32_GPIO.port[LEDS_PORT].ovrc  = LedMask;
 			}
 
-			static inline void LEDs_TurnOffLEDs(const uint8_t LedMask)
+			static inline void LEDs_TurnOffLEDs(const uint32_t LedMask)
 			{
-				PORTA &= ~LedMask;
+				AVR32_GPIO.port[LEDS_PORT].ovrs  = LedMask;
 			}
 
-			static inline void LEDs_SetAllLEDs(const uint8_t LedMask)
+			static inline void LEDs_SetAllLEDs(const uint32_t LedMask)
 			{
-				PORTA = ((PORTD & ~LEDS_ALL_LEDS) | LedMask);
+				AVR32_GPIO.port[LEDS_PORT].ovrs  = LEDS_ALL_LEDS;
+				AVR32_GPIO.port[LEDS_PORT].ovrc  = LedMask;
 			}
 			
-			static inline void LEDs_ChangeLEDs(const uint8_t LedMask, const uint8_t ActiveMask)
+			static inline void LEDs_ChangeLEDs(const uint32_t LedMask, const uint32_t ActiveMask)
 			{
-				PORTA = ((PORTD & ~LedMask) | ActiveMask);
+				AVR32_GPIO.port[LEDS_PORT].ovrs  = LedMask;
+				AVR32_GPIO.port[LEDS_PORT].ovrc  = ActiveMask;
 			}
 			
-			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
-			static inline uint8_t LEDs_GetLEDs(void)
+			static inline uint32_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+			static inline uint32_t LEDs_GetLEDs(void)
 			{
-				return (PORTA & LEDS_ALL_LEDS);
+				return (AVR32_GPIO.port[LEDS_PORT].ovr & LEDS_ALL_LEDS);
 			}
 		#endif
 

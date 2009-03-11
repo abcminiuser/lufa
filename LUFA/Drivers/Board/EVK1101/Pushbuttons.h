@@ -51,10 +51,16 @@
 		#endif
 
 	/* Preprocessor Checks: */
-		#if !defined(INCLUDE_FROM_HWB_H)
-			#error Do not include this file directly. Include LUFA/Drivers/Board/HWB.h instead.
+		#if !defined(INCLUDE_FROM_PUSHBUTTONS_H)
+			#error Do not include this file directly. Include LUFA/Drivers/Board/Pushbuttons.h instead.
 		#endif
 		
+	/* Private Interface - For use in library only: */
+	#if !defined(__DOXYGEN__)
+		/* Macros: */
+			#define BUTTONS_PORT          1
+	#endif
+
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Total number of pushbuttons on the selected board */
@@ -70,14 +76,14 @@
 		#if !defined(__DOXYGEN__)
 			static inline void Pushbuttons_Init(void)
 			{
-				DDRB  &= ~(BUTTON_1 | BUTTON_2);
-				PORTB |=  (BUTTON_1 | BUTTON_2);
+				AVR32_GPIO.port[BUTTONS_PORT].gpers  = (BUTTON_1 | BUTTON_2);
+				AVR32_GPIO.port[BUTTONS_PORT].puers  = (BUTTON_1 | BUTTON_2);
 			}
 
 			static inline uint8_t Pushbuttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Pushbuttons_GetStatus(void)
 			{
-				return (!(PINB & (BUTTON_1 | BUTTON_2)));
+				return (~(AVR32_GPIO.port[JOY_MOVE_PORT].pvr & (BUTTON_1 | BUTTON_2)));
 			}
 		#endif
 
