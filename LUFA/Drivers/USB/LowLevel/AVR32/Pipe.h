@@ -35,11 +35,11 @@
  *  send/recieve functions for various datatypes.
  */
  
-#ifndef __PIPE_AVR8_H__
-#define __PIPE_AVR8_H__
+#ifndef __PIPE_AVR32_H__
+#define __PIPE_AVR32_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
 
 	/* Enable C linkage for C++ Compilers: */

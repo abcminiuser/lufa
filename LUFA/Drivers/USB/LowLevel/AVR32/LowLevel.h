@@ -34,49 +34,16 @@
  *  USB interface in either device or (if supported) host mode.
  */
 
-#ifndef __USBLOWLEVEL_AVR8_H__
-#define __USBLOWLEVEL_AVR8_H__
+#ifndef __USBLOWLEVEL_AVR32_H__
+#define __USBLOWLEVEL_AVR32_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/interrupt.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
 			extern "C" {
-		#endif
-
-	/* Preprocessor Checks and Defines: */
-		#if !defined(F_CLOCK)
-			#error F_CLOCK is not defined. You must device F_CLOCK to the frequency of the unprescaled input clock in your project makefile.
-			#define F_CLOCK 0
-		#endif
-	
-		#if (F_CLOCK == 8000000)
-			#if (defined(__AVR_AT90USB82__) || defined(__AVR_AT90USB162__))
-				#define USB_PLL_PSC                0
-			#elif (defined(__AVR_AT90USB646__)  || defined(__AVR_AT90USB647__)  || \
-			       defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__) || \
-				   defined(__AVR_ATmega32U6__))
-				#define USB_PLL_PSC                ((1 << PLLP1) | (1 << PLLP0))
-			#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
-				#define USB_PLL_PSC                0
-			#endif
-		#elif (F_CLOCK == 16000000)
-			#if (defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || defined(__AVR_ATmega32U6__))
-				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP1))
-			#elif (defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__))
-				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP0))
-			#elif (defined(__AVR_AT90USB82__) || defined(__AVR_AT90USB162__))
-				#define USB_PLL_PSC                (1 << PLLP0)
-			#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
-				#define USB_PLL_PSC                (1 << PINDIV)
-			#endif
-		#endif
-		
-		#if !defined(USB_PLL_PSC)
-			#error No PLL prescale value available for chosen F_CPU value and AVR model.
 		#endif
 		
 	/* Public Interface - May be used in end-application: */

@@ -34,12 +34,8 @@
  *  the USB controller is initialized in device mode.
  */
 
-#ifndef __USBDEVICE_AVR8_H__
-#define __USBDEVICE_AVR8_H__
-
-	/* Includes: */
-		#include <avr/pgmspace.h>
-		#include <avr/eeprom.h>
+#ifndef __USBDEVICE_AVR32_H__
+#define __USBDEVICE_AVR32_H__
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
@@ -73,7 +69,7 @@
 			 *
 			 *  \see StdDescriptors.h for more information on the RMWAKEUP feature and device descriptors.
 			 */
-			#define USB_Device_SendRemoteWakeup()   MACROS{ UDCON |= (1 << RMWKUP); }MACROE
+			#define USB_Device_SendRemoteWakeup()   MACROS{ AVR32_USBB.UDCON.RMWKUP = true; }MACROE
 
 			/** Indicates if a Remote Wakeup request is being sent to the host. This returns true if a
 			 *  remote wakeup is currently being sent, false otherwise.
@@ -86,7 +82,7 @@
 			 *
 			 *  \see StdDescriptors.h for more information on the RMWAKEUP feature and device descriptors.
 			 */
-			#define USB_Device_IsRemoteWakeupSent()       ((UDCON &  (1 << RMWKUP)) ? false : true)
+			#define USB_Device_IsRemoteWakeupSent()       ((AVR32_USBB.UDCON.RMWKUP) ? false : true)
 
 			/** Indicates if the device is currently suspended by the host. While suspended, the device is
 			 *  to enter a low power state until resumed by the host. While suspended no USB traffic to or
@@ -95,7 +91,7 @@
 			 *  This macro returns true if the USB communications have been suspended by the host, false
 			 *  otherwise.
 			 */
-			#define USB_Device_IsUSBSuspended()           ((UDINT &  (1 << SUSPI)) ? true : false)
+			#define USB_Device_IsUSBSuspended()           ((AVR32_USBB.UDINT.SUSPI) ? true : false)
 
 		/* Enums: */
 			/** Enum for the ErrorCode parameter of the USB_DeviceError event.
@@ -115,8 +111,8 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */		
-			#define USB_Device_SetLowSpeed()        MACROS{ UDCON |=  (1 << LSM);   }MACROE
-			#define USB_Device_SetHighSpeed()       MACROS{ UDCON &= ~(1 << LSM);   }MACROE
+			#define USB_Device_SetLowSpeed()        MACROS{ AVR32_USBB.UDCON.LS = true;  }MACROE
+			#define USB_Device_SetHighSpeed()       MACROS{ AVR32_USBB.UDCON.LS = false; }MACROE
 	#endif
 	
 #endif

@@ -72,11 +72,11 @@
 		#include <stdint.h>
 		#include <stdbool.h>
 		
+		#include "../Common/Common.h"
+
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
 			#include <util/atomic.h>
 		#endif
-
-		#include "../Common/Common.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -180,7 +180,8 @@
 			                                        ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
 			static inline void Scheduler_ResetDelay(SchedulerDelayCounter_t* const DelayCounter)
 			{
-				ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+				//TEMP
+				//ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 				{
 					*DelayCounter = Scheduler_TickCounter;
 				}

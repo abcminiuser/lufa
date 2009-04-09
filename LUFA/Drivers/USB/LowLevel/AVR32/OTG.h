@@ -36,11 +36,11 @@
  *  \note These macros are only for AVRs which support the OTG protocol, and do not exist for device-only AVRs.
  */
 
-#ifndef __USBOTG_AVR8_H__
-#define __USBOTG_AVR8_H__
+#ifndef __USBOTG_AVR32_H__
+#define __USBOTG_AVR32_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
 
 	/* Public Interface - May be used in end-application: */

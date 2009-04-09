@@ -38,7 +38,8 @@ bool Scheduler_HasDelayElapsed(const uint16_t Delay, SchedulerDelayCounter_t* co
 	SchedulerDelayCounter_t CurrentTickValue_LCL;
 	SchedulerDelayCounter_t DelayCounter_LCL;
 	
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	// TEMP
+	//ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
 		CurrentTickValue_LCL = Scheduler_TickCounter;
 	}

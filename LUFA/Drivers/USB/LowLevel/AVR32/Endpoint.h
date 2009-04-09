@@ -35,11 +35,11 @@
  *  send/recieve functions for various datatypes.
  */
  
-#ifndef __ENDPOINT_AVR8_H__
-#define __ENDPOINT_AVR8_H__
+#ifndef __ENDPOINT_AVR32_H__
+#define __ENDPOINT_AVR32_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
 
 	/* Enable C linkage for C++ Compilers: */
@@ -52,26 +52,26 @@
 			/** Endpoint data direction mask for Endpoint_ConfigureEndpoint(). This indicates that the endpoint
 			 *  should be initialized in the OUT direction - i.e. data flows from host to device.
 			 */
-			#define ENDPOINT_DIR_OUT                      (0 << EPDIR)
+			#define ENDPOINT_DIR_OUT                      (0UL << AVR32_USBB_EPDIR)
 
 			/** Endpoint data direction mask for Endpoint_ConfigureEndpoint(). This indicates that the endpoint
 			 *  should be initialized in the IN direction - i.e. data flows from device to host.
 			 */
-			#define ENDPOINT_DIR_IN                       (1 << EPDIR)
+			#define ENDPOINT_DIR_IN                       (1UL << AVR32_USBB_EPDIR)
 
 			/** Mask for the bank mode selection for the Endpoint_ConfigureEndpoint() macro. This indicates
 			 *  that the endpoint should have one single bank, which requires less USB FIFO memory but results
 			 *  in slower transfers as only one USB device (the AVR or the host) can access the endpoint's
 			 *  bank at the one time.
 			 */
-			#define ENDPOINT_BANK_SINGLE                  (0 << EPBK0)
+			#define ENDPOINT_BANK_SINGLE                  (0UL << AVR32_USBB_EPBK0)
 
 			/** Mask for the bank mode selection for the Endpoint_ConfigureEndpoint() macro. This indicates
 			 *  that the endpoint should have two banks, which requires more USB FIFO memory but results
 			 *  in faster transfers as one USB device (the AVR or the host) can access one bank while the other
 			 *  accesses the second bank.
 			 */
-			#define ENDPOINT_BANK_DOUBLE                  (1 << EPBK0)
+			#define ENDPOINT_BANK_DOUBLE                  (1UL << AVR32_USBB_EPBK0)
 			
 			/** Endpoint address for the default control endpoint, which always resides in address 0. This is
 			 *  defined for convenience to give more readable code when used with the endpoint macros.
@@ -88,7 +88,7 @@
 			/** Endpoint number mask, for masking against endpoint addresses to retrieve the endpoint's
 			 *  numerical address in the device.
 			 */
-			#define ENDPOINT_EPNUM_MASK                   0b111
+			#define ENDPOINT_EPNUM_MASK                   0x03
 
 			/** Endpoint bank size mask, for masking against endpoint addresses to retrieve the endpoint's
 			 *  bank size in the device.
@@ -107,15 +107,7 @@
 			 */				
 			#define ENDPOINT_DOUBLEBANK_SUPPORTED(n)      _ENDPOINT_GET_DOUBLEBANK(n)
 
-			#if defined(USB_FULL_CONTROLLER) || defined(USB_MODIFIED_FULL_CONTROLLER) || defined(__DOXYGEN__)
-				/** Total number of endpoints (including the default control endpoint at address 0) which may
-				 *  be used in the device. Different USB AVR models support different amounts of endpoints,
-				 *  this value reflects the maximum number of endpoints for the currently selected AVR model.
-				 */
-				#define ENDPOINT_TOTAL_ENDPOINTS          7
-			#else
-				#define ENDPOINT_TOTAL_ENDPOINTS          5			
-			#endif
+			#define ENDPOINT_TOTAL_ENDPOINTS              7
 
 			/** Interrupt definition for the endpoint SETUP interrupt (for CONTROL type endpoints). Should be
 			 *  used with the USB_INT_* macros located in USBInterrupt.h.
@@ -158,12 +150,7 @@
 			 */
 			#define ENDPOINT_INT_OUT                      UEIENX, (1 << RXOUTE), UEINTX, (1 << RXOUTI)
 			
-			#if defined(USB_FULL_CONTROLLER) || defined(USB_MODIFIED_FULL_CONTROLLER) || defined(__DOXYGEN__)
-				/** Indicates the number of bytes currently stored in the current endpoint's selected bank. */
-				#define Endpoint_BytesInEndpoint()        UEBCX
-			#else
-				#define Endpoint_BytesInEndpoint()        UEBCLX
-			#endif
+			#define Endpoint_BytesInEndpoint()            UEBCX
 			
 			/** Returns the endpoint address of the currently selected endpoint. This is typically used to save
 			 *  the currently selected endpoint number so that it can be restored after another endpoint has
@@ -183,7 +170,8 @@
 			/** Resets the endpoint bank FIFO. This clears all the endpoint banks and resets the USB controller's
 			 *  In and Out pointers to the bank's contents.
 			 */
-			#define Endpoint_ResetFIFO(epnum)             MACROS{ UERST = (1 << epnum); UERST = 0; }MACROE
+			#define Endpoint_ResetFIFO(epnum)             MACROS{ AVR32_USBB.uerst |=  (1UL << (AVR32_USBB_EPRST + epnum)); \
+			                                                      AVR32_USBB.uerst &= ~(1UL << (AVR32_USBB_EPRST + epnum); }MACROE
 
 			/** Enables the currently selected endpoint so that data can be sent and received through it to
 			 *  and from a host.
@@ -191,15 +179,15 @@
 			 *  \note Endpoints must first be configured properly rather than just being enabled via the
 			 *        Endpoint_ConfigureEndpoint() macro, which calls Endpoint_EnableEndpoint() automatically.
 			 */
-			#define Endpoint_EnableEndpoint()             MACROS{ UECONX |= (1 << EPEN); }MACROE
+			#define Endpoint_EnableEndpoint()             MACROS{ AVR32_USBB.uerst |= (1UL << (AVR32_USBB_EPEN + epnum)); }MACROE
 
 			/** Disables the currently selected endpoint so that data cannot be sent and received through it
 			 *  to and from a host.
 			 */
-			#define Endpoint_DisableEndpoint()            MACROS{ UECONX &= ~(1 << EPEN); }MACROE
+			#define Endpoint_DisableEndpoint()            MACROS{ AVR32_USBB.uerst &= ~(1UL << (AVR32_USBB_EPEN0 + epnum)); }MACROE
 
 			/** Returns true if the currently selected endpoint is enabled, false otherwise. */
-			#define Endpoint_IsEnabled()                  ((UECONX & (1 << EPEN)) ? true : false)
+			#define Endpoint_IsEnabled()                  ((AVR32_USBB.uerst & (1UL << (AVR32_USBB_EPEN0 + epnum));) ? true : false)
 
 			/** Returns true if the currently selected endpoint may be read from (if data is waiting in the endpoint
 			 *  bank and the endpoint is an OUT direction, or if the bank is not yet full if the endpoint is an
@@ -835,22 +823,21 @@
 			static inline uint8_t Endpoint_BytesToEPSizeMask(const uint16_t Bytes)
 			{
 				if (Bytes <= 8)
-				  return (0 << EPSIZE0);
+				  return (0UL << AVR32_USBB_EPSIZE);
 				else if (Bytes <= 16)
-				  return (1 << EPSIZE0);
+				  return (1UL << AVR32_USBB_EPSIZE);
 				else if (Bytes <= 32)
-				  return (2 << EPSIZE0);
-				#if defined(USB_LIMITED_CONTROLLER)
-				else
-				  return (3 << EPSIZE0);
-				#else
+				  return (2UL << AVR32_USBB_EPSIZE);
 				else if (Bytes <= 64)
-				  return (3 << EPSIZE0);
+				  return (3UL << AVR32_USBB_EPSIZE);
 				else if (Bytes <= 128)
-				  return (4 << EPSIZE0);
-				else
-				  return (5 << EPSIZE0);
-				#endif
+				  return (4UL << AVR32_USBB_EPSIZE);
+				else if (Bytes <= 256)
+				  return (5UL << AVR32_USBB_EPSIZE);
+				else if (Bytes <= 512)
+				  return (6UL << AVR32_USBB_EPSIZE);
+				else if (Bytes <= 1024)
+				  return (7UL << AVR32_USBB_EPSIZE);
 			};
 
 	#endif

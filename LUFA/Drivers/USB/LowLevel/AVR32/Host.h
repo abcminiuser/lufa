@@ -34,13 +34,12 @@
  *  the USB controller is initialized in host mode.
  */
 
-#ifndef __USBHOST_AVR8_H__
-#define __USBHOST_AVR8_H__
+#ifndef __USBHOST_AVR32_H__
+#define __USBHOST_AVR32_H__
 
 	/* Includes: */
-		#include <avr/io.h>
+		#include <avr32/io.h>
 		#include <stdbool.h>
-		#include <util/delay.h>
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

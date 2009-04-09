@@ -14,12 +14,8 @@
 # code.
 
 all:
-	make -C Mouse clean
-	make -C Mouse all
-
-	make -C TestApp clean
-	make -C TestApp all
+	make -C BoardTest clean
+	make -C BoardTest all
 
 %:
-	make -C Mouse $@
-	make -C TestApp $@
+	make -C BoardTest $@

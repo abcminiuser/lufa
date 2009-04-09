@@ -41,15 +41,96 @@
 
 	/* Includes: */
 		#include "../../../Common/Common.h"
-		#include "../HighLevel/StdDescriptors.h"
-		#include "../HighLevel/Events.h"
-		#include "../HighLevel/StdRequestType.h"
-		#include "LowLevel.h"
-		
+
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
-			#include "AVR8/DevChapter9.h"
+			#include <avr/io.h>
+			#include <avr/pgmspace.h>
+			#include <avr/eeprom.h>
 		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
-			#include "AVR32/DevChapter9.h"
+			#include <avr32/io.h>
+		#endif
+		
+	/* Enable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			extern "C" {
+		#endif
+
+	/* Public Interface - May be used in end-application: */
+		/* Global Variables: */
+			/** Indicates the currently set configuration number of the device. USB devices may have several
+			 *  different configurations which the host can select between; this indicates the currently selected
+			 *  value, or 0 if no configuration has been selected.
+			 *
+			 *  If a device has only one single configuration, the token USE_SINGLE_DEVICE_CONFIGURATION may be
+			 *  defined in the project makefile and passed to the compiler using the -D switch. This optimize for
+			 *  a single configuration, saving a small amount of space in the resulting compiled binary.
+			 *
+			 *  \note This variable should be treated as read-only in the user application, and never manually
+			 *        changed in value.
+			 */
+			extern uint8_t USB_ConfigurationNumber;
+			
+			/** Indicates if the host is currently allowing the device to issue remote wakeup events. If this
+			 *  flag is cleared, the device should not issue remote wakeup events to the host.
+			 *
+			 *  \note This variable should be treated as read-only in the user application, and never manually
+			 *        changed in value.
+			 */
+			extern bool USB_RemoteWakeupEnabled;
+			
+			/** Indicates if the device is currently being powered by its own power supply, rather than being
+			 *  powered by the host's USB supply. This flag should remain cleared if the device does not
+			 *  support self powered mode, as indicated in the device descriptors.
+			 */
+			extern bool USB_CurrentlySelfPowered;
+
+		/* Throwable Events: */
+			/** This module raises the USB_UnhandledControlPacket event when a request to the default control
+			 *  endpoint has been received, but the library does not implement an internal handler for it.
+			 *
+			 *  \see Events.h for more information on this event.
+			 */
+			RAISES_EVENT(USB_UnhandledControlPacket);
+
+			/** This module raises the USB_ConfigurationChanged event when the host issues a REQ_SetConfiguration
+			 *  device request, to change the currently selected configuration number.
+			 *
+			 *  \see Events.h for more information on this event.
+			 */
+			RAISES_EVENT(USB_ConfigurationChanged);
+
+			/** This module raises the USB_DeviceEnumerationComplete event when the host has completed its
+			 *  enumeration of the device (i.e. when a REQ_SetConfiguration request changes the current configuration
+			 *  number from 0 to a non-zero value).
+			 *
+			 *  \see Events.h for more information on this event.
+			 */
+			RAISES_EVENT(USB_DeviceEnumerationComplete);
+	
+	/* Private Interface - For use in library only: */
+	#if !defined(__DOXYGEN__)
+		#if defined(USE_RAM_DESCRIPTORS) && defined(USE_EEPROM_DESCRIPTORS)
+			#error USE_RAM_DESCRIPTORS and USE_EEPROM_DESCRIPTORS are mutually exclusive.
+		#endif
+	
+		/* Function Prototypes: */
+			void USB_Device_ProcessControlPacket(void);
+			
+			#if defined(INCLUDE_FROM_DEVCHAPTER9_C)
+				static void USB_Device_SetAddress(void);
+				static void USB_Device_SetConfiguration(void);
+				static void USB_Device_GetConfiguration(void);
+				static void USB_Device_GetDescriptor(void);
+				static void USB_Device_GetStatus(const uint8_t bmRequestType);
+				#if !defined(NO_CLEARSET_FEATURE_REQUEST)
+				static void USB_Device_ClearSetFeature(const uint8_t bRequest, const uint8_t bmRequestType);
+				#endif
+			#endif
+	#endif
+
+	/* Disable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			}
 		#endif
 		
 #endif
