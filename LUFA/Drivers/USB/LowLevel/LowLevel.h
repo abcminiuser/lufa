@@ -58,6 +58,8 @@
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
 			#include "AVR8/LowLevel.h"
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include "AVR32/LowLevel.h"
 		#endif
 		
 #endif

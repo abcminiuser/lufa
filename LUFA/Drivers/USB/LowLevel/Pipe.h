@@ -48,6 +48,8 @@
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
 			#include "AVR8/Pipe.h"
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include "AVR32/Pipe.h"
 		#endif
 		
 #endif

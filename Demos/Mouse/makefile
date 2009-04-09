@@ -68,7 +68,7 @@ ARCH = avr32
 
 # MCU name
 #MCU = at90usb1287
-MCU = uc3b0128
+MCU = uc3b0256
 
 
 # Target board (see library BoardTypes.h documentation, USER or blank for projects not requiring

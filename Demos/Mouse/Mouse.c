@@ -291,7 +291,7 @@ bool GetNextReport(USB_MouseReport_Data_t* ReportData)
 	if (JoyStatus_LCL & JOY_PRESS)
 	  ReportData->Button  = (1 << 0);
 	  
-	if (HWB_GetStatus())
+	if (Pushbuttons_GetStatus())
 	  ReportData->Button |= (1 << 1);
 
 	/* Check if the new report is different to the previous report */
@@ -312,7 +312,7 @@ bool GetNextReport(USB_MouseReport_Data_t* ReportData)
  */
 void UpdateStatus(uint8_t CurrentStatus)
 {
-	uint8_t LEDMask = LEDS_NO_LEDS;
+	uint32_t LEDMask = LEDS_NO_LEDS;
 	
 	/* Set the LED mask to the appropriate LED mask based on the given status code */
 	switch (CurrentStatus)

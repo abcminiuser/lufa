@@ -48,6 +48,8 @@
 		
 		#if (MCU_ARCHITECTURE == ARCH_AVR8)
 			#include "AVR8/DevChapter9.h"
+		#elif (MCU_ARCHITECTURE == ARCH_AVR32)
+			#include "AVR32/DevChapter9.h"
 		#endif
 		
 #endif
