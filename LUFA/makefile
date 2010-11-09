@@ -44,7 +44,7 @@ LUFA_SRC_USBCLASS     = $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/Audio.c      
                         $(LUFA_ROOT_PATH)/Drivers/USB/Class/Host/Printer.c          \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Class/Host/RNDIS.c            \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Class/Host/StillImage.c
-LUFA_SRC_TEMPERATURE  = $(LUFA_ROOT_PATH)/Drivers/Board/$(ARCH)/Temperature.c
+LUFA_SRC_TEMPERATURE  = $(LUFA_ROOT_PATH)/Drivers/Board/Temperature.c
 LUFA_SRC_SERIAL       = $(LUFA_ROOT_PATH)/Drivers/Peripheral/$(ARCH)/Serial.c
 LUFA_SRC_SERIALSTREAM = $(LUFA_ROOT_PATH)/Drivers/Peripheral/$(ARCH)/SerialStream.c
 LUFA_SRC_TWI          = $(LUFA_ROOT_PATH)/Drivers/Peripheral/$(ARCH)/TWI.c
