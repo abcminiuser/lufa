@@ -49,20 +49,6 @@
 #ifndef __USBHOST_H__
 #define __USBHOST_H__
 
-	/* Includes: */
-		#include <avr/io.h>
-		#include <stdbool.h>
-		#include <util/delay.h>
-
-		#include "../../../Common/Common.h"
-		#include "StdDescriptors.h"
-		#include "Pipe.h"
-		#include "USBInterrupt.h"
-		
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/Host.h"
-		#endif
-
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
 			extern "C" {
@@ -259,6 +245,11 @@
 				HOST_WAITERROR_SetupStalled     = 3,
 			};
 	#endif
+
+	/* Includes: */
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/Host.h"
+		#endif
 
 	/* Disable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

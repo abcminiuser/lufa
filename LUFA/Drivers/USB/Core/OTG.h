@@ -51,19 +51,14 @@
 #ifndef __USBOTG_H__
 #define __USBOTG_H__
 
-	/* Includes: */
-		#include <avr/io.h>
-		#include <stdbool.h>
-
-		#include "../../../Common/Common.h"
-		
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/OTG.h"
-		#endif
-
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
+		#endif
+
+	/* Includes: */
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/OTG.h"
 		#endif
 
 #endif

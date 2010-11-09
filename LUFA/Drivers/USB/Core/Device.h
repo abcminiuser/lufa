@@ -50,18 +50,9 @@
 #define __USBDEVICE_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/pgmspace.h>
-		#include <avr/eeprom.h>
-
 		#include "../../../Common/Common.h"
-		#include "StdDescriptors.h"
-		#include "USBInterrupt.h"
-		#include "Endpoint.h"
 		
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/Device.h"
-		#endif
+		#include "USBMode.h"
 
 	/* Preprocessor Checks: */
 		#if (defined(USE_RAM_DESCRIPTORS) && defined(USE_EEPROM_DESCRIPTORS))
@@ -70,6 +61,11 @@
 
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
+		#endif
+
+	/* Enable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			extern "C" {
 		#endif
 
 	/* Public Interface - May be used in end-application: */
@@ -158,7 +154,17 @@
 			#endif
 			                                    ) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
 
-#endif
+	/* Includes: */
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/Device.h"
+		#endif
+
+	/* Disable C linkage for C++ Compilers: */
+		#if defined(__cplusplus)
+			}
+		#endif
+
+	#endif
 
 /** @} */
 

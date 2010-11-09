@@ -50,36 +50,10 @@
 #define __USBCONTROLLER_H__
 
 	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/interrupt.h>
+		#include <stdint.h>
 		#include <stdbool.h>
 
 		#include "USBMode.h"
-
-		#include "../../../Common/Common.h"
-		#include "USBMode.h"
-		#include "Events.h"
-		#include "USBTask.h"
-		#include "USBInterrupt.h"
-
-		#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
-			#include "Host.h"
-			#include "OTG.h"
-			#include "Pipe.h"
-			#include "HostStandardReq.h"
-			#include "PipeStream.h"
-		#endif
-
-		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
-			#include "Device.h"
-			#include "Endpoint.h"
-			#include "DeviceStandardReq.h"
-			#include "EndpointStream.h"
-		#endif
-		
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/USBController.h"
-		#endif
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -212,6 +186,11 @@
 				                      *   USB connector.
 				                      */
 			};
+
+	/* Includes: */
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/USBController.h"
+		#endif
 
 	/* Disable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

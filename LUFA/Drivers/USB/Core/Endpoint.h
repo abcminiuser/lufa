@@ -69,19 +69,7 @@
 
 #ifndef __ENDPOINT_H__
 #define __ENDPOINT_H__
-
-	/* Includes: */
-		#include <avr/io.h>
-		#include <stdbool.h>
-
-		#include "../../../Common/Common.h"
-		#include "USBTask.h"
-		#include "USBInterrupt.h"
 		
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/Endpoint.h"
-		#endif
-
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
 			extern "C" {
@@ -116,6 +104,11 @@
 				                                                 *   \ref USB_STREAM_TIMEOUT_MS macro.
 				                                                 */
 			};
+
+	/* Includes: */
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/Endpoint.h"
+		#endif
 
 	/* Disable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

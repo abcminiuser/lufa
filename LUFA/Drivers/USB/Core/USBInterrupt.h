@@ -41,23 +41,12 @@
 #ifndef __USBINTERRUPT_H__
 #define __USBINTERRUPT_H__
 
-	/* Includes: */
-		#include <avr/io.h>
-		#include <avr/interrupt.h>
-		#include <util/atomic.h>
-		#include <stdbool.h>
-
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
 		#endif
 
 	/* Includes: */
-		#include "../../../Common/Common.h"
-		#include "USBMode.h"
-		#include "Events.h"
-		#include "USBController.h"
-		
 		#if (ARCH == ARCH_AVR8)
 			#include "AVR8/USBInterrupt.h"
 		#endif

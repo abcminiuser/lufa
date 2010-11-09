@@ -60,19 +60,19 @@
 		#include "../USBMode.h"
 		#include "../Events.h"
 		#include "../USBTask.h"
-		#include "USBInterrupt.h"
+		#include "../USBInterrupt.h"
 
 		#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
-			#include "Host.h"
-			#include "OTG.h"
-			#include "Pipe.h"
+			#include "../Host.h"
+			#include "../OTG.h"
+			#include "../Pipe.h"
 			#include "../HostStandardReq.h"
 			#include "../PipeStream.h"
 		#endif
 
 		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
-			#include "Device.h"
-			#include "Endpoint.h"
+			#include "../Device.h"
+			#include "../Endpoint.h"
 			#include "../DeviceStandardReq.h"
 			#include "../EndpointStream.h"
 		#endif

@@ -42,7 +42,6 @@
 #define __USBTASK_H__
 
 	/* Includes: */
-		#include <avr/interrupt.h>
 		#include <stdint.h>
 		#include <stdbool.h>
 

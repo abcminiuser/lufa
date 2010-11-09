@@ -56,8 +56,8 @@
 
 		#include "../../../../Common/Common.h"
 		#include "../StdDescriptors.h"
-		#include "USBInterrupt.h"
-		#include "Endpoint.h"
+		#include "../USBInterrupt.h"
+		#include "../Endpoint.h"
 
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)

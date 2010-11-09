@@ -90,7 +90,7 @@
 			#include "../../../../Common/Common.h"
 			#include "../USBMode.h"
 			#include "../Events.h"
-			#include "USBController.h"
+			#include "../USBController.h"
 
 		/* Function Prototypes: */
 			void USB_INT_ClearAllInterrupts(void);

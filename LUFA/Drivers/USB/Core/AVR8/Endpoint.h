@@ -76,7 +76,7 @@
 
 		#include "../../../../Common/Common.h"
 		#include "../USBTask.h"
-		#include "USBInterrupt.h"
+		#include "../USBInterrupt.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
