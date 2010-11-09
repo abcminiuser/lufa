@@ -83,8 +83,8 @@
 		#include <avr/io.h>
 		#include <stdbool.h>
 
-		#include "../../../Common/Common.h"
-		#include "../HighLevel/USBTask.h"
+		#include "../../../../Common/Common.h"
+		#include "../USBTask.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -193,22 +193,6 @@
 			 *  direction for comparing with the ENDPOINT_DESCRIPTOR_DIR_* masks.
 			 */
 			#define PIPE_EPDIR_MASK                 0x80
-
-		/* Enums: */
-			/** Enum for the possible error return codes of the Pipe_WaitUntilReady function.
-			 *
-			 *  \ingroup Group_PipeRW
-			 */
-			enum Pipe_WaitUntilReady_ErrorCodes_t
-			{
-				PIPE_READYWAIT_NoError                 = 0, /**< Pipe ready for next packet, no error. */
-				PIPE_READYWAIT_PipeStalled             = 1,	/**< The device stalled the pipe while waiting. */
-				PIPE_READYWAIT_DeviceDisconnected      = 2,	/**< Device was disconnected from the host while waiting. */
-				PIPE_READYWAIT_Timeout                 = 3, /**< The device failed to accept or send the next packet
-				                                             *   within the software timeout period set by the
-				                                             *   \ref USB_STREAM_TIMEOUT_MS macro.
-				                                             */
-			};
 
 		/* Inline Functions: */
 			/** Indicates the number of bytes currently stored in the current pipes's selected bank.

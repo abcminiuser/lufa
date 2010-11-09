@@ -69,6 +69,10 @@ MCU = at90usb1287
 BOARD = USBKEY
 
 
+# Targeted chip architecture (see library "Architectures" documentation)
+ARCH = AVR8
+
+
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the
 #     processor frequency in Hz. You can then use this symbol in your source code to
@@ -178,6 +182,7 @@ CSTANDARD = -std=c99
 CDEFS  = -DF_CPU=$(F_CPU)UL
 CDEFS += -DF_CLOCK=$(F_CLOCK)UL
 CDEFS += -DBOARD=BOARD_$(BOARD)
+CDEFS += -DARCH=ARCH_$(ARCH)
 CDEFS += $(LUFA_OPTS)
 
 
