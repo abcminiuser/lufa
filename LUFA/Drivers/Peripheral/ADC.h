@@ -59,13 +59,10 @@
 	#endif
 
 	/* Includes: */
-		#if (defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
-		     defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
-			 defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || \
-			 defined(__AVR_ATmega32U6__))
-			#include "AVRU4U6U7/ADC.h"
+		#if (ARCH == ARCH_AVR8)
+			#include "AVR8/ADC.h"
 		#else
-			#error "ADC is not available for the currently selected AVR model."
+			#error "ADC is not available for the currently selected architecture."
 		#endif
 
 #endif

@@ -39,7 +39,7 @@
  */
 
 /** \ingroup Group_ADC
- *  @defgroup Group_ADC_AVRU4U6U7 Series U4, U6 and U7 Model ADC Driver
+ *  @defgroup Group_ADC_AVR8 Series U4, U6 and U7 Model ADC Driver
  *
  *  On-chip Analogue-to-Digital converter (ADC) driver for supported U4, U6 and U7 model AVRs that contain an ADC
  *  peripheral internally.
@@ -50,8 +50,8 @@
  *  @{
  */
 
-#ifndef __ADC_AVRU4U6U7_H__
-#define __ADC_AVRU4U6U7_H__
+#ifndef __ADC_AVR8_H__
+#define __ADC_AVR8_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"

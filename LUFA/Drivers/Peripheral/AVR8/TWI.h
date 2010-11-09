@@ -38,7 +38,7 @@
  */
 
 /** \ingroup Group_TWI
- *  @defgroup Group_TWI_AVRU4U6U7 Series U4, U6 and U7 Model TWI Driver
+ *  @defgroup Group_TWI_AVR8 Series U4, U6 and U7 Model TWI Driver
  *
  *  Master mode TWI driver for the AT90USB1287, AT90USB1286, AT90USB647, AT90USB646, ATMEGA16U4 and ATMEGA32U4 AVRs.
  *
@@ -48,8 +48,8 @@
  *  @{
  */
 
-#ifndef __TWI_AVRU4U6U7_H__
-#define __TWI_AVRU4U6U7_H__
+#ifndef __TWI_AVR8_H__
+#define __TWI_AVR8_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"
@@ -67,6 +67,13 @@
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_TWI_H)
 			#error Do not include this file directly. Include LUFA/Drivers/Peripheral/TWI.h instead.
+		#endif
+
+		#if !(defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
+		      defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
+			  defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || \
+			  defined(__AVR_ATmega32U6__))
+			#error "TWI is not available for the currently selected AVR model."
 		#endif
 
 	/* Public Interface - May be used in end-application: */
