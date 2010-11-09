@@ -53,11 +53,14 @@
 		#include <avr/io.h>
 		#include <avr/pgmspace.h>
 		#include <avr/eeprom.h>
+		#include <avr/boot.h>
+		#include <util/atomic.h>
 
 		#include "../../../../Common/Common.h"
 		#include "../StdDescriptors.h"
 		#include "../USBInterrupt.h"
 		#include "../Endpoint.h"
+		#include "../EndpointStream.h"
 
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
@@ -123,6 +126,39 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Inline Functions: */
+			#if !defined(NO_INTERNAL_SERIAL) && (USE_INTERNAL_SERIAL != NO_DESCRIPTOR)
+			static inline char USB_Device_NibbleToASCII(uint8_t Nibble)
+			{
+				Nibble &= 0x0F;
+				return (Nibble >= 10) ? (('A' - 10) + Nibble) : ('0' + Nibble);
+			}
+
+			static inline void USB_Device_GetInternalSerialDescriptor(USB_Descriptor_String_t* const Descriptor,
+			                                                          const uint8_t Length)
+			{
+				Descriptor->Header.Type = DTYPE_String;
+				Descriptor->Header.Size = sizeof(USB_Descriptor_String_t) + (Length * sizeof(wchar_t));
+
+				ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+				{
+					uint8_t SigReadAddress = 0x0E;
+
+					for (uint8_t SerialCharNum = 0; SerialCharNum < Length; SerialCharNum++)
+					{
+						uint8_t SerialByte = boot_signature_byte_get(SigReadAddress);
+
+						if (SerialCharNum & 0x01)
+						{
+							SerialByte >>= 4;
+							SigReadAddress++;
+						}
+
+						Descriptor->UnicodeString[SerialCharNum] = USB_Device_NibbleToASCII(SerialByte);
+					}
+				}
+			}
+			#endif
+
 			#if (defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR))
 			static inline void USB_Device_SetLowSpeed(void) ATTR_ALWAYS_INLINE;
 			static inline void USB_Device_SetLowSpeed(void)

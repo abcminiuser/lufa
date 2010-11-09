@@ -74,7 +74,7 @@
 			 *
 			 *  \see \ref USB_OTG_Device_InitiateSRP().
 			 */
-			#define USB_OTG_STP_DATA                   0
+			#define USB_OTG_STP_DATA                   (0 << SRPSEL)
 
 		/* Inline Functions: */
 			/** Initiate a Host Negotiation Protocol request. This indicates to the other connected device

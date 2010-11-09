@@ -28,30 +28,42 @@
   this software.
 */
 
-/** \file
- *  \brief USB controller interrupt service routine management.
- *
- *  This file contains definitions required for the correct handling of low level USB service routine interrupts
- *  from the USB controller.
- *
- *  \note This file should not be included directly. It is automatically included as needed by the USB driver
- *        dispatch header located in LUFA/Drivers/USB/USB.h.
- */
+#define  __INCLUDE_FROM_USB_DRIVER
+#include "../USBMode.h"
 
-#ifndef __USBINTERRUPT_H__
-#define __USBINTERRUPT_H__
+#if defined(USB_CAN_BE_DEVICE)
 
-	/* Preprocessor Checks: */
-		#if !defined(__INCLUDE_FROM_USB_DRIVER)
-			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
-		#endif
+#include "Endpoint.h"
 
-	/* Includes: */
-		#if (ARCH == ARCH_AVR8)
-			#include "AVR8/USBInterrupt.h"
-		#elif (ARCH == ARCH_AVR32)
-			#include "AVR32/USBInterrupt.h"
-		#endif
+#if !defined(FIXED_CONTROL_ENDPOINT_SIZE)
+uint16_t USB_ControlEndpointSize = ENDPOINT_CONTROLEP_DEFAULT_SIZE;
+#endif
+
+bool Endpoint_ConfigureEndpoint_Prv(const uint8_t Number,
+                                    const uint8_t UECFG0XData,
+                                    const uint8_t UECFG1XData)
+{
+	// TODO
+	return 0;
+}
+
+void Endpoint_ClearEndpoints(void)
+{
+	// TODO
+}
+
+void Endpoint_ClearStatusStage(void)
+{
+	// TODO
+}
+
+#if !defined(CONTROL_ONLY_DEVICE)
+uint8_t Endpoint_WaitUntilReady(void)
+{
+	// TODO
+	return 0;
+}
+#endif
 
 #endif
 

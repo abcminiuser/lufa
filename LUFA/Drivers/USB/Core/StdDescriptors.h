@@ -50,7 +50,7 @@
 #define __USBDESCRIPTORS_H__
 
 	/* Includes: */
-		#include <avr/pgmspace.h>
+
 		#include <stdbool.h>
 		#include <stdint.h>
 		#include <stddef.h>
@@ -79,7 +79,7 @@
 			 *  for string descriptor indexes, or may be use as a return value for GetDescriptor when the specified
 			 *  descriptor does not exist.
 			 */
-			#define NO_DESCRIPTOR                     0
+			#define NO_DESCRIPTOR                0
 
 			#if (!defined(NO_INTERNAL_SERIAL) && \
 			     (defined(__AVR_AT90USB647__) || defined(__AVR_AT90USB1287__) || \

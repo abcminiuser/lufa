@@ -249,6 +249,8 @@
 	/* Includes: */
 		#if (ARCH == ARCH_AVR8)
 			#include "AVR8/Host.h"
+		#elif (ARCH == ARCH_AVR32)
+			#include "AVR32/Host.h"
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

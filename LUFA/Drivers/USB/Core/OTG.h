@@ -59,6 +59,8 @@
 	/* Includes: */
 		#if (ARCH == ARCH_AVR8)
 			#include "AVR8/OTG.h"
+		#elif (ARCH == ARCH_AVR32)
+			#include "AVR32/OTG.h"
 		#endif
 
 #endif

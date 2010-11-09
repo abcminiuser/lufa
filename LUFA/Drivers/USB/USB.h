@@ -360,6 +360,8 @@
 		#endif
 
 	/* Includes: */
+		#include "../../Common/Common.h"
+		
 		#include "Core/USBMode.h"
 
 	/* Preprocessor Checks: */

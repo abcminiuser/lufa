@@ -157,6 +157,8 @@
 	/* Includes: */
 		#if (ARCH == ARCH_AVR8)
 			#include "AVR8/Device.h"
+		#elif (ARCH == ARCH_AVR32)
+			#include "AVR32/Device.h"
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

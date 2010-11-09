@@ -197,50 +197,6 @@ static void USB_Device_GetConfiguration(void)
 	Endpoint_ClearStatusStage();
 }
 
-#if !defined(NO_INTERNAL_SERIAL) && (USE_INTERNAL_SERIAL != NO_DESCRIPTOR)
-static char USB_Device_NibbleToASCII(uint8_t Nibble)
-{
-	Nibble &= 0x0F;
-	return (Nibble >= 10) ? (('A' - 10) + Nibble) : ('0' + Nibble);
-}
-
-static void USB_Device_GetInternalSerialDescriptor(void)
-{
-	struct
-	{
-		USB_Descriptor_Header_t Header;
-		wchar_t                 UnicodeString[20];
-	} SignatureDescriptor;
-
-	SignatureDescriptor.Header.Type = DTYPE_String;
-	SignatureDescriptor.Header.Size = sizeof(SignatureDescriptor);
-
-	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-	{
-		uint8_t SigReadAddress = 0x0E;
-
-		for (uint8_t SerialCharNum = 0; SerialCharNum < 20; SerialCharNum++)
-		{
-			uint8_t SerialByte = boot_signature_byte_get(SigReadAddress);
-
-			if (SerialCharNum & 0x01)
-			{
-				SerialByte >>= 4;
-				SigReadAddress++;
-			}
-
-			SignatureDescriptor.UnicodeString[SerialCharNum] = USB_Device_NibbleToASCII(SerialByte);
-		}
-	}
-
-	Endpoint_ClearSETUP();
-
-	Endpoint_Write_Control_Stream_LE(&SignatureDescriptor, sizeof(SignatureDescriptor));
-
-	Endpoint_ClearOUT();
-}
-#endif
-
 static void USB_Device_GetDescriptor(void)
 {
 	const void* DescriptorPointer;
@@ -253,7 +209,19 @@ static void USB_Device_GetDescriptor(void)
 	#if !defined(NO_INTERNAL_SERIAL) && (USE_INTERNAL_SERIAL != NO_DESCRIPTOR)
 	if (USB_ControlRequest.wValue == ((DTYPE_String << 8) | USE_INTERNAL_SERIAL))
 	{
-		USB_Device_GetInternalSerialDescriptor();
+		struct
+		{
+			USB_Descriptor_Header_t Header;
+			wchar_t                 UnicodeString[20];
+		} SignatureDescriptor;
+
+		USB_Device_GetInternalSerialDescriptor((USB_Descriptor_String_t*)&SignatureDescriptor,
+		                                       (sizeof(SignatureDescriptor.UnicodeString) / sizeof(wchar_t)));
+
+		Endpoint_ClearSETUP();
+		Endpoint_Write_Control_Stream_LE(&SignatureDescriptor, sizeof(SignatureDescriptor));
+		Endpoint_ClearOUT();
+
 		return;
 	}
 	#endif
