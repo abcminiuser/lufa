@@ -69,6 +69,10 @@ MCU = at90usb1287
 BOARD = USBKEY
 
 
+# Targeted chip architecture (see library "Architectures" documentation)
+ARCH = AVR8
+
+
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the
 #     processor frequency in Hz. You can then use this symbol in your source code to
@@ -180,6 +184,7 @@ CSTANDARD = -std=c99
 CDEFS  = -DF_CPU=$(F_CPU)UL
 CDEFS += -DF_CLOCK=$(F_CLOCK)UL
 CDEFS += -DBOARD=BOARD_$(BOARD)
+CDEFS += -DARCH=ARCH_$(ARCH)
 CDEFS += $(LUFA_OPTS)
 
 
@@ -187,12 +192,14 @@ CDEFS += $(LUFA_OPTS)
 ADEFS  = -DF_CPU=$(F_CPU)
 ADEFS += -DF_CLOCK=$(F_CLOCK)UL
 ADEFS += -DBOARD=BOARD_$(BOARD)
+ADEFS += -DARCH=ARCH_$(ARCH)
 ADEFS += $(LUFA_OPTS)
 
 # Place -D or -U options here for C++ sources
 CPPDEFS  = -DF_CPU=$(F_CPU)UL
 CPPDEFS += -DF_CLOCK=$(F_CLOCK)UL
 CPPDEFS += -DBOARD=BOARD_$(BOARD)
+CPPDEFS += -DARCH=ARCH_$(ARCH)
 CPPDEFS += $(LUFA_OPTS)
 #CPPDEFS += -D__STDC_LIMIT_MACROS
 #CPPDEFS += -D__STDC_CONSTANT_MACROS
