@@ -29,7 +29,7 @@
 */
 
 #define  __INCLUDE_FROM_USB_DRIVER
-#include "../../HighLevel/USBMode.h"
+#include "../../Core/USBMode.h"
 #if defined(USB_CAN_BE_HOST)
 
 #define  __INCLUDE_FROM_MS_DRIVER

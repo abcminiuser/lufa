@@ -360,7 +360,7 @@
 		#endif
 
 	/* Includes: */
-		#include "HighLevel/USBMode.h"
+		#include "Core/USBMode.h"
 
 	/* Preprocessor Checks: */
 		#if (!defined(USB_SERIES_2_AVR) && !defined(USB_SERIES_4_AVR) && \
@@ -369,26 +369,25 @@
 		#endif
 
 	/* Includes: */
-		#include "HighLevel/USBTask.h"
-		#include "HighLevel/Events.h"
-		#include "HighLevel/StdDescriptors.h"
-		#include "HighLevel/ConfigDescriptor.h"
-
-		#include "LowLevel/USBController.h"
-		#include "LowLevel/USBInterrupt.h"
+		#include "Core/USBTask.h"
+		#include "Core/Events.h"
+		#include "Core/StdDescriptors.h"
+		#include "Core/ConfigDescriptor.h"
+		#include "Core/USBController.h"
+		#include "Core/USBInterrupt.h"
 
 		#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
-			#include "LowLevel/Host.h"
-			#include "LowLevel/Pipe.h"
-			#include "HighLevel/HostStandardReq.h"
-			#include "HighLevel/PipeStream.h"
+			#include "Core/Host.h"
+			#include "Core/Pipe.h"
+			#include "Core/HostStandardReq.h"
+			#include "Core/PipeStream.h"
 		#endif
 
 		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
-			#include "LowLevel/Device.h"
-			#include "LowLevel/Endpoint.h"
-			#include "HighLevel/DeviceStandardReq.h"
-			#include "HighLevel/EndpointStream.h"
+			#include "Core/Device.h"
+			#include "Core/Endpoint.h"
+			#include "Core/DeviceStandardReq.h"
+			#include "Core/EndpointStream.h"
 		#endif
 
 		#if defined(USB_CAN_BE_BOTH) || defined(__DOXYGEN__)

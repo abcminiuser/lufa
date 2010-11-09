@@ -76,8 +76,8 @@
  *  @{
  */
 
-#ifndef __PIPE_H__
-#define __PIPE_H__
+#ifndef __PIPE_AVR8_H__
+#define __PIPE_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>

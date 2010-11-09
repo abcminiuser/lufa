@@ -67,15 +67,15 @@
  *  @{
  */
 
-#ifndef __ENDPOINT_H__
-#define __ENDPOINT_H__
+#ifndef __ENDPOINT_AVR8_H__
+#define __ENDPOINT_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>
 		#include <stdbool.h>
 
-		#include "../../../Common/Common.h"
-		#include "../HighLevel/USBTask.h"
+		#include "../../../../Common/Common.h"
+		#include "../USBTask.h"
 		#include "USBInterrupt.h"
 
 	/* Enable C linkage for C++ Compilers: */
@@ -224,30 +224,6 @@
 			#else
 				#define ENDPOINT_TOTAL_ENDPOINTS            1
 			#endif
-
-		/* Enums: */
-			/** Enum for the possible error return codes of the \ref Endpoint_WaitUntilReady() function.
-			 *
-			 *  \ingroup Group_EndpointRW
-			 */
-			enum Endpoint_WaitUntilReady_ErrorCodes_t
-			{
-				ENDPOINT_READYWAIT_NoError                 = 0, /**< Endpoint is ready for next packet, no error. */
-				ENDPOINT_READYWAIT_EndpointStalled         = 1, /**< The endpoint was stalled during the stream
-				                                                 *   transfer by the host or device.
-				                                                 */
-				ENDPOINT_READYWAIT_DeviceDisconnected      = 2,	/**< Device was disconnected from the host while
-				                                                 *   waiting for the endpoint to become ready.
-				                                                 */
-				ENDPOINT_READYWAIT_BusSuspended            = 3, /**< The USB bus has been suspended by the host and
-				                                                 *   no USB endpoint traffic can occur until the bus
-				                                                 *   has resumed.
-				                                                 */
-				ENDPOINT_READYWAIT_Timeout                 = 4, /**< The host failed to accept or send the next packet
-				                                                 *   within the software timeout period set by the
-				                                                 *   \ref USB_STREAM_TIMEOUT_MS macro.
-				                                                 */
-			};
 
 		/* Inline Functions: */
 			/** Configures the specified endpoint number with the given endpoint type, direction, bank size

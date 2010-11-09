@@ -60,7 +60,7 @@
 		#include "Events.h"
 
 		#if defined(USB_CAN_BE_DEVICE)
-			#include "../LowLevel/Device.h"
+			#include "Device.h"
 		#endif
 
 	/* Enable C linkage for C++ Compilers: */

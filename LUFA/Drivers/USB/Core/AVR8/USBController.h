@@ -46,35 +46,35 @@
  *  @{
  */
 
-#ifndef __USBCONTROLLER_H__
-#define __USBCONTROLLER_H__
+#ifndef __USBCONTROLLER_AVR8_H__
+#define __USBCONTROLLER_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>
 		#include <avr/interrupt.h>
 		#include <stdbool.h>
 
-		#include "../HighLevel/USBMode.h"
+		#include "../USBMode.h"
 
-		#include "../../../Common/Common.h"
-		#include "../HighLevel/USBMode.h"
-		#include "../HighLevel/Events.h"
-		#include "../HighLevel/USBTask.h"
+		#include "../../../../Common/Common.h"
+		#include "../USBMode.h"
+		#include "../Events.h"
+		#include "../USBTask.h"
 		#include "USBInterrupt.h"
 
 		#if defined(USB_CAN_BE_HOST) || defined(__DOXYGEN__)
 			#include "Host.h"
 			#include "OTG.h"
 			#include "Pipe.h"
-			#include "../HighLevel/HostStandardReq.h"
-			#include "../HighLevel/PipeStream.h"
+			#include "../HostStandardReq.h"
+			#include "../PipeStream.h"
 		#endif
 
 		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
 			#include "Device.h"
 			#include "Endpoint.h"
-			#include "../HighLevel/DeviceStandardReq.h"
-			#include "../HighLevel/EndpointStream.h"
+			#include "../DeviceStandardReq.h"
+			#include "../EndpointStream.h"
 		#endif
 
 	/* Enable C linkage for C++ Compilers: */
@@ -85,10 +85,6 @@
 	/* Preprocessor Checks and Defines: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
-		#endif
-
-		#if !defined(F_CLOCK)
-			#error F_CLOCK is not defined. You must define F_CLOCK to the frequency of the unprescaled input clock in your project makefile.
 		#endif
 
 		#if (F_CLOCK == 8000000)
@@ -120,75 +116,6 @@
 		#if !defined(USB_PLL_PSC)
 			#error No PLL prescale value available for chosen F_CLOCK value and AVR model.
 		#endif
-
-	/* Public Interface - May be used in end-application: */
-		/* Macros: */
-			/** \name USB Controller Option Masks */
-			//@{
-			/** Regulator disable option mask for \ref USB_Init(). This indicates that the internal 3.3V USB data pad
-			 *  regulator should be enabled to regulate the data pin voltages to within the USB standard.
-			 *
-			 *  \note See USB AVR data sheet for more information on the internal pad regulator.
-			 */
-			#define USB_OPT_REG_DISABLED               (1 << 1)
-
-			/** Regulator enable option mask for \ref USB_Init(). This indicates that the internal 3.3V USB data pad
-			 *  regulator should be disabled and the AVR's VCC level used for the data pads.
-			 *
-			 *  \note See USB AVR data sheet for more information on the internal pad regulator.
-			 */
-			#define USB_OPT_REG_ENABLED                (0 << 1)
-
-			/** Manual PLL control option mask for \ref USB_Init(). This indicates to the library that the user application
-			 *  will take full responsibility for controlling the AVR's PLL (used to generate the high frequency clock
-			 *  that the USB controller requires) and ensuring that it is locked at the correct frequency for USB operations.
-			 */
-			#define USB_OPT_MANUAL_PLL                 (1 << 2)
-
-			/** Automatic PLL control option mask for \ref USB_Init(). This indicates to the library that the library should
-			 *  take full responsibility for controlling the AVR's PLL (used to generate the high frequency clock
-			 *  that the USB controller requires) and ensuring that it is locked at the correct frequency for USB operations.
-			 */
-			#define USB_OPT_AUTO_PLL                   (0 << 2)
-			//@}
-			
-			/** \name Endpoint/Pipe Type Masks */
-			//@{
-			/** Mask for a CONTROL type endpoint or pipe.
-			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
-			 */
-			#define EP_TYPE_CONTROL                    0x00
-
-			/** Mask for an ISOCHRONOUS type endpoint or pipe.
-			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
-			 */
-			#define EP_TYPE_ISOCHRONOUS                0x01
-
-			/** Mask for a BULK type endpoint or pipe.
-			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
-			 */
-			#define EP_TYPE_BULK                       0x02
-
-			/** Mask for an INTERRUPT type endpoint or pipe.
-			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
-			 */
-			#define EP_TYPE_INTERRUPT                  0x03
-			//@}
-
-			#if !defined(USB_STREAM_TIMEOUT_MS) || defined(__DOXYGEN__)
-				/** Constant for the maximum software timeout period of the USB data stream transfer functions
-				 *  (both control and standard) when in either device or host mode. If the next packet of a stream
-				 *  is not received or acknowledged within this time period, the stream function will fail.
-				 *
-				 *  This value may be overridden in the user project makefile as the value of the
-				 *  \ref USB_STREAM_TIMEOUT_MS token, and passed to the compiler using the -D switch.
-				 */
-				#define USB_STREAM_TIMEOUT_MS       100
-			#endif
 
 		/* Inline Functions: */
 			#if defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR) || defined(__DOXYGEN__)
@@ -332,20 +259,6 @@
 			#elif defined(USE_STATIC_OPTIONS)
 				#define USB_Options USE_STATIC_OPTIONS
 			#endif
-
-		/* Enums: */
-			/** Enum for the possible USB controller modes, for initialization via \ref USB_Init() and indication back to the
-			 *  user application via \ref USB_CurrentMode.
-			 */
-			enum USB_Modes_t
-			{
-				USB_MODE_None   = 0, /**< Indicates that the controller is currently not initialized in any specific USB mode. */
-				USB_MODE_Device = 1, /**< Indicates that the controller is currently initialized in USB Device mode. */
-				USB_MODE_Host   = 2, /**< Indicates that the controller is currently initialized in USB Host mode. */
-				USB_MODE_UID    = 3, /**< Indicates that the controller should determine the USB mode from the UID pin of the
-				                      *   USB connector.
-				                      */
-			};
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)

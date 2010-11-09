@@ -47,7 +47,7 @@
 
 		#include "USBMode.h"
 		#include "StdRequestType.h"
-		#include "../LowLevel/USBController.h"
+		#include "USBController.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

@@ -38,8 +38,8 @@
  *        dispatch header located in LUFA/Drivers/USB/USB.h.
  */
 
-#ifndef __USBINTERRUPT_H__
-#define __USBINTERRUPT_H__
+#ifndef __USBINTERRUPT_AVR8_H__
+#define __USBINTERRUPT_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>
@@ -87,9 +87,9 @@
 			#define USB_INT_RXSTPI                           UEIENX, (1 << RXSTPE) , UEINTX, (1 << RXSTPI)
 
 		/* Includes: */
-			#include "../../../Common/Common.h"
-			#include "../HighLevel/USBMode.h"
-			#include "../HighLevel/Events.h"
+			#include "../../../../Common/Common.h"
+			#include "../USBMode.h"
+			#include "../Events.h"
 			#include "USBController.h"
 
 		/* Function Prototypes: */

@@ -48,8 +48,8 @@
  *  @{
  */
 
-#ifndef __USBOTG_H__
-#define __USBOTG_H__
+#ifndef __USBOTG_AVR8_H__
+#define __USBOTG_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>

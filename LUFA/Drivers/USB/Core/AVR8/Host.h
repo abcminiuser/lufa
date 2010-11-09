@@ -46,8 +46,8 @@
  *  @{
  */
 
-#ifndef __USBHOST_H__
-#define __USBHOST_H__
+#ifndef __USBHOST_AVR8_H__
+#define __USBHOST_AVR8_H__
 
 	/* Includes: */
 		#include <avr/io.h>

@@ -46,7 +46,7 @@
 		#include <stdint.h>
 		#include <stdbool.h>
 
-		#include "../LowLevel/USBController.h"
+		#include "USBController.h"
 		#include "Events.h"
 		#include "StdRequestType.h"
 		#include "StdDescriptors.h"

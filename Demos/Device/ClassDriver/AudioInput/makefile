@@ -63,6 +63,10 @@
 MCU = at90usb1287
 
 
+# Targeted chip architecture (see library "Architectures" documentation)
+ARCH = AVR8
+
+
 # Target board (see library "Board Types" documentation, NONE for projects not requiring
 # LUFA board drivers). If USER is selected, put custom board drivers in a directory called
 # "Board" inside the application directory.
@@ -183,6 +187,7 @@ CSTANDARD = -std=c99
 CDEFS  = -DF_CPU=$(F_CPU)UL
 CDEFS += -DF_CLOCK=$(F_CLOCK)UL
 CDEFS += -DBOARD=BOARD_$(BOARD)
+CDEFS += -DARCH=ARCH_$(ARCH)
 CDEFS += $(LUFA_OPTS)
 
 
