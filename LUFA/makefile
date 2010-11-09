@@ -16,6 +16,11 @@ else
    LUFA_ROOT_PATH = $(LUFA_PATH)/LUFA
 endif
 
+# Check to see if the ARCH variable has not been set (default to AVR8 architecture)
+ifeq ($(origin ARCH), undefined)
+   ARCH = AVR8
+endif
+
 # Define module source file lists
 LUFA_SRC_USB          = $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/Device.c         \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/Endpoint.c       \

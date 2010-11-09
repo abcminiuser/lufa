@@ -135,6 +135,8 @@
 		#include "MINIMUS/LEDs.h"
 	#elif (BOARD == BOARD_ADAFRUITU4)
 		#include "ADAFRUITU4/LEDs.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/LEDs.h"
 	#elif (BOARD == BOARD_USER)
 		#include "Board/LEDs.h"
 	#endif
@@ -187,21 +189,21 @@
 		 *  \param[in] LEDMask     Mask of the board LEDs to manipulate (see board-specific LEDs.h driver file).
 		 *  \param[in] ActiveMask  Mask of whether the LEDs in the LED mask should be turned on or off.
 		 */
-		static inline void LEDs_ChangeLEDs(const uint8_t LEDMask,
-		                                   const uint8_t ActiveMask);
+		static inline void LEDs_ChangeLEDs(const uintN_t LEDMask,
+		                                   const uintN_t ActiveMask);
 
 		/** Toggles all LEDs in the LED mask, leaving all others in their current states.
 		 *
 		 *  \param[in] LEDMask  Mask of the board LEDs to manipulate (see board-specific LEDs.h driver file).
 		 */
-		static inline void LEDs_ToggleLEDs(const uint8_t LEDMask);
+		static inline void LEDs_ToggleLEDs(const uintN_t LEDMask);
 
 		/** Returns the status of all the board LEDs; set LED masks in the return value indicate that the
 		 *  corresponding LED is on.
 		 *
 		 *  \return Mask of the board LEDs which are currently turned on.
 		 */
-		static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+		static inline uintN_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
 	#endif
 
 #endif

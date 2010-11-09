@@ -105,6 +105,8 @@
 		#include "CULV3/Buttons.h"
 	#elif (BOARD == BOARD_MINIMUS)
 		#include "MINIMUS/Buttons.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/Buttons.h"
 	#elif (BOARD == BOARD_USER)
 		#include "Board/Buttons.h"
 	#else
@@ -124,7 +126,7 @@
 		 *
 		 *  \return Mask indicating which board buttons are currently pressed.
 		 */
-		static inline uint8_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+		static inline uintN_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 	#endif
 
 #endif

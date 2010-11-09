@@ -62,6 +62,7 @@
 
 		#include "Attributes.h"
 		#include "BoardTypes.h"
+		#include "Architectures.h"
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
@@ -148,6 +149,20 @@
 			#define SWAPENDIAN_32(x)          ((((x) & 0xFF000000UL) >> 24UL) | (((x) & 0x00FF0000UL) >> 8UL) | \
 			                                   (((x) & 0x0000FF00UL) << 8UL)  | (((x) & 0x000000FFUL) << 24UL))
 
+		/* Type Defines: */
+			#if !defined(__DOXYGEN__)
+				#if (ARCH == ARCH_AVR8)
+					typedef uint8_t uintN_t;
+				#elif (ARCH == ARCH_AVR32)
+					typedef uint32_t uintN_t;			
+				#endif
+			#else
+				/** Type define for an unsigned integer type of the target architecture's native width - i.e.
+				 *  8-bits wide for 8-bit processors, and 32-bits wide for 32-bit processors.
+				 */
+				typedef NATIVE_WIDTH_INT uintN_t;
+			#endif
+			
 		/* Inline Functions: */
 			/** Function to reverse the individual bits in a byte - i.e. bit 7 is moved to bit 0, bit 6 to bit 1,
 			 *  etc.

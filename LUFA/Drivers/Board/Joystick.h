@@ -86,6 +86,8 @@
 		#include "BUMBLEB/Joystick.h"
 	#elif (BOARD == BOARD_EVK527)
 		#include "EVK527/Joystick.h"
+	#elif (BOARD == BOARD_EVK1101)
+		#include "EVK1101/Joystick.h"
 	#elif (BOARD == BOARD_USER)
 		#include "Board/Joystick.h"
 	#else
@@ -105,7 +107,7 @@
 		 *  \return Mask indicating the joystick direction - see corresponding board specific Joystick.h file
 		 *          for direction masks.
 		 */
-		static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+		static inline uintN_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 	#endif
 
 #endif

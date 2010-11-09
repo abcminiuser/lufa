@@ -134,6 +134,9 @@
 			/** Selects the Adafruit U4 specific board drivers, including the Button and LEDs drivers. */
 			#define BOARD_ADAFRUITU4    23
 
+			/** Selects the EVK1101 specific board drivers, including the Button, Joystick and LEDs drivers. */
+			#define BOARD_EVK1101       24
+
 			#if !defined(__DOXYGEN__)
 				#define BOARD_          BOARD_NONE
 
