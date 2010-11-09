@@ -56,8 +56,8 @@
 		#include <avr/pgmspace.h>
 		#include <stdbool.h>
 
-		#include "../../Common/Common.h"
-		#include "../Misc/TerminalCodes.h"
+		#include "../../../Common/Common.h"
+		#include "../../Misc/TerminalCodes.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
