@@ -22,6 +22,7 @@
  *
  *    - <b>MCU</b>, the target AVR processor
  *    - <b>BOARD</b>, the target board hardware
+ *    - <b>ARCH</b>, the target architecture
  *    - <b>F_CLOCK</b>, the target raw master clock frequency, before any prescaling is performed
  *    - <b>F_CPU</b>, the target AVR CPU master clock frequency, after any prescaling
  *    - <b>CDEFS</b>, the C preprocessor defines which configure options the source code
@@ -49,6 +50,12 @@
  *  custom board's hardware.
  *
  *  For boards with built in hardware driver support within the LUFA library, see \ref Page_DeviceSupport.
+ *
+ *  \section Sec_ARCH The ARCH Parameter
+ *  This parameter indicates the target microcontroller architecture that is being targeted by the library. LUFA is able to target multiple
+ *  architectures, and thus this option indicates the one chosen for the user application.
+ *
+ *  For supported architectures, see \ref Page_DeviceSupport.
  *
  *  \section Sec_F_CLOCK The F_CLOCK Parameter
  *  This parameter indicates the target AVR's input clock frequency, in Hz. This is the actual clock input, before any prescaling is performed. In the

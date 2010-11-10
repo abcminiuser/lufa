@@ -127,12 +127,6 @@
 	#if !defined(__DOXYGEN__)
 		/* Inline Functions: */
 			#if !defined(NO_INTERNAL_SERIAL) && (USE_INTERNAL_SERIAL != NO_DESCRIPTOR)
-			static inline char USB_Device_NibbleToASCII(uint8_t Nibble)
-			{
-				Nibble &= 0x0F;
-				return (Nibble >= 10) ? (('A' - 10) + Nibble) : ('0' + Nibble);
-			}
-
 			static inline void USB_Device_GetInternalSerialDescriptor(USB_Descriptor_String_t* const Descriptor,
 			                                                          const uint8_t Length)
 			{
@@ -153,7 +147,8 @@
 							SigReadAddress++;
 						}
 
-						Descriptor->UnicodeString[SerialCharNum] = USB_Device_NibbleToASCII(SerialByte);
+						Descriptor->UnicodeString[SerialCharNum] = (SerialByte >= 10) ?
+						                                            (('A' - 10) + SerialByte) : ('0' + SerialByte);
 					}
 				}
 			}
