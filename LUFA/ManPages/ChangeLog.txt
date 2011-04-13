@@ -6,7 +6,7 @@
 
  /** \page Page_ChangeLog Project Changelog
   *
-  *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  \section Sec_ChangeLog110528 Version 110528
   *  <b>New:</b>
   *  - Core:
   *   - Added new ORDERED_EP_CONFIG compile time option to restrict endpoint/pipe configuration to ascending order
