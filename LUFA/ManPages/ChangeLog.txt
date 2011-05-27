@@ -18,7 +18,7 @@
   *   - Added new Endpoint_Null_Stream() and Pipe_Null_Stream() functions
   *   - Added new ADC_GET_CHANNEL_MASK() convenience macro
   *   - Added new HID report item macros (with HID_RI_ prefix) to allow for easy creation and editing of HID report descriptors
-  *   - Added new HID_DESCRIPTOR_MOUSE, HID_DESCRIPTOR_KEYBOARD, HID_DESCRIPTOR_JOYSTICK and HID_DESCRIPTOR_VENDOR macros
+  *   - Added new HID_DESCRIPTOR_MOUSE(), HID_DESCRIPTOR_KEYBOARD(), HID_DESCRIPTOR_JOYSTICK() and HID_DESCRIPTOR_VENDOR() macros
   *     for easy automatic creation of basic USB HID device reports
   *   - Added new MAX() and MIN() convenience macros
   *   - Added new Serial_SendData() function to the Serial driver
@@ -33,6 +33,7 @@
   *   - Added new KeyboardMouseMultiReport Device ClassDriver demo
   *   - Added new VirtualSerialMassStorage Device ClassDriver demo
   *   - Added HID class bootloader, compatible with a modified version of the command line Teensy loader from PJRC.com
+  *   - Added LED flashing to the CDC and DFU class bootloaders to indicate when they are running
   *
   *  <b>Changed:</b>
   *  - Core:
@@ -66,6 +67,7 @@
   *     a symbolic size (Byte, Word, DWord) so that the function names are applicable and correct across all architectures
   *   - Renamed all low level Pipe_Read_*, Pipe_Write_* and Pipe_Discard_* functions to use the number of bits instead of
   *     a symbolic size (Byte, Word, DWord) so that the function names are applicable and correct across all architectures
+  *   - Seperated out board drivers by architecture in the library internals for better organisation
   *  - Library Applications:
   *   - Changed the XPLAINBridge software UART to use the regular timer CTC mode instead of the alternative CTC mode
   *     via the Input Capture register, to reduce user confusion
@@ -96,6 +98,7 @@
   *     is found
   *   - Fixed missing call to Pipe_SetInfiniteINRequests() in the Pipe_ConfigurePipe() routine
   *   - Fixed Remote Wakeup broken on the AVRs due to the mechanism only operating when the SUSPI bit is set (thanks to Holger Steinhaus)
+  *   - Fixed possible invalid program execution when in host mode if corrupt descriptor lengths are supplied by the attached device
   *  - Library Applications:
   *   - Fixed Benito project discarding incoming data from the USB virtual serial port when the USART is busy
   *   - Fixed broken DFU bootloader, added XPLAIN support for bootloader start when XCK jumpered to ground
