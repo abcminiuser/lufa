@@ -119,6 +119,9 @@ int main(void)
 	MCUCR &= ~(1 << JTD);	
 	#endif
 
+	/* Turn on first LED on the board to indicate that the bootloader has started */
+	LEDs_SetAllLEDs(LEDS_LED1);
+
 	/* Enable global interrupts so that the USB stack can function */
 	sei();
 
@@ -149,6 +152,11 @@ void SetupHardware(void)
 
 	/* Initialize the USB subsystem */
 	USB_Init();
+	LEDs_Init();
+	
+	/* Bootloader active LED toggle timer initialization */
+	TIMSK1 = (1 << TOIE1);
+	TCCR1B = ((1 << CS11) | (1 << CS10));
 }
 
 /** Resets all configured hardware required for the bootloader back to their original states. */
@@ -162,21 +170,30 @@ void ResetHardware(void)
 	MCUCR = 0;
 }
 
+/** ISR to periodically toggle the LEDs on the board to indicate that the bootloader is active. */
+ISR(TIMER1_OVF_vect, ISR_BLOCK)
+{
+	LEDs_ToggleLEDs(LEDS_LED1 | LEDS_LED2);
+}
+
 /** Event handler for the USB_ControlRequest event. This is used to catch and process control requests sent to
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
 void EVENT_USB_Device_ControlRequest(void)
-{
-	/* Get the size of the command and data from the wLength value */
-	SentCommand.DataSize = USB_ControlRequest.wLength;
-	
+{	
 	/* Ignore any requests that aren't directed to the DFU interface */
 	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
 	    (REQTYPE_CLASS | REQREC_INTERFACE))
 	{
 		return;
 	}
+
+	/* Activity - toggle indicator LEDs */
+	LEDs_ToggleLEDs(LEDS_LED1 | LEDS_LED2);
+
+	/* Get the size of the command and data from the wLength value */
+	SentCommand.DataSize = USB_ControlRequest.wLength;
 
 	switch (USB_ControlRequest.bRequest)
 	{
