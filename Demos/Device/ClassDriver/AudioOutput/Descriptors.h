@@ -37,9 +37,12 @@
 #define _DESCRIPTORS_H_
 
 	/* Includes: */
+		#include <LUFA/Common/Common.h>
 		#include <LUFA/Drivers/USB/USB.h>
 
-		#include <avr/pgmspace.h>
+		#if (ARCH == ARCH_AVR8)
+			#include <avr/pgmspace.h>
+		#endif
 
 	/* Macros: */
 		/** Endpoint number of the Audio isochronous streaming data endpoint. */

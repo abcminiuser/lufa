@@ -78,7 +78,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.ManufacturerStrIndex   = 0x01,
 	.ProductStrIndex        = 0x02,
-	.SerialNumStrIndex      = USE_INTERNAL_SERIAL,
+	.SerialNumStrIndex      = NO_DESCRIPTOR,
 
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
@@ -151,7 +151,7 @@ const USB_Descriptor_String_t PROGMEM LanguageString =
 {
 	.Header                 = {.Size = USB_STRING_LEN(1), .Type = DTYPE_String},
 
-	.UnicodeString          = {LANGUAGE_ID_ENG}
+	.UnicodeString          = {CPU_TO_LE16(LANGUAGE_ID_ENG)}
 };
 
 /** Manufacturer descriptor string. This is a Unicode string containing the manufacturer's details in human readable

@@ -14,6 +14,12 @@
  *  - Series 6 USB AVRs (AT90USBxxx6)
  *  - Series 4 USB AVRs (ATMEGAxxU4)
  *  - Series 2 USB AVRs (AT90USBxx2, ATMEGAxxU2)
+ *  - Series A0 USB AVR32 UC3s (AT32UC3A0*)
+ *  - Series A1 USB AVR32 UC3s (AT32UC3A1*)
+ *  - Series B0 USB AVR32 UC3s (AT32UC3B0*)
+ *  - Series B1 USB AVR32 UC3s (AT32UC3B1*)
+ *  - Series A3 USB AVR32 UC3s (AT32UC3A3*)
+ *  - Series A4 USB AVR32 UC3s (AT32UC3A4*)
  *
  *  \section Sec_Info USB Information:
  *

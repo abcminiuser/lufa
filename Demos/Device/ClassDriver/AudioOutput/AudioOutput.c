@@ -63,8 +63,8 @@ int main(void)
 	SetupHardware();
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
-	sei();
-
+	GlobalInterruptEnable();
+	
 	for (;;)
 	{
 		Audio_Device_USBTask(&Speaker_Audio_Interface);
@@ -75,20 +75,46 @@ int main(void)
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
+	#if (ARCH == ARCH_AVR8)
+		/* Disable watchdog if enabled by bootloader/fuses */
+		MCUSR &= ~(1 << WDRF);
+		wdt_disable();
 
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
+		/* Disable clock division */
+		clock_prescale_set(clock_div_1);
+	#elif (ARCH == ARCH_UC3)
+		/* Initialize interrupt subsystem */
+		INTC_Init();
+		INTC_RegisterGroupHandler(AVR32_USBB_IRQ, AVR32_INTC_INT0, USB_GEN_vect);
 
+		/* Select slow startup, external high frequency crystal attached to OSC0 */
+		AVR32_PM.OSCCTRL0.startup = 6;
+		AVR32_PM.OSCCTRL0.mode    = 7;
+		AVR32_PM.MCCTRL.osc0en    = true;
+		while (!(AVR32_PM.POSCSR.osc0rdy));
+
+		/* Switch CPU core to use OSC0 as the system clock */
+		AVR32_PM.MCCTRL.mcsel     = 1;
+
+		/* Start PLL1 to feed into the USB generic clock module */
+		AVR32_PM.PLL[1].pllmul    = (F_USB / F_CPU) ? (((F_USB / F_CPU) - 1) / 2) : 0;
+		AVR32_PM.PLL[1].plldiv    = 0;
+		AVR32_PM.PLL[1].pllosc    = 0;	
+		AVR32_PM.PLL[1].pllen     = true;
+		while (!(AVR32_PM.POSCSR.lock1));	
+	#endif
+	
 	/* Hardware Initialization */
 	LEDs_Init();
 	USB_Init();
 }
 
 /** ISR to handle the reloading of the PWM timer with the next sample. */
+#if (ARCH == ARCH_AVR)
 ISR(TIMER0_COMPA_vect, ISR_BLOCK)
+#elif (ARCH == ARCH_UC3)
+ISR(TC_CH0_vect)
+#endif
 {
 	uint8_t PrevEndpoint = Endpoint_GetCurrentEndpoint();
 	
@@ -102,19 +128,15 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 		/* Mix the two channels together to produce a mono, 8-bit sample */
 		int8_t MixedSample_8Bit = (((int16_t)LeftSample_8Bit + (int16_t)RightSample_8Bit) >> 1);
 
-		#if defined(AUDIO_OUT_MONO)
-		/* Load the sample into the PWM timer channel */
-		OCR3A = (MixedSample_8Bit ^ (1 << 7));
-		#elif defined(AUDIO_OUT_STEREO)
-		/* Load the dual 8-bit samples into the PWM timer channels */
-		OCR3A = (LeftSample_8Bit  ^ (1 << 7));
-		OCR3B = (RightSample_8Bit ^ (1 << 7));
-		#elif defined(AUDIO_OUT_PORTC)
-		/* Load the 8-bit mixed sample into PORTC */
-		PORTC = MixedSample_8Bit;
+		#if (ARCH == ARCH_AVR8)
+			/* Load the dual 8-bit samples into the PWM timer channels */
+			OCR3A = (LeftSample_8Bit  ^ (1 << 7));
+			OCR3B = (RightSample_8Bit ^ (1 << 7));
+		#elif (ARCH == ARCH_UC3)
+		
 		#endif
-
-		uint8_t LEDMask = LEDS_NO_LEDS;
+		
+		uint_reg_t LEDMask = LEDS_NO_LEDS;
 
 		/* Turn on LEDs as the sample amplitude increases */
 		if (MixedSample_8Bit > 16)
@@ -129,6 +151,11 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 		LEDs_SetAllLEDs(LEDMask);
 	}
 	
+	#if (ARCH == ARCH_UC3)
+		/* Perform dummy read of the TC Status Register to clear interrupt flags */
+		(void)AVR32_TC.channel[0].sr;
+	#endif
+	
 	Endpoint_SelectEndpoint(PrevEndpoint);	
 }
 
@@ -137,28 +164,29 @@ void EVENT_USB_Device_Connect(void)
 {
 	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
 
-	/* Sample reload timer initialization */
-	TIMSK0  = (1 << OCIE0A);
-	OCR0A   = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
-	TCCR0A  = (1 << WGM01);  // CTC mode
-	TCCR0B  = (1 << CS01);   // Fcpu/8 speed
+	#if (ARCH == ARCH_AVR8)
+		/* Sample reload timer initialization */
+		TIMSK0  = (1 << OCIE0A);
+		OCR0A   = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
+		TCCR0A  = (1 << WGM01);  // CTC mode
+		TCCR0B  = (1 << CS01);   // Fcpu/8 speed
 
-	#if defined(AUDIO_OUT_MONO)
-	/* Set speaker as output */
-	DDRC   |= (1 << 6);
-	#elif defined(AUDIO_OUT_STEREO)
-	/* Set speakers as outputs */
-	DDRC   |= ((1 << 6) | (1 << 5));
-	#elif defined(AUDIO_OUT_PORTC)
-	/* Set PORTC as outputs */
-	DDRC   |= 0xFF;
-	#endif
+		/* Set speakers as outputs */
+		DDRC   |= ((1 << 6) | (1 << 5));
 
-	#if (defined(AUDIO_OUT_MONO) || defined(AUDIO_OUT_STEREO))
-	/* PWM speaker timer initialization */
-	TCCR3A  = ((1 << WGM30) | (1 << COM3A1) | (1 << COM3A0)
-	        | (1 << COM3B1) | (1 << COM3B0)); // Set on match, clear on TOP
-	TCCR3B  = ((1 << WGM32) | (1 << CS30));  // Fast 8-Bit PWM, F_CPU speed
+		/* PWM speaker timer initialization */
+		TCCR3A  = ((1 << WGM30) | (1 << COM3A1) | (1 << COM3A0)
+		        | (1 << COM3B1) | (1 << COM3B0)); // Set on match, clear on TOP
+		TCCR3B  = ((1 << WGM32) | (1 << CS30));  // Fast 8-Bit PWM, F_CPU speed
+	#elif (ARCH == ARCH_UC3)
+		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
+
+		AVR32_TC.channel[0].IER.cpcs            = true;
+		AVR32_TC.channel[0].cmr                 = AVR32_TC_CMR0_WAVE_MASK |
+		                                          (AVR32_TC_CMR1_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
+		                                          (AVR32_TC_CMR1_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET);
+		AVR32_TC.channel[0].rc                  = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
+		AVR32_TC.channel[0].ccr                 = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
 	#endif
 }
 
@@ -167,23 +195,18 @@ void EVENT_USB_Device_Disconnect(void)
 {
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 
-	/* Stop the sample reload timer */
-	TCCR0B = 0;
+	#if (ARCH == ARCH_AVR8)
+		/* Stop the sample reload timer */
+		TCCR0B = 0;
 
-	#if (defined(AUDIO_OUT_MONO) || defined(AUDIO_OUT_STEREO))
-	/* Stop the PWM generation timer */
-	TCCR3B = 0;
-	#endif
+		/* Stop the PWM generation timer */
+		TCCR3B = 0;
 
-	#if defined(AUDIO_OUT_MONO)
-	/* Set speaker as input to reduce current draw */
-	DDRC  &= ~(1 << 6);
-	#elif defined(AUDIO_OUT_STEREO)
-	/* Set speakers as inputs to reduce current draw */
-	DDRC  &= ~((1 << 6) | (1 << 5));
-	#elif defined(AUDIO_OUT_PORTC)
-	/* Set PORTC low */
-	PORTC = 0x00;
+		/* Set speakers as inputs to reduce current draw */
+		DDRC  &= ~((1 << 6) | (1 << 5));
+	#elif (ARCH == ARCH_UC3)
+		/* Stop the sample reload timer */
+		AVR32_TC.channel[0].CCR.clken = false;	
 	#endif
 }
 
@@ -247,8 +270,13 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
 					/* Set the new sampling frequency to the value given by the host */
 					CurrentAudioSampleFrequency = (((uint32_t)Data[2] << 16) | ((uint32_t)Data[1] << 8) | (uint32_t)Data[0]);
 
-					/* Adjust sample reload timer to the new frequency */
-					OCR0A = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);				
+					#if (ARCH == ARCH_AVR8)
+						/* Adjust sample reload timer to the new frequency */
+						OCR0A                     = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
+					#elif (ARCH == ARCH_UC3)
+						/* Adjust sample reload timer to the new frequency */
+						AVR32_TC.channel[0].RC.rc = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
+					#endif
 				}
 				
 				return true;

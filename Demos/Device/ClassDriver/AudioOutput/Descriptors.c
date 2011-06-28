@@ -53,8 +53,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
 
-	.VendorID               = 0x03EB,
-	.ProductID              = 0x2046,
+	.VendorID               = CPU_TO_LE16(0x03EB),
+	.ProductID              = CPU_TO_LE16(0x2046),
 	.ReleaseNumber          = VERSION_BCD(00.02),
 
 	.ManufacturerStrIndex   = 0x01,
@@ -75,7 +75,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                   = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
-			.TotalConfigurationSize   = sizeof(USB_Descriptor_Configuration_t),
+			.TotalConfigurationSize   = CPU_TO_LE16(sizeof(USB_Descriptor_Configuration_t)),
 			.TotalInterfaces          = 2,
 
 			.ConfigurationNumber      = 1,
@@ -108,9 +108,9 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_Header,
 
 			.ACSpecification          = VERSION_BCD(01.00),
-			.TotalLength              = (sizeof(USB_Audio_Descriptor_Interface_AC_t) +
-			                             sizeof(USB_Audio_Descriptor_InputTerminal_t) +
-			                             sizeof(USB_Audio_Descriptor_OutputTerminal_t)),
+			.TotalLength              = CPU_TO_LE16(sizeof(USB_Audio_Descriptor_Interface_AC_t) +
+			                                        sizeof(USB_Audio_Descriptor_InputTerminal_t) +
+			                                        sizeof(USB_Audio_Descriptor_OutputTerminal_t)),
 
 			.InCollection             = 1,
 			.InterfaceNumber          = 1,
@@ -122,11 +122,11 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_InputTerminal,
 
 			.TerminalID               = 0x01,
-			.TerminalType             = AUDIO_TERMINAL_STREAMING,
+			.TerminalType             = CPU_TO_LE16(AUDIO_TERMINAL_STREAMING),
 			.AssociatedOutputTerminal = 0x00,
 
 			.TotalChannels            = 2,
-			.ChannelConfig            = (AUDIO_CHANNEL_LEFT_FRONT | AUDIO_CHANNEL_RIGHT_FRONT),
+			.ChannelConfig            = CPU_TO_LE16(AUDIO_CHANNEL_LEFT_FRONT | AUDIO_CHANNEL_RIGHT_FRONT),
 
 			.ChannelStrIndex          = NO_DESCRIPTOR,
 			.TerminalStrIndex         = NO_DESCRIPTOR
@@ -138,7 +138,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_OutputTerminal,
 
 			.TerminalID               = 0x02,
-			.TerminalType             = AUDIO_TERMINAL_OUT_SPEAKER,
+			.TerminalType             = CPU_TO_LE16(AUDIO_TERMINAL_OUT_SPEAKER),
 			.AssociatedInputTerminal  = 0x00,
 
 			.SourceID                 = 0x01,
@@ -186,7 +186,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.TerminalLink             = 0x01,
 
 			.FrameDelay               = 1,
-			.AudioFormat              = 0x0001
+			.AudioFormat              = CPU_TO_LE16(0x0001)
 		},
 
 	.Audio_AudioFormat =
@@ -222,7 +222,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 					.EndpointAddress     = (ENDPOINT_DESCRIPTOR_DIR_OUT | AUDIO_STREAM_EPNUM),
 					.Attributes          = (EP_TYPE_ISOCHRONOUS | ENDPOINT_ATTR_SYNC | ENDPOINT_USAGE_DATA),
-					.EndpointSize        = AUDIO_STREAM_EPSIZE,
+					.EndpointSize        = CPU_TO_LE16(AUDIO_STREAM_EPSIZE),
 					.PollingIntervalMS   = 0x01
 				},
 
@@ -238,7 +238,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.Attributes               = (AUDIO_EP_ACCEPTS_SMALL_PACKETS | AUDIO_EP_SAMPLE_FREQ_CONTROL),
 
 			.LockDelayUnits           = 0x00,
-			.LockDelay                = 0x0000
+			.LockDelay                = CPU_TO_LE16(0x0000)
 		}
 };
 
@@ -250,7 +250,7 @@ const USB_Descriptor_String_t PROGMEM LanguageString =
 {
 	.Header                 = {.Size = USB_STRING_LEN(1), .Type = DTYPE_String},
 
-	.UnicodeString          = {LANGUAGE_ID_ENG}
+	.UnicodeString          = {CPU_TO_LE16(LANGUAGE_ID_ENG)}
 };
 
 /** Manufacturer descriptor string. This is a Unicode string containing the manufacturer's details in human readable
@@ -261,7 +261,17 @@ const USB_Descriptor_String_t PROGMEM ManufacturerString =
 {
 	.Header                 = {.Size = USB_STRING_LEN(11), .Type = DTYPE_String},
 
-	.UnicodeString          = L"Dean Camera"
+	.UnicodeString          = {CPU_TO_LE16('D'),
+	                           CPU_TO_LE16('e'),
+	                           CPU_TO_LE16('a'),
+	                           CPU_TO_LE16('n'),
+	                           CPU_TO_LE16(' '),
+	                           CPU_TO_LE16('C'),
+	                           CPU_TO_LE16('a'),
+	                           CPU_TO_LE16('m'),
+	                           CPU_TO_LE16('e'),
+	                           CPU_TO_LE16('r'),
+	                           CPU_TO_LE16('a')}
 };
 
 /** Product descriptor string. This is a Unicode string containing the product's details in human readable form,
@@ -272,7 +282,25 @@ const USB_Descriptor_String_t PROGMEM ProductString =
 {
 	.Header                 = {.Size = USB_STRING_LEN(19), .Type = DTYPE_String},
 
-	.UnicodeString          = L"LUFA Audio Out Demo"
+	.UnicodeString          = {CPU_TO_LE16('L'),
+	                           CPU_TO_LE16('U'),
+	                           CPU_TO_LE16('F'),
+	                           CPU_TO_LE16('A'),
+	                           CPU_TO_LE16(' '),
+	                           CPU_TO_LE16('A'),
+	                           CPU_TO_LE16('u'),
+	                           CPU_TO_LE16('d'),
+	                           CPU_TO_LE16('i'),
+	                           CPU_TO_LE16('o'),
+	                           CPU_TO_LE16(' '),
+	                           CPU_TO_LE16('O'),
+	                           CPU_TO_LE16('u'),
+	                           CPU_TO_LE16('t'),
+	                           CPU_TO_LE16(' '),
+	                           CPU_TO_LE16('D'),
+	                           CPU_TO_LE16('e'),
+	                           CPU_TO_LE16('m'),
+	                           CPU_TO_LE16('o')}
 };
 
 /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"

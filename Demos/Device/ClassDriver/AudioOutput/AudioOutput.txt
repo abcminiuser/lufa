@@ -13,6 +13,12 @@
  *  - Series 7 USB AVRs (AT90USBxxx7)
  *  - Series 6 USB AVRs (AT90USBxxx6)
  *  - Series 4 USB AVRs (ATMEGAxxU4)
+ *  - Series A0 USB AVR32 UC3s (AT32UC3A0*)
+ *  - Series A1 USB AVR32 UC3s (AT32UC3A1*)
+ *  - Series B0 USB AVR32 UC3s (AT32UC3B0*)
+ *  - Series B1 USB AVR32 UC3s (AT32UC3B1*)
+ *  - Series A3 USB AVR32 UC3s (AT32UC3A3*)
+ *  - Series A4 USB AVR32 UC3s (AT32UC3A4*)
  *
  *  \section Sec_Info USB Information:
  *
@@ -52,11 +58,9 @@
  *
  *  On start-up the system will automatically enumerate and function
  *  as a USB speaker. Outgoing audio will output in 8-bit PWM onto
- *  the timer 3 output compare channel A for AUDIO_OUT_MONO mode, on
- *  timer 3 channels A and B for AUDIO_OUT_STEREO and on PORTC as a signed
- *  mono sample for AUDIO_OUT_PORTC. Audio output will also be indicated on
- *  the board LEDs in all modes. Decouple audio outputs with a capacitor and
- *  attach to a speaker to hear the audio.
+ *  the timer 3 channels A and B for. Audio output will also be indicated on
+ *  the board LEDs. Decouple audio outputs with a capacitor and attach to a
+ *  speaker to hear the audio.
  *
  *  Under Windows, if a driver request dialogue pops up, select the option
  *  to automatically install the appropriate drivers.
@@ -67,25 +71,9 @@
  *
  *  <table>
  *   <tr>
- *    <td><b>Define Name:</b></td>
- *    <td><b>Location:</b></td>
- *    <td><b>Description:</b></td>
- *   </tr>
- *   <tr>
- *    <td>AUDIO_OUT_STEREO</td>
- *    <td>Makefile LUFA_OPTS</td>
- *    <td>When defined, this outputs the audio samples in stereo to the timer output pins of the microcontroller.</td>
- *   </tr>
- *   <tr>
- *    <td>AUDIO_OUT_MONO</td>
- *    <td>Makefile LUFA_OPTS</td>
- *    <td>When defined, this outputs the audio samples in mono to the timer output pin of the microcontroller.</td>
- *   </tr>
- *   <tr>
- *    <td>AUDIO_OUT_PORTC</td>
- *    <td>Makefile LUFA_OPTS</td>
- *    <td>When defined, this outputs the audio samples in mono to port C of the microcontroller, for connection to an
- *        external DAC.</td>
+ *    <td>
+ *     None
+ *    </td>
  *   </tr>
  *  </table>
  */

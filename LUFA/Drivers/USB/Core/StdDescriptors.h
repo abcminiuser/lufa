@@ -101,7 +101,7 @@
 			/** String language ID for the English language. Should be used in \ref USB_Descriptor_String_t descriptors
 			 *  to indicate that the English language is supported by the device in its string descriptors.
 			 */
-			#define LANGUAGE_ID_ENG                   CPU_TO_LE16(0x0409)
+			#define LANGUAGE_ID_ENG                   0x0409
 
 			/** \name Endpoint Address Direction Masks */
 			//@{
