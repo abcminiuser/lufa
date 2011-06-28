@@ -121,9 +121,13 @@ ISR(TC_CH0_vect)
 	/* Check that the USB bus is ready for the next sample to read */
 	if (Audio_Device_IsSampleReceived(&Speaker_Audio_Interface))
 	{
-		/* Retrieve the signed 16-bit left and right audio samples, convert to 8-bit */
-		int8_t LeftSample_8Bit  = (Audio_Device_ReadSample16(&Speaker_Audio_Interface) >> 8);
-		int8_t RightSample_8Bit = (Audio_Device_ReadSample16(&Speaker_Audio_Interface) >> 8);
+		/* Retrieve the signed 16-bit left and right audio samples */
+		int16_t LeftSample_16Bit  = Audio_Device_ReadSample16(&Speaker_Audio_Interface);
+		int16_t RightSample_16Bit = Audio_Device_ReadSample16(&Speaker_Audio_Interface);
+
+		/* Convert the signed 16-bit left and right audio samples to 8-bit */
+		int8_t LeftSample_8Bit  = (LeftSample_16Bit  >> 8);
+		int8_t RightSample_8Bit = (RightSample_16Bit >> 8);
 
 		/* Mix the two channels together to produce a mono, 8-bit sample */
 		int8_t MixedSample_8Bit = (((int16_t)LeftSample_8Bit + (int16_t)RightSample_8Bit) >> 1);
@@ -133,7 +137,9 @@ ISR(TC_CH0_vect)
 			OCR3A = (LeftSample_8Bit  ^ (1 << 7));
 			OCR3B = (RightSample_8Bit ^ (1 << 7));
 		#elif (ARCH == ARCH_UC3)
-		
+			/* Load the dual 16-bit samples into the PWM timer channels */
+			AVR32_TC.channel[2].ra = (LeftSample_8Bit  ^ (1 << 7));
+			AVR32_TC.channel[2].rb = (RightSample_8Bit ^ (1 << 7));
 		#endif
 		
 		uint_reg_t LEDMask = LEDS_NO_LEDS;
@@ -181,12 +187,32 @@ void EVENT_USB_Device_Connect(void)
 	#elif (ARCH == ARCH_UC3)
 		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
 
-		AVR32_TC.channel[0].IER.cpcs            = true;
-		AVR32_TC.channel[0].cmr                 = AVR32_TC_CMR0_WAVE_MASK |
-		                                          (AVR32_TC_CMR1_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
-		                                          (AVR32_TC_CMR1_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET);
-		AVR32_TC.channel[0].rc                  = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
-		AVR32_TC.channel[0].ccr                 = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
+		/* Sample reload timer initialization */
+		AVR32_TC.channel[0].IER.cpcs = true;
+		AVR32_TC.channel[0].cmr      = AVR32_TC_CMR0_WAVE_MASK |
+		                               (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
+		                               (AVR32_TC_CMR0_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET);
+		AVR32_TC.channel[0].rc       = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
+		AVR32_TC.channel[0].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
+
+		/* Configure GPIO pins for speaker output as the timer alternative functions */
+		AVR32_GPIO.port[1].gper     &= ~((1UL << 10) | (1UL << 11));
+		AVR32_GPIO.port[1].pmr0     |=  ((1UL << 10) | (1UL << 11));
+		AVR32_GPIO.port[1].pmr1     &= ~((1UL << 10) | (1UL << 11));
+
+		/* Set speakers as outputs */
+		AVR32_GPIO.port[1].oder     |=  ((1UL << 10) | (1UL << 11));
+
+		/* PWM speaker timer initialization */
+		AVR32_TC.channel[2].cmr      = AVR32_TC_CMR2_WAVE_MASK | AVR32_TC_CMR2_EEVT_XC0_OUTPUT |
+		                               (AVR32_TC_CMR2_WAVSEL_UP_AUTO << AVR32_TC_CMR2_WAVSEL_OFFSET) |
+		                               (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK1 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
+		                               (AVR32_TC_CMR2_ACPA_SET   << AVR32_TC_CMR2_ACPA_OFFSET) |
+		                               (AVR32_TC_CMR2_ACPC_CLEAR << AVR32_TC_CMR2_ACPC_OFFSET) |
+		                               (AVR32_TC_CMR2_BCPB_SET   << AVR32_TC_CMR2_BCPB_OFFSET) |
+		                               (AVR32_TC_CMR2_BCPC_CLEAR << AVR32_TC_CMR2_BCPC_OFFSET);
+		AVR32_TC.channel[2].rc       = 0x00000FF;
+		AVR32_TC.channel[2].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;		
 	#endif
 }
 
@@ -206,7 +232,13 @@ void EVENT_USB_Device_Disconnect(void)
 		DDRC  &= ~((1 << 6) | (1 << 5));
 	#elif (ARCH == ARCH_UC3)
 		/* Stop the sample reload timer */
-		AVR32_TC.channel[0].CCR.clken = false;	
+		AVR32_TC.channel[0].CCR.clken = false;
+
+		/* Stop the PWM generation timer */
+		AVR32_TC.channel[2].CCR.clken = false;
+		
+		/* Set speakers as inputs to reduce current draw */
+		AVR32_GPIO.port[1].oder &= ~((1UL << 10) | (1UL << 11));		
 	#endif
 }
 
@@ -272,7 +304,7 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
 
 					#if (ARCH == ARCH_AVR8)
 						/* Adjust sample reload timer to the new frequency */
-						OCR0A                     = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
+						OCR0A = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
 					#elif (ARCH == ARCH_UC3)
 						/* Adjust sample reload timer to the new frequency */
 						AVR32_TC.channel[0].RC.rc = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
