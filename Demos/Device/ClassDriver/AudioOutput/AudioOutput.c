@@ -133,7 +133,7 @@ ISR(TC_CH0_vect)
 			OCR3A = (LeftSample_8Bit  ^ (1 << 7));
 			OCR3B = (RightSample_8Bit ^ (1 << 7));
 		#elif (ARCH == ARCH_UC3)
-			/* Load the dual 16-bit samples into the PWM timer channels */
+			/* Load the dual 8-bit samples into the PWM timer channels */
 			AVR32_TC.channel[2].ra = (LeftSample_8Bit  ^ (1 << 7));
 			AVR32_TC.channel[2].rb = (RightSample_8Bit ^ (1 << 7));
 		#endif
@@ -177,16 +177,16 @@ void EVENT_USB_Device_Connect(void)
 		DDRC   |= ((1 << 6) | (1 << 5));
 
 		/* PWM speaker timer initialization */
-		TCCR3A  = ((1 << WGM30) | (1 << COM3A1) | (1 << COM3A0)
-		        | (1 << COM3B1) | (1 << COM3B0)); // Set on match, clear on TOP
+		TCCR3A  = ((1 << WGM30) | (1 << COM3A1) | (1 << COM3A0) |
+		           (1 << COM3B1) | (1 << COM3B0)); // Set on match, clear on TOP
 		TCCR3B  = ((1 << WGM32) | (1 << CS30));  // Fast 8-Bit PWM, F_CPU speed
 	#elif (ARCH == ARCH_UC3)
 		/* Sample reload timer initialization */
 		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
 		AVR32_TC.channel[0].IER.cpcs = true;
-		AVR32_TC.channel[0].cmr      = AVR32_TC_CMR0_WAVE_MASK |
-		                               (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
-		                               (AVR32_TC_CMR0_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET);
+		AVR32_TC.channel[0].cmr      = (AVR32_TC_CMR0_WAVE_MASK |
+		                                (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
+		                                (AVR32_TC_CMR0_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET));
 		AVR32_TC.channel[0].rc       = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
 		AVR32_TC.channel[0].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
 
@@ -199,14 +199,14 @@ void EVENT_USB_Device_Connect(void)
 		AVR32_GPIO.port[1].oder     |=  ((1UL << 10) | (1UL << 11));
 
 		/* PWM speaker timer initialization */
-		AVR32_TC.channel[2].cmr      = AVR32_TC_CMR2_WAVE_MASK |
-		                               (AVR32_TC_CMR2_EEVT_XC0_OUTPUT << AVR32_TC_CMR2_EEVT_OFFSET) |
-		                               (AVR32_TC_CMR2_WAVSEL_UP_AUTO << AVR32_TC_CMR2_WAVSEL_OFFSET) |
-		                               (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK2 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
-		                               (AVR32_TC_CMR2_ACPA_SET   << AVR32_TC_CMR2_ACPA_OFFSET) |
-		                               (AVR32_TC_CMR2_ACPC_CLEAR << AVR32_TC_CMR2_ACPC_OFFSET) |
-		                               (AVR32_TC_CMR2_BCPB_SET   << AVR32_TC_CMR2_BCPB_OFFSET) |
-		                               (AVR32_TC_CMR2_BCPC_CLEAR << AVR32_TC_CMR2_BCPC_OFFSET);
+		AVR32_TC.channel[2].cmr      = (AVR32_TC_CMR2_WAVE_MASK |
+		                                (AVR32_TC_CMR2_EEVT_XC0_OUTPUT << AVR32_TC_CMR2_EEVT_OFFSET) |
+		                                (AVR32_TC_CMR2_WAVSEL_UP_AUTO << AVR32_TC_CMR2_WAVSEL_OFFSET) |
+		                                (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK2 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
+		                                (AVR32_TC_CMR2_ACPA_SET   << AVR32_TC_CMR2_ACPA_OFFSET) |
+		                                (AVR32_TC_CMR2_ACPC_CLEAR << AVR32_TC_CMR2_ACPC_OFFSET) |
+		                                (AVR32_TC_CMR2_BCPB_SET   << AVR32_TC_CMR2_BCPB_OFFSET) |
+		                                (AVR32_TC_CMR2_BCPC_CLEAR << AVR32_TC_CMR2_BCPC_OFFSET));
 		AVR32_TC.channel[2].rc       = 0x00000FF;
 		AVR32_TC.channel[2].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;		
 	#endif
