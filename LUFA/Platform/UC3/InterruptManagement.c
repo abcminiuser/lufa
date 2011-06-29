@@ -28,7 +28,7 @@
   this software.
 */
 
-#include "INTC.h"
+#include "InterruptManagement.h"
 
 /** Interrupt vector table, containing the ISR to call for each interrupt group */
 InterruptHandlerPtr_t InterruptHandlers[AVR32_INTC_NUM_INT_GRPS];

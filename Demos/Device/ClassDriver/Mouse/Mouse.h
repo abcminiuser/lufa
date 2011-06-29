@@ -52,7 +52,8 @@
 			#include <stdbool.h>
 			#include <string.h>
 		#elif (ARCH == ARCH_UC3)
-			#include <LUFA/Platform/UC3/INTC.h>
+			#include <LUFA/Platform/UC3/InterruptManagement.h>
+			#include <LUFA/Platform/UC3/ClockManagement.h>
 
 			#include <avr32/io.h>			
 		#endif

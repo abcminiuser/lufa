@@ -72,6 +72,8 @@ int main(void)
 	}
 }
 
+#define F_XTAL0 12000000
+
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
@@ -83,25 +85,19 @@ void SetupHardware(void)
 		/* Disable clock division */
 		clock_prescale_set(clock_div_1);
 	#elif (ARCH == ARCH_UC3)
+		/* Start the master external oscillator which will be used as the main clock reference */
+		AVR32CLK_StartExternalOscillator(0, EXOSC_MODE_8MHZ_OR_MORE, EXOSC_START_0CLK);
+		
+		/* Start the PLL for the CPU clock, switch CPU to it */
+		AVR32CLK_StartPLL(0, CLOCK_SRC_OSC0, 12000000, F_CPU);
+		AVR32CLK_SetCPUClockSource(CLOCK_SRC_PLL0, F_CPU);
+
+		/* Start the PLL for the USB Generic Clock module */
+		AVR32CLK_StartPLL(1, CLOCK_SRC_OSC0, 12000000, 48000000);
+		
 		/* Initialize interrupt subsystem */
 		INTC_Init();
 		INTC_RegisterGroupHandler(AVR32_USBB_IRQ, AVR32_INTC_INT0, USB_GEN_vect);
-
-		/* Select slow startup, external high frequency crystal attached to OSC0 */
-		AVR32_PM.OSCCTRL0.startup = 6;
-		AVR32_PM.OSCCTRL0.mode    = 7;
-		AVR32_PM.MCCTRL.osc0en    = true;
-		while (!(AVR32_PM.POSCSR.osc0rdy));
-
-		/* Switch CPU core to use OSC0 as the system clock */
-		AVR32_PM.MCCTRL.mcsel     = 1;
-
-		/* Start PLL1 to feed into the USB generic clock module */
-		AVR32_PM.PLL[1].pllmul    = (F_USB / F_CPU) ? (((F_USB / F_CPU) - 1) / 2) : 0;
-		AVR32_PM.PLL[1].plldiv    = 0;
-		AVR32_PM.PLL[1].pllosc    = 0;	
-		AVR32_PM.PLL[1].pllen     = true;
-		while (!(AVR32_PM.POSCSR.lock1));	
 	#endif
 	
 	/* Hardware Initialization */
@@ -185,9 +181,8 @@ void EVENT_USB_Device_Connect(void)
 		        | (1 << COM3B1) | (1 << COM3B0)); // Set on match, clear on TOP
 		TCCR3B  = ((1 << WGM32) | (1 << CS30));  // Fast 8-Bit PWM, F_CPU speed
 	#elif (ARCH == ARCH_UC3)
-		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
-
 		/* Sample reload timer initialization */
+		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
 		AVR32_TC.channel[0].IER.cpcs = true;
 		AVR32_TC.channel[0].cmr      = AVR32_TC_CMR0_WAVE_MASK |
 		                               (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
@@ -204,9 +199,10 @@ void EVENT_USB_Device_Connect(void)
 		AVR32_GPIO.port[1].oder     |=  ((1UL << 10) | (1UL << 11));
 
 		/* PWM speaker timer initialization */
-		AVR32_TC.channel[2].cmr      = AVR32_TC_CMR2_WAVE_MASK | AVR32_TC_CMR2_EEVT_XC0_OUTPUT |
+		AVR32_TC.channel[2].cmr      = AVR32_TC_CMR2_WAVE_MASK |
+		                               (AVR32_TC_CMR2_EEVT_XC0_OUTPUT << AVR32_TC_CMR2_EEVT_OFFSET) |
 		                               (AVR32_TC_CMR2_WAVSEL_UP_AUTO << AVR32_TC_CMR2_WAVSEL_OFFSET) |
-		                               (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK1 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
+		                               (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK2 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
 		                               (AVR32_TC_CMR2_ACPA_SET   << AVR32_TC_CMR2_ACPA_OFFSET) |
 		                               (AVR32_TC_CMR2_ACPC_CLEAR << AVR32_TC_CMR2_ACPC_OFFSET) |
 		                               (AVR32_TC_CMR2_BCPB_SET   << AVR32_TC_CMR2_BCPB_OFFSET) |
@@ -294,38 +290,37 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
 		if (EndpointControl == AUDIO_EPCONTROL_SamplingFreq)
 		{
 			/* Check the requested property to see if a supported property is being manipulated */
-			if (EndpointProperty == AUDIO_REQ_SetCurrent)
+			switch (EndpointProperty)
 			{
-				/* Check if we are just testing for a valid property, or actually adjusting it */
-				if (DataLength != NULL)
-				{
-					/* Set the new sampling frequency to the value given by the host */
-					CurrentAudioSampleFrequency = (((uint32_t)Data[2] << 16) | ((uint32_t)Data[1] << 8) | (uint32_t)Data[0]);
+				case AUDIO_REQ_SetCurrent:
+					/* Check if we are just testing for a valid property, or actually adjusting it */
+					if (DataLength != NULL)
+					{
+						/* Set the new sampling frequency to the value given by the host */
+						CurrentAudioSampleFrequency = (((uint32_t)Data[2] << 16) | ((uint32_t)Data[1] << 8) | (uint32_t)Data[0]);
 
-					#if (ARCH == ARCH_AVR8)
-						/* Adjust sample reload timer to the new frequency */
-						OCR0A = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
-					#elif (ARCH == ARCH_UC3)
-						/* Adjust sample reload timer to the new frequency */
-						AVR32_TC.channel[0].RC.rc = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
-					#endif
-				}
-				
-				return true;
-			}
-			else if (EndpointProperty == AUDIO_REQ_GetCurrent)
-			{
-				/* Check if we are just testing for a valid property, or actually reading it */
-				if (DataLength != NULL)
-				{
-					*DataLength = 3;
+						#if (ARCH == ARCH_AVR8)
+							/* Adjust sample reload timer to the new frequency */
+							OCR0A = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
+						#elif (ARCH == ARCH_UC3)
+							/* Adjust sample reload timer to the new frequency */
+							AVR32_TC.channel[0].RC.rc = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
+						#endif
+					}
+					
+					return true;
+				case AUDIO_REQ_GetCurrent:
+					/* Check if we are just testing for a valid property, or actually reading it */
+					if (DataLength != NULL)
+					{
+						*DataLength = 3;
 
-					Data[2] = (CurrentAudioSampleFrequency >> 16);
-					Data[1] = (CurrentAudioSampleFrequency >> 8);
-					Data[0] = (CurrentAudioSampleFrequency &  0xFF);					
-				}
-				
-				return true;
+						Data[2] = (CurrentAudioSampleFrequency >> 16);
+						Data[1] = (CurrentAudioSampleFrequency >> 8);
+						Data[0] = (CurrentAudioSampleFrequency &  0xFF);					
+					}
+					
+					return true;
 			}
 		}
 	}

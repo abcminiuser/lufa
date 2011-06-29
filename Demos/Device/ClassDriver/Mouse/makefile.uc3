@@ -63,12 +63,10 @@ ARCH = UC3
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
 #
-#     This will be an integer division of F_USB below, as it is sourced by
-#     F_USB after it has run through any CPU prescalers. Note that this value
-#     does not *change* the processor frequency - it should merely be updated to
-#     reflect the processor speed set externally so that the code can use accurate
-#     software delays.
-F_CPU = 12000000
+#     Note that this value does not *change* the processor frequency - it should merely
+#     be updated to reflect the processor speed set externally so that the code can use
+#     accurate software delays.
+F_CPU = 60000000
 
 
 # Input clock frequency.
@@ -79,9 +77,6 @@ F_CPU = 12000000
 #     clock generation for the USB and other AVR subsections. Do NOT tack on a 'UL'
 #     at the end, this will be done automatically to create a 32-bit value in your
 #     source code.
-#
-#     If no clock division is performed on the input clock inside the AVR (via the
-#     CPU clock adjust registers or the clock division fuses), this will be equal to F_CPU.
 F_USB = 48000000
 
 
@@ -117,7 +112,7 @@ include $(LUFA_PATH)/LUFA/makefile
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c                                                 \
 	  Descriptors.c                                               \
-	  $(LUFA_PATH)/LUFA/Platform/UC3/INTC.c                       \
+	  $(LUFA_PATH)/LUFA/Platform/UC3/InterruptManagement.c        \
 	  $(LUFA_SRC_USB)                                             \
 	  $(LUFA_SRC_USBCLASS)
 

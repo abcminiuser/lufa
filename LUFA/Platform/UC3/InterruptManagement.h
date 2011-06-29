@@ -28,8 +28,8 @@
   this software.
 */
 
-#ifndef _INTC_H_
-#define _INTC_H_
+#ifndef _INTERRUPT_MANAGEMENT_H_
+#define _INTERRUPT_MANAGEMENT_H_
 
 	/* Includes: */
 		#include <avr32/io.h>
