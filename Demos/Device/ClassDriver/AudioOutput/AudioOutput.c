@@ -72,8 +72,6 @@ int main(void)
 	}
 }
 
-#define F_XTAL0 12000000
-
 /** Configures the board hardware and chip peripherals for the demo's functionality. */
 void SetupHardware(void)
 {
@@ -134,8 +132,8 @@ ISR(TC_CH0_vect)
 			OCR3B = (RightSample_8Bit ^ (1 << 7));
 		#elif (ARCH == ARCH_UC3)
 			/* Load the dual 8-bit samples into the PWM timer channels */
-			AVR32_TC.channel[2].ra = (LeftSample_8Bit  ^ (1 << 7));
-			AVR32_TC.channel[2].rb = (RightSample_8Bit ^ (1 << 7));
+			AVR32_PWM.channel[PWM_CHANNEL_LEFT].cupd  = (LeftSample_8Bit  + 1);
+			AVR32_PWM.channel[PWM_CHANNEL_RIGHT].cupd = (RightSample_8Bit + 1);
 		#endif
 		
 		uint_reg_t LEDMask = LEDS_NO_LEDS;
@@ -183,32 +181,33 @@ void EVENT_USB_Device_Connect(void)
 	#elif (ARCH == ARCH_UC3)
 		/* Sample reload timer initialization */
 		INTC_RegisterGroupHandler(AVR32_TC_IRQ0, AVR32_INTC_INT0, TC_CH0_vect);
-		AVR32_TC.channel[0].IER.cpcs = true;
-		AVR32_TC.channel[0].cmr      = (AVR32_TC_CMR0_WAVE_MASK |
-		                                (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
-		                                (AVR32_TC_CMR0_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET));
-		AVR32_TC.channel[0].rc       = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
-		AVR32_TC.channel[0].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
+		AVR32_TC.channel[0].IER.cpcs  = true;
+		AVR32_TC.channel[0].cmr       = (AVR32_TC_CMR0_WAVE_MASK |
+		                                 (AVR32_TC_CMR0_WAVSEL_UP_AUTO << AVR32_TC_CMR0_WAVSEL_OFFSET) |
+		                                 (AVR32_TC_CMR0_TCCLKS_TIMER_CLOCK3 << AVR32_TC_CMR0_TCCLKS_OFFSET));
+		AVR32_TC.channel[0].rc        = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);		
+		AVR32_TC.channel[0].ccr       = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;
 
-		/* Configure GPIO pins for speaker output as the timer alternative functions */
-		AVR32_GPIO.port[1].gper     &= ~((1UL << 10) | (1UL << 11));
-		AVR32_GPIO.port[1].pmr0     |=  ((1UL << 10) | (1UL << 11));
-		AVR32_GPIO.port[1].pmr1     &= ~((1UL << 10) | (1UL << 11));
-
+		/* Configure GPIO pins for speaker output as the PWM alternative functions */
+		AVR32_GPIO.port[PWM_GPIO_LEFT / 32].gper     &= ~(1UL << (PWM_GPIO_LEFT % 32));
+		AVR32_GPIO.port[PWM_GPIO_LEFT / 32].pmr0     |=  (1UL << (PWM_GPIO_LEFT % 32));
+		AVR32_GPIO.port[PWM_GPIO_LEFT / 32].pmr1     &= ~(1UL << (PWM_GPIO_LEFT % 32));
+		AVR32_GPIO.port[PWM_GPIO_RIGHT / 32].gper    &= ~(1UL << (PWM_GPIO_RIGHT % 32));
+		AVR32_GPIO.port[PWM_GPIO_RIGHT / 32].pmr0    |=  (1UL << (PWM_GPIO_RIGHT % 32));
+		AVR32_GPIO.port[PWM_GPIO_RIGHT / 32].pmr1    &= ~(1UL << (PWM_GPIO_RIGHT % 32));
+		
 		/* Set speakers as outputs */
-		AVR32_GPIO.port[1].oder     |=  ((1UL << 10) | (1UL << 11));
+		AVR32_GPIO.port[PWM_GPIO_LEFT / 32].oder     &= ~(1UL << (PWM_GPIO_LEFT % 32));
+		AVR32_GPIO.port[PWM_GPIO_RIGHT / 32].oder    &= ~(1UL << (PWM_GPIO_RIGHT % 32));
 
-		/* PWM speaker timer initialization */
-		AVR32_TC.channel[2].cmr      = (AVR32_TC_CMR2_WAVE_MASK |
-		                                (AVR32_TC_CMR2_EEVT_XC0_OUTPUT << AVR32_TC_CMR2_EEVT_OFFSET) |
-		                                (AVR32_TC_CMR2_WAVSEL_UP_AUTO << AVR32_TC_CMR2_WAVSEL_OFFSET) |
-		                                (AVR32_TC_CMR2_TCCLKS_TIMER_CLOCK2 << AVR32_TC_CMR2_TCCLKS_OFFSET) |
-		                                (AVR32_TC_CMR2_ACPA_SET   << AVR32_TC_CMR2_ACPA_OFFSET) |
-		                                (AVR32_TC_CMR2_ACPC_CLEAR << AVR32_TC_CMR2_ACPC_OFFSET) |
-		                                (AVR32_TC_CMR2_BCPB_SET   << AVR32_TC_CMR2_BCPB_OFFSET) |
-		                                (AVR32_TC_CMR2_BCPC_CLEAR << AVR32_TC_CMR2_BCPC_OFFSET));
-		AVR32_TC.channel[2].rc       = 0x00000FF;
-		AVR32_TC.channel[2].ccr      = AVR32_TC_SWTRG_MASK | AVR32_TC_CLKEN_MASK;		
+		/* PWM unit initialization */
+		AVR32_PWM.ena                                |= ((1UL << PWM_CHANNEL_LEFT) | (1UL << PWM_CHANNEL_RIGHT));
+		AVR32_PWM.channel[PWM_CHANNEL_LEFT].CMR.calg  = true;
+		AVR32_PWM.channel[PWM_CHANNEL_LEFT].cprd      = 0xFF;
+		AVR32_PWM.channel[PWM_CHANNEL_LEFT].cdty      = 0;
+		AVR32_PWM.channel[PWM_CHANNEL_RIGHT].CMR.calg = true;
+		AVR32_PWM.channel[PWM_CHANNEL_RIGHT].cprd     = 0xFF;
+		AVR32_PWM.channel[PWM_CHANNEL_RIGHT].cdty     = 0;
 	#endif
 }
 
@@ -229,12 +228,10 @@ void EVENT_USB_Device_Disconnect(void)
 	#elif (ARCH == ARCH_UC3)
 		/* Stop the sample reload timer */
 		AVR32_TC.channel[0].CCR.clken = false;
-
-		/* Stop the PWM generation timer */
-		AVR32_TC.channel[2].CCR.clken = false;
 		
 		/* Set speakers as inputs to reduce current draw */
-		AVR32_GPIO.port[1].oder &= ~((1UL << 10) | (1UL << 11));		
+		AVR32_GPIO.port[PWM_GPIO_LEFT / 32].oder  &= ~(1UL << (PWM_GPIO_LEFT % 32));
+		AVR32_GPIO.port[PWM_GPIO_RIGHT / 32].oder &= ~(1UL << (PWM_GPIO_RIGHT % 32));
 	#endif
 }
 

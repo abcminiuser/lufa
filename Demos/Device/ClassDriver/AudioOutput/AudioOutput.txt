@@ -58,7 +58,8 @@
  *
  *  On start-up the system will automatically enumerate and function
  *  as a USB speaker. Outgoing audio will output in 8-bit PWM onto
- *  the timer 3 channels A and B for. Audio output will also be indicated on
+ *  the timer 3 channels A and B for AVR8 devices, and through PWM outputs
+ *  specific for each UC3 board. Audio output will also be indicated on
  *  the board LEDs. Decouple audio outputs with a capacitor and attach to a
  *  speaker to hear the audio.
  *

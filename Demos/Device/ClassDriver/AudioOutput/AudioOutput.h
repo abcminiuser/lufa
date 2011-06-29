@@ -69,6 +69,15 @@
 		/** LED mask for the library LED driver, to indicate that an error has occurred in the USB interface. */
 		#define LEDMASK_USB_ERROR        (LEDS_LED1 | LEDS_LED3)
 
+		#if (ARCH == ARCH_UC3)
+			#if (BOARD == BOARD_EVK1101)
+				#define PWM_GPIO_LEFT        13
+				#define PWM_CHANNEL_LEFT     3
+				#define PWM_GPIO_RIGHT       14
+				#define PWM_CHANNEL_RIGHT    4
+			#endif
+		#endif
+
 	/* Function Prototypes: */
 		void SetupHardware(void);
 
