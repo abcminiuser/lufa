@@ -93,6 +93,9 @@
 			 *  Decimal format for descriptor fields requiring BCD encoding, such as the USB version number in the
 			 *  standard device descriptor.
 			 *
+			 *  \note This value is automatically converted into Little Endian, suitable for direct use inside device
+			 *        descriptors on all architectures without endianness conversion macros.
+			 *
 			 *  \param[in]  x  Version number to encode as a 16-bit little-endian number, as a floating point number.
 			 */
 			#define VERSION_BCD(x)                    CPU_TO_LE16((((VERSION_TENS(x) << 4) | VERSION_ONES(x)) << 8) | \

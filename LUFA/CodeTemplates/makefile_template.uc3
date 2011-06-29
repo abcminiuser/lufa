@@ -68,7 +68,7 @@ BOARD = ### INSERT NAME OF BOARD HERE, OR NONE IF NO BOARD DRIVERS USED ###
 F_CPU = ### INSERT PRESCALED SYSTEM CLOCK SPEED HERE, IN HZ ###
 
 
-# Input clock frequency.
+# USB controller master clock frequency.
 #     This will define a symbol, F_USB, in all source code files equal to the
 #     input clock frequency (before any prescaling is performed) in Hz. This value may
 #     differ from F_CPU, as the USB clock is often sourced from the same oscillator as
@@ -465,6 +465,15 @@ doxygen:
 clean_doxygen:
 	rm -rf Documentation
 
+checksource:
+	@for f in $(SRC) $(CPPSRC) $(ASRC); do \
+		if [ -f $$f ]; then \
+			echo "Found Source File: $$f" ; \
+		else \
+			echo "Source File Not Found: $$f" ; \
+		fi; done 
+
+
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
 
@@ -476,5 +485,5 @@ $(shell mkdir $(OBJDIR) 2>/dev/null)
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter gccversion \
 build elf hex lss sym doxygen clean clean_list clean_doxygen  \
-dfu flip
+dfu flip checksource
 
