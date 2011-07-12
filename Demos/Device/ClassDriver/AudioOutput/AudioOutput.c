@@ -104,7 +104,7 @@ void SetupHardware(void)
 }
 
 /** ISR to handle the reloading of the PWM timer with the next sample. */
-#if (ARCH == ARCH_AVR)
+#if (ARCH == ARCH_AVR8)
 ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 #elif (ARCH == ARCH_UC3)
 ISR(TC_CH0_vect)
