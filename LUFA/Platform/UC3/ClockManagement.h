@@ -72,10 +72,6 @@
 #define _UC3_CLOCK_MANAGEMENT_H_
 
 	/* Includes: */
-		#include <avr32/io.h>
-		#include <stdbool.h>
-		#include <stdint.h>
-
 		#include <LUFA/Common/Common.h>
 
 	/* Enable C linkage for C++ Compilers: */
@@ -86,29 +82,29 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Enum for the possible external oscillator types. */
-			enum Extern_OSC_ClockTypes_t
+			enum UC3_Extern_OSC_ClockTypes_t
 			{
-				EXOSC_MODE_CLOCK         = 0, /**< External clock (non-crystal) mode. */
-				EXOSC_MODE_900KHZ_MAX    = 1, /**< External crystal oscillator equal to or slower than 900KHz. */
-				EXOSC_MODE_3MHZ_MAX      = 2, /**< External crystal oscillator equal to or slower than 3MHz. */
-				EXOSC_MODE_8MHZ_MAX      = 3, /**< External crystal oscillator equal to or slower than 8MHz. */
-				EXOSC_MODE_8MHZ_OR_MORE  = 4, /**< External crystal oscillator equal to or faster than 8MHz. */		
+				EXOSC_MODE_CLOCK         = AVR32_PM_OSCCTRL0_MODE_EXT_CLOCK,  /**< External clock (non-crystal) mode. */
+				EXOSC_MODE_900KHZ_MAX    = AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G0, /**< External crystal oscillator equal to or slower than 900KHz. */
+				EXOSC_MODE_3MHZ_MAX      = AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G1, /**< External crystal oscillator equal to or slower than 3MHz. */
+				EXOSC_MODE_8MHZ_MAX      = AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G2, /**< External crystal oscillator equal to or slower than 8MHz. */
+				EXOSC_MODE_8MHZ_OR_MORE  = AVR32_PM_OSCCTRL0_MODE_CRYSTAL_G3, /**< External crystal oscillator equal to or faster than 8MHz. */		
 			};
 
 			/** Enum for the possible external oscillator statup times. */
-			enum Extern_OSC_ClockStartup_t
+			enum UC3_Extern_OSC_ClockStartup_t
 			{
-				EXOSC_START_0CLK         = 0, /**< Immediate startup, no delay. */
-				EXOSC_START_64CLK        = 1, /**< Wait 64 clock cyles before startup for stability. */
-				EXOSC_START_128CLK       = 2, /**< Wait 128 clock cyles before startup for stability. */
-				EXOSC_START_2048CLK      = 3, /**< Wait 2048 clock cyles before startup for stability. */
-				EXOSC_START_4096CLK      = 4, /**< Wait 4096 clock cyles before startup for stability. */
-				EXOSC_START_8192CLK      = 5, /**< Wait 8192 clock cyles before startup for stability. */
-				EXOSC_START_16384CLK     = 6, /**< Wait 16384 clock cyles before startup for stability. */
+				EXOSC_START_0CLK         = AVR32_PM_OSCCTRL0_STARTUP_0_RCOSC,     /**< Immediate startup, no delay. */
+				EXOSC_START_64CLK        = AVR32_PM_OSCCTRL0_STARTUP_64_RCOSC,    /**< Wait 64 clock cyles before startup for stability. */
+				EXOSC_START_128CLK       = AVR32_PM_OSCCTRL0_STARTUP_128_RCOSC,   /**< Wait 128 clock cyles before startup for stability. */
+				EXOSC_START_2048CLK      = AVR32_PM_OSCCTRL0_STARTUP_2048_RCOSC,  /**< Wait 2048 clock cyles before startup for stability. */
+				EXOSC_START_4096CLK      = AVR32_PM_OSCCTRL0_STARTUP_4096_RCOSC,  /**< Wait 4096 clock cyles before startup for stability. */
+				EXOSC_START_8192CLK      = AVR32_PM_OSCCTRL0_STARTUP_8192_RCOSC,  /**< Wait 8192 clock cyles before startup for stability. */
+				EXOSC_START_16384CLK     = AVR32_PM_OSCCTRL0_STARTUP_16384_RCOSC, /**< Wait 16384 clock cyles before startup for stability. */
 			};
 			
 			/** Enum for the possible module clock sources. */
-			enum System_ClockSource_t
+			enum UC3_System_ClockSource_t
 			{
 				CLOCK_SRC_SLOW_CLK       = 0, /**< Clock sourced from the internal slow clock. */
 				CLOCK_SRC_OSC0           = 1, /**< Clock sourced from the Oscillator 0 clock. */
@@ -122,8 +118,8 @@
 			 *  the oscillator is ready for use.
 			 *
 			 *  \param[in] Channel  Index of the external oscillator to start.
-			 *  \param[in] Type     Type of clock attached to the given oscillator channel, a value from \ref Extern_OSC_ClockTypes_t.
-			 *  \param[in] Startup  Statup time of the external oscillator, a value from \ref Extern_OSC_ClockStartup_t.
+			 *  \param[in] Type     Type of clock attached to the given oscillator channel, a value from \ref UC3_Extern_OSC_ClockTypes_t.
+			 *  \param[in] Startup  Statup time of the external oscillator, a value from \ref UC3_Extern_OSC_ClockStartup_t.
 			 *
 			 *  \return Boolean \c true if the external oscillator was successfully started, \c false if invalid parameters specified.
 			 */
@@ -167,7 +163,7 @@
 			/** Starts the given PLL of the UC3 microcontroller, with the given options. This routine blocks until the PLL is ready for use.
 			 *
 			 *  \param[in] Channel     Index of the PLL to start.
-			 *  \param[in] Source      Clock source for the PLL, a value from \ref System_ClockSource_t.
+			 *  \param[in] Source      Clock source for the PLL, a value from \ref UC3_System_ClockSource_t.
 			 *  \param[in] SourceFreq  Frequency of the PLL's clock source, in Hz.
 			 *  \param[in] Frequency   Target frequency of the PLL's output.
 			 *
@@ -215,7 +211,7 @@
 			/** Starts the given Generic Clock of the UC3 microcontroller, with the given options.
 			 *
 			 *  \param[in] Channel     Index of the Generic Clock to start.
-			 *  \param[in] Source      Clock source for the Generic Clock, a value from \ref System_ClockSource_t.
+			 *  \param[in] Source      Clock source for the Generic Clock, a value from \ref UC3_System_ClockSource_t.
 			 *  \param[in] SourceFreq  Frequency of the Generic Clock's clock source, in Hz.
 			 *  \param[in] Frequency   Target frequency of the Generic Clock's output.
 			 *
@@ -277,7 +273,7 @@
 			 *
 			 *  This function will configure the FLASH controller's wait states automatically to suit the given clock source.
 			 *
-			 *  \param[in] Source      Clock source for the CPU core, a value from \ref System_ClockSource_t.
+			 *  \param[in] Source      Clock source for the CPU core, a value from \ref UC3_System_ClockSource_t.
 			 *  \param[in] SourceFreq  Frequency of the CPU core's clock source, in Hz.
 			 *
 			 *  \return Boolean \c true if the CPU core clock was sucessfully altered, \c false if invalid parameters specified.
