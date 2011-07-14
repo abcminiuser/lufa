@@ -10,16 +10,25 @@
  *
  *  The following list indicates what microcontrollers are compatible with this demo.
  *
+ */
+#if (ARCH == ARCH_AVR8) || defined(__DOXYGEN)
+/** \mainpage 
  *  - Series 7 USB AVRs (AT90USBxxx7)
  *  - Series 6 USB AVRs (AT90USBxxx6)
  *  - Series 4 USB AVRs (ATMEGAxxU4)
+ */
+#endif
+#if (ARCH == ARCH_UC3) || defined(__DOXYGEN)
+/** \mainpage 
  *  - Series A0 USB AVR32 UC3s (AT32UC3A0*)
  *  - Series A1 USB AVR32 UC3s (AT32UC3A1*)
  *  - Series B0 USB AVR32 UC3s (AT32UC3B0*)
  *  - Series B1 USB AVR32 UC3s (AT32UC3B1*)
  *  - Series A3 USB AVR32 UC3s (AT32UC3A3*)
  *  - Series A4 USB AVR32 UC3s (AT32UC3A4*)
- *
+ */
+#endif
+/** \mainpage 
  *  \section Sec_Info USB Information:
  *
  *  The following table gives a rundown of the USB utilization of this demo.
@@ -57,15 +66,39 @@
  *  required).
  *
  *  On start-up the system will automatically enumerate and function
- *  as a USB speaker. Outgoing audio will output in 8-bit PWM onto
- *  the timer 3 channels A and B for AVR8 devices, and through PWM outputs
- *  specific for each UC3 board. Audio output will also be indicated on
- *  the board LEDs. Decouple audio outputs with a capacitor and attach to a
- *  speaker to hear the audio.
+ *  as a USB speaker. Outgoing audio will output in 8-bit stereo PWM signals,
+ *  and indicated on the board LEDs. Decouple audio outputs with a capacitor
+ *  and attach to a speaker to hear the audio.
  *
  *  Under Windows, if a driver request dialogue pops up, select the option
  *  to automatically install the appropriate drivers.
  *
+ */
+#if (ARCH == ARCH_AVR8) || defined(__DOXYGEN)
+/** \mainpage 
+ *  \section Sec_Hardware_AVR8 AVR8 Architecture Hardware Connections:
+ * 
+ *  Output audio will be generated on the timer 3 channels A and B.
+ *
+ */
+#endif
+#if (ARCH == ARCH_AVR8) || defined(__DOXYGEN)
+/** \mainpage 
+ *  \section Sec_Hardware_UC3 UC3 Architecture Hardware Connections:
+ *
+ *  The following table lists the output mappings for supported boards.
+ *
+ *  <table>
+ *   <tr>
+ *    <td>Board</td><td>Hardware</td>
+ *   </tr>
+ *   <tr>
+ *    <td>EVK1101</td><td>Output audio will be generated on pins A13 and A14.</td>
+ *   </tr>
+ *
+ */
+#endif
+/** \mainpage 
  *  \section Sec_Options Project Options
  *
  *  The following defines can be found in this demo, which can control the demo behaviour when defined, or changed in value.
