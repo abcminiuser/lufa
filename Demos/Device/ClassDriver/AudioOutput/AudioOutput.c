@@ -91,7 +91,7 @@ void SetupHardware(void)
 		AVR32CLK_SetCPUClockSource(CLOCK_SRC_PLL0, F_CPU);
 
 		/* Start the PLL for the USB Generic Clock module */
-		AVR32CLK_StartPLL(1, CLOCK_SRC_OSC0, 12000000, 48000000);
+		AVR32CLK_StartPLL(1, CLOCK_SRC_OSC0, 12000000, F_USB);
 		
 		/* Initialize interrupt subsystem */
 		INTC_Init();
