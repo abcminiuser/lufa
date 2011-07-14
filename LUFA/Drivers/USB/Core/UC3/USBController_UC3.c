@@ -180,11 +180,6 @@ static void USB_Init_Device(void)
 		USB_Device_SetFullSpeed();
 		#endif		
 	}
-	
-	#if defined(USB_DEVICE_OPT_HIGHSPEED)
-	if (USB_Options & USB_DEVICE_OPT_HIGHSPEED)	
-	  USB_Device_SetHighSpeed();
-	#endif
 
 	USB_INT_Enable(USB_INT_VBUSTI);
 

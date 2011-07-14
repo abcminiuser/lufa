@@ -95,7 +95,7 @@ void SetupHardware(void)
 		
 		/* Initialize interrupt subsystem */
 		INTC_Init();
-		INTC_RegisterGroupHandler(AVR32_USBB_IRQ, AVR32_INTC_INT0, USB_GEN_vect);
+		INTC_RegisterGroupHandler(INTC_IRQ_GROUP(AVR32_USBB_IRQ), AVR32_INTC_INT0, USB_GEN_vect);
 	#endif
 	
 	/* Hardware Initialization */
