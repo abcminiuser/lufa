@@ -55,6 +55,13 @@
 		#include "../USBTask.h"
 		#include "../USBInterrupt.h"
 
+	/* Private Interface - For use in library only: */
+	#if !defined(__DOXYGEN__)
+		/* External Variables: */
+			extern USB_EP_TABLE_t USB_EndpointTable;
+	#endif
+	
+	/* Includes: */
 		#if defined(USB_CAN_BE_DEVICE) || defined(__DOXYGEN__)
 			#include "../Device.h"
 			#include "../Endpoint.h"
@@ -77,32 +84,50 @@
 		#endif
 
 	/* Public Interface - May be used in end-application: */
-		/* Macros: */			
-			/** \name Endpoint/Pipe Type Masks */
+		/* Macros: */
+			/** \name USB Controller Option Masks */
+			//@{
+			/** Sets the USB bus interrupt priority level to be low priority. The USB bus interrupt is used for Start of Frame events, bus suspend
+			 *  and resume events, bus reset events and other events related to the management of the USB bus.
+			 */
+			#define USB_OPT_BUSEVENT_PRILOW           ((0 << 1) | (0 << 1))
+
+			/** Sets the USB bus interrupt priority level to be medium priority. The USB bus interrupt is used for Start of Frame events, bus suspend
+			 *  and resume events, bus reset events and other events related to the management of the USB bus.
+			 */
+			#define USB_OPT_BUSEVENT_PRIMED           ((0 << 1) | (1 << 1))
+
+			/** Sets the USB bus interrupt priority level to be high priority. The USB bus interrupt is used for Start of Frame events, bus suspend
+			 *  and resume events, bus reset events and other events related to the management of the USB bus.
+			 */
+			#define USB_OPT_BUSEVENT_PRIHIGH          ((1 << 1) | (0 << 1))
+			//@}
+
+			/** \name Endpoint Type Masks */
 			//@{
 			/** Mask for a CONTROL type endpoint or pipe.
 			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
+			 *  \note See \ref Group_EndpointManagement for endpoint functions.
 			 */
-			#define EP_TYPE_CONTROL                 0x00
+			#define EP_TYPE_CONTROL                 USB_EP_TYPE_CONTROL_gc
 
 			/** Mask for an ISOCHRONOUS type endpoint or pipe.
 			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
+			 *  \note See \ref Group_EndpointManagement for endpoint functions.
 			 */
-			#define EP_TYPE_ISOCHRONOUS             0x01
+			#define EP_TYPE_ISOCHRONOUS             USB_EP_TYPE_ISOCHRONOUS_gc
 
 			/** Mask for a BULK type endpoint or pipe.
 			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
+			 *  \note See \ref Group_EndpointManagement for endpoint functions.
 			 */
-			#define EP_TYPE_BULK                    0x02
+			#define EP_TYPE_BULK                    USB_EP_TYPE_BULK_gc
 
 			/** Mask for an INTERRUPT type endpoint or pipe.
 			 *
-			 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
+			 *  \note See \ref Group_EndpointManagement for endpoint functions.
 			 */
-			#define EP_TYPE_INTERRUPT               0x03
+			#define EP_TYPE_INTERRUPT              USB_EP_TYPE_BULK_gc
 			//@}
 
 			#if !defined(USB_STREAM_TIMEOUT_MS) || defined(__DOXYGEN__)
