@@ -97,15 +97,23 @@
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			/** Macro for calculating the baud value from a given baud rate when the U2X (double speed) bit is
+			/** Macro for calculating the baud value from a given baud rate when the \c U2X (double speed) bit is
 			 *  not set.
+			 *
+			 *  \param[in] Baud  Target serial UART baud rate.
+			 *
+			 *  \return Closest UBRR register value for the given UART frequency.
 			 */
-			#define SERIAL_UBBRVAL(baud)    ((((F_CPU / 16) + (baud / 2)) / (baud)) - 1)
+			#define SERIAL_UBBRVAL(Baud)    ((((F_CPU / 16) + (Baud / 2)) / (Baud)) - 1)
 
-			/** Macro for calculating the baud value from a given baud rate when the U2X (double speed) bit is
+			/** Macro for calculating the baud value from a given baud rate when the \c U2X (double speed) bit is
 			 *  set.
+			 *
+			 *  \param[in] Baud  Target serial UART baud rate.
+			 *
+			 *  \return Closest UBRR register value for the given UART frequency.
 			 */
-			#define SERIAL_2X_UBBRVAL(baud) ((((F_CPU / 8) + (baud / 2)) / (baud)) - 1)
+			#define SERIAL_2X_UBBRVAL(Baud) ((((F_CPU / 8) + (Baud / 2)) / (Baud)) - 1)
 
 		/* Function Prototypes: */
 			/** Transmits a given string located in program space (FLASH) through the USART.
@@ -169,8 +177,8 @@
 			 *  be used when the read data is processed byte-per-bye (via \c getc()) or when the user application will implement its own
 			 *  line buffering.
 			 *
-			 *  \param[in,out] Stream  Pointer to a FILE structure where the created stream should be placed, if \c NULL stdio
-			 *                         and stdin will be configured to use the USART.
+			 *  \param[in,out] Stream  Pointer to a FILE structure where the created stream should be placed, if \c NULL, \c stdout
+			 *                         and \c stdin will be configured to use the USART.
 			 *
 			 *  \pre The USART must first be configured via a call to \ref Serial_Init() before the stream is used.
 			 */
@@ -189,8 +197,8 @@
 			/** Identical to \ref Serial_CreateStream(), except that reads are blocking until the calling stream function terminates
 			 *  the transfer.
 			 *
-			 *  \param[in,out] Stream  Pointer to a FILE structure where the created stream should be placed, if \c NULL stdio
-			 *                         and stdin will be configured to use the USART.
+			 *  \param[in,out] Stream  Pointer to a FILE structure where the created stream should be placed, if \c NULL, \c stdout
+			 *                         and \c stdin will be configured to use the USART.
 			 *
 			 *  \pre The USART must first be configured via a call to \ref Serial_Init() before the stream is used.
 			 */

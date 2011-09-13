@@ -28,6 +28,7 @@
   *   - Added new USB_Host_GetDeviceStatus() function to the host standard request function set
   *   - Added AVR USB XMEGA architecture port (currently incomplete/experimental)
   *   - Added new STRINGIFY() and STRINGIFY_EXPANDED() convenience macros
+  *   - Added new JTAG_DISABLE() macro for the AVR8 architecture
   *   - Added Device Qualifier standard descriptor structure definitions USB_StdDescriptor_DeviceQualifier_t and USB_Descriptor_DeviceQualifier_t
   *  - Library Applications:
   *   - Added RNDIS device mode to the Webserver project
@@ -39,6 +40,7 @@
   *   - Added new AudioInputHost Host LowLevel demo
   *   - Added new AudioOutputHost Host LowLevel demo
   *   - Added new "checksource" target to all library project makefiles
+  *   - Added new VTARGET_USE_INTERNAL_REF configuration option to the AVRISP-MKII clone project (thanks to Volker Bosch)
   *
   *  <b>Changed:</b>
   *  - Core:
@@ -53,10 +55,18 @@
   *   - Altered the USB_Host_SetDeviceConfiguration() function to update the global Host state machine state and the new
   *     USB_Host_ConfigurationNumber global as required
   *   - Added endian correcting code to the library USB class drivers for multiple architecture support
+  *   - Removed the ENDPOINT_DESCRIPTOR_DIR_* macros, replaced by ENDPOINT_DIR_* instead
+  *   - Renamed the JTAG_DEBUG_ASSERT() macro to JTAG_ASSERT()
+  *   - Added variable number of axis to HID_DESCRIPTOR_JOYSTICK() for multi-axis joysticks above just X and Y
+  *   - Renamed USB_Host_ClearPipeStall() to USB_Host_ClearEndpointStall() as the function works on an endpoint address within the attached device,
+  *     and not a Pipe within the host
+  *   - The MS_Host_ResetMSInterface() now performs a full Mass Storage reset sequence to prevent data corruption in the event of a device
+  *     lock up or timeout (thanks to David Lyons)
   *  - Library Applications:
   *   - Modified the Low Level and Class Driver AudioInput and AudioOutput demos to support multiple audio sample rates
   *   - Updated all host mode demos and projects to use the EVENT_USB_Host_DeviceEnumerationComplete() event callback for device configuration
   *     instead of manual host state machine manipulations in the main application task
+  *   - Changed the reports in the GenericHID device demos to control the board LEDs, to reduce user confusion over the callback routines
   *
   *  <b>Fixed:</b>
   *  - Core:
@@ -67,10 +77,19 @@
   *     option was not enabled on the AVR8s
   *   - Fixed lack of C++ compatibility in some internal header files causing compile errors when using LUFA in C++ projects
   *   - Fixed error in the pipe unordered allocation algorithm for the AVR8 devices breaking compatibility with some devices
+  *   - Fixed USB_USBTask not being called internally in stream transfers between packets when Partial Stream Transfers are used
+  *   - Fixed swapped TWI_ADDRESS_READ and TWI_ADDRESS_WRITE values
+  *   - Fixed TWI_ReadPacket() not releasing the TWI bus on read completion
+  *   - Fixed optimization error in the HID Parser item value USB_SetHIDReportItemInfo() and USB_GetHIDReportItemInfo() routines if the report item was
+  *     \c NULL (which should be allowable according to the API)
+  *   - Fixed HID Parser CALLBACK_HIDParser_FilterHIDReportItem() callback function not being passed a cacheable report item pointer
   *  - Library Applications:
   *   - Fixed incorrect signature in the CDC and DFU class bootloaders for the ATMEGA8U2
   *   - Fixed KeyboardHost and KeyboardHostWithParser demos displaying incorrect values when numerical keys were pressed
   *   - Fixed compile errors in the incomplete BluetoothHost demo application (thanks to Timo Lindfors)
+  *   - Fixed incorrect Dataflash buffer use in the DataflashManager_WriteBlocks_RAM() function of several demos/projects (thanks to Jeremy Willden)
+  *   - Fixed incorrect logging interval (always 500ms longer than requested) in the TempDataLogger project
+  *   - Fixed incorrect buffer size check in the USBtoSerial project (thanks to Yuri A Nikiforov)
   *
   *  \section Sec_ChangeLog110528 Version 110528
   *  <b>New:</b>
