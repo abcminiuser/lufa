@@ -144,20 +144,7 @@
 	#endif
 
 	/* Public Interface - May be used in end-application: */
-		/* Macros: */
-			/** \name Endpoint Direction Masks */
-			//@{
-			/** Endpoint data direction mask for \ref Endpoint_ConfigureEndpoint(). This indicates that the endpoint
-			 *  should be initialized in the OUT direction - i.e. data flows from host to device.
-			 */
-			#define ENDPOINT_DIR_OUT                        (0 << EPDIR)
-
-			/** Endpoint data direction mask for \ref Endpoint_ConfigureEndpoint(). This indicates that the endpoint
-			 *  should be initialized in the IN direction - i.e. data flows from device to host.
-			 */
-			#define ENDPOINT_DIR_IN                         (1 << EPDIR)
-			//@}
-			
+		/* Macros: */			
 			/** \name Endpoint Bank Mode Masks */
 			//@{
 			/** Mask for the bank mode selection for the \ref Endpoint_ConfigureEndpoint() macro. This indicates
@@ -286,7 +273,7 @@
 			                                              const uint16_t Size,
 			                                              const uint8_t Banks)
 			{
-				return Endpoint_ConfigureEndpoint_Prv(Number, ((Type << EPTYPE0) | Direction),
+				return Endpoint_ConfigureEndpoint_Prv(Number, ((Type << EPTYPE0) | (Direction ? (1 << EPDIR) : 0)),
 				                                      ((1 << ALLOC) | Banks | Endpoint_BytesToEPSizeMask(Size)));
 			}
 
@@ -600,7 +587,7 @@
 			static inline uint8_t Endpoint_GetEndpointDirection(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
 			static inline uint8_t Endpoint_GetEndpointDirection(void)
 			{
-				return (UECFG0X & ENDPOINT_DIR_IN);
+				return (UECFG0X & (1 << EPDIR)) ? ENDPOINT_DIR_IN : ENDPOINT_DIR_OUT;
 			}
 
 			/** Sets the direction of the currently selected endpoint.
@@ -610,7 +597,7 @@
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask) ATTR_ALWAYS_INLINE;
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask)
 			{
-				UECFG0X = ((UECFG0X & ~ENDPOINT_DIR_IN) | DirectionMask);
+				UECFG0X = ((UECFG0X & ~(1 << EPDIR)) | (DirectionMask ? (1 << EPDIR) : 0));
 			}
 
 			/** Reads one byte from the currently selected endpoint's bank, for OUT direction endpoints.

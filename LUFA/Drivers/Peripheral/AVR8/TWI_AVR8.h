@@ -52,8 +52,8 @@
  *
  *  <b>Low Level API Example:</b>
  *  \code
- *      // Initialize the TWI driver before first use
- *      TWI_Init(TWI_BIT_PRESCALE_1, 10);
+ *      // Initialize the TWI driver before first use at 200KHz
+ *      TWI_Init(TWI_BIT_PRESCALE_1, TWI_BITLENGTH_FROM_FREQ(1, 200000));
  *
  *      // Start a write session to device at device address 0xA0, internal address 0xDC with a 10ms timeout
  *      if (TWI_StartTransmission(0xA0 | TWI_ADDRESS_WRITE, 10) == TWI_ERROR_NoError)
@@ -91,8 +91,8 @@
  * 
  *  <b>High Level API Example:</b>
  *  \code
- *      // Initialize the TWI driver before first use
- *      TWI_Init(TWI_BIT_PRESCALE_1, 10);
+ *      // Initialize the TWI driver before first use at 200KHz
+ *      TWI_Init(TWI_BIT_PRESCALE_1, TWI_BITLENGTH_FROM_FREQ(1, 200000));
  *
  *      // Start a write session to device at device address 0xA0, internal address 0xDC with a 10ms timeout
  *      uint8_t InternalWriteAddress = 0xDC;
@@ -143,12 +143,12 @@
 			/** TWI slave device address mask for a read session. Mask with a slave device base address to obtain
 			 *  the correct TWI bus address for the slave device when reading data from it.
 			 */
-			#define TWI_ADDRESS_READ         0x00
+			#define TWI_ADDRESS_READ         0x01
 
 			/** TWI slave device address mask for a write session. Mask with a slave device base address to obtain
 			 *  the correct TWI bus address for the slave device when writing data to it.
 			 */
-			#define TWI_ADDRESS_WRITE        0x01
+			#define TWI_ADDRESS_WRITE        0x00
 
 			/** Mask to retrieve the base address for a TWI device, which can then be ORed with \ref TWI_ADDRESS_READ
 			 *  or \ref TWI_ADDRESS_WRITE to obtain the device's read and write address respectively.
@@ -167,6 +167,17 @@
 			/** Bit length prescaler for \ref TWI_Init(). This mask multiplies the TWI bit length prescaler by 64. */
 			#define TWI_BIT_PRESCALE_64      ((1 << TWPS1) | (1 << TWPS0))
 			
+			/** Calculates the length of each bit on the TWI bus for a given target frequency. This may be used with
+			 *  the \ref TWI_Init() function to convert a bus frequency to a number of clocks for the \c BitLength
+			 *  parameter.
+			 *
+			 *  \param[in] Prescaler  Prescaler set on the TWI bus.
+			 *  \param[in] Frequency  Desired TWI bus frequency in Hz.
+			 *
+			 *  \return Bit length in clocks for the given TWI bus frequency at the given prescaler value.
+			 */
+			#define TWI_BITLENGTH_FROM_FREQ(Prescale, Frequency) ((((F_CPU / (Prescale)) / (Frequency)) - 16) / 2)
+
 		/* Enums: */
 			/** Enum for the possible return codes of the TWI transfer start routine and other dependant TWI functions. */
 			enum TWI_ErrorCodes_t
@@ -215,43 +226,6 @@
 				TWCR = ((1 << TWINT) | (1 << TWSTO) | (1 << TWEN));
 			}
 
-			/** Sends a byte to the currently addressed device on the TWI bus.
-			 *
-			 *  \param[in] Byte  Byte to send to the currently addressed device
-			 *
-			 *  \return Boolean \c true if the recipient ACKed the byte, \c false otherwise
-			 */
-			static inline bool TWI_SendByte(const uint8_t Byte)
-			{
-				TWDR = Byte;
-				TWCR = ((1 << TWINT) | (1 << TWEN));
-				while (!(TWCR & (1 << TWINT)));
-
-				return ((TWSR & TW_STATUS_MASK) == TW_MT_DATA_ACK);
-			}
-
-			/** Receives a byte from the currently addressed device on the TWI bus.
-			 *
-			 *  \param[in] Byte      Location where the read byte is to be stored.
-			 *  \param[in] LastByte  Indicates if the byte should be ACKed if false, NAKed if true.
-			 *
-			 *  \return Boolean \c true if the byte reception successfully completed, \c false otherwise.
-			 */
-			static inline bool TWI_ReceiveByte(uint8_t* const Byte,
-			                                   const bool LastByte)
-			{
-				uint8_t TWCRMask = ((1 << TWINT) | (1 << TWEN));
-
-				if (!(LastByte))
-				  TWCRMask |= (1 << TWEA);
-
-				TWCR = TWCRMask;
-				while (!(TWCR & (1 << TWINT)));
-				*Byte = TWDR;
-
-				return ((TWSR & TW_STATUS_MASK) == TW_MR_DATA_ACK);
-			}
-
 		/* Function Prototypes: */
 			/** Begins a master mode TWI bus communication with the given slave device address.
 			 *
@@ -263,6 +237,26 @@
 			uint8_t TWI_StartTransmission(const uint8_t SlaveAddress,
 			                              const uint8_t TimeoutMS);
 
+			/** Sends a byte to the currently addressed device on the TWI bus.
+			 *
+			 *  \param[in] Byte  Byte to send to the currently addressed device
+			 *
+			 *  \return Boolean \c true if the recipient ACKed the byte, \c false otherwise
+			 */
+			bool TWI_SendByte(const uint8_t Byte);
+
+			/** Receives a byte from the currently addressed device on the TWI bus.
+			 *
+			 *  \param[in] Byte      Location where the read byte is to be stored.
+			 *  \param[in] LastByte  Indicates if the byte should be ACKed if false, NAKed if true.
+			 *
+			 *  \return Boolean \c true if the byte reception successfully completed, \c false otherwise.
+			 */
+			bool TWI_ReceiveByte(uint8_t* const Byte,
+			                     const bool LastByte) ATTR_NON_NULL_PTR_ARG(1);
+			bool TWI_ReceiveByte(uint8_t* const Byte,
+			                     const bool LastByte);
+					 
 			/** High level function to perform a complete packet transfer over the TWI bus to the specified
 			 *  device.
 			 *
@@ -278,7 +272,7 @@
 			uint8_t TWI_ReadPacket(const uint8_t SlaveAddress,
 			                       const uint8_t TimeoutMS,
 			                       const uint8_t* InternalAddress,
-			                       const uint8_t InternalAddressLen,
+			                       uint8_t InternalAddressLen,
 			                       uint8_t* Buffer,
 			                       uint8_t Length) ATTR_NON_NULL_PTR_ARG(3);
 
