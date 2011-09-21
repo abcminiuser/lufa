@@ -58,6 +58,18 @@
 		#endif
 
 	/* Public Interface - May be used in end-application: */
+		/* Macros: */
+			#if !defined(USB_HOST_TIMEOUT_MS) || defined(__DOXYGEN__)
+				/** Constant for the maximum software timeout period of sent USB control transactions to an attached
+				 *  device. If a device fails to respond to a sent control request within this period, the
+				 *  library will return a timeout error code.
+				 *
+				 *  This value may be overridden in the user project makefile as the value of the
+				 *  \ref USB_HOST_TIMEOUT_MS token, and passed to the compiler using the -D switch.
+				 */
+				#define USB_HOST_TIMEOUT_MS                1000
+			#endif
+			
 		/* Enums: */
 			/** Enum for the \ref USB_Host_SendControlRequest() return code, indicating the reason for the error
 			 *  if the transfer of the request is unsuccessful.
@@ -177,7 +189,7 @@
 			 *
 			 *  \return A value from the \ref USB_Host_SendControlErrorCodes_t enum to indicate the result.
 			 */
-			uint8_t USB_Host_ClearPipeStall(const uint8_t EndpointAddress);
+			uint8_t USB_Host_ClearEndpointStall(const uint8_t EndpointAddress);
 
 			/** Selects a given alternative setting for the specified interface, via a SET INTERFACE standard request to
 			 *  the attached device.

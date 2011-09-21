@@ -74,7 +74,7 @@ uint8_t SI_Host_ConfigurePipes(USB_ClassInfo_SI_Host_t* const SIInterfaceInfo,
 
 		USB_Descriptor_Endpoint_t* EndpointData = DESCRIPTOR_PCAST(ConfigDescriptorData, USB_Descriptor_Endpoint_t);
 
-		if (EndpointData->EndpointAddress & ENDPOINT_DESCRIPTOR_DIR_IN)
+		if ((EndpointData->EndpointAddress & ENDPOINT_DIR_MASK) == ENDPOINT_DIR_IN)
 		{
 			if ((EndpointData->Attributes & EP_TYPE_MASK) == EP_TYPE_INTERRUPT)
 			  EventsEndpoint = EndpointData;
@@ -254,7 +254,7 @@ uint8_t SI_Host_ReceiveBlockHeader(USB_ClassInfo_SI_Host_t* const SIInterfaceInf
 
 		if (Pipe_IsStalled())
 		{
-			USB_Host_ClearPipeStall(SIInterfaceInfo->Config.DataOUTPipeNumber);
+			USB_Host_ClearEndpointStall(Pipe_GetBoundEndpointAddress());
 			return PIPE_RWSTREAM_PipeStalled;
 		}
 
@@ -264,7 +264,7 @@ uint8_t SI_Host_ReceiveBlockHeader(USB_ClassInfo_SI_Host_t* const SIInterfaceInf
 
 		if (Pipe_IsStalled())
 		{
-			USB_Host_ClearPipeStall(SIInterfaceInfo->Config.DataINPipeNumber);
+			USB_Host_ClearEndpointStall(Pipe_GetBoundEndpointAddress());
 			return PIPE_RWSTREAM_PipeStalled;
 		}
 

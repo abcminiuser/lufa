@@ -46,7 +46,7 @@
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] =
 {
 	/* Use the HID class driver's standard Vendor HID report.
-	 *  Vendor Usage Page: 1
+	 *  Vendor Usage Page: 0
 	 *  Vendor Collection Usage: 1
 	 *  Vendor Report IN Usage: 2
 	 *  Vendor Report OUT Usage: 3
@@ -135,7 +135,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = (ENDPOINT_DESCRIPTOR_DIR_IN | GENERIC_IN_EPNUM),
+			.EndpointAddress        = (ENDPOINT_DIR_IN | GENERIC_IN_EPNUM),
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = GENERIC_EPSIZE,
 			.PollingIntervalMS      = 0x01

@@ -46,13 +46,14 @@
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM JoystickReport[] =
 {
 	/* Use the HID class driver's standard Joystick report.
+	 *   Number of Axis: 2 (X/Y)
 	 *   Min X/Y Axis values: -100
 	 *   Max X/Y Axis values:  100
 	 *   Min physical X/Y Axis values (used to determine resolution): -1
 	 *   Max physical X/Y Axis values (used to determine resolution):  1
 	 *   Buttons: 2
 	 */
-	HID_DESCRIPTOR_JOYSTICK(-100, 100, -1, 1, 2)
+	HID_DESCRIPTOR_JOYSTICK(2, -100, 100, -1, 1, 2)
 };
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
@@ -135,7 +136,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = (ENDPOINT_DESCRIPTOR_DIR_IN | JOYSTICK_EPNUM),
+			.EndpointAddress        = (ENDPOINT_DIR_IN | JOYSTICK_EPNUM),
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = JOYSTICK_EPSIZE,
 			.PollingIntervalMS      = 0x01

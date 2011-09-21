@@ -33,11 +33,11 @@
 
 void USB_INT_DisableAllInterrupts(void)
 {
-	AVR32_USBB.USBCON.vbuste = false;
-	AVR32_USBB.USBCON.idte   = false;
+	AVR32_USBB.USBCON.vbuste     = false;
+	AVR32_USBB.USBCON.idte       = false;
 
-	AVR32_USBB.uhinteclr     = -1;
-	AVR32_USBB.udinteclr     = -1;
+	AVR32_USBB.uhinteclr         = -1;
+	AVR32_USBB.udinteclr         = -1;
 }
 
 void USB_INT_ClearAllInterrupts(void)
@@ -45,8 +45,8 @@ void USB_INT_ClearAllInterrupts(void)
 	AVR32_USBB.USBSTACLR.vbustic = true;
 	AVR32_USBB.USBSTACLR.idtic   = true;
 
-	AVR32_USBB.uhintclr      = -1;
-	AVR32_USBB.udintclr      = -1;
+	AVR32_USBB.uhintclr          = -1;
+	AVR32_USBB.udintclr          = -1;
 }
 
 ISR(USB_GEN_vect)
@@ -120,6 +120,10 @@ ISR(USB_GEN_vect)
 		Endpoint_ConfigureEndpoint(ENDPOINT_CONTROLEP, EP_TYPE_CONTROL,
 		                           ENDPOINT_DIR_OUT, USB_Device_ControlEndpointSize,
 		                           ENDPOINT_BANK_SINGLE);
+
+		#if defined(INTERRUPT_CONTROL_ENDPOINT)
+		USB_INT_Enable(USB_INT_RXSTPI);
+		#endif
 
 		EVENT_USB_Device_Reset();
 	}
@@ -200,3 +204,22 @@ ISR(USB_GEN_vect)
 	}
 	#endif
 }
+
+#if defined(INTERRUPT_CONTROL_ENDPOINT) && defined(USB_CAN_BE_DEVICE)
+ISR(USB_COM_vect, ISR_BLOCK)
+{
+	uint8_t PrevSelectedEndpoint = Endpoint_GetCurrentEndpoint();
+
+	Endpoint_SelectEndpoint(ENDPOINT_CONTROLEP);
+	USB_INT_Disable(USB_INT_RXSTPI);
+
+	GlobalInterruptEnable();
+
+	USB_Device_ProcessControlRequest();
+
+	Endpoint_SelectEndpoint(ENDPOINT_CONTROLEP);
+	USB_INT_Enable(USB_INT_RXSTPI);
+	Endpoint_SelectEndpoint(PrevSelectedEndpoint);
+}
+#endif
+

@@ -45,7 +45,7 @@
  */
 const USB_Descriptor_HIDReport_Datatype_t PROGMEM GenericReport[] =
 {
-	HID_RI_USAGE_PAGE(16, 0xFF00), /* Vendor Page 1 */
+	HID_RI_USAGE_PAGE(16, 0xFF00), /* Vendor Page 0 */
 	HID_RI_USAGE(8, 0x01), /* Vendor Usage 1 */
 	HID_RI_COLLECTION(8, 0x01), /* Vendor Usage 1 */
 	    HID_RI_USAGE(8, 0x02), /* Vendor Usage 2 */
@@ -143,7 +143,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = (ENDPOINT_DESCRIPTOR_DIR_IN | GENERIC_IN_EPNUM),
+			.EndpointAddress        = (ENDPOINT_DIR_IN | GENERIC_IN_EPNUM),
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = GENERIC_EPSIZE,
 			.PollingIntervalMS      = 0x01
@@ -153,7 +153,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Endpoint_t), .Type = DTYPE_Endpoint},
 
-			.EndpointAddress        = (ENDPOINT_DESCRIPTOR_DIR_OUT | GENERIC_OUT_EPNUM),
+			.EndpointAddress        = (ENDPOINT_DIR_OUT | GENERIC_OUT_EPNUM),
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
 			.EndpointSize           = GENERIC_EPSIZE,
 			.PollingIntervalMS      = 0x01

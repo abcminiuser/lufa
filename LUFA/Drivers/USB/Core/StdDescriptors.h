@@ -102,21 +102,6 @@
 			 */
 			#define LANGUAGE_ID_ENG                   0x0409
 
-			/** \name Endpoint Address Direction Masks */
-			//@{
-			/** Can be masked with an endpoint address for a \ref USB_Descriptor_Endpoint_t endpoint descriptor's
-			 *  EndpointAddress value to indicate to the host that the endpoint is of the IN direction (i.e, from
-			 *  device to host).
-			 */
-			#define ENDPOINT_DESCRIPTOR_DIR_IN        0x80
-
-			/** Can be masked with an endpoint address for a \ref USB_Descriptor_Endpoint_t endpoint descriptor's
-			 *  EndpointAddress value to indicate to the host that the endpoint is of the OUT direction (i.e, from
-			 *  host to device).
-			 */
-			#define ENDPOINT_DESCRIPTOR_DIR_OUT       0x00
-			//@}
-
 			/** \name USB Configuration Descriptor Attribute Masks */
 			//@{
 			/** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t
@@ -696,7 +681,8 @@
 				                           *   Under GCC, strings prefixed with the "L" character (before
 				                           *   the opening string quotation mark) are considered to be
 				                           *   Unicode strings, and may be used instead of an explicit
-				                           *   array of ASCII characters.
+				                           *   array of ASCII characters on little endian devices with
+				                           *   UTF-16-LE \c wchar_t encoding.
 				                           */
 				#endif
 			} ATTR_PACKED USB_Descriptor_String_t;

@@ -57,7 +57,7 @@
  *    - No reversed/shorted target connector detection and notification
  *    - A separate header is required for each of the ISP, PDI and TPI programming protocols that the user wishes to use
  *
- *  On AVR models with an ADC converter, AVCC should be tied to 5V (e.g. VBUS) and the VTARGET_ADC_CHANNEL token should be
+ *  On AVR models with an ADC converter, AVCC should be tied to 5V (e.g. VBUS) and the \c VTARGET_ADC_CHANNEL token should be
  *  set to an appropriate ADC channel number in the project makefile for VTARGET detection to operate correctly. On models
  *  without an ADC converter, VTARGET will report a fixed 5V level at all times.
  *
@@ -265,6 +265,13 @@
  *    <td>Indicates the programmer AVR's AVCC reference voltage when measuring the target's supply voltage. Note that the supply
  *        voltage should never exceed the reference voltage on the programmer AVR without some form of protection to prevent damage
  *        to the ADC. <i>Ignored when compiled for targets lacking an ADC, or when NO_VTARGET_DETECT is defined.</i></td>
+ *   </tr>
+ *   <tr>
+ *    <td>VTARGET_USE_INTERNAL_REF</td>
+ *    <td>Makefile LUFA_OPTS</td>
+ *    <td>Selects the internal 2.56V ADC reference voltage, instead of using the AVR's VREF pin. When enabled, this option will
+ *        override the VTARGET_REF_VOLTS configuration option. <i>Ignored when compiled for targets lacking an ADC, or when
+ *        NO_VTARGET_DETECT is defined.</i></td>
  *   </tr>
  *   <tr>
  *    <td>VTARGET_SCALE_FACTOR</td>
