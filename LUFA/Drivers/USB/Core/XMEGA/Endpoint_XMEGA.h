@@ -135,7 +135,7 @@
 			 */
 			#define ENDPOINT_DIR_IN                         ENDPOINT_DESCRIPTOR_DIR_IN
 			//@}
-			
+
 			/** \name Endpoint Bank Mode Masks */
 			//@{
 			/** Mask for the bank mode selection for the \ref Endpoint_ConfigureEndpoint() macro. This indicates
@@ -297,10 +297,10 @@
 						EPTypeMask = USB_EP_TYPE_BULK_gc;
 						break;
 				}
-	
+
 				Endpoint_SelectedEndpointHandle->CTRL   = 0;
 				Endpoint_SelectedEndpointHandle->STATUS = (USB_EP_BUSNACK0_bm | USB_EP_BUSNACK1_bm);
-				Endpoint_SelectedEndpointHandle->CTRL   = (EPTypeMask | Banks | Endpoint_BytesToEPSizeMask(Size));				
+				Endpoint_SelectedEndpointHandle->CTRL   = (EPTypeMask | Banks | Endpoint_BytesToEPSizeMask(Size));
 				return true;
 			}
 

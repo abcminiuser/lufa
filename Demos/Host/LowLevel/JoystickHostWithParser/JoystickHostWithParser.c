@@ -285,3 +285,4 @@ void ProcessJoystickReport(uint8_t* JoystickReport)
 	/* Display the button information on the board LEDs */
 	LEDs_SetAllLEDs(LEDMask);
 }
+

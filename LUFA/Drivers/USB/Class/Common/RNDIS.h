@@ -113,7 +113,7 @@
 		#define REMOTE_NDIS_MEDIA_STATE_CONNECTED     0x00000000UL
 		#define REMOTE_NDIS_MEDIA_STATE_DISCONNECTED  0x00000001UL
 		//@}
-		
+
 		#define REMOTE_NDIS_MEDIUM_802_3              0x00000000UL
 
 		/** \name RNDIS Connection Types */
@@ -121,7 +121,7 @@
 		#define REMOTE_NDIS_DF_CONNECTIONLESS	      0x00000001UL
 		#define REMOTE_NDIS_DF_CONNECTION_ORIENTED    0x00000002UL
 		//@}
-		
+
 		/** \name RNDIS Packet Types */
 		//@{
 		#define REMOTE_NDIS_PACKET_DIRECTED           0x00000001UL
@@ -137,7 +137,7 @@
 		#define REMOTE_NDIS_PACKET_FUNCTIONAL         0x00004000UL
 		#define REMOTE_NDIS_PACKET_MAC_FRAME          0x00008000UL
 		//@}
-		
+
 		/** \name RNDIS OID Values */
 		//@{
 		#define OID_GEN_SUPPORTED_LIST                0x00010101UL

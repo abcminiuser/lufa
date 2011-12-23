@@ -194,7 +194,7 @@ uint8_t USB_Host_SetDeviceConfiguration(const uint8_t ConfigNumber)
 		};
 
 	Pipe_SelectPipe(PIPE_CONTROLPIPE);
-	
+
 	if ((ErrorCode = USB_Host_SendControlRequest(NULL)) == HOST_SENDCONTROL_Successful)
 	{
 		USB_Host_ConfigurationNumber = ConfigNumber;

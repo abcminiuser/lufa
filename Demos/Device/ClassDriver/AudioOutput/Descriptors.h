@@ -52,7 +52,7 @@
 			/** Endpoint number of the Audio isochronous streaming data endpoint. */
 			#define AUDIO_STREAM_EPNUM           5
 		#endif
-		
+
 		/** Endpoint size in bytes of the Audio isochronous streaming data endpoint. The Windows audio stack requires
 		 *  at least 192 bytes for correct output, thus the smaller 128 byte maximum endpoint size on some of the smaller
 		 *  USB AVR models will result in unavoidable distorted output.
@@ -87,3 +87,4 @@
 		                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
 
 #endif
+

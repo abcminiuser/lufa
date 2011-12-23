@@ -301,3 +301,4 @@ void ProcessMouseReport(uint8_t* MouseReport)
 	/* Display the button information on the board LEDs */
 	LEDs_SetAllLEDs(LEDMask);
 }
+

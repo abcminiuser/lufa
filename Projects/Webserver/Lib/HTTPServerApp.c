@@ -194,7 +194,7 @@ static void HTTPServerApp_OpenRequestedFile(void)
 	{
 		strncpy_P(&AppState->HTTPServer.FileName[FileNameLen], DefaultDirFileName,
 		          (sizeof(AppState->HTTPServer.FileName) - FileNameLen));
-		
+
 		/* Ensure altered filename is still null-terminated */
 		AppState->HTTPServer.FileName[sizeof(AppState->HTTPServer.FileName) - 1] = 0x00;
 	}

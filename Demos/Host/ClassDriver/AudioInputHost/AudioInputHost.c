@@ -104,7 +104,7 @@ int main(void)
 					USB_HostState = HOST_STATE_WaitForDeviceRemoval;
 					break;
 				}
-			
+
 				USB_Audio_SampleFreq_t SampleRate = AUDIO_SAMPLE_FREQ(48000);
 				if (Audio_Host_GetSetEndpointProperty(&Microphone_Audio_Interface, Microphone_Audio_Interface.Config.DataINPipeNumber,
 				                                      AUDIO_REQ_SetCurrent, AUDIO_EPCONTROL_SamplingFreq,
@@ -113,14 +113,14 @@ int main(void)
 					puts_P(PSTR("Error Setting Audio Sampling Frequency.\r\n"));
 					LEDs_SetAllLEDs(LEDMASK_USB_ERROR);
 					USB_HostState = HOST_STATE_WaitForDeviceRemoval;
-					break;				
+					break;
 				}
 
 				/* Sample reload timer initialization */
 				TIMSK0  = (1 << OCIE0A);
 				OCR0A   = ((F_CPU / 8 / 48000) - 1);
 				TCCR0A  = (1 << WGM01);  // CTC mode
-				TCCR0B  = (1 << CS01);   // Fcpu/8 speed	
+				TCCR0B  = (1 << CS01);   // Fcpu/8 speed
 
 				/* Set speaker as output */
 				DDRC   |= (1 << 6);
@@ -171,7 +171,7 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 
 		LEDs_SetAllLEDs(LEDMask);
 	}
-	
+
 	Pipe_SelectPipe(PrevPipe);
 }
 

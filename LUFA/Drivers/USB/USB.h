@@ -387,7 +387,7 @@
 		#if defined(USB_CAN_BE_BOTH) || defined(__DOXYGEN__)
 			#include "Core/OTG.h"
 		#endif
-		
+
 		#include "Class/Audio.h"
 		#include "Class/CDC.h"
 		#include "Class/HID.h"

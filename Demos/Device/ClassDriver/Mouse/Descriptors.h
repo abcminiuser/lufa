@@ -43,7 +43,7 @@
 		#if (ARCH == ARCH_AVR8)
 			#include <avr/pgmspace.h>
 		#endif
-		
+
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
 		 *  application code, as the configuration descriptor contains several sub-descriptors which

@@ -197,7 +197,7 @@ void MIDI_Host_Task(void)
 					printf_P(PSTR("MIDI Note %s - Channel %d, Pitch %d, Velocity %d\r\n"), NoteOnEvent ? "On" : "Off",
 				                                                                           ((MIDIEvent.Data1 & 0x0F) + 1),
 				                                                                           MIDIEvent.Data2, MIDIEvent.Data3);
-				}				
+				}
 			}
 
 			Pipe_SelectPipe(MIDI_DATA_OUT_PIPE);

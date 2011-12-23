@@ -64,7 +64,7 @@ int main(void)
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
-	
+
 	for (;;)
 	{
 		Audio_Device_USBTask(&Speaker_Audio_Interface);
@@ -76,7 +76,7 @@ int main(void)
 void EVENT_USB_Device_Connect(void)
 {
 	LEDs_SetAllLEDs(LEDMASK_USB_ENUMERATING);
-	
+
 	ConfigureAudioOutput(true);
 }
 
@@ -148,10 +148,10 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
 					{
 						/* Set the new sampling frequency to the value given by the host */
 						CurrentAudioSampleFrequency = (((uint32_t)Data[2] << 16) | ((uint32_t)Data[1] << 8) | (uint32_t)Data[0]);
-						
+
 						SetAudioSampleRate(CurrentAudioSampleFrequency);
 					}
-					
+
 					return true;
 				case AUDIO_REQ_GetCurrent:
 					/* Check if we are just testing for a valid property, or actually reading it */
@@ -161,13 +161,14 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
 
 						Data[2] = (CurrentAudioSampleFrequency >> 16);
 						Data[1] = (CurrentAudioSampleFrequency >> 8);
-						Data[0] = (CurrentAudioSampleFrequency &  0xFF);					
+						Data[0] = (CurrentAudioSampleFrequency &  0xFF);
 					}
-					
+
 					return true;
 			}
 		}
 	}
-	
+
 	return false;
 }
+

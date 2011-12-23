@@ -35,7 +35,7 @@
    header, copy this into your project's root directory and supply
    the USE_LUFA_CONFIG_HEADER token to the compiler so that it is
    defined in all compiled source files.
-   
+
    For information on what each token does, refer to the LUFA
    manual section "Summary of Compile Tokens".
 */
@@ -117,6 +117,6 @@
 //		#define USB_HOST_TIMEOUT_MS              {Insert Value Here}
 //		#define HOST_DEVICE_SETTLE_DELAY_MS	     {Insert Value Here}
 
-	#endif	
+	#endif
 #endif
 

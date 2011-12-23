@@ -138,10 +138,10 @@ void Android_Host_Task(void)
 
 			/* Get and process the configuration descriptor data */
 			ErrorCode = ProcessDeviceDescriptor();
-			
+
 			/* Save whether the Android device needs to be mode-switched later on */
 			bool RequiresModeSwitch = (ErrorCode == NonAccessoryModeAndroidDevice);
-			
+
 			/* Error out if the device is not an Android device or an error occurred */
 			if ((ErrorCode != AccessoryModeAndroidDevice) && !(RequiresModeSwitch))
 			{
@@ -175,7 +175,7 @@ void Android_Host_Task(void)
 				USB_HostState = HOST_STATE_WaitForDeviceRemoval;
 				break;
 			}
-			
+
 			/* Check if a valid Android device was attached, but it is not current in Accessory mode */
 			if (RequiresModeSwitch)
 			{
@@ -191,7 +191,7 @@ void Android_Host_Task(void)
 				/* Send the control request for the Android device to switch to accessory mode */
 				Pipe_SelectPipe(PIPE_CONTROLPIPE);
 				USB_Host_SendControlRequest(NULL);
-			
+
 				/* Wait until USB device disconnected */
 				USB_HostState = HOST_STATE_WaitForDeviceRemoval;
 				break;
@@ -261,7 +261,7 @@ void Android_Host_Task(void)
 
 			/* Re-freeze IN pipe after use */
 			Pipe_Freeze();
-			break;			
+			break;
 	}
 }
 

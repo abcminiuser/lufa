@@ -55,7 +55,7 @@
 			#include <LUFA/Platform/UC3/InterruptManagement.h>
 			#include <LUFA/Platform/UC3/ClockManagement.h>
 
-			#include <avr32/io.h>			
+			#include <avr32/io.h>
 		#endif
 
 		#include "Descriptors.h"

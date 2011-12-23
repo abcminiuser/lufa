@@ -40,7 +40,7 @@
 		#include <avr/io.h>
 		#include <avr/interrupt.h>
 		#include <avr/wdt.h>
-	
+
 		#include <LUFA/Drivers/USB/USB.h>
 
 		#include "../Descriptors.h"

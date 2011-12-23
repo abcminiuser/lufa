@@ -275,7 +275,7 @@ void ProcessKeyboardReport(uint8_t* KeyboardReport)
 				}
 				else if (KeyCode == HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS)
 				{
-					PressedKey = '0';						
+					PressedKey = '0';
 				}
 				else if (KeyCode == HID_KEYBOARD_SC_SPACE)
 				{

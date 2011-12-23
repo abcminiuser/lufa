@@ -89,7 +89,7 @@
 			 *  \ingroup Group_Host
 			 */
 			extern uint8_t USB_Host_ConfigurationNumber;
-			
+
 		/* Function Prototypes: */
 			/** Sends the request stored in the \ref USB_ControlRequest global structure to the attached device,
 			 *  and transfers the data stored in the buffer to the device, or from the device to the buffer

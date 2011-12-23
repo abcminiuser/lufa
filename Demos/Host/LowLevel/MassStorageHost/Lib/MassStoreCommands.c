@@ -259,7 +259,7 @@ static uint8_t MassStore_GetReturnedStatus(MS_CommandStatusWrapper_t* const SCSI
 	{
 		return ErrorCode;
 	}
-	
+
 	/* Clear the data ready for next reception */
 	Pipe_ClearIN();
 

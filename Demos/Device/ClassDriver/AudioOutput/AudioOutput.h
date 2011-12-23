@@ -39,7 +39,7 @@
 	/* Includes: */
 		#include <stdint.h>
 		#include <stdbool.h>
-		
+
 		#include <LUFA/Common/Common.h>
 
 		#include "Descriptors.h"

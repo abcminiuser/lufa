@@ -69,7 +69,7 @@ void SetupHardware(void)
 	Serial_Init(9600, false);
 	Buttons_Init();
 	ADC_Init(ADC_FREE_RUNNING | ADC_PRESCALE_32);
-	ADC_SetupChannel(MIC_IN_ADC_CHANNEL);	
+	ADC_SetupChannel(MIC_IN_ADC_CHANNEL);
 	LEDs_Init();
 	USB_Init();
 
@@ -169,7 +169,7 @@ void Audio_Task(void)
 				USB_HostState = HOST_STATE_WaitForDeviceRemoval;
 				break;
 			}
-			
+
 			if ((ErrorCode = USB_Host_SetInterfaceAltSetting(StreamingInterfaceIndex,
 			                                                 StreamingInterfaceAltSetting)) != HOST_SENDCONTROL_Successful)
 			{
@@ -192,7 +192,7 @@ void Audio_Task(void)
 					.wIndex        = StreamingEndpointAddress,
 					.wLength       = sizeof(USB_Audio_SampleFreq_t),
 				};
-				
+
 			USB_Audio_SampleFreq_t SampleRate = AUDIO_SAMPLE_FREQ(48000);
 
 			/* Select the control pipe for the request transfer */
@@ -208,13 +208,13 @@ void Audio_Task(void)
 				USB_HostState = HOST_STATE_WaitForDeviceRemoval;
 				break;
 			}
-	
+
 			/* Sample reload timer initialization */
 			TIMSK0  = (1 << OCIE0A);
 			OCR0A   = ((F_CPU / 8 / 48000) - 1);
 			TCCR0A  = (1 << WGM01);  // CTC mode
-			TCCR0B  = (1 << CS01);   // Fcpu/8 speed	
-			
+			TCCR0B  = (1 << CS01);   // Fcpu/8 speed
+
 			puts_P(PSTR("Speaker Enumerated.\r\n"));
 
 			USB_HostState = HOST_STATE_Configured;
@@ -236,16 +236,16 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 	/* Check if the current pipe can be written to (device ready for more data) */
 	if (Pipe_IsOUTReady())
 	{
-		int16_t AudioSample;		
-	
+		int16_t AudioSample;
+
 		#if defined(USE_TEST_TONE)
 			static uint8_t SquareWaveSampleCount;
 			static int16_t CurrentWaveValue;
-			
+
 			/* In test tone mode, generate a square wave at 1/256 of the sample rate */
 			if (SquareWaveSampleCount++ == 0xFF)
 			  CurrentWaveValue ^= 0x8000;
-			
+
 			/* Only generate audio if the board button is being pressed */
 			AudioSample = (Buttons_GetStatus() & BUTTONS_BUTTON1) ? CurrentWaveValue : 0;
 		#else
@@ -255,12 +255,12 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 			#if defined(MICROPHONE_BIASED_TO_HALF_RAIL)
 			/* Microphone is biased to half rail voltage, subtract the bias from the sample value */
 			AudioSample -= (SAMPLE_MAX_RANGE / 2);
-			#endif		
+			#endif
 		#endif
-		
+
 		Pipe_Write_16_LE(AudioSample);
 		Pipe_Write_16_LE(AudioSample);
-		
+
 		if (!(Pipe_IsReadWriteAllowed()))
 		  Pipe_ClearOUT();
 	}
@@ -268,3 +268,4 @@ ISR(TIMER0_COMPA_vect, ISR_BLOCK)
 	Pipe_Freeze();
 	Pipe_SelectPipe(PrevPipe);
 }
+

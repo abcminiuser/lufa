@@ -74,7 +74,7 @@ uint8_t Endpoint_WaitUntilReady(void)
 	{
 		if (Endpoint_IsOUTReceived())
 		  return ENDPOINT_READYWAIT_NoError;
-		
+
 		uint8_t USB_DeviceState_LCL = USB_DeviceState;
 
 		if (USB_DeviceState_LCL == DEVICE_STATE_Unattached)

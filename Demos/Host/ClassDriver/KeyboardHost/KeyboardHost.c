@@ -153,7 +153,7 @@ int main(void)
 						{
 							PressedKey = '\n';
 						}
-						
+
 						if (PressedKey)
 						  putchar(PressedKey);
 					}

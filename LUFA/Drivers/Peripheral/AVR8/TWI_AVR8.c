@@ -105,7 +105,7 @@ uint8_t TWI_ReadPacket(const uint8_t SlaveAddress,
                        uint8_t Length)
 {
 	uint8_t ErrorCode;
-	
+
 	if ((ErrorCode = TWI_WritePacket(SlaveAddress, TimeoutMS, InternalAddress, InternalAddressLen,
 	                                 NULL, 0)) != TWI_ERROR_NoError)
 	{
@@ -123,10 +123,10 @@ uint8_t TWI_ReadPacket(const uint8_t SlaveAddress,
 				break;
 			}
 		}
-		
+
 		TWI_StopTransmission();
 	}
-	
+
 	return ErrorCode;
 }
 
@@ -159,9 +159,10 @@ uint8_t TWI_WritePacket(const uint8_t SlaveAddress,
 				break;
 			}
 		}
-		
+
 		TWI_StopTransmission();
 	}
-	
+
 	return ErrorCode;
 }
+

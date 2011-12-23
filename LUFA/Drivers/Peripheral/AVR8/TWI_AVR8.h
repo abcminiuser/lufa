@@ -88,7 +88,7 @@
  *          }
  *      }
  *  \endcode
- * 
+ *
  *  <b>High Level API Example:</b>
  *  \code
  *      // Initialize the TWI driver before first use
@@ -154,10 +154,10 @@
 			 *  or \ref TWI_ADDRESS_WRITE to obtain the device's read and write address respectively.
 			 */
 			#define TWI_DEVICE_ADDRESS_MASK  0xFE
-			
+
 			/** Bit length prescaler for \ref TWI_Init(). This mask multiplies the TWI bit length prescaler by 1. */
 			#define TWI_BIT_PRESCALE_1       ((0 << TWPS1) | (0 << TWPS0))
-			
+
 			/** Bit length prescaler for \ref TWI_Init(). This mask multiplies the TWI bit length prescaler by 4. */
 			#define TWI_BIT_PRESCALE_4       ((0 << TWPS1) | (1 << TWPS0))
 
@@ -166,7 +166,7 @@
 
 			/** Bit length prescaler for \ref TWI_Init(). This mask multiplies the TWI bit length prescaler by 64. */
 			#define TWI_BIT_PRESCALE_64      ((1 << TWPS1) | (1 << TWPS0))
-			
+
 		/* Enums: */
 			/** Enum for the possible return codes of the TWI transfer start routine and other dependant TWI functions. */
 			enum TWI_ErrorCodes_t
@@ -178,7 +178,7 @@
 				TWI_ERROR_SlaveNotReady        = 4, /**< Slave NAKed the TWI bus START condition. */
 				TWI_ERROR_SlaveNAK             = 5, /**< Slave NAKed whilst attempting to send data to the device. */
 			};
-	
+
 		/* Inline Functions: */
 			/** Initializes the TWI hardware into master mode, ready for data transmission and reception. This must be
 			 *  before any other TWI operations.

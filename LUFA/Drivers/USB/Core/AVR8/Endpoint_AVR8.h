@@ -157,7 +157,7 @@
 			 */
 			#define ENDPOINT_DIR_IN                         (1 << EPDIR)
 			//@}
-			
+
 			/** \name Endpoint Bank Mode Masks */
 			//@{
 			/** Mask for the bank mode selection for the \ref Endpoint_ConfigureEndpoint() macro. This indicates

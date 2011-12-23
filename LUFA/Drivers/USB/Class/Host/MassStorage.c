@@ -103,7 +103,7 @@ uint8_t MS_Host_ConfigurePipes(USB_ClassInfo_MS_Host_t* const MSInterfaceInfo,
 			Token           = PIPE_TOKEN_OUT;
 			Type            = EP_TYPE_BULK;
 			DoubleBanked    = MSInterfaceInfo->Config.DataOUTPipeDoubleBank;
-			
+
 			MSInterfaceInfo->State.DataOUTPipeSize = DataOUTEndpoint->EndpointSize;
 		}
 		else

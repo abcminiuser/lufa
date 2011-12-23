@@ -71,7 +71,7 @@
 
 		#include "HIDReportData.h"
 		#include "../Common/HID.h"
-		
+
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
 			extern "C" {
