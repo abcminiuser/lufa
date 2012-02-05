@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -148,7 +148,7 @@
 		/** Type define for a structure containing a complete DFU command issued by the host. */
 		typedef struct
 		{
-			uint8_t  Command; /**< Single byte command to perform, one of the COMMAND_* macro values */
+			uint8_t  Command; /**< Single byte command to perform, one of the \c COMMAND_* macro values */
 			uint8_t  Data[5]; /**< Command parameters */
 			uint16_t DataSize; /**< Size of the command parameters */
 		} DFU_Command_t;
@@ -192,8 +192,8 @@
 		};
 
 	/* Function Prototypes: */
-		void SetupHardware(void);
-		void ResetHardware(void);
+		static void SetupHardware(void);
+		static void ResetHardware(void);
 
 		void EVENT_USB_Device_ControlRequest(void);
 

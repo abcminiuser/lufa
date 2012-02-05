@@ -1,18 +1,18 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
-      www.fourwalledcubicle.com
+           www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
-  Permission to use, copy, modify, and distribute this software
-  and its documentation for any purpose and without fee is hereby
-  granted, provided that the above copyright notice appear in all
-  copies and that both that the copyright notice and this
+  Permission to use, copy, modify, distribute, and sell this
+  software and its documentation for any purpose is hereby granted
+  without fee, provided that the above copyright notice appear in
+  all copies and that both that the copyright notice and this
   permission notice and warranty disclaimer appear in supporting
   documentation, and that the name of the author not be used in
   advertising or publicity pertaining to distribution of the
@@ -99,6 +99,17 @@
 				AVR32_GPIO.port[3].gpers = LEDS_LEDMASK3;
 				AVR32_GPIO.port[3].oders = LEDS_LEDMASK3;
 				AVR32_GPIO.port[3].ovrs  = LEDS_LEDMASK3;
+			}
+
+			static inline void LEDs_Disable(void)
+			{
+				AVR32_GPIO.port[2].gperc = LEDS_LEDMASK2;
+				AVR32_GPIO.port[2].oderc = LEDS_LEDMASK2;
+				AVR32_GPIO.port[2].ovrc  = LEDS_LEDMASK2;
+
+				AVR32_GPIO.port[3].gperc = LEDS_LEDMASK3;
+				AVR32_GPIO.port[3].oderc = LEDS_LEDMASK3;
+				AVR32_GPIO.port[3].ovrc  = LEDS_LEDMASK3;
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint32_t LEDMask)

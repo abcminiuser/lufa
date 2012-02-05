@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -313,7 +313,7 @@ void ISPTarget_LoadExtendedAddress(void)
 /** Waits until the last issued target memory programming command has completed, via the check mode given and using
  *  the given parameters.
  *
- *  \param[in] ProgrammingMode  Programming mode used and completion check to use, a mask of PROG_MODE_* constants
+ *  \param[in] ProgrammingMode  Programming mode used and completion check to use, a mask of \c PROG_MODE_* constants
  *  \param[in] PollAddress      Memory address to poll for completion if polling check mode used
  *  \param[in] PollValue        Poll value to check against if polling check mode used
  *  \param[in] DelayMS          Milliseconds to delay before returning if delay check mode used
@@ -356,6 +356,9 @@ uint8_t ISPTarget_WaitForProgComplete(const uint8_t ProgrammingMode,
 			ProgrammingStatus = ISPTarget_WaitWhileTargetBusy();
 			break;
 	}
+
+	/* Program complete - reset timeout */
+	wdt_reset();
 
 	return ProgrammingStatus;
 }

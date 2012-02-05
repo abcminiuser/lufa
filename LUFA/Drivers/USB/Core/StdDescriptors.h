@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -104,20 +104,19 @@
 
 			/** \name USB Configuration Descriptor Attribute Masks */
 			//@{
-			/** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t
-			 *  descriptor's ConfigAttributes value to indicate that the specified configuration can draw its power
-			 *  from the host's VBUS line.
+			/** Mask for the reserved bit in the Configuration Descriptor's \c ConfigAttributes field, which must be set on all
+			 *  devices for historial purposes.
 			 */
-			#define USB_CONFIG_ATTR_BUSPOWERED        0x80
+			#define USB_CONFIG_ATTR_RESERVED          0x80
 
 			/** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t
-			 *  descriptor's ConfigAttributes value to indicate that the specified configuration can draw its power
+			 *  descriptor's \c ConfigAttributes value to indicate that the specified configuration can draw its power
 			 *  from the device's own power source.
 			 */
 			#define USB_CONFIG_ATTR_SELFPOWERED       0x40
 
 			/** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t
-			 *  descriptor's ConfigAttributes value to indicate that the specified configuration supports the
+			 *  descriptor's \c ConfigAttributes value to indicate that the specified configuration supports the
 			 *  remote wakeup feature of the USB standard, allowing a suspended USB device to wake up the host upon
 			 *  request.
 			 */
@@ -127,28 +126,28 @@
 			/** \name Endpoint Descriptor Attribute Masks */
 			//@{
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is not synchronized.
+			 *  \c Attributes value to indicate that the specified endpoint is not synchronized.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint attributes.
 			 */
 			#define ENDPOINT_ATTR_NO_SYNC             (0 << 2)
 
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is asynchronous.
+			 *  \c Attributes value to indicate that the specified endpoint is asynchronous.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint attributes.
 			 */
 			#define ENDPOINT_ATTR_ASYNC               (1 << 2)
 
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is adaptive.
+			 *  \c Attributes value to indicate that the specified endpoint is adaptive.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint attributes.
 			 */
 			#define ENDPOINT_ATTR_ADAPTIVE            (2 << 2)
 
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is synchronized.
+			 *  \c Attributes value to indicate that the specified endpoint is synchronized.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint attributes.
 			 */
@@ -158,21 +157,21 @@
 			/** \name Endpoint Descriptor Usage Masks */
 			//@{
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is used for data transfers.
+			 *  \c Attributes value to indicate that the specified endpoint is used for data transfers.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint usage attributes.
 			 */
 			#define ENDPOINT_USAGE_DATA               (0 << 4)
 
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is used for feedback.
+			 *  \c Attributes value to indicate that the specified endpoint is used for feedback.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint usage attributes.
 			 */
 			#define ENDPOINT_USAGE_FEEDBACK           (1 << 4)
 
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
-			 *  Attributes value to indicate that the specified endpoint is used for implicit feedback.
+			 *  \c Attributes value to indicate that the specified endpoint is used for implicit feedback.
 			 *
 			 *  \see The USB specification for more details on the possible Endpoint usage attributes.
 			 */
@@ -432,8 +431,8 @@
 				uint8_t  ConfigurationNumber; /**< Configuration index of the current configuration. */
 				uint8_t  ConfigurationStrIndex; /**< Index of a string descriptor describing the configuration. */
 
-				uint8_t  ConfigAttributes; /**< Configuration attributes, comprised of a mask of zero or
-				                            *   more USB_CONFIG_ATTR_* masks.
+				uint8_t  ConfigAttributes; /**< Configuration attributes, comprised of a mask of \c USB_CONFIG_ATTR_* masks.
+				                            *   On all devices, this should include USB_CONFIG_ATTR_RESERVED at a minimum.
 				                            */
 
 				uint8_t  MaxPowerConsumption; /**< Maximum power consumption of the device while in the
@@ -463,8 +462,8 @@
 				uint8_t  bNumInterfaces; /**< Total number of interfaces in the configuration. */
 				uint8_t  bConfigurationValue; /**< Configuration index of the current configuration. */
 				uint8_t  iConfiguration; /**< Index of a string descriptor describing the configuration. */
-				uint8_t  bmAttributes; /**< Configuration attributes, comprised of a mask of zero or
-				                        *   more USB_CONFIG_ATTR_* masks.
+				uint8_t  bmAttributes; /**< Configuration attributes, comprised of a mask of \c USB_CONFIG_ATTR_* masks.
+				                        *   On all devices, this should include USB_CONFIG_ATTR_RESERVED at a minimum.
 				                        */
 				uint8_t  bMaxPower; /**< Maximum power consumption of the device while in the
 				                     *   current configuration, calculated by the \ref USB_CONFIG_POWER_MA()

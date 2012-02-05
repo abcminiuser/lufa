@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -125,6 +125,9 @@
 		 *  I/O pins to inputs with their pull-ups enabled.
 		 */
 		static inline void Joystick_Init(void);
+
+		/** Disables the joystick driver, releasing the I/O pins back to their default high-impedence input mode. */
+		static inline void Joystick_Disable(void);
 
 		/** Returns the current status of the joystick, as a mask indicating the direction the joystick is
 		 *  currently facing in (multiple bits can be set).
