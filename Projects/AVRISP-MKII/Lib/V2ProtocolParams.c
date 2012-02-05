@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -37,7 +37,7 @@
 #include "V2ProtocolParams.h"
 
 /* Non-Volatile Parameter Values for EEPROM storage */
-static uint8_t EEMEM EEPROM_Rest_Polarity = 0x00;
+static uint8_t EEMEM EEPROM_Reset_Polarity = 0x00;
 
 /* Volatile Parameter Values for RAM storage */
 static ParameterItem_t ParameterTable[] =
@@ -71,7 +71,7 @@ static ParameterItem_t ParameterTable[] =
 		  .ParamValue       = 6                                  },
 
 		{ .ParamID          = PARAM_RESET_POLARITY,
-		  .ParamPrivileges  = PARAM_PRIV_WRITE,
+		  .ParamPrivileges  = PARAM_PRIV_READ | PARAM_PRIV_WRITE,
 		  .ParamValue       = 0x01                               },
 
 		{ .ParamID          = PARAM_STATUS_TGT_CONN,
@@ -79,7 +79,7 @@ static ParameterItem_t ParameterTable[] =
 		  .ParamValue       = STATUS_ISP_READY                   },
 
 		{ .ParamID          = PARAM_DISCHARGEDELAY,
-		  .ParamPrivileges  = PARAM_PRIV_WRITE,
+		  .ParamPrivileges  = PARAM_PRIV_READ | PARAM_PRIV_WRITE,
 		  .ParamValue       = 0x00                               },
 	};
 
@@ -88,7 +88,7 @@ static ParameterItem_t ParameterTable[] =
 void V2Params_LoadNonVolatileParamValues(void)
 {
 	/* Target RESET line polarity is a non-volatile value, retrieve current parameter value from EEPROM */
-	V2Params_GetParamFromTable(PARAM_RESET_POLARITY)->ParamValue = eeprom_read_byte(&EEPROM_Rest_Polarity);
+	V2Params_GetParamFromTable(PARAM_RESET_POLARITY)->ParamValue = eeprom_read_byte(&EEPROM_Reset_Polarity);
 }
 
 /** Updates any parameter values that are sourced from hardware rather than explicitly set by the host, such as
@@ -108,7 +108,7 @@ void V2Params_UpdateParamValues(void)
  *
  *  \param[in] ParamID  Parameter ID whose privileges are to be retrieved from the table
  *
- *  \return Privileges for the requested parameter, as a mask of PARAM_PRIV_* masks
+ *  \return Privileges for the requested parameter, as a mask of \c PARAM_PRIV_* masks
  */
 uint8_t V2Params_GetParameterPrivileges(const uint8_t ParamID)
 {
@@ -163,7 +163,7 @@ void V2Params_SetParameterValue(const uint8_t ParamID,
 
 	/* The target RESET line polarity is a non-volatile parameter, save to EEPROM when changed */
 	if (ParamID == PARAM_RESET_POLARITY)
-	  eeprom_update_byte(&EEPROM_Rest_Polarity, Value);
+	  eeprom_update_byte(&EEPROM_Reset_Polarity, Value);
 }
 
 /** Retrieves a parameter entry (including ID, value and privileges) from the parameter table that matches the given

@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -165,7 +165,7 @@
 
 			/** Retrieves the current feature status of the attached device, via a GET STATUS standard request. The
 			 *  retrieved feature status can then be examined by masking the retrieved value with the various
-			 *  FEATURE_* masks for bus/self power information and remote wakeup support.
+			 *  \c FEATURE_* masks for bus/self power information and remote wakeup support.
 			 *
 			 *  \note After this routine returns, the control pipe will be selected.
 			 *
