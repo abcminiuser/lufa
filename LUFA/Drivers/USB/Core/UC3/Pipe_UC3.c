@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -58,6 +58,7 @@ bool Pipe_ConfigurePipe(const uint8_t Number,
 	                                ((uint32_t)Type  << AVR32_USBB_PTYPE_OFFSET)  |
 	                                ((uint32_t)Token << AVR32_USBB_PTOKEN_OFFSET) |
 	                                ((uint32_t)Banks << AVR32_USBB_PBK_OFFSET)    |
+	                                Pipe_BytesToEPSizeMask(Size) |
 	                                ((EndpointNumber & PIPE_EPNUM_MASK) << AVR32_USBB_PEPNUM_OFFSET));
 
 	Pipe_SetInfiniteINRequests();
@@ -76,11 +77,12 @@ bool Pipe_ConfigurePipe(const uint8_t Number,
 			              ((uint32_t)Type  << AVR32_USBB_PTYPE_OFFSET)  |
 			              ((uint32_t)Token << AVR32_USBB_PTOKEN_OFFSET) |
 			              ((uint32_t)Banks << AVR32_USBB_PBK_OFFSET)    |
+			              Pipe_BytesToEPSizeMask(Size) |
 			              ((EndpointNumber & PIPE_EPNUM_MASK) << AVR32_USBB_PEPNUM_OFFSET));
 		}
 		else
 		{
-			UPCFG0Temp = (&AVR32_USBB.upcfg0)[PNum]
+			UPCFG0Temp = (&AVR32_USBB.upcfg0)[PNum];
 		}
 
 		if (!(UPCFG0Temp & AVR32_USBB_ALLOC_MASK))

@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -209,7 +209,8 @@
 			#elif (defined(__AVR_ATxmega256A3BU__))
 				#define USB_SERIES_A3BU_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega16A4U__) || defined(__AVR_ATxmega32A4U__))
+			#elif (defined(__AVR_ATxmega16A4U__) || defined(__AVR_ATxmega32A4U__) || \
+			       defined(__AVR_ATxmega64A4U__) || defined(__AVR_ATxmega128A4U__))
 				#define USB_SERIES_A4U_XMEGA
 				#define USB_CAN_BE_DEVICE
 			#elif (defined(__AVR_ATxmega128B1__) || defined(__AVR_ATxmega64B1__))

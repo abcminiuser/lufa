@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -79,6 +79,11 @@ void USB_Host_ProcessNextHostState(void)
 				USB_OTGPAD_On();
 				USB_Host_VBUS_Auto_Enable();
 				USB_Host_VBUS_Auto_On();
+				
+				#if defined(NO_AUTO_VBUS_MANAGEMENT)
+				USB_Host_VBUS_Manual_Enable();
+				USB_Host_VBUS_Manual_On();
+				#endif
 
 				USB_HostState = HOST_STATE_Powered_WaitForConnect;
 			}
@@ -219,7 +224,7 @@ uint8_t USB_Host_WaitMS(uint8_t MS)
 			break;
 		}
 
-		if (Pipe_IsError() == true)
+		if (Pipe_IsError())
 		{
 			Pipe_ClearError();
 			ErrorCode = HOST_WAITERROR_PipeError;
@@ -227,7 +232,7 @@ uint8_t USB_Host_WaitMS(uint8_t MS)
 			break;
 		}
 
-		if (Pipe_IsStalled() == true)
+		if (Pipe_IsStalled())
 		{
 			Pipe_ClearStall();
 			ErrorCode = HOST_WAITERROR_SetupStalled;

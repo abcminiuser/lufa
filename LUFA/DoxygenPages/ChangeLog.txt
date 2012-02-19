@@ -6,7 +6,7 @@
 
  /** \page Page_ChangeLog Project Changelog
   *
-  *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  \section Sec_ChangeLog120219 Version 120219
   *  <b>New:</b>
   *  - Core:
   *   - Added support for the XMEGA A3BU Xplained board
@@ -15,6 +15,15 @@
   *   - Added support for the USB2AX boards, hardware revision 1-3
   *   - Added new Android Accessory Host class driver
   *   - Added new USB_Host_GetDescriptor(), USB_Host_GetDeviceConfiguration() and USB_Host_GetInterfaceAltSetting() functions
+  *   - Added new CALLBACK_Audio_Device_GetSetInterfaceProperty() callback to the Audio Device Class driver
+  *   - Added new LEDs_Disable(), Buttons_Disable() and Joystick_Disable() functions to the board hardware drivers
+  *   - Added support for the Micropendous family of boards (Arduino-like revisions 1 and 2, DIP, 32U2, A, 1, 2, 3 and 4)
+  *   - Added INVERTED_VBUS_ENABLE_LINE and NO_AUTO_VBUS_MANAGEMENT compile time options (thanks to Opendous Inc.)
+  *   - Added support for the Atmel XMEGA B1 Xplained board
+  *   - Added Serial USART peripheral driver for the XMEGA architecture
+  *   - Added Master Mode SPI USART peripheral driver for the XMEGA and AVR8 architectures
+  *   - Added build test to verify correct compilation of as many modules as possible under as many architectures as possible under the C and C++ languages
+  *   - Added build test to verify correct compilation of the USB driver when forced into single USB mode under as many architectures as possible
   *  - Library Applications:
   *   - Added User Application APIs to the CDC and DFU class bootloaders
   *   - Added INVERTED_ISP_MISO compile time option to the AVRISP-MKII clone project (thanks to Chuck Rohs)
@@ -27,9 +36,18 @@
   *   - Added Class, ClassDevice, ClassHost and ClassCommon to the internal class driver source filenames to prevent ambiguities
   *   - Altered the Mass Storage Host class driver so that SCSI data STALLs from the attached device can be recovered from automatically without
   *     having to reset the Mass Storage interface
+  *   - USB_CONFIG_ATTR_BUSPOWERED constant renamed to USB_CONFIG_ATTR_RESERVED, as this was misnamed (thanks to NXP Semiconductors)
+  *   - Reordered board name definition indexes so that a mispelled BOARD compile option will default to BOARD_USER rather than BOARD_USBKEY
+  *   - Altered the HID class driver to only try to construct at maximum one packet per USB frame, to reduce CPU usage
+  *   - All USB Class Driver configuration struct values are now non-const, to allow for run-time modifications if required before configuring an instance
   *  - Library Applications:
   *   - Altered the Mass Storage Host LowLevel demo so that SCSI data STALLs from the attached device can be recovered from automatically without
   *     having to reset the Mass Storage interface
+  *   - Updated the AVRISP-MKII Clone programmer project to be compatible with the latest version of AVR Studio (version 5.1)
+  *   - Changed the AVRISP-MKII Clone programmer project to report a fixed 3.3V VTARGET voltage on USB AVRs lacking an ADC instead of 5V to prevent
+  *     warnings in AVR Studio 5.1 when programming XMEGA devices
+  *   - Allow serial strings to be generated on the older AVR8 devices which do not explicitly state they contain unique values in the datasheet,
+  *     as this appears to be implemented in hardware
   *
   *  <b>Fixed:</b>
   *  - Core:
@@ -40,10 +58,18 @@
   *   - Fixed broken AVR32 endpoint/pipe communications when ORDERED_EP_CONFIG compile time option is not enabled (thanks to Matthias Jahr)
   *   - Fixed broken compilation for the AVR32 devices if the NO_SOF_EVENTS compile time option was not enabled (thanks to Matthias Jahr)
   *   - Fixed compiler warning on GCC with \c -wundef compile flag is used (thanks to Georg Glock)
+  *   - Fixed incorrect implementation of LEDs_ToggleLEDs() for the Adafruit-U4 board (thanks to Caroline Saliman)
+  *   - Fixed broken compilation of LUFA under C++ compilers when the Serial peripheral module header file is included in a C++ source file
+  *   - Fixed missing semicolon in the UC3 architecture host pipe functions
+  *   - Fixed failed compilation for the XMEGA architecture if USB_DEVICE_ONLY us not specified
+  *   - Fixed UC3 architecture ignoring the pipe size when Pipe_ConfigurePipe() is called
   *  - Library Applications:
   *   - Added reliability patches to the AVRISP-MKII Clone project's PDI/TPI protocols (thanks to Justin Mattair)
   *   - Fixed AVRISP-MKII Clone compile warning on AVR8 U4 targets even when NO_VTARGET_DETECT is enabled
   *   - Fixed AVRISP-MKII Clone failing to start application firmware once a TPI programming session is exited
+  *   - Fixed DFU class bootloader not resetting the LED pins as high impedance inputs when a software jump to the user applications is requested
+  *   - Fixed AVRISP-MKII Clone timing out on long programming commands such as programming the EEPROM on an ATMEGA8 (thanks to Martin Kelling)
+  *   - Fixed invalid PID value used in the TempDataLogger project host application (thanks to Anupam Pathak)
   *
   *  \section Sec_ChangeLog111009 Version 111009
   *  <b>New:</b>

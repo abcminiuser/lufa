@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -81,7 +81,7 @@
 			 */
 			typedef struct
 			{
-				const struct
+				struct
 				{
 					uint8_t  InterfaceNumber; /**< Interface number of the HID interface within the device. */
 
@@ -113,6 +113,7 @@
 				struct
 				{
 					bool     UsingReportProtocol; /**< Indicates if the HID interface is set to Boot or Report protocol mode. */
+					uint16_t PrevFrameNum; /**< Frame number of the previous HID report packet opportunity. */
 					uint16_t IdleCount; /**< Report idle period, in milliseconds, set by the host. */
 					uint16_t IdleMSRemaining; /**< Total number of milliseconds remaining before the idle period elapsed - this
 											   *   should be decremented by the user application if non-zero each millisecond. */

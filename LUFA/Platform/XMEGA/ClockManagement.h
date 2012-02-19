@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -35,8 +35,8 @@
  *  of the various clocks within the device to clock the various peripherals.
  */
 
-/** \ingroup Group_PlatformDrivers
- *  \defgroup Group_PlatformDrivers_XMEGAClocks AVR USB XMEGA Clock Management Driver - LUFA/Platform/XMEGA/ClockManagement.h
+/** \ingroup Group_PlatformDrivers_XMEGA
+ *  \defgroup Group_PlatformDrivers_XMEGAClocks Clock Management Driver - LUFA/Platform/XMEGA/ClockManagement.h
  *  \brief Module Clock Driver for the AVR USB XMEGA microcontrollers.
  *
  *  \section Sec_Dependencies Module Source Dependencies
@@ -323,14 +323,11 @@
 			 *  and ready for use before this function is called.
 			 *
 			 *  \param[in] Source      Clock source for the CPU core, a value from \ref XMEGA_System_ClockSource_t.
-			 *  \param[in] SourceFreq  Frequency of the CPU core's clock source, in Hz.
 			 *
 			 *  \return Boolean \c true if the CPU core clock was sucessfully altered, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source,
-			                                              const uint32_t SourceFreq) ATTR_ALWAYS_INLINE;
-			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source,
-			                                              const uint32_t SourceFreq)
+			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source) ATTR_ALWAYS_INLINE;
+			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source)
 			{
 				uint8_t ClockSourceMask = 0;
 

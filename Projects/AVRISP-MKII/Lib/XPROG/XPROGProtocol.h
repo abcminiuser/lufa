@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -49,6 +49,10 @@
 
 	/* Preprocessor Checks: */
 		#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
+			/* On the XPLAIN board, we only need PDI programming
+			   for the ATXMEGA128A1 - disable ISP to prevent hardware
+			   damage.
+			 */
 			#undef ENABLE_ISP_PROTOCOL
 
 			#if !defined(ENABLE_XPROG_PROTOCOL)
@@ -98,6 +102,7 @@
 		#define XPRG_PARAM_EEPPAGESIZE              0x02
 		#define XPRG_PARAM_NVMCMD_REG               0x03
 		#define XPRG_PARAM_NVMCSR_REG               0x04
+		#define XPRG_PARAM_UNKNOWN_1                0x05
 
 		#define XPRG_PROTOCOL_PDI                   0x00
 		#define XPRG_PROTOCOL_JTAG                  0x01

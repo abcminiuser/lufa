@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -91,11 +91,20 @@
 		#if !defined(__DOXYGEN__)
 			static inline void Joystick_Init(void)
 			{
-				DDRB  &= ~(JOY_BMASK);
-				DDRE  &= ~(JOY_EMASK);
+				DDRB  &= ~JOY_BMASK;
+				DDRE  &= ~JOY_EMASK;
 
-				PORTB |= JOY_BMASK;
-				PORTE |= JOY_EMASK;
+				PORTB |=  JOY_BMASK;
+				PORTE |=  JOY_EMASK;
+			}
+
+			static inline void Joystick_Disable(void)
+			{
+				DDRB  &= ~JOY_BMASK;
+				DDRE  &= ~JOY_EMASK;
+
+				PORTB &= ~JOY_BMASK;
+				PORTE &= ~JOY_EMASK;
 			}
 
 			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;

@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -29,28 +29,29 @@
 */
 
 /** \file
- *  \brief Board specific Dataflash driver header for the Atmel XMEGA A3BU Xplained.
- *  \copydetails Group_Dataflash_A3BU_XPLAINED
+ *  \brief Board specific Dataflash driver header for the Atmel XMEGA B1 Xplained.
+ *  \copydetails Group_Dataflash_B1_XPLAINED
  *
  *  \note This file should not be included directly. It is automatically included as needed by the dataflash driver
  *        dispatch header located in LUFA/Drivers/Board/Dataflash.h.
  */
 
 /** \ingroup Group_Dataflash
- *  \defgroup Group_Dataflash_A3BU_XPLAINED A3BU_XPLAINED
- *  \brief Board specific Dataflash driver header for the Atmel XMEGA A3BU Xplained.
+ *  \defgroup Group_Dataflash_B1_XPLAINED B1_XPLAINED
+ *  \brief Board specific Dataflash driver header for the Atmel XMEGA B1 Xplained.
  *
- *  Board specific Dataflash driver header for the Atmel XMEGA A3BU Xplained board.
+ *  Board specific Dataflash driver header for the Atmel XMEGA B1 Xplained board.
  *
  *  @{
  */
 
-#ifndef __DATAFLASH_A3BU_XPLAINED_H__
-#define __DATAFLASH_A3BU_XPLAINED_H__
+#ifndef __DATAFLASH_B1_XPLAINED_H__
+#define __DATAFLASH_B1_XPLAINED_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"
 		#include "../../../Misc/AT45DB642D.h"
+		#include "../../../Peripheral/SerialSPI.h"
 
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_DATAFLASH_H)
@@ -93,25 +94,24 @@
 
 			/** Sends a byte to the currently selected dataflash IC, and returns a byte from the dataflash.
 			 *
-			 *  \param[in] Byte of data to send to the dataflash
+			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
 			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
 			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte)
 			{
-				// TODO
-				return 0;
+				return SerialSPI_TransferByte(&USARTD0, Byte);
 			}
 
 			/** Sends a byte to the currently selected dataflash IC, and ignores the next byte from the dataflash.
 			 *
-			 *  \param[in] Byte of data to send to the dataflash
+			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 */
 			static inline void Dataflash_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
 			static inline void Dataflash_SendByte(const uint8_t Byte)
 			{
-				// TODO
+				SerialSPI_SendByte(&USARTD0, Byte);
 			}
 
 			/** Sends a dummy byte to the currently selected dataflash IC, and returns the next byte from the dataflash.
@@ -121,8 +121,7 @@
 			static inline uint8_t Dataflash_ReceiveByte(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Dataflash_ReceiveByte(void)
 			{
-				// TODO
-				return 0;
+				return SerialSPI_ReceiveByte(&USARTD0);
 			}
 
 			/** Determines the currently selected dataflash chip.
@@ -170,10 +169,7 @@
 				if (PageAddress >= (DATAFLASH_PAGES * DATAFLASH_TOTALCHIPS))
 				  return;
 
-				if (PageAddress & 0x01)
-				  Dataflash_SelectChip(DATAFLASH_CHIP2);
-				else
-				  Dataflash_SelectChip(DATAFLASH_CHIP1);
+				Dataflash_SelectChip(DATAFLASH_CHIP1);
 			}
 
 			/** Toggles the select line of the currently selected dataflash IC, so that it is ready to receive
@@ -207,8 +203,6 @@
 			static inline void Dataflash_SendAddressBytes(uint16_t PageAddress,
 			                                              const uint16_t BufferByte)
 			{
-				PageAddress >>= 1;
-
 				Dataflash_SendByte(PageAddress >> 5);
 				Dataflash_SendByte((PageAddress << 3) | (BufferByte >> 8));
 				Dataflash_SendByte(BufferByte);

@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -89,6 +89,7 @@
 			#include <avr/pgmspace.h>
 			#include <avr/eeprom.h>
 			#include <avr/boot.h>
+			#include <math.h>
 			#include <util/delay.h>
 
 			typedef uint8_t uint_reg_t;
@@ -119,6 +120,7 @@
 			#include <avr/interrupt.h>
 			#include <avr/pgmspace.h>
 			#include <avr/eeprom.h>
+			#include <math.h>
 			#include <util/delay.h>
 
 			typedef uint8_t uint_reg_t;
@@ -212,7 +214,7 @@
 				 *
 				 *  \param Name  Unique name of the interrupt service routine.
 				 */
-				#define ISR(Name, ...)                  void Name (void) __attribute__((__interrupt__)) __VA_ARGS__; void Name (void)
+				#define ISR(Name, ...)          void Name (void) __attribute__((__interrupt__)) __VA_ARGS__; void Name (void)
 			#endif
 
 		/* Inline Functions: */
@@ -256,7 +258,7 @@
 				while (Milliseconds--)
 				{
 					__builtin_mtsr(AVR32_COUNT, 0);
-					while (__builtin_mfsr(AVR32_COUNT) < (F_CPU / 1000));
+					while ((uint32_t)__builtin_mfsr(AVR32_COUNT) < (F_CPU / 1000));
 				}
 				#elif (ARCH == ARCH_XMEGA)
 				if (GCC_IS_COMPILE_CONST(Milliseconds))

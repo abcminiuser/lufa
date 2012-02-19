@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -137,7 +137,7 @@ int main(void)
 }
 
 /** Configures all hardware required for the bootloader. */
-void SetupHardware(void)
+static void SetupHardware(void)
 {
 	/* Disable watchdog if enabled by bootloader/fuses */
 	MCUSR &= ~(1 << WDRF);
@@ -150,7 +150,7 @@ void SetupHardware(void)
 	MCUCR = (1 << IVCE);
 	MCUCR = (1 << IVSEL);
 
-	/* Initialize the USB subsystem */
+	/* Initialize the USB and other board hardware drivers */
 	USB_Init();
 	LEDs_Init();
 
@@ -160,10 +160,11 @@ void SetupHardware(void)
 }
 
 /** Resets all configured hardware required for the bootloader back to their original states. */
-void ResetHardware(void)
+static void ResetHardware(void)
 {
-	/* Shut down the USB subsystem */
+	/* Shut down the USB and other board hardware drivers */
 	USB_Disable();
+	LEDs_Disable();
 
 	/* Relocate the interrupt vector table back to the application section */
 	MCUCR = (1 << IVCE);

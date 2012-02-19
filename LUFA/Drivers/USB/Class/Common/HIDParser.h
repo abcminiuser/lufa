@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -222,7 +222,7 @@
 			{
 				uint16_t                    BitOffset;      /**< Bit offset in the IN, OUT or FEATURE report of the item. */
 				uint8_t                     ItemType;       /**< Report item type, a value in \ref HID_ReportItemTypes_t. */
-				uint16_t                    ItemFlags;      /**< Item data flags, a mask of HID_IOF_* constants. */
+				uint16_t                    ItemFlags;      /**< Item data flags, a mask of \c HID_IOF_* constants. */
 				uint8_t                     ReportID;       /**< Report ID this item belongs to, or 0x00 if device has only one report */
 				HID_CollectionPath_t*       CollectionPath; /**< Collection path of the item. */
 

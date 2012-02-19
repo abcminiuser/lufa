@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -66,6 +66,8 @@
 	/* Includes: */
 		#if (ARCH == ARCH_AVR8)
 			#include "AVR8/Serial_AVR8.h"
+		#elif (ARCH == ARCH_XMEGA)
+			#include "XMEGA/Serial_XMEGA.h"
 		#else
 			#error The Serial peripheral driver is not currently available for your selected architecture.
 		#endif

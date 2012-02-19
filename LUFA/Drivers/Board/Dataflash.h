@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -122,8 +122,7 @@
 		#define __INCLUDE_FROM_DATAFLASH_H
 
 	/* Includes: */
-	#include "../../Common/Common.h"
-	#include "../Peripheral/SPI.h"
+		#include "../../Common/Common.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -148,7 +147,9 @@
 		/* Inline Functions: */
 			/** Initializes the dataflash driver so that commands and data may be sent to an attached dataflash IC.
 			 *
-			 *  \note The microcontroller's SPI driver must be initialized before any of the dataflash commands are used.
+			 *  \note The microcontroller's physical interface driver connected to the Dataflash IC must be initialized before
+			 *        any of the dataflash commands are used. This is usually a SPI hardware port, but on some devices/boards may
+			 *        be a USART operating in SPI Master mode.
 			 */
 			static inline void Dataflash_Init(void);
 
@@ -201,7 +202,7 @@
 
 			/** Sends a byte to the currently selected dataflash IC, and returns a byte from the dataflash.
 			 *
-			 *  \param[in] Byte of data to send to the dataflash
+			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
@@ -209,7 +210,7 @@
 
 			/** Sends a byte to the currently selected dataflash IC, and ignores the next byte from the dataflash.
 			 *
-			 *  \param[in] Byte of data to send to the dataflash
+			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 */
 			static inline void Dataflash_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
 
@@ -234,6 +235,8 @@
 				#include "AVR8/EVK527/Dataflash.h"
 			#elif (BOARD == BOARD_A3BU_XPLAINED)
 				#include "XMEGA/A3BU_XPLAINED/Dataflash.h"
+			#elif (BOARD == BOARD_B1_XPLAINED)
+				#include "XMEGA/B1_XPLAINED/Dataflash.h"
 			#else
 				#include "Board/Dataflash.h"
 			#endif
