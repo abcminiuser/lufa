@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -35,8 +35,8 @@
  *  handlers within the device.
  */
 
-/** \ingroup Group_PlatformDrivers
- *  \defgroup Group_PlatformDrivers_UC3Interrupts UC3 Interrupt Controller Driver - LUFA/Platform/UC3/InterruptManagement.h
+/** \ingroup Group_PlatformDrivers_UC3
+ *  \defgroup Group_PlatformDrivers_UC3Interrupts Interrupt Controller Driver - LUFA/Platform/UC3/InterruptManagement.h
  *  \brief Interrupt Controller Driver for the AVR32 UC3 microcontrollers.
  *
  *  \section Sec_Dependencies Module Source Dependencies
@@ -84,9 +84,11 @@
 			typedef void (*InterruptHandlerPtr_t)(void);
 
 		/* External Variables: */
-			extern const void            EVBA_Table;
-			extern const uint32_t        Autovector_Table[];
+			#if defined(__INCLUDE_FROM_INTMANAGEMENT_C)
+				extern const void        EVBA_Table;
+			#endif
 			extern InterruptHandlerPtr_t InterruptHandlers[AVR32_INTC_NUM_INT_GRPS];
+			extern const uint32_t        Autovector_Table[];
 	#endif
 
 	/* Public Interface - May be used in end-application: */

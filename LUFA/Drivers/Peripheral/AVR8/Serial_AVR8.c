@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -82,9 +82,33 @@ void Serial_SendString(const char* StringPtr)
 	}
 }
 
-void Serial_SendData(const uint8_t* Buffer, uint16_t Length)
+void Serial_SendData(const uint8_t* Buffer,
+                     uint16_t Length)
 {
 	while (Length--)
 	  Serial_SendByte(*(Buffer++));
 }
 
+void Serial_CreateStream(FILE* Stream)
+{
+	if (!(Stream))
+	{
+		Stream = &USARTSerialStream;
+		stdin  = Stream;
+		stdout = Stream;
+	}
+
+	*Stream = (FILE)FDEV_SETUP_STREAM(Serial_putchar, Serial_getchar, _FDEV_SETUP_RW);
+}
+
+void Serial_CreateBlockingStream(FILE* Stream)
+{
+	if (!(Stream))
+	{
+		Stream = &USARTSerialStream;
+		stdin  = Stream;
+		stdout = Stream;
+	}
+
+	*Stream = (FILE)FDEV_SETUP_STREAM(Serial_putchar, Serial_getchar_Blocking, _FDEV_SETUP_RW);
+}

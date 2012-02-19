@@ -10,7 +10,7 @@
  *  to the next version released. It does not indicate all new additions to the library in each version change, only
  *  areas relevant to making older projects compatible with the API changes of each new release.
  *
- *  \section Sec_MigrationXXXXXX Migrating from 111009 to XXXXXX
+ *  \section Sec_Migration120219 Migrating from 111009 to 120219
  *  <b>USB Core</b>
  *    - The HID_KEYBOARD_MODIFER_* macros in the HID class driver have been corrected to HID_KEYBOARD_MODIFIER_* (note the spelling of "modifier").
  *      Existing applications should switch over to the correctly spelled macro names.
@@ -18,6 +18,14 @@
  *      respective class driver files. Projects referencing the class driver source files by filename rather than the LUFA_SRC_USBCLASS makefile
  *      variable should append these postfixes to the source file names. Projects including the USB class driver dispatch headers directly should either
  *      switch to including the main USB driver header instead, or use the updated header filenames.
+ *    - The USB_CONFIG_ATTR_BUSPOWERED constant has been renamed to USB_CONFIG_ATTR_RESERVED, as this was misnamed. All devices must set this bit in
+ *      the Configuration descriptor's attributes field. As all devices are assumed to be bus-powered unless stated otherwise with the
+ *      USB_CONFIG_ATTR_SELFPOWERED flag a replacement constant for bus powered devices is not provided.
+ *
+ *  <b>Device Mode</b>
+ *    - The device mode Audio class driver now requires a new user application callback, \ref CALLBACK_Audio_Device_GetSetInterfaceProperty().
+ *      Existing applications must implement this new callback, however if no audio entities are defined in the audio device's descriptors,
+ *      this function may be hard-coded to always return false for previous behaviour to be retained.
  *
  *  \section Sec_Migration111009 Migrating from 110528 to 111009
  *  <b>Non-USB Library Components</b>

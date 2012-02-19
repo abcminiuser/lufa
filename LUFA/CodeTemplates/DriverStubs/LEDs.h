@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -80,6 +80,11 @@
 			static inline void LEDs_Init(void)
 			{
 				// TODO: Add code to initialize LED port pins as outputs here
+			}
+
+			static inline void LEDs_Disable(void)
+			{
+				// TODO: Clear the LED port pins as high impedance inputs here
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)

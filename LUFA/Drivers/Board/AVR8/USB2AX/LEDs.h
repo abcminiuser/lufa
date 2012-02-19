@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -101,6 +101,17 @@
 				#else
 				DDRD  |= LEDS_ALL_LEDS;
 				PORTD |= LEDS_ALL_LEDS;				
+				#endif				
+			}
+
+			static inline void LEDs_Disable(void)
+			{
+				#if (BOARD == BOARD_USB2AX)
+				DDRC  &= ~LEDS_ALL_LEDS;
+				PORTC &= ~LEDS_ALL_LEDS;				
+				#else
+				DDRD  &= ~LEDS_ALL_LEDS;
+				PORTD &= ~LEDS_ALL_LEDS;				
 				#endif				
 			}
 

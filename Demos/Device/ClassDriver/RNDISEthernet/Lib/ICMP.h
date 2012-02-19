@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -67,7 +67,7 @@
 		/** Type define for an ICMP message header. */
 		typedef struct
 		{
-			uint8_t       Type; /**< ICMP message type, a ICMP_TYPE_* constant */
+			uint8_t       Type; /**< ICMP message type, an \c ICMP_TYPE_* constant */
 			uint8_t       Code; /**< ICMP message code, indicating the message value */
 			uint16_t      Checksum; /**< Ethernet checksum of the ICMP message */
 			uint16_t      Id; /**< Id of the ICMP message */

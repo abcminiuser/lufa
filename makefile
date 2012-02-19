@@ -23,4 +23,3 @@ all:
 	$(MAKE) -C Bootloaders $@ -s
 	@echo
 	@echo LUFA \"make $@\" operation complete.
-

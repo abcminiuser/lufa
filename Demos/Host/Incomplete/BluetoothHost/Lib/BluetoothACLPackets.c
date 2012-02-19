@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2011.
+     Copyright (C) Dean Camera, 2012.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2011  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -207,7 +207,7 @@ static void Bluetooth_ProcessIncomingACLPackets(void)
 /** Retrieves the channel information structure with the given local or remote channel number from the channel list.
  *
  *  \param[in] SearchValue  Value to search for in the channel structure list
- *  \param[in] SearchKey    Key to search within the channel structure, a CHANNEL_SEARCH_* mask
+ *  \param[in] SearchKey    Key to search within the channel structure, a \c CHANNEL_SEARCH_* mask
  *
  *  \return Pointer to the matching channel information structure in the channel table if found, NULL otherwise
  */
