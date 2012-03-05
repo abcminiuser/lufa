@@ -24,6 +24,10 @@ DEVICE_FAMILIES = $(AVR8_FAMILIES:%=%.avr8) $(XMEGA_FAMILIES:%=%.xmega) $(UC3_FA
 
 all: begin $(DEVICE_FAMILIES) clean end
 
+arch_avr8:  begin $(AVR8_FAMILIES:%=%.avr8) end
+arch_xmega: begin $(XMEGA_FAMILIES:%=%.xmega) end
+arch_uc3:   begin $(UC3_FAMILIES:%=%.uc3) end
+
 begin:
 	@echo Executing build test "ModuleTest".
 	@echo

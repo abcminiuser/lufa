@@ -45,9 +45,12 @@ USB_ClassInfo_Audio_Device_t Microphone_Audio_Interface =
 		.Config =
 			{
 				.StreamingInterfaceNumber = 1,
-
-				.DataINEndpointNumber     = AUDIO_STREAM_EPNUM,
-				.DataINEndpointSize       = AUDIO_STREAM_EPSIZE,
+				.DataINEndpoint           =
+					{
+						.Address          = AUDIO_STREAM_EPADDR,
+						.Size             = AUDIO_STREAM_EPSIZE,
+						.Banks            = 2,
+					},
 			},
 	};
 
@@ -196,7 +199,7 @@ bool CALLBACK_Audio_Device_GetSetEndpointProperty(USB_ClassInfo_Audio_Device_t* 
                                                   uint8_t* Data)
 {
 	/* Check the requested endpoint to see if a supported endpoint is being manipulated */
-	if (EndpointAddress == (ENDPOINT_DIR_IN | Microphone_Audio_Interface.Config.DataINEndpointNumber))
+	if (EndpointAddress == Microphone_Audio_Interface.Config.DataINEndpoint.Address)
 	{
 		/* Check the requested control to see if a supported control is being manipulated */
 		if (EndpointControl == AUDIO_EPCONTROL_SamplingFreq)

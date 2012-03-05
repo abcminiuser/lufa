@@ -111,10 +111,8 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	bool ConfigSuccess = true;
 
 	/* Setup Mass Storage Data Endpoints */
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(MASS_STORAGE_IN_EPNUM,  EP_TYPE_BULK, ENDPOINT_DIR_IN,
-	                                            MASS_STORAGE_IO_EPSIZE, ENDPOINT_BANK_SINGLE);
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(MASS_STORAGE_OUT_EPNUM, EP_TYPE_BULK, ENDPOINT_DIR_OUT,
-	                                            MASS_STORAGE_IO_EPSIZE, ENDPOINT_BANK_SINGLE);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(MASS_STORAGE_IN_EPADDR,  EP_TYPE_BULK, MASS_STORAGE_IO_EPSIZE, 1);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(MASS_STORAGE_OUT_EPADDR, EP_TYPE_BULK, MASS_STORAGE_IO_EPSIZE, 1);
 
 	/* Indicate endpoint configuration success or failure */
 	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
@@ -173,7 +171,7 @@ void MassStorage_Task(void)
 
 		/* Check direction of command, select Data IN endpoint if data is from the device */
 		if (CommandBlock.Flags & MS_COMMAND_DIR_DATA_IN)
-		  Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPNUM);
+		  Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPADDR);
 
 		/* Decode the received SCSI command, set returned status code */
 		CommandStatus.Status = SCSI_DecodeSCSICommand() ? MS_SCSI_COMMAND_Pass : MS_SCSI_COMMAND_Fail;
@@ -199,13 +197,13 @@ void MassStorage_Task(void)
 	if (IsMassStoreReset)
 	{
 		/* Reset the data endpoint banks */
-		Endpoint_ResetEndpoint(MASS_STORAGE_OUT_EPNUM);
-		Endpoint_ResetEndpoint(MASS_STORAGE_IN_EPNUM);
+		Endpoint_ResetEndpoint(MASS_STORAGE_OUT_EPADDR);
+		Endpoint_ResetEndpoint(MASS_STORAGE_IN_EPADDR);
 
-		Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPNUM);
+		Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPADDR);
 		Endpoint_ClearStall();
 		Endpoint_ResetDataToggle();
-		Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPNUM);
+		Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPADDR);
 		Endpoint_ClearStall();
 		Endpoint_ResetDataToggle();
 
@@ -224,7 +222,7 @@ static bool ReadInCommandBlock(void)
 	uint16_t BytesTransferred;
 
 	/* Select the Data Out endpoint */
-	Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPNUM);
+	Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPADDR);
 
 	/* Abort if no command has been sent from the host */
 	if (!(Endpoint_IsOUTReceived()))
@@ -249,7 +247,7 @@ static bool ReadInCommandBlock(void)
 	{
 		/* Stall both data pipes until reset by host */
 		Endpoint_StallTransaction();
-		Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPNUM);
+		Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPADDR);
 		Endpoint_StallTransaction();
 
 		return false;
@@ -279,7 +277,7 @@ static void ReturnCommandStatus(void)
 	uint16_t BytesTransferred;
 
 	/* Select the Data Out endpoint */
-	Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPNUM);
+	Endpoint_SelectEndpoint(MASS_STORAGE_OUT_EPADDR);
 
 	/* While data pipe is stalled, wait until the host issues a control request to clear the stall */
 	while (Endpoint_IsStalled())
@@ -290,7 +288,7 @@ static void ReturnCommandStatus(void)
 	}
 
 	/* Select the Data In endpoint */
-	Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPNUM);
+	Endpoint_SelectEndpoint(MASS_STORAGE_IN_EPADDR);
 
 	/* While data pipe is stalled, wait until the host issues a control request to clear the stall */
 	while (Endpoint_IsStalled())

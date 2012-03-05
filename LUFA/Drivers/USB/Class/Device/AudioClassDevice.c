@@ -51,8 +51,8 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 	{
 		uint8_t EndpointIndex = (USB_ControlRequest.wIndex & 0xFF);
 	
-		if ((EndpointIndex != (ENDPOINT_DIR_IN  | AudioInterfaceInfo->Config.DataINEndpointNumber)) &&
-		    (EndpointIndex != (ENDPOINT_DIR_OUT | AudioInterfaceInfo->Config.DataOUTEndpointNumber)))
+		if ((EndpointIndex != AudioInterfaceInfo->Config.DataINEndpoint.Address) &&
+		    (EndpointIndex != AudioInterfaceInfo->Config.DataOUTEndpoint.Address))
 		{
 			return;
 		}
@@ -170,39 +170,17 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 bool Audio_Device_ConfigureEndpoints(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo)
 {
 	memset(&AudioInterfaceInfo->State, 0x00, sizeof(AudioInterfaceInfo->State));
+	
+	AudioInterfaceInfo->Config.DataINEndpoint.Type   = EP_TYPE_ISOCHRONOUS;
+	AudioInterfaceInfo->Config.DataINEndpoint.Banks  = 2;
+	AudioInterfaceInfo->Config.DataOUTEndpoint.Type  = EP_TYPE_ISOCHRONOUS;
+	AudioInterfaceInfo->Config.DataOUTEndpoint.Banks = 2;
 
-	for (uint8_t EndpointNum = 1; EndpointNum < ENDPOINT_TOTAL_ENDPOINTS; EndpointNum++)
-	{
-		uint16_t Size;
-		uint8_t  Type;
-		uint8_t  Direction;
-		bool     DoubleBanked;
+	if (!(Endpoint_ConfigureEndpointTable(&AudioInterfaceInfo->Config.DataINEndpoint, 1)))
+	  return false;
 
-		if (EndpointNum == AudioInterfaceInfo->Config.DataINEndpointNumber)
-		{
-			Size         = AudioInterfaceInfo->Config.DataINEndpointSize;
-			Direction    = ENDPOINT_DIR_IN;
-			Type         = EP_TYPE_ISOCHRONOUS;
-			DoubleBanked = true;
-		}
-		else if (EndpointNum == AudioInterfaceInfo->Config.DataOUTEndpointNumber)
-		{
-			Size         = AudioInterfaceInfo->Config.DataOUTEndpointSize;
-			Direction    = ENDPOINT_DIR_OUT;
-			Type         = EP_TYPE_ISOCHRONOUS;
-			DoubleBanked = true;
-		}
-		else
-		{
-			continue;
-		}
-
-		if (!(Endpoint_ConfigureEndpoint(EndpointNum, Type, Direction, Size,
-		                                 DoubleBanked ? ENDPOINT_BANK_DOUBLE : ENDPOINT_BANK_SINGLE)))
-		{
-			return false;
-		}
-	}
+	if (!(Endpoint_ConfigureEndpointTable(&AudioInterfaceInfo->Config.DataOUTEndpoint, 1)))
+	  return false;
 
 	return true;
 }
