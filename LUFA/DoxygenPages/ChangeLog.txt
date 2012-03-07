@@ -21,6 +21,7 @@
   *   - The Endpoint_ConfigureEndpoint() function no longer takes an endpoint direction as a parameter, as this is now deduced from the specified full endpoint address
   *   - The Endpoint_ConfigureEndpoint() function no longer takes a number of banks as a special mask; the number of banks is now specified as an integer parameter
   *   - Endpoints are now configured via instances of a new struct USB_Endpoint_Table_t in all device mode class drivers, rather than a list of endpoint parameters
+  *   - Added support for various assert and debugging macros for the UC3 devices
   *  - Library Applications:
   *   - Raised the guard bits in the AVRISP-MKII clone project when in PDI and TPI to 32, to prevent communication errors on low quality connections to a target
   *

@@ -71,10 +71,10 @@
 			#define DATAFLASH_TOTALCHIPS                 1
 
 			/** Mask for no dataflash chip selected. */
-			#define DATAFLASH_NO_CHIP                    DATAFLASH_CHIPCS_MASK
+			#define DATAFLASH_NO_CHIP                    0
 
 			/** Mask for the first dataflash chip selected. */
-			#define DATAFLASH_CHIP1                      0
+			#define DATAFLASH_CHIP1                      (1 << 2)
 
 			/** Internal main memory page size for the board's dataflash ICs. */
 			#define DATAFLASH_PAGE_SIZE                  1024
@@ -88,8 +88,10 @@
 			 */
 			static inline void Dataflash_Init(void)
 			{
-				DATAFLASH_CHIPCS_PORT.DIRSET = DATAFLASH_CHIPCS_MASK;
-				DATAFLASH_CHIPCS_PORT.OUTSET = DATAFLASH_CHIPCS_MASK;
+				DATAFLASH_CHIPCS_PORT.DIRSET   = DATAFLASH_CHIPCS_MASK;
+				
+				PORTCFG.MPCMASK                = DATAFLASH_CHIPCS_MASK;
+				DATAFLASH_CHIPCS_PORT.PIN0CTRL = PORT_INVEN_bm;	
 				
 				PORTE.REMAP |= PORT_USART0_bm;
 			}
