@@ -383,7 +383,7 @@
 			/** Determines if the specified endpoint number has interrupted (valid only for INTERRUPT type
 			 *  endpoints).
 			 *
-			 *  \param[in] EndpointNumber  Index of the endpoint whose interrupt flag should be tested.
+			 *  \param[in] Address  Address of the endpoint whose interrupt flag should be tested.
 			 *
 			 *  \return Boolean \c true if the specified endpoint has interrupted, \c false otherwise.
 			 */
