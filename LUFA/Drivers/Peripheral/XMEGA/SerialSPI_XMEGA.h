@@ -177,7 +177,7 @@
 			static inline void SerialSPI_SendByte(USART_t* const USART,
 			                                      const uint8_t DataByte)
 			{
-				SerialSPI_TransferByte(DataByte);
+				SerialSPI_TransferByte(USART, DataByte);
 			}
 
 			/** Sends a dummy byte through the USART SPI interface, blocking until the transfer is complete. The response
@@ -189,7 +189,7 @@
 			 */
 			static inline uint8_t SerialSPI_ReceiveByte(USART_t* const USART)
 			{
-				return SerialSPI_TransferByte(0);
+				return SerialSPI_TransferByte(USART, 0);
 			}
 			
 	/* Disable C linkage for C++ Compilers: */
