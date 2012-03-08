@@ -138,7 +138,7 @@
 					 */
 					#define pgm_read_ptr(Address)        (void*)pgm_read_word(Address)
 				#endif
-			#else if (ARCH == ARCH_UC3)
+			#elif (ARCH == ARCH_UC3)
 				#define JTAG_DEBUG_POINT()              __asm__ __volatile__ ("nop" ::)
 				#define JTAG_DEBUG_BREAK()              __asm__ __volatile__ ("breakpoint" ::)
 				#define JTAG_ASSERT(Condition)          MACROS{ if (!(Condition)) { JTAG_DEBUG_BREAK(); } }MACROE

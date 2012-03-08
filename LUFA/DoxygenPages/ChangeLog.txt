@@ -11,6 +11,7 @@
   *  - Core:
   *   - Added support for the BitWizard Multio and Big-Multio boards
   *   - Added new Endpoint_ConfigureEndpointTable() function
+  *   - Added new Pipe_ConfigurePipeTable() function
   *  - Library Applications:
   *   - Modified the CDC Host demos to set a default CDC Line Encoding on enumerated devices
   *
@@ -18,9 +19,13 @@
   *  - Core:
   *   - Android Accessory Host property strings changed from a struct of pointer to an array to prevent unaligned access on greater than 8-bit architectures
   *   - Endpoint indexes are now specified as full endpoint addresses within the device in device mode, rather than a logical index
-  *   - The Endpoint_ConfigureEndpoint() function no longer takes an endpoint direction as a parameter, as this is now deduced from the specified full endpoint address
+  *   - The Endpoint_ConfigureEndpoint() function no longer takes an endpoint direction as a parameter, as this is now deduced from the specified full endpoint
+  *     address and type
   *   - The Endpoint_ConfigureEndpoint() function no longer takes a number of banks as a special mask; the number of banks is now specified as an integer parameter
   *   - Endpoints are now configured via instances of a new struct USB_Endpoint_Table_t in all device mode class drivers, rather than a list of endpoint parameters
+  *   - The Pipe_ConfigurePipe() function no longer takes an pipe token as a parameter, as this is now deduced from the specified full pipe address and type
+  *   - The Pipe_ConfigurePipe() function no longer takes a number of banks as a special mask; the number of banks is now specified as an integer parameter
+  *   - Pipes are now configured via instances of a new struct USB_Pipe_Table_t in all host mode class drivers, rather than a list of pipe parameters
   *   - Added support for various assert and debugging macros for the UC3 devices
   *  - Library Applications:
   *   - Raised the guard bits in the AVRISP-MKII clone project when in PDI and TPI to 32, to prevent communication errors on low quality connections to a target
