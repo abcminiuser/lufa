@@ -11,9 +11,26 @@
  *  areas relevant to making older projects compatible with the API changes of each new release.
  *
  *  \section Sec_MigrationXXXXXX Migrating from 120219 to XXXXXX
+ *  <b>Device Mode</b>
+ *    - The Endpoint_ConfigureEndpoint() function no longer takes in masks for the banks and direction; the number of banks is now an integer argument, and
+ *      the direction is obtained from the full endpoint address within the device. Applications calling Endpoint_ConfigureEndpoint() should update their API
+ *      call to use a full endpoint address (including ENDPOINT_DIR_IN or ENDPOINT_DIR_OUT direction in the MSB of the endpoint address) and an integer number
+ *      of banks.
+ *    - All endpoint functions now operate on full endpoint addresses within the device, rather than a directionless endpoint index. Applications should update
+ *      their API calls to use full endpoint addresses when required within the device.
+ *    - All device mode class drivers have been updated to use a new unified endpoint description structure for all endpoints; existing applications will need
+ *      to update their class driver struct instantiation to match the new scheme (see \ref USB_EndpointTable_t).
+ *
  *  <b>Host Mode</b>
  *    - The Android Accessory Host class driver property strings are now a array of \c char* rather than a struct of named pointers. Existing applications
  *      should use C99 Designated Initializers with the property string indexes located in \ref AOA_Strings_t instead.
+ *    - The Pipe_ConfigurePipe() function no longer takes in masks for the banks and token; the number of banks is now an integer argument, and the token
+ *      is now inferred from the full pipe address within the device, and the pipe type. Applications calling Pipe_ConfigurePipe() should update their API
+ *      call to use a full pipe address (including PIPE_DIR_IN or PIPE_DIR_OUT direction in the MSB of the pipe address) and an integer number of banks.
+ *    - All pipe functions now operate on full pipe addresses within the device, rather than a directionless pipe index. Applications should update their API
+ *      calls to use full pipe addresses when required within the device.
+ *    - All host mode class drivers have been updated to use a new unified pipe description structure for all pipes; existing applications will need to update
+ *      their class driver struct instantiation to match the new scheme (see \ref USB_PipeTable_t).
  *
  *  \section Sec_Migration120219 Migrating from 111009 to 120219
  *  <b>USB Core</b>
