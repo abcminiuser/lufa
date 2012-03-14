@@ -84,8 +84,8 @@ void Endpoint_ClearEndpoints(void)
 {
 	for (uint8_t EPNum = 0; EPNum < ENDPOINT_TOTAL_ENDPOINTS; EPNum++)
 	{
-		USB_EndpointTable.Endpoints[EPNum].IN.CTRL  = 0;
-		USB_EndpointTable.Endpoints[EPNum].OUT.CTRL = 0;
+		((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EPNum].IN.CTRL  = 0;
+		((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EPNum].OUT.CTRL = 0;
 	}
 }
 

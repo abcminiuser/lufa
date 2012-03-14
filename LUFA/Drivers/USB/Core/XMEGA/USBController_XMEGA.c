@@ -40,7 +40,8 @@ volatile uint8_t USB_CurrentMode = USB_MODE_None;
 volatile uint8_t USB_Options;
 #endif
 
-USB_EndpointTable_t USB_EndpointTable ATTR_ALIGNED(4);
+/* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for 8-bit AVR-GCC */
+uint8_t USB_EndpointTable[sizeof(USB_EndpointTable_t) + 1];
 
 void USB_Init(
                #if defined(USB_CAN_BE_BOTH)
@@ -72,7 +73,8 @@ void USB_Init(
 	USB.CAL1 = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, USBCAL1));
 	NVM.CMD  = 0;
 
-	USB.EPPTR = (intptr_t)&USB_EndpointTable;
+	/* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for 8-bit AVR-GCC */
+	USB.EPPTR = ((intptr_t)&USB_EndpointTable[1] & ~(1 << 0));
 	USB.CTRLA = (USB_STFRNUM_bm | USB_MAXEP_gm);
 
 	if ((USB_Options & USB_OPT_BUSEVENT_PRIHIGH) == USB_OPT_BUSEVENT_PRIHIGH)
@@ -106,7 +108,7 @@ void USB_ResetInterface(void)
 	  CLK.USBCTRL = (((F_USB / 48000000) - 1) << CLK_USBPSDIV_gp);
 
 	if (USB_Options & USB_OPT_PLLCLKSRC)
-	  CLK.USBCTRL |= (CLK_USBSRC_PLL_gc | CLK_USBSEN_bm);
+	  CLK.USBCTRL |= (CLK_USBSRC_PLL_gc   | CLK_USBSEN_bm);
 	else
 	  CLK.USBCTRL |= (CLK_USBSRC_RC32M_gc | CLK_USBSEN_bm);
 

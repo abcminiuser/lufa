@@ -198,12 +198,12 @@
 				if (Address & ENDPOINT_DIR_IN)
 				{
 					USB_Endpoint_SelectedFIFO   = &USB_Endpoint_FIFOs[EndpointNumber].IN;
-					USB_Endpoint_SelectedHandle = &USB_EndpointTable.Endpoints[EndpointNumber].IN;
+					USB_Endpoint_SelectedHandle = &((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EndpointNumber].IN;
 				}
 				else
 				{
 					USB_Endpoint_SelectedFIFO   = &USB_Endpoint_FIFOs[EndpointNumber].OUT;
-					USB_Endpoint_SelectedHandle = &USB_EndpointTable.Endpoints[EndpointNumber].OUT;
+					USB_Endpoint_SelectedHandle = &((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EndpointNumber].OUT;
 				}
 			}
 
