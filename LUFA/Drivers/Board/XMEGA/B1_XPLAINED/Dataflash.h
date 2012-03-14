@@ -93,7 +93,7 @@
 				PORTCFG.MPCMASK                = DATAFLASH_CHIPCS_MASK;
 				DATAFLASH_CHIPCS_PORT.PIN0CTRL = PORT_INVEN_bm;	
 				
-				PORTE.REMAP |= PORT_USART0_bm;
+				PORTC.REMAP |= PORT_USART0_bm;
 			}
 
 			/** Sends a byte to the currently selected dataflash IC, and returns a byte from the dataflash.
@@ -105,7 +105,7 @@
 			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
 			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte)
 			{
-				return SerialSPI_TransferByte(&USARTE0, Byte);
+				return SerialSPI_TransferByte(&USARTC0, Byte);
 			}
 
 			/** Sends a byte to the currently selected dataflash IC, and ignores the next byte from the dataflash.
@@ -115,7 +115,7 @@
 			static inline void Dataflash_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
 			static inline void Dataflash_SendByte(const uint8_t Byte)
 			{
-				SerialSPI_SendByte(&USARTE0, Byte);
+				SerialSPI_SendByte(&USARTC0, Byte);
 			}
 
 			/** Sends a dummy byte to the currently selected dataflash IC, and returns the next byte from the dataflash.
@@ -125,7 +125,7 @@
 			static inline uint8_t Dataflash_ReceiveByte(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Dataflash_ReceiveByte(void)
 			{
-				return SerialSPI_ReceiveByte(&USARTE0);
+				return SerialSPI_ReceiveByte(&USARTC0);
 			}
 
 			/** Determines the currently selected dataflash chip.
@@ -147,7 +147,8 @@
 			static inline void Dataflash_SelectChip(const uint8_t ChipMask) ATTR_ALWAYS_INLINE;
 			static inline void Dataflash_SelectChip(const uint8_t ChipMask)
 			{
-				DATAFLASH_CHIPCS_PORT.OUT = ((DATAFLASH_CHIPCS_PORT.OUT & ~DATAFLASH_CHIPCS_MASK) | ChipMask);
+				DATAFLASH_CHIPCS_PORT.OUTCLR = DATAFLASH_CHIPCS_MASK;
+				DATAFLASH_CHIPCS_PORT.OUTSET = (ChipMask & DATAFLASH_CHIPCS_MASK);
 			}
 
 			/** Deselects the current dataflash chip, so that no dataflash is selected. */
