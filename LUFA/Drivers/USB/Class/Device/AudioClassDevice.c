@@ -171,10 +171,8 @@ bool Audio_Device_ConfigureEndpoints(USB_ClassInfo_Audio_Device_t* const AudioIn
 {
 	memset(&AudioInterfaceInfo->State, 0x00, sizeof(AudioInterfaceInfo->State));
 	
-	AudioInterfaceInfo->Config.DataINEndpoint.Type   = EP_TYPE_ISOCHRONOUS;
-	AudioInterfaceInfo->Config.DataINEndpoint.Banks  = 2;
-	AudioInterfaceInfo->Config.DataOUTEndpoint.Type  = EP_TYPE_ISOCHRONOUS;
-	AudioInterfaceInfo->Config.DataOUTEndpoint.Banks = 2;
+	AudioInterfaceInfo->Config.DataINEndpoint.Type  = EP_TYPE_ISOCHRONOUS;
+	AudioInterfaceInfo->Config.DataOUTEndpoint.Type = EP_TYPE_ISOCHRONOUS;
 
 	if (!(Endpoint_ConfigureEndpointTable(&AudioInterfaceInfo->Config.DataINEndpoint, 1)))
 	  return false;

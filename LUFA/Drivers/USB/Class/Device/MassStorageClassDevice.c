@@ -94,7 +94,7 @@ void MS_Device_USBTask(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 
 	Endpoint_SelectEndpoint(MSInterfaceInfo->Config.DataOUTEndpoint.Address);
 
-	if (Endpoint_IsReadWriteAllowed())
+	if (Endpoint_IsOUTReceived())
 	{
 		if (MS_Device_ReadInCommandBlock(MSInterfaceInfo))
 		{
@@ -136,7 +136,7 @@ static bool MS_Device_ReadInCommandBlock(USB_ClassInfo_MS_Device_t* const MSInte
 	uint16_t BytesProcessed;
 
 	Endpoint_SelectEndpoint(MSInterfaceInfo->Config.DataOUTEndpoint.Address);
-
+	
 	BytesProcessed = 0;
 	while (Endpoint_Read_Stream_LE(&MSInterfaceInfo->State.CommandBlock,
 	                               (sizeof(MS_CommandBlockWrapper_t) - 16), &BytesProcessed) ==
@@ -151,7 +151,7 @@ static bool MS_Device_ReadInCommandBlock(USB_ClassInfo_MS_Device_t* const MSInte
 		(MSInterfaceInfo->State.CommandBlock.Flags              & 0x1F)                              ||
 		(MSInterfaceInfo->State.CommandBlock.SCSICommandLength == 0)                                 ||
 		(MSInterfaceInfo->State.CommandBlock.SCSICommandLength >  16))
-	{
+	{		
 		Endpoint_StallTransaction();
 		Endpoint_SelectEndpoint(MSInterfaceInfo->Config.DataINEndpoint.Address);
 		Endpoint_StallTransaction();

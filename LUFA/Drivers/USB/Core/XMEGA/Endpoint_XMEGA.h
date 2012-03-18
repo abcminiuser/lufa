@@ -193,7 +193,7 @@
 			{
 				uint8_t EndpointNumber = (Address & ENDPOINT_EPNUM_MASK);
 
-				USB_Endpoint_SelectedEndpoint   = Address;
+				USB_Endpoint_SelectedEndpoint = Address;
 
 				if (Address & ENDPOINT_DIR_IN)
 				{
@@ -339,10 +339,7 @@
 			static inline bool Endpoint_IsReadWriteAllowed(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
 			static inline bool Endpoint_IsReadWriteAllowed(void)
 			{
-				if (USB_Endpoint_SelectedEndpoint & ENDPOINT_DIR_IN)
-				  return (USB_Endpoint_SelectedFIFO->Position < USB_Endpoint_SelectedFIFO->Length);
-				else
-				  return (USB_Endpoint_SelectedFIFO->Position > 0);
+				return (USB_Endpoint_SelectedFIFO->Position < USB_Endpoint_SelectedFIFO->Length);
 			}
 
 			/** Determines if the currently selected endpoint is configured.
