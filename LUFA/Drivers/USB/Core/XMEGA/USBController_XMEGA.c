@@ -75,7 +75,7 @@ void USB_Init(
 
 	/* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for 8-bit AVR-GCC */
 	USB.EPPTR = ((intptr_t)&USB_EndpointTable[1] & ~(1 << 0));
-	USB.CTRLA = (USB_STFRNUM_bm | USB_MAXEP_gm);
+	USB.CTRLA = (USB_STFRNUM_bm | ((ENDPOINT_TOTAL_ENDPOINTS - 1) << USB_MAXEP_gp));
 
 	if ((USB_Options & USB_OPT_BUSEVENT_PRIHIGH) == USB_OPT_BUSEVENT_PRIHIGH)
 	  USB.INTCTRLA = (3 << USB_INTLVL_gp);
