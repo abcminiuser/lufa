@@ -219,6 +219,9 @@
 
 				if (SourceFreq > Frequency)
 				  return false;
+				  
+				if (MulFactor > 31)
+				  return false;
 
 				switch (Source)
 				{
