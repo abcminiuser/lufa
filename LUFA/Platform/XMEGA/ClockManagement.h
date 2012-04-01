@@ -117,6 +117,26 @@
 			};
 
 		/* Inline Functions: */
+			/** Write a value to a location protected by the XMEGA CCP protection mechanism. This function uses inline assembly to ensure that
+			 *  the protected address is written to within four clock cycles of the CCP key being written.
+			 *
+			 *  \param[in] Address  Address to write to, a memory address protected by the CCP mechanism
+			 *  \param[in] Value    Value to write to the protected location
+			 */
+			static inline void XMEGACLK_CCP_Write(volatile void* Address, const uint8_t Value) ATTR_ALWAYS_INLINE;
+			static inline void XMEGACLK_CCP_Write(volatile void* Address, const uint8_t Value)
+			{
+				__asm__ __volatile__ (
+					"out %0, __zero_reg__" "\n\t" /* Zero RAMPZ using fixed zero value register */
+					"movw r30, %1"         "\n\t" /* Copy address to Z register pair */
+					"out %2, %3"           "\n\t" /* Write key to CCP register */
+					"st Z, %4"             "\n\t" /* Indirectly write value to address */
+					: /* No output operands */
+					: /* Input operands: */ "m" (RAMPZ), "e" (Address), "m" (CCP), "r" (CCP_IOREG_gc), "r" (Value)
+					: /* Clobbered registers: */ "r30", "r31"
+				); 
+			}
+
 			/** Starts the external oscillator of the XMEGA microcontroller, with the given options. This routine blocks until
 			 *  the oscillator is ready for use.
 			 *
@@ -358,8 +378,7 @@
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 				GlobalInterruptDisable();
 
-				CCP      = CCP_IOREG_gc;
-				CLK_CTRL = ClockSourceMask;
+				XMEGACLK_CCP_Write(&CLK.CTRL, ClockSourceMask);
 
 				SetGlobalInterruptMask(CurrentGlobalInt);
 
