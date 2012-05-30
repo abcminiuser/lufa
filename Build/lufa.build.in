@@ -1,0 +1,74 @@
+#
+#             LUFA Library
+#     Copyright (C) Dean Camera, 2012.
+#
+#  dean [at] fourwalledcubicle [dot] com
+#           www.lufa-lib.org
+#
+
+# -----------------------------------------------------------------------------
+#               LUFA Compiler Buildsystem Makefile Module.
+# -----------------------------------------------------------------------------
+# DESCRIPTION:
+#   Provides a set of targets to build a C, C++ and/or Assembly application
+#   via the AVR-GCC compiler.
+# -----------------------------------------------------------------------------
+# TARGETS:
+#
+#    all                       - Build application
+#    checksource               - Check existance of listed input source files
+#
+# MANDATORY PARAMETERS:
+#
+#    TARGET                    - Application name
+#    ARCH                      - Device architecture name
+#    MCU                       - Microcontroller device model name
+#    SRC                       - List of input source files (.c, .cpp/.c++, .S)
+#
+# OPTIONAL PARAMETERS:
+#
+#    BOARD                     - LUFA board hardware
+#    OPTIMIZATION              - Optimization level (0, 1, 2, 3, s)
+#
+# -----------------------------------------------------------------------------
+
+# Output Messages
+MSG_BEGIN = Begin compilation of project \"$(TARGET)\"...
+MSG_END   = Finished building project \"$(TARGET)\"...
+
+# Default values of user-supplied variables
+TARGET        ?= Unknown
+ARCH          ?= AVR8
+BOARD         ?= NONE
+SRC           ?=
+OPTIMIZATION  ?= 0
+
+# Convert input source file list to differentiate them by type
+C_SOURCE   = $(filter %.c, $(SRC))
+CPP_SOURCE = $(filter %.cpp, $(SRC)) $(filter %.c++, $(SRC))
+ASM_SOURCE = $(filter %.S, $(SRC))
+
+# Create a list of unknown source file types, if any are found throw an error
+UNKNOWN_SOURCE = $(filter-out $(C_SOURCE) $(CPP_SOURCE) $(ASM_SOURCE), $(SRC))
+ifneq ($(UNKNOWN_SOURCE),)
+   $(error Unknown source formats: $(UNKNOWN_SOURCE))
+endif
+
+
+all: begin end
+
+checksource:
+	@for f in $(SRC) $(CPPSRC) $(ASRC); do \
+		if [ -f $$f ]; then \
+			echo "Found Source File: $$f" ; \
+		else \
+			echo "Source File Not Found: $$f" ; \
+		fi; done
+
+begin:
+	@echo $(MSG_BEGIN)
+	
+end:
+	@echo $(MSG_END)
+
+
