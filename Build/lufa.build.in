@@ -7,7 +7,7 @@
 #
 
 LUFA_BUILD_MODULES += BUILD
-LUFA_BUILD_TARGETS += all checksource
+LUFA_BUILD_TARGETS += all build size checksource
 
 # -----------------------------------------------------------------------------
 #               LUFA Compiler Buildsystem Makefile Module.
@@ -18,7 +18,9 @@ LUFA_BUILD_TARGETS += all checksource
 # -----------------------------------------------------------------------------
 # TARGETS:
 #
-#    all                       - Build application
+#    all                       - Build application and list size
+#    build                     - Build application
+#    size                      - List application size
 #    checksource               - Check existance of listed input source files
 #
 # MANDATORY PARAMETERS:
@@ -36,21 +38,24 @@ LUFA_BUILD_TARGETS += all checksource
 # -----------------------------------------------------------------------------
 
 # Output Messages
-MSG_BEGIN = Begin compilation of project \"$(TARGET)\"...
-MSG_END   = Finished building project \"$(TARGET)\"...
+MSG_BUILD_BEGIN = Begin compilation of project \"$(TARGET)\"...
+MSG_BUILD_END   = Finished building project \"$(TARGET)\"...
+MSG_COMPILE_CMD = '  [CC]      :'
+MSG_LINKER_CMD  = '  [LNK]     :'
+MSG_SIZE_CMD    = '  [SIZE]    :'
 
 # Sanity check the user MCU, TARGET, ARCH and SRC makefile options
 ifeq ($(TARGET),)
-   $(error Makefile TARGET value not set.
+   $(error Makefile TARGET value not set.)
 endif
 ifeq ($(ARCH),)
-   $(error Makefile ARCH value not set.
+   $(error Makefile ARCH value not set.)
 endif
 ifeq ($(MCU),)
-   $(error Makefile MCU value not set.
+   $(error Makefile MCU value not set.)
 endif
 ifeq ($(SRC),)
-   $(error Makefile SRC value not set.
+   $(error Makefile SRC value not set.)
 endif
 
 # Default values of user-supplied variables
@@ -68,8 +73,18 @@ ifneq ($(UNKNOWN_SOURCE),)
    $(error Unknown source formats: $(UNKNOWN_SOURCE))
 endif
 
+# Determine flags to pass to the size utility based on its reported features
+SIZE_MCU_FLAG    = $(shell avr-size --help | grep -- --mcu > /dev/null && echo --mcu=$(MCU) )
+SIZE_FORMAT_FLAG = $(shell avr-size --help | grep -- --format=.*avr > /dev/null && echo --format=avr )
 
-all: begin end
+
+begin:
+	@echo $(MSG_BUILD_BEGIN)
+	
+end:
+	@echo $(MSG_BUILD_END)
+
+all: begin build end
 
 checksource:
 	@for f in $(SRC) $(CPPSRC) $(ASRC); do \
@@ -77,12 +92,13 @@ checksource:
 			echo "Found Source File: $$f" ; \
 		else \
 			echo "Source File Not Found: $$f" ; \
-		fi; done
+		fi; \
+	 done
 
-begin:
-	@echo $(MSG_BEGIN)
-	
-end:
-	@echo $(MSG_END)
+build:
 
-
+size:
+	@echo $(MSG_SIZE_CMD) Determining size of \"$(TARGET).elf\"
+	@if test -f $(TARGET).elf; then \
+	    avr-size $(SIZE_MCU_FLAG) $(SIZE_FORMAT_FLAG) $(TARGET).elf ; 2>/dev/null; \
+	 fi

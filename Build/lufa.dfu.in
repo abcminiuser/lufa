@@ -38,10 +38,10 @@ MSG_DFU_CMD   = '  [DFU]     :'
 
 # Sanity check the user MCU and TARGET makefile options
 ifeq ($(MCU),)
-   $(error Makefile MCU value not set.
+   $(error Makefile MCU value not set.)
 endif
 ifeq ($(TARGET),)
-   $(error Makefile TARGET value not set.
+   $(error Makefile TARGET value not set.)
 endif
 
 flip: $(TARGET).hex
