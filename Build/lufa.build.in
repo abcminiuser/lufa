@@ -33,6 +33,7 @@ LUFA_BUILD_TARGETS += size checksource all elf hex clean
 #    SRC                       - List of input source files (.c, .cpp/.c++, .S)
 #    F_USB                     - Speed of the input clock of the USB controller
 #                                in Hz
+#    LUFA_PATH                 - Path to the LUFA library core
 #
 # OPTIONAL PARAMETERS:
 #
@@ -53,7 +54,7 @@ MSG_LINKER_CMD  = '  [LNK]     :'
 MSG_SIZE_CMD    = '  [SIZE]    :'
 MSG_OBJCPY_CMD  = '  [OBJCPY]  :'
 
-# Sanity check the user MCU, TARGET, ARCH, SRC and F_USB makefile options
+# Sanity check the user MCU, TARGET, ARCH, SRC, F_USB and LUFA_PATH makefile options
 ifeq ($(TARGET),)
    $(error Makefile TARGET value not set.)
 endif
@@ -69,10 +70,13 @@ endif
 ifeq ($(F_USB),)
    $(error Makefile F_USB value not set.)
 endif
+ifeq ($(LUFA_PATH),)
+   $(error Makefile LUFA_PATH value not set.)
+endif
 
 # Default values of user-supplied variables
 BOARD         ?= NONE
-OPTIMIZATION  ?= 0
+OPTIMIZATION  ?= s
 F_CPU         ?=
 C_STANDARD    ?= c99
 CPP_STANDARD  ?= c++98
@@ -86,7 +90,7 @@ ASM_SOURCE = $(filter %.S, $(SRC))
 OBJECT_FILES = $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.c++=%.o) $(CPP_SOURCE:%.c++=%.o) $(ASM_SOURCE:%.S=%.o)
 
 # Create a list of flags to pass to the compiler
-CC_FLAGS = -gdwarf-2 -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
+CC_FLAGS = -I. -I$(LUFA_PATH) -gdwarf-2 -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
 ifneq ($(F_CPU),)
    CC_FLAGS += -DF_CPU=$(F_CPU)UL
 endif
@@ -131,16 +135,16 @@ hex: $(TARGET).hex $(TARGET).eep
 
 %.o: %.c
 	@echo $(MSG_COMPILE_CMD) Compiling C file \"$^\"
-	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) -I. $< -o $@
+	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) $< -o $@
 
 %.o: %.cpp
 %.o: %.c++
 	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$^\"
-	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ -I. $< -o $@
+	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ $< -o $@
 	
 %.o: %.S
 	@echo $(MSG_COMPILE_CMD) Assembling \"$^\"
-	avr-gcc -S -mmcu=$(MCU) $(CC_FLAGS) -x assembler-with-cpp -I. $< -o $@
+	avr-gcc -S -mmcu=$(MCU) $(CC_FLAGS) -x assembler-with-cpp $< -o $@
 
 %.elf: $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
