@@ -6,6 +6,9 @@
 #           www.lufa-lib.org
 #
 
+LUFA_BUILD_MODULES += BUILD
+LUFA_BUILD_TARGETS += all checksource
+
 # -----------------------------------------------------------------------------
 #               LUFA Compiler Buildsystem Makefile Module.
 # -----------------------------------------------------------------------------
@@ -28,7 +31,7 @@
 # OPTIONAL PARAMETERS:
 #
 #    BOARD                     - LUFA board hardware
-#    OPTIMIZATION              - Optimization level (0, 1, 2, 3, s)
+#    OPTIMIZATION              - Optimization level
 #
 # -----------------------------------------------------------------------------
 
@@ -36,11 +39,22 @@
 MSG_BEGIN = Begin compilation of project \"$(TARGET)\"...
 MSG_END   = Finished building project \"$(TARGET)\"...
 
+# Sanity check the user MCU, TARGET, ARCH and SRC makefile options
+ifeq ($(TARGET),)
+   $(error Makefile TARGET value not set.
+endif
+ifeq ($(ARCH),)
+   $(error Makefile ARCH value not set.
+endif
+ifeq ($(MCU),)
+   $(error Makefile MCU value not set.
+endif
+ifeq ($(SRC),)
+   $(error Makefile SRC value not set.
+endif
+
 # Default values of user-supplied variables
-TARGET        ?= Unknown
-ARCH          ?= AVR8
 BOARD         ?= NONE
-SRC           ?=
 OPTIMIZATION  ?= 0
 
 # Convert input source file list to differentiate them by type

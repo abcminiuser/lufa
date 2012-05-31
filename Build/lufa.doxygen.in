@@ -6,6 +6,9 @@
 #           www.lufa-lib.org
 #
 
+LUFA_BUILD_MODULES += DOXYGEN
+LUFA_BUILD_TARGETS += doxygen
+
 # -----------------------------------------------------------------------------
 #                 LUFA Doxygen Buildsystem Makefile Module.
 # -----------------------------------------------------------------------------
@@ -44,14 +47,6 @@ ifeq ($(DOXYGEN_FAIL_ON_WARNING), Y)
     DOXYGEN_CMD = if ( ( cat Doxygen.conf $(DOXYGEN_OVERRIDE_PARAMS:%=; echo "%") ) | doxygen - 2>&1 | grep -v "warning: ignoring unsupported tag" ;); then exit 1; fi;
 endif
 
-doxygen: doxygen_begin doxygen_build doxygen_end
-
-doxygen_begin:
-	@echo $(MSG_DOXYGEN_BEGIN)
-	
-doxygen_end:
-	@echo $(MSG_DOXYGEN_END)
-
-doxygen_build:
+doxygen:
 	@echo $(MSG_DOXYGEN_CMD) Configuration file \"$(DOXYGEN_CONF)\" with parameters \"$(DOXYGEN_OVERRIDE_PARAMS)\"
 	$(DOXYGEN_CMD)

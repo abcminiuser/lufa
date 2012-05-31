@@ -20,9 +20,11 @@ SRC    = Target.c
 
 LUFA_PATH = .
 
-%: all
+all:
 
 # Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa.core.in
 include $(LUFA_PATH)/Build/lufa.build.in
 include $(LUFA_PATH)/Build/lufa.doxygen.in
 include $(LUFA_PATH)/Build/lufa.dfu.in
+include $(LUFA_PATH)/Build/lufa.avrdude.in

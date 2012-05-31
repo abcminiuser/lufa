@@ -6,6 +6,9 @@
 #           www.lufa-lib.org
 #
 
+LUFA_BUILD_MODULES += DFU
+LUFA_BUILD_TARGETS += flip flip-ee dfu dfu-ee
+
 # -----------------------------------------------------------------------------
 #               LUFA DFU Bootloader Buildsystem Makefile Module.
 # -----------------------------------------------------------------------------
