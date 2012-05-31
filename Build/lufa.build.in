@@ -7,7 +7,7 @@
 #
 
 LUFA_BUILD_MODULES += BUILD
-LUFA_BUILD_TARGETS += all build size checksource
+LUFA_BUILD_TARGETS += size checksource all elf hex clean
 
 # -----------------------------------------------------------------------------
 #               LUFA Compiler Buildsystem Makefile Module.
@@ -18,10 +18,12 @@ LUFA_BUILD_TARGETS += all build size checksource
 # -----------------------------------------------------------------------------
 # TARGETS:
 #
-#    all                       - Build application and list size
-#    build                     - Build application
 #    size                      - List application size
 #    checksource               - Check existance of listed input source files
+#    all                       - Build application and list size
+#    elf                       - Build application ELF debug object file
+#    hex                       - Build application HEX object files
+#    clean                     - Remove output files
 #
 # MANDATORY PARAMETERS:
 #
@@ -29,11 +31,16 @@ LUFA_BUILD_TARGETS += all build size checksource
 #    ARCH                      - Device architecture name
 #    MCU                       - Microcontroller device model name
 #    SRC                       - List of input source files (.c, .cpp/.c++, .S)
+#    F_USB                     - Speed of the input clock of the USB controller
+#                                in Hz
 #
 # OPTIONAL PARAMETERS:
 #
 #    BOARD                     - LUFA board hardware
 #    OPTIMIZATION              - Optimization level
+#    C_STANDARD                - C Language Standard to use
+#    CPP_STANDARD              - C++ Language Standard to use
+#    F_CPU                     - Speed of the CPU, in Hz
 #
 # -----------------------------------------------------------------------------
 
@@ -41,10 +48,12 @@ LUFA_BUILD_TARGETS += all build size checksource
 MSG_BUILD_BEGIN = Begin compilation of project \"$(TARGET)\"...
 MSG_BUILD_END   = Finished building project \"$(TARGET)\"...
 MSG_COMPILE_CMD = '  [CC]      :'
+MSG_REMOVE_CMD  = '  [RM]      :'
 MSG_LINKER_CMD  = '  [LNK]     :'
 MSG_SIZE_CMD    = '  [SIZE]    :'
+MSG_OBJCPY_CMD  = '  [OBJCPY]  :'
 
-# Sanity check the user MCU, TARGET, ARCH and SRC makefile options
+# Sanity check the user MCU, TARGET, ARCH, SRC and F_USB makefile options
 ifeq ($(TARGET),)
    $(error Makefile TARGET value not set.)
 endif
@@ -57,20 +66,35 @@ endif
 ifeq ($(SRC),)
    $(error Makefile SRC value not set.)
 endif
+ifeq ($(F_USB),)
+   $(error Makefile F_USB value not set.)
+endif
 
 # Default values of user-supplied variables
 BOARD         ?= NONE
 OPTIMIZATION  ?= 0
+F_CPU         ?=
+C_STANDARD    ?= c99
+CPP_STANDARD  ?= c++98
 
 # Convert input source file list to differentiate them by type
 C_SOURCE   = $(filter %.c, $(SRC))
 CPP_SOURCE = $(filter %.cpp, $(SRC)) $(filter %.c++, $(SRC))
 ASM_SOURCE = $(filter %.S, $(SRC))
 
+# Convert input source filenames into a list of required output object files
+OBJECT_FILES = $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.c++=%.o) $(CPP_SOURCE:%.c++=%.o) $(ASM_SOURCE:%.S=%.o)
+
+# Create a list of flags to pass to the compiler
+CC_FLAGS = -gdwarf-2 -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
+ifneq ($(F_CPU),)
+   CC_FLAGS += -DF_CPU=$(F_CPU)UL
+endif
+
 # Create a list of unknown source file types, if any are found throw an error
 UNKNOWN_SOURCE = $(filter-out $(C_SOURCE) $(CPP_SOURCE) $(ASM_SOURCE), $(SRC))
 ifneq ($(UNKNOWN_SOURCE),)
-   $(error Unknown source formats: $(UNKNOWN_SOURCE))
+   $(error Unknown input source formats: $(UNKNOWN_SOURCE))
 endif
 
 # Determine flags to pass to the size utility based on its reported features
@@ -79,12 +103,12 @@ SIZE_FORMAT_FLAG = $(shell avr-size --help | grep -- --format=.*avr > /dev/null 
 
 
 begin:
+	@echo ""
 	@echo $(MSG_BUILD_BEGIN)
 	
 end:
 	@echo $(MSG_BUILD_END)
-
-all: begin build end
+	@echo ""
 
 checksource:
 	@for f in $(SRC) $(CPPSRC) $(ASRC); do \
@@ -95,10 +119,43 @@ checksource:
 		fi; \
 	 done
 
-build:
-
 size:
 	@echo $(MSG_SIZE_CMD) Determining size of \"$(TARGET).elf\"
 	@if test -f $(TARGET).elf; then \
 	    avr-size $(SIZE_MCU_FLAG) $(SIZE_FORMAT_FLAG) $(TARGET).elf ; 2>/dev/null; \
 	 fi
+
+all: begin hex end size
+elf: $(TARGET).elf
+hex: $(TARGET).hex $(TARGET).eep
+
+%.o: %.c
+	@echo $(MSG_COMPILE_CMD) Compiling C file \"$^\"
+	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) -I. $< -o $@
+
+%.o: %.cpp
+%.o: %.c++
+	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$^\"
+	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ -I. $< -o $@
+	
+%.o: %.S
+	@echo $(MSG_COMPILE_CMD) Assembling \"$^\"
+	avr-gcc -S -mmcu=$(MCU) $(CC_FLAGS) -x assembler-with-cpp -I. $< -o $@
+
+%.elf: $(OBJECT_FILES)
+	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
+	avr-gcc $^ -mmcu=$(MCU) $(CC_FLAGS) -Wl,-Map=$(TARGET).map,--cref -Wl,--relax -Wl,--gc-sections -lm -o $@ 
+
+%.hex: %.elf
+	@echo $(MSG_OBJCPY_CMD) Extracting HEX file data from \"$@\"
+	avr-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
+
+%.eep: %.elf
+	@echo $(MSG_OBJCPY_CMD) Extracting EEP file data from \"$@\"
+	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex $< $@ || exit 0
+	
+clean:
+	@echo $(MSG_REMOVE_CMD) Removing object files
+	rm -f $(OBJECT_FILES)
+	@echo $(MSG_REMOVE_CMD) Removing output files
+	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map
