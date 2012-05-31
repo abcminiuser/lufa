@@ -155,7 +155,7 @@ hex: $(TARGET).hex $(TARGET).eep
 	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex $< $@ || exit 0
 	
 clean:
-	@echo $(MSG_REMOVE_CMD) Removing object files
+	@echo $(MSG_REMOVE_CMD) Removing object files \"$(OBJECT_FILES)\"
 	rm -f $(OBJECT_FILES)
-	@echo $(MSG_REMOVE_CMD) Removing output files
+	@echo $(MSG_REMOVE_CMD) Removing output files \"$(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map\"
 	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map
