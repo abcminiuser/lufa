@@ -38,6 +38,7 @@ info:
 	@echo "      (C) Dean Camera { dean @ fourwalledcubicle . com }           "
 	@echo "==================================================================="
 
+.PHONY: info
 help: info
 	@echo "DESCRIPTION:                                                       "
 	@echo " This build system is a set of makefile modules for (GNU) Make, to "
@@ -54,19 +55,19 @@ help: info
 	@echo "==================================================================="
 	@echo "  Currently Used Modules in this application:                      "
 	@echo "                                                                   "
-	@echo "    [" $(LUFA_BUILD_MODULES) "]"
+	@echo "    [" $(sort $(LUFA_BUILD_MODULES)) "]"
 	@echo "                                                                   "
 	@echo "                                                                   "
 	@echo "  Currently Available Build Targets in this application:           "
 	@echo "                                                                   "
-	@echo "    [" $(LUFA_BUILD_TARGETS) "]"
+	@echo "    [" $(sort $(LUFA_BUILD_TARGETS)) "]"
 	@echo "==================================================================="
 	@echo "        The LUFA BuildSystem 2.0 - Powered By Unicorns (tm)        "
 	@echo "==================================================================="
-
+	
 list_targets:
-	@echo Currently Available Build Targets: $(LUFA_BUILD_TARGETS)
+	@echo Currently Available Build Targets: $(sort $(LUFA_BUILD_TARGETS))
 	
 list_modules:
-	@echo Currently Build Modules: $(LUFA_BUILD_MODULES)
+	@echo Currently Build Modules: $(sort $(LUFA_BUILD_MODULES))
 

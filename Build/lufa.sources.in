@@ -1,0 +1,73 @@
+#
+#             LUFA Library
+#     Copyright (C) Dean Camera, 2012.
+#
+#  dean [at] fourwalledcubicle [dot] com
+#           www.lufa-lib.org
+#
+
+LUFA_BUILD_MODULES += SOURCES
+LUFA_BUILD_TARGETS += 
+
+# -----------------------------------------------------------------------------
+#               LUFA Sources Buildsystem Makefile Module.
+# -----------------------------------------------------------------------------
+# DESCRIPTION:
+#   Provides a set of makefile variables for the various LUFA module sources.
+#   Once included, the sources required to use a given LUFA module will become
+#   available using the makefile variable names listed in the LUFA project
+#   documentation.
+# -----------------------------------------------------------------------------
+# TARGETS:
+#
+#    (None)
+#
+# MANDATORY PARAMETERS:
+#
+#    LUFA_PATH                 - Path to the LUFA library core
+#
+# OPTIONAL PARAMETERS:
+#
+#    (None)
+#
+# -----------------------------------------------------------------------------
+
+# Sanity check the user LUFA_PATH makefile option
+ifeq ($(LUFA_PATH),)
+   $(error Makefile LUFA_PATH value not set.)
+endif
+
+# Construct LUFA module source variables
+LUFA_SRC_USB           = $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/Device_$(ARCH).c          \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/Endpoint_$(ARCH).c        \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/Host_$(ARCH).c            \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/Pipe_$(ARCH).c            \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/USBController_$(ARCH).c   \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/USBInterrupt_$(ARCH).c    \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/EndpointStream_$(ARCH).c  \
+                         $(LUFA_PATH)/Drivers/USB/Core/$(ARCH)/PipeStream_$(ARCH).c      \
+                         $(LUFA_PATH)/Drivers/USB/Core/ConfigDescriptor.c                \
+                         $(LUFA_PATH)/Drivers/USB/Core/DeviceStandardReq.c               \
+                         $(LUFA_PATH)/Drivers/USB/Core/Events.c                          \
+                         $(LUFA_PATH)/Drivers/USB/Core/HostStandardReq.c                 \
+                         $(LUFA_PATH)/Drivers/USB/Core/USBTask.c                         \
+                         $(LUFA_PATH)/Drivers/USB/Class/Common/HIDParser.c
+LUFA_SRC_USBCLASS      = $(LUFA_PATH)/Drivers/USB/Class/Device/AudioClassDevice.c        \
+                         $(LUFA_PATH)/Drivers/USB/Class/Device/CDCClassDevice.c          \
+                         $(LUFA_PATH)/Drivers/USB/Class/Device/HIDClassDevice.c          \
+                         $(LUFA_PATH)/Drivers/USB/Class/Device/MassStorageClassDevice.c  \
+                         $(LUFA_PATH)/Drivers/USB/Class/Device/MIDIClassDevice.c         \
+                         $(LUFA_PATH)/Drivers/USB/Class/Device/RNDISClassDevice.c        \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/AndroidAccessoryClassHost.c \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/AudioClassHost.c            \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/CDCClassHost.c              \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/HIDClassHost.c              \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/MassStorageClassHost.c      \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/MIDIClassHost.c             \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/PrinterClassHost.c          \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/RNDISClassHost.c            \
+                         $(LUFA_PATH)/Drivers/USB/Class/Host/StillImageClassHost.c
+LUFA_SRC_TEMPERATURE   = $(LUFA_PATH)/Drivers/Board/Temperature.c
+LUFA_SRC_SERIAL        = $(LUFA_PATH)/Drivers/Peripheral/$(ARCH)/Serial_$(ARCH).c
+LUFA_SRC_TWI           = $(LUFA_PATH)/Drivers/Peripheral/$(ARCH)/TWI_$(ARCH).c
+

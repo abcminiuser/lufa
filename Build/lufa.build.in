@@ -42,6 +42,8 @@ LUFA_BUILD_TARGETS += size checksource all elf hex clean
 #    C_STANDARD                - C Language Standard to use
 #    CPP_STANDARD              - C++ Language Standard to use
 #    F_CPU                     - Speed of the CPU, in Hz
+#    CC_FLAGS                  - Flags to pass to the compiler
+#    LD_FLAGS                  - Flags to pass to the linker
 #
 # -----------------------------------------------------------------------------
 
@@ -90,10 +92,13 @@ ASM_SOURCE = $(filter %.S, $(SRC))
 OBJECT_FILES = $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.c++=%.o) $(CPP_SOURCE:%.c++=%.o) $(ASM_SOURCE:%.S=%.o)
 
 # Create a list of flags to pass to the compiler
-CC_FLAGS = -I. -I$(LUFA_PATH) -gdwarf-2 -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
+CC_FLAGS += -mmcu=$(MCU) -I. -I$(LUFA_PATH)/.. -gdwarf-2 -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL -Wall -Wstrict-prototypes -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections -fshort-enums
 ifneq ($(F_CPU),)
    CC_FLAGS += -DF_CPU=$(F_CPU)UL
 endif
+
+# Create a list of flags to pass to the linker
+LD_FLAGS += -Wl,-Map=$(TARGET).map,--cref -Wl,--relax -Wl,--gc-sections -lm
 
 # Create a list of unknown source file types, if any are found throw an error
 UNKNOWN_SOURCE = $(filter-out $(C_SOURCE) $(CPP_SOURCE) $(ASM_SOURCE), $(SRC))
@@ -129,26 +134,29 @@ size:
 	    avr-size $(SIZE_MCU_FLAG) $(SIZE_FORMAT_FLAG) $(TARGET).elf ; 2>/dev/null; \
 	 fi
 
+.PHONY: begin hex end size
 all: begin hex end size
+
 elf: $(TARGET).elf
 hex: $(TARGET).hex $(TARGET).eep
 
 %.o: %.c
 	@echo $(MSG_COMPILE_CMD) Compiling C file \"$^\"
-	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) $< -o $@
+	avr-gcc -c $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) $< -o $@
 
 %.o: %.cpp
 %.o: %.c++
 	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$^\"
-	avr-gcc -c -mmcu=$(MCU) $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ $< -o $@
+	avr-gcc -c $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ $< -o $@
 	
 %.o: %.S
 	@echo $(MSG_COMPILE_CMD) Assembling \"$^\"
-	avr-gcc -S -mmcu=$(MCU) $(CC_FLAGS) -x assembler-with-cpp $< -o $@
+	avr-gcc -S $(CC_FLAGS) -x assembler-with-cpp $< -o $@
 
+.PRECIOUS : $(OBJECT_FILES)
 %.elf: $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
-	avr-gcc $^ -mmcu=$(MCU) $(CC_FLAGS) -Wl,-Map=$(TARGET).map,--cref -Wl,--relax -Wl,--gc-sections -lm -o $@ 
+	avr-gcc $^ $(CC_FLAGS) $(LD_FLAGS) -o $@ 
 
 %.hex: %.elf
 	@echo $(MSG_OBJCPY_CMD) Extracting HEX file data from \"$@\"
