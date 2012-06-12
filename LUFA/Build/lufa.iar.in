@@ -7,9 +7,9 @@
 #
 
 LUFA_BUILD_MODULES         += IAR
-LUFA_BUILD_TARGETS         += ~TODO~
+LUFA_BUILD_TARGETS         += ALL ELF HEX CLEAN
 LUFA_BUILD_MANDATORY_VARS  += TARGET ARCH MCU SRC F_USB LUFA_PATH
-LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR
+LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR
 LUFA_BUILD_PROVIDED_VARS   += 
 LUFA_BUILD_PROVIDED_MACROS += 
 
@@ -22,7 +22,10 @@ LUFA_BUILD_PROVIDED_MACROS +=
 # -----------------------------------------------------------------------------
 # TARGETS:
 #
-#    ~TODO~
+#    all                       - Build application and list size
+#    elf                       - Build application ELF debug object file
+#    hex                       - Build application HEX object files
+#    clean                     - Remove output files
 #
 # MANDATORY PARAMETERS:
 #
@@ -38,7 +41,6 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #
 #    BOARD                     - LUFA board hardware
 #    OPTIMIZATION              - Optimization level
-#    C_STANDARD                - C Language Standard to use
 #    CPP_STANDARD              - C++ Language Standard to use
 #    F_CPU                     - Speed of the CPU, in Hz
 #    C_FLAGS                   - Flags to pass to the C compiler only
@@ -69,8 +71,7 @@ ERROR_IF_NONBOOL = $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(st
 BOARD           ?= NONE
 OPTIMIZATION    ?= s
 F_CPU           ?=
-C_STANDARD      ?= gnu99
-CPP_STANDARD    ?= gnu++98
+CPP_STANDARD    ?= ec++
 C_FLAGS         ?=
 CPP_FLAGS       ?=
 ASM_FLAGS       ?=
@@ -86,7 +87,6 @@ $(call ERROR_IF_EMPTY, F_USB)
 $(call ERROR_IF_EMPTY, LUFA_PATH)
 $(call ERROR_IF_EMPTY, BOARD)
 $(call ERROR_IF_EMPTY, OPTIMIZATION)
-$(call ERROR_IF_EMPTY, C_STANDARD)
 $(call ERROR_IF_EMPTY, CPP_STANDARD)
 $(call ERROR_IF_EMPTY, OBJDIR)
 
@@ -108,7 +108,9 @@ $(warning IAR compiler support is currently EXPERIMENTAL (incomplete and/or non-
 # Output Messages
 MSG_BUILD_BEGIN  := Begin compilation of project \"$(TARGET)\"...
 MSG_BUILD_END    := Finished building project \"$(TARGET)\".
-MSG_COMPILE_CMD  := ' [CC]      :'
+MSG_COMPILE_CMD  := ' [ICC]     :'
+MSG_ASSEMBLE_CMD := ' [IAS]     :'
+MSG_LINKER_CMD   := ' [XLNK]    :'
 
 # Convert input source file list to differentiate them by type
 C_SOURCE   = $(filter %.c, $(SRC))
@@ -123,6 +125,40 @@ endif
 
 # Convert input source filenames into a list of required output object files
 OBJECT_FILES = $(filter %.o, $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.cpp=%.o) $(ASM_SOURCE:%.S=%.o))
+ifneq ($(OBJDIR),.)
+   $(shell mkdir $(OBJDIR) 2>&1 | /dev/null)   
+   VPATH           += $(dir $(SRC))
+   
+   OBJECT_FILES    := $(addprefix $(patsubst %/,%,$(OBJDIR))/, $(notdir $(OBJECT_FILES)))
+endif
+
+DEPENDENCY_FILES = $(OBJECT_FILES:%.o=%.d)
+
+# Create a list of common flags to pass to the compiler/linker/assembler
+BASE_CC_FLAGS    := 
+ifeq ($(ARCH), AVR8)
+   BASE_CC_FLAGS += --variable_enum_size enabled
+else ifeq ($(ARCH), XMEGA)
+   BASE_CC_FLAGS += --variable_enum_size enabled
+else ifeq ($(ARCH), UC3)
+   BASE_CC_FLAGS +=  
+endif
+BASE_CC_FLAGS += --silent --debug --cpu=$(MCU)
+BASE_CC_FLAGS += -I. -I$(patsubst %/,%,$(LUFA_PATH))/..
+BASE_CC_FLAGS += -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
+ifneq ($(F_CPU),)
+   BASE_CC_FLAGS += -DF_CPU=$(F_CPU)UL
+endif
+
+# Additional language specific compiler flags
+BASE_C_FLAGS   := -e --diag_suppress Pe546,Pa082 --require_prototypes --variable_enum_size enabled --vla --no_tbaa --char_is_unsigned --discard_unused_publics -O$(OPTIMIZATION) 
+BASE_CPP_FLAGS := $(BASE_C_FLAGS) --$(CPP_STANDARD)
+BASE_ASM_FLAGS := 
+
+# Create a list of flags to pass to the linker
+BASE_LD_FLAGS := 
+# TODO:
+#   -f "C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\config\lnk$(MCU:at32%=%).xcl" -D_SSTACK_SIZE=1000 -D_CSTACK_SIZE=2000 -D_HEAP_SIZE=1000 -I"C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\LIB\" -rt -s __program_start -g__init_all_ihandlers -g__handle_all_exceptions
 
 build_begin:
 	@echo ""
@@ -144,8 +180,10 @@ check_source:
 clean:
 	@echo $(MSG_REMOVE_CMD) Removing object files of \"$(TARGET)\"
 	rm -f $(OBJECT_FILES)
+	@echo $(MSG_REMOVE_CMD) Removing dependency files of \"$(TARGET)\"
+	rm -f $(DEPENDENCY_FILES)
 	@echo $(MSG_REMOVE_CMD) Removing output files of \"$(TARGET)\"
-	rm -f $(TARGET).elf
+	rm -f $(TARGET).elf $(TARGET).hex
 
 all: build_begin check_source elf hex build_end
 
@@ -154,22 +192,28 @@ hex: $(TARGET).hex
 
 $(OBJDIR)/%.o: %.c $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Compiling C file \"$(notdir $<)\"
-	icc$(CROSS) --cpu=$(MCU) --silent --debug -e --diag_suppress Pe546 --require_prototypes --variable_enum_size enabled --vla --no_tbaa --char_is_unsigned --discard_unused_publics -I$(LUFA_PATH)/.. -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_CPU=$(F_CPU) -DF_USB=$(F_USB) -DUSE_LUFA_CONFIG_HEADER -IConfig/ -Ohs $< -o $@
+	icc$(CROSS) $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) --dependencies=m $(@:%.o=%.d) $< -o $@
 
 $(OBJDIR)/%.o: %.cpp $(MAKEFILE_LIST)
-	icc$(CROSS) --cpu=$(MCU) --ec++ --silent --debug -e --diag_suppress Pe546 --require_prototypes --variable_enum_size enabled --vla --no_tbaa --char_is_unsigned --discard_unused_publics -I$(LUFA_PATH)/.. -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_CPU=$(F_CPU) -DF_USB=$(F_USB) -DUSE_LUFA_CONFIG_HEADER -IConfig/ -Ohs $< -o $@
+	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$(notdir $<)\"
+	icc$(CROSS) $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) --dependencies=m $(@:%.o=%.d) $< -o $@
 
 $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
-	a$(CROSS) --cpu=$(MCU) --silent --debug -I$(LUFA_PATH)/.. -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_CPU=$(F_CPU) -DF_USB=$(F_USB) -DUSE_LUFA_CONFIG_HEADER -IConfig/ $< -o $@
+	@echo $(MSG_ASSEMBLE_CMD) Assembling \"$(notdir $<)\"
+	a$(CROSS) $(BASE_CC_FLAGS) $(BASE_ASM_FLAGS) $(CC_FLAGS) $(ASM_FLAGS) --dependencies=m $(@:%.o=%.d) $< -o $@
 
 .PRECIOUS  : $(OBJECT_FILES)
 .SECONDARY : %.elf
 %.elf: $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
-	xlink -c$(CROSS) -Felf -yp -S $^ -o $@
+	xlink $(BASE_LD_FLAGS) $(LD_FLAGS) -c$(CROSS) -Felf -yp -S $^ -o $@
 
 %.hex : $(OBJECT_FILES)
-	xlink -f "C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\config\lnk$(MCU:at32%=%).xcl" -D_SSTACK_SIZE=1000 -D_CSTACK_SIZE=2000 -D_HEAP_SIZE=1000 -I"C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\LIB\" -rt -s __program_start -g__init_all_ihandlers -g__handle_all_exceptions -Fintel-extended $^ -o $@
+	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
+	xlink $(BASE_LD_FLAGS) $(LD_FLAGS) -Fintel-extended $^ -o $@
+
+# Include build dependency files
+-include $(DEPENDENCY_FILES)
 
 # Phony build targets for this module
-.PHONY: build_begin build_end check_source clean elf
+.PHONY: build_begin build_end check_source clean elf hex
