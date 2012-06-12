@@ -153,11 +153,11 @@
 				#define ATTR_NON_NULL_PTR_ARG(...)       
 				#define ATTR_NAKED                       
 				#define ATTR_NO_INLINE                   
-				#define ATTR_ALWAYS_INLINE               __IAR_PRAGMA(inline = forced)
+				#define ATTR_ALWAYS_INLINE               /*__IAR_PRAGMA(inline = forced)*/
 				#define ATTR_PURE                        
 				#define ATTR_CONST                       
 				#define ATTR_DEPRECATED                  
-				#define ATTR_WEAK                        
+				#define ATTR_WEAK                        /*__weak*/
 				#define ATTR_NO_INIT                     __no_init
 				#define ATTR_INIT_SECTION(SectionIndex)  
 				#define ATTR_ALIAS(Func)                 
