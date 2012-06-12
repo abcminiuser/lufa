@@ -144,31 +144,6 @@
 				#define IAR_SET_STATUS_FLAG(Bitmask)          
 			#endif
 			
-			#define MEMORY_BARRIER()              __COMPILER_SPECIFIC(MEMORY_BARRIER())
-			#define IS_PART_DEFINED(x)            __COMPILER_SPECIFIC(IS_PART_DEFINED(x))
-			#define READ_SYS_REGISTER(Reg)        __COMPILER_SPECIFIC(READ_SYS_REGISTER(Reg))
-			#define WRITE_SYS_REGISTER(Reg, Val)  __COMPILER_SPECIFIC(WRITE_SYS_REGISTER(Reg, Val))
-			#define CLEAR_STATUS_FLAG(Bitmask)    __COMPILER_SPECIFIC(CLEAR_STATUS_FLAG(Bitmask))
-			#define SET_STATUS_FLAG(Bitmask)      __COMPILER_SPECIFIC(SET_STATUS_FLAG(Bitmask))
-
-			#if !defined(ISR) || defined(__DOXYGEN__)
-				/** Macro for the definition of interrupt service routines, so that the compiler can insert the required
-				 *  prologue and epilogue code to properly manage the interrupt routine without affecting the main thread's
-				 *  state with unintentional side-effects.
-				 *
-				 *  Interrupt handlers written using this macro may still need to be registered with the microcontroller's
-				 *  Interrupt Controller (if present) before they will properly handle incoming interrupt events.
-				 *
-				 *  \note This macro is only supplied on some architectures, where the standard library does not include a valid
-				 *        definition. If an existing definition exists, the alternative definition here will be ignored.
-				 *
-				 *  \ingroup Group_GlobalInt
-				 *
-				 *  \param[in] Name  Unique name of the interrupt service routine.
-				 */
-				 #define ISR(Name, ...) __COMPILER_SPECIFIC(ISR(Name, __VA_ARGS__))
-			#endif
-			
 #endif
 
 /** @} */
