@@ -13,9 +13,20 @@
 # custom LUFA library build options are reflected in the compiled
 # code.
 
+PROJECT_DIRECTORIES = $(shell ls -d */)
+
+# This makefile is potentially infinitely recursive if something really bad
+# happens when determining the set of project directories - hard-abort if
+# more than 10 levels deep to avoid angry emails.
+ifeq ($(MAKELEVEL), 10)
+   $(error EMERGENCY ABORT: INFINITE RECURSION DETECTED)
+endif
+
 all:
-	$(MAKE) -s -C MouseHostDevice clean all
+ifeq ($(OBJDIR),)
+	@$(foreach PROJECT, $(PROJECT_DIRECTORIES), $(MAKE) -s -C $(PROJECT) clean all;)
+endif
 
 %:
-	$(MAKE) -s -C MouseHostDevice $@
+	@$(foreach PROJECT, $(PROJECT_DIRECTORIES), $(MAKE) -s -C $(PROJECT) $@;)
 

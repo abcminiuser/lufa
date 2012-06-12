@@ -85,27 +85,27 @@
 		#endif
 
 		#if (F_USB == 8000000)
-			#if (defined(__AVR_AT90USB82__) || defined(__AVR_AT90USB162__) || \
-			     defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || \
-			     defined(__AVR_ATmega32U2__))
+			#if (IS_PART_DEFINED(AT90USB82) || IS_PART_DEFINED(AT90USB162) || \
+			     IS_PART_DEFINED(ATmega8U2) || IS_PART_DEFINED(ATmega16U2) || \
+			     IS_PART_DEFINED(ATmega32U2))
 				#define USB_PLL_PSC                0
-			#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
+			#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				#define USB_PLL_PSC                0
-			#elif (defined(__AVR_AT90USB646__)  || defined(__AVR_AT90USB1286__) || defined(__AVR_ATmega32U6__))
+			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(ATmega32U6))
 				#define USB_PLL_PSC                ((1 << PLLP1) | (1 << PLLP0))
-			#elif (defined(__AVR_AT90USB647__)  || defined(__AVR_AT90USB1287__))
+			#elif (IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(AT90USB1287))
 				#define USB_PLL_PSC                ((1 << PLLP1) | (1 << PLLP0))
 			#endif
 		#elif (F_USB == 16000000)
-			#if (defined(__AVR_AT90USB82__) || defined(__AVR_AT90USB162__) || \
-			     defined(__AVR_ATmega8U2__) || defined(__AVR_ATmega16U2__) || \
-			     defined(__AVR_ATmega32U2__))
+			#if (IS_PART_DEFINED(AT90USB82) || IS_PART_DEFINED(AT90USB162) || \
+			     IS_PART_DEFINED(ATmega8U2) || IS_PART_DEFINED(ATmega16U2) || \
+			     IS_PART_DEFINED(ATmega32U2))
 				#define USB_PLL_PSC                (1 << PLLP0)
-			#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
+			#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				#define USB_PLL_PSC                (1 << PINDIV)
-			#elif (defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__) || defined(__AVR_ATmega32U6__))
+			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(ATmega32U6))
 				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP1))
-			#elif (defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB1287__))
+			#elif (IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB1287))
 				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP0))
 			#endif
 		#endif
@@ -215,7 +215,7 @@
 			 *                      from the \ref USB_Modes_t enum.
 			 *
 			 *  \param[in] Options  Mask indicating the options which should be used when initializing the USB
-			 *                      interface to control the USB interface's behaviour. This should be comprised of
+			 *                      interface to control the USB interface's behavior. This should be comprised of
 			 *                      a \c USB_OPT_REG_* mask to control the regulator, a \c USB_OPT_*_PLL mask to control the
 			 *                      PLL, and a \c USB_DEVICE_OPT_* mask (when the device mode is enabled) to set the device
 			 *                      mode speed.

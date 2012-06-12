@@ -85,12 +85,90 @@
 				 *  \return Boolean true if the given value is known to be a compile time constant, false otherwise.
 				 */
 				#define GCC_IS_COMPILE_CONST(x)               __builtin_constant_p(x)
+
+				#if ((ARCH == ARCH_AVR) || (ARCH == ARCH_XMEGA))
+					#define GCC_IS_PART_DEFINED(x)            defined(__AVR_ ## x ## __)
+				#elif (ARCH == ARCH_UC3)
+					#define GCC_IS_PART_DEFINED(x)            defined(__AVR32_ ## x ## __)				
+				#endif
+				
+				#define GCC_ISR(Name, ...)                    void Name (void) __attribute__((__interrupt__)) __VA_ARGS__; void Name (void)
+
+				#define GCC_READ_SYS_REGISTER(Reg)            __builtin_mfsr(Reg)
+				#define GCC_WRITE_SYS_REGISTER(Reg, Val)      __builtin_mtsr(Reg, Val)
+				#define GCC_CLEAR_STATUS_FLAG(Bitmask)        __builtin_csrf(Bitmask)
+				#define GCC_SET_STATUS_FLAG(Bitmask)          __builtin_ssrf(Bitmask)
+
+				#if !defined(__DOXYGEN__)
+					#define __COMPILER_SPECIFIC(x)            GCC_ ## x
+				#endif
 			#else
 				#define GCC_FORCE_POINTER_ACCESS(StructPtr)
 				#define GCC_MEMORY_BARRIER()
 				#define GCC_IS_COMPILE_CONST(x)               0
+				#define GCC_IS_PART_DEFINED(x)                0
+				#define GCC_ISR(Name, ...)                    
+				#define GCC_READ_SYS_REGISTER(Reg)       
+				#define GCC_WRITE_SYS_REGISTER(Reg, Val)      
+				#define GCC_CLEAR_STATUS_FLAG(Bitmask)        
+				#define GCC_SET_STATUS_FLAG(Bitmask)          
 			#endif
 
+			#if defined(__ICCAVR32__) || defined(__DOXYGEN__)
+				#include <intrinsics.h>
+			
+				#define IAR_MEMORY_BARRIER()                  __asm("")
+
+				#if ((ARCH == ARCH_AVR) || (ARCH == ARCH_XMEGA))
+					#define IAR_IS_PART_DEFINED(x)            defined(__AT ## x ## __)
+				#elif (ARCH == ARCH_UC3)
+					#define IAR_IS_PART_DEFINED(x)            defined(__AT32 ## x ## __)				
+				#endif
+
+				#define IAR_ISR(Name, ...)                    __interrupt void Name (void); __interrupt void Name (void)
+				
+				#define IAR_READ_SYS_REGISTER(Reg)            __get_system_register(Reg)
+				#define IAR_WRITE_SYS_REGISTER(Reg, Val)      __set_system_register(Reg, Val)
+				#define IAR_CLEAR_STATUS_FLAG(Bitmask)        __clear_status_flag(Bitmask)
+				#define IAR_SET_STATUS_FLAG(Bitmask)          __set_status_flag(Bitmask)
+
+				#if !defined(__DOXYGEN__)
+					#define __COMPILER_SPECIFIC(x)            IAR_ ## x
+				#endif
+			#else
+				#define IAR_IS_PART_DEFINED(x)                0
+				#define IAR_ISR(Name, ...)                    
+				#define IAR_READ_SYS_REGISTER(Reg)       
+				#define IAR_WRITE_SYS_REGISTER(Reg, Val)      
+				#define IAR_CLEAR_STATUS_FLAG(Bitmask)        
+				#define IAR_SET_STATUS_FLAG(Bitmask)          
+			#endif
+			
+			#define MEMORY_BARRIER()              __COMPILER_SPECIFIC(MEMORY_BARRIER())
+			#define IS_PART_DEFINED(x)            __COMPILER_SPECIFIC(IS_PART_DEFINED(x))
+			#define READ_SYS_REGISTER(Reg)        __COMPILER_SPECIFIC(READ_SYS_REGISTER(Reg))
+			#define WRITE_SYS_REGISTER(Reg, Val)  __COMPILER_SPECIFIC(WRITE_SYS_REGISTER(Reg, Val))
+			#define CLEAR_STATUS_FLAG(Bitmask)    __COMPILER_SPECIFIC(CLEAR_STATUS_FLAG(Bitmask))
+			#define SET_STATUS_FLAG(Bitmask)      __COMPILER_SPECIFIC(SET_STATUS_FLAG(Bitmask))
+
+			#if !defined(ISR) || defined(__DOXYGEN__)
+				/** Macro for the definition of interrupt service routines, so that the compiler can insert the required
+				 *  prologue and epilogue code to properly manage the interrupt routine without affecting the main thread's
+				 *  state with unintentional side-effects.
+				 *
+				 *  Interrupt handlers written using this macro may still need to be registered with the microcontroller's
+				 *  Interrupt Controller (if present) before they will properly handle incoming interrupt events.
+				 *
+				 *  \note This macro is only supplied on some architectures, where the standard library does not include a valid
+				 *        definition. If an existing definition exists, the alternative definition here will be ignored.
+				 *
+				 *  \ingroup Group_GlobalInt
+				 *
+				 *  \param[in] Name  Unique name of the interrupt service routine.
+				 */
+				 #define ISR(Name, ...) __COMPILER_SPECIFIC(ISR(Name, __VA_ARGS__))
+			#endif
+			
 #endif
 
 /** @} */

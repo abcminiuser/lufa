@@ -28,101 +28,106 @@
   this software.
 */
 
-#if defined(__AVR32__)
-#include <avr32/io.h>
+#if defined(__GNUC__)
 
-.section .exception_handlers, "ax", @progbits
+	#include <avr32/io.h>
 
-// ================= EXCEPTION TABLE ================
-.balign  0x200
-.global  EVBA_Table
-EVBA_Table:
+	.section .exception_handlers, "ax", @progbits
 
-.org  0x000
-Exception_Unrecoverable_Exception:
-	rjmp $
-.org  0x004
-Exception_TLB_Multiple_Hit:
-	rjmp $
-.org  0x008
-Exception_Bus_Error_Data_Fetch:
-	rjmp $
-.org  0x00C
-Exception_Bus_Error_Instruction_Fetch:
-	rjmp $
-.org  0x010
-Exception_NMI:
-	rjmp $
-.org  0x014
-Exception_Instruction_Address:
-	rjmp $
-.org  0x018
-Exception_ITLB_Protection:
-	rjmp $
-.org  0x01C
-Exception_OCD_Breakpoint:
-	rjmp $
-.org  0x020
-Exception_Illegal_Opcode:
-	rjmp $
-.org  0x024
-Exception_Unimplemented_Instruction:
-	rjmp $
-.org  0x028
-Exception_Privilege_Violation:
-	rjmp $
-.org  0x02C
-Exception_Floating_Point:
-	rjmp $
-.org  0x030
-Exception_Coprocessor_Absent:
-	rjmp $
-.org  0x034
-Exception_Data_Address_Read:
-	rjmp $
-.org  0x038
-Exception_Data_Address_Write:
-	rjmp $
-.org  0x03C
-Exception_DTLB_Protection_Read:
-	rjmp $
-.org  0x040
-Exception_DTLB_Protection_Write:
-	rjmp $
-.org  0x044
-Exception_DTLB_Modified:
-	rjmp $
-.org  0x050
-Exception_ITLB_Miss:
-	rjmp $
-.org  0x060
-Exception_DTLB_Miss_Read:
-	rjmp $
-.org  0x070
-Exception_DTLB_Miss_Write:
-	rjmp $
-.org  0x100
-Exception_Supervisor_Call:
-    rjmp $
-// ============== END OF EXCEPTION TABLE =============
+	// ================= EXCEPTION TABLE ================
+	.balign  0x200
+	.global  EVBA_Table
+	EVBA_Table:
 
-// ============= GENERAL INTERRUPT HANDLER ===========
-.balign 4
-.irp    Level, 0, 1, 2, 3
-Exception_INT\Level:
-	mov     r12, \Level
-	call    INTC_GetInterruptHandler
-	mov     pc, r12
-.endr
-// ========= END OF GENERAL INTERRUPT HANDLER ========
+	.org  0x000
+	Exception_Unrecoverable_Exception:
+		rjmp $
+	.org  0x004
+	Exception_TLB_Multiple_Hit:
+		rjmp $
+	.org  0x008
+	Exception_Bus_Error_Data_Fetch:
+		rjmp $
+	.org  0x00C
+	Exception_Bus_Error_Instruction_Fetch:
+		rjmp $
+	.org  0x010
+	Exception_NMI:
+		rjmp $
+	.org  0x014
+	Exception_Instruction_Address:
+		rjmp $
+	.org  0x018
+	Exception_ITLB_Protection:
+		rjmp $
+	.org  0x01C
+	Exception_OCD_Breakpoint:
+		rjmp $
+	.org  0x020
+	Exception_Illegal_Opcode:
+		rjmp $
+	.org  0x024
+	Exception_Unimplemented_Instruction:
+		rjmp $
+	.org  0x028
+	Exception_Privilege_Violation:
+		rjmp $
+	.org  0x02C
+	Exception_Floating_Point:
+		rjmp $
+	.org  0x030
+	Exception_Coprocessor_Absent:
+		rjmp $
+	.org  0x034
+	Exception_Data_Address_Read:
+		rjmp $
+	.org  0x038
+	Exception_Data_Address_Write:
+		rjmp $
+	.org  0x03C
+	Exception_DTLB_Protection_Read:
+		rjmp $
+	.org  0x040
+	Exception_DTLB_Protection_Write:
+		rjmp $
+	.org  0x044
+	Exception_DTLB_Modified:
+		rjmp $
+	.org  0x050
+	Exception_ITLB_Miss:
+		rjmp $
+	.org  0x060
+	Exception_DTLB_Miss_Read:
+		rjmp $
+	.org  0x070
+	Exception_DTLB_Miss_Write:
+		rjmp $
+	.org  0x100
+	Exception_Supervisor_Call:
+		rjmp $
+	// ============== END OF EXCEPTION TABLE =============
 
-// ====== GENERAL INTERRUPT HANDLER OFFSET TABLE ======
-.balign 4
-.global Autovector_Table
-Autovector_Table:
-.irp    Level, 0, 1, 2, 3
-	.word ((AVR32_INTC_INT0 + \Level) << AVR32_INTC_IPR_INTLEVEL_OFFSET) | (Exception_INT\Level - EVBA_Table)
-.endr
-// === END OF GENERAL INTERRUPT HANDLER OFFSET TABLE ===
+	// ============= GENERAL INTERRUPT HANDLER ===========
+	.balign 4
+	.irp    Level, 0, 1, 2, 3
+	Exception_INT\Level:
+		mov     r12, \Level
+		call    INTC_GetInterruptHandler
+		mov     pc, r12
+	.endr
+	// ========= END OF GENERAL INTERRUPT HANDLER ========
+
+	// ====== GENERAL INTERRUPT HANDLER OFFSET TABLE ======
+	.balign 4
+	.global Autovector_Table
+	Autovector_Table:
+	.irp    Level, 0, 1, 2, 3
+		.word ((AVR32_INTC_INT0 + \Level) << AVR32_INTC_IPR_INTLEVEL_OFFSET) | (Exception_INT\Level - EVBA_Table)
+	.endr
+	// === END OF GENERAL INTERRUPT HANDLER OFFSET TABLE ===
+
+#elif defined(__AAVR32__)
+
+	END
 
 #endif

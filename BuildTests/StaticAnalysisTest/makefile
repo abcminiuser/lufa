@@ -8,30 +8,18 @@
 
 # Static anlysis of the entire LUFA source tree, using the free cross-platform "cppcheck" tool.
 
-# Path to the root of the LUFA tree to scan
-LUFA_ROOT_PATH    = ../..
+# Path to the LUFA library core
+LUFA_PATH         = ../../LUFA/
 
-# Filenames or directories (including fragments) to exclude from the analysis
-EXCLUDE_LIST      = FATFs/            \
+CPPCHECK_EXCLUDES = FATFs/            \
                     PetiteFATFs/      \
                     uip/
+CPPCHECK_INCLUDES = $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/   \
+                    $(patsubst %/,%,$(LUFA_PATH))/../Projects/AVRISP-MKII/
 
-# Output message template for found warnings and errors
-MESSAGE_TEMPLATE  = "{file}:{line}: {severity} ({id}): {message}"
+SRC               = $(patsubst %/,%,$(LUFA_PATH))/..
 
-# Checks to suppress so that generated warnings are discarded
-SUPPRESS_WARNINGS = variableScope     \
-                    missingInclude
-
-# Extra paths to search for include files
-INCLUDE_PATHS     = $(LUFA_ROOT_PATH)/LUFA/CodeTemplates/      \
-					$(LUFA_ROOT_PATH)/Projects/AVRISP-MKII/
-
-# Configuration options to pass to cppcheck
-CPPCHECK_OPTIONS  = --template=$(MESSAGE_TEMPLATE) $(INCLUDE_PATHS:%=-I%) $(EXCLUDE_LIST:%=-i%) --inline-suppr --force --error-exitcode=1 --std=c99
-
-
-all: begin staticcheck end
+all: begin cppcheck-config cppcheck end
 
 begin:
 	@echo Executing build test "StaticAnalysisTest".
@@ -41,9 +29,11 @@ end:
 	@echo Build test "StaticAnalysisTest" complete.
 	@echo
 
-staticcheck:
-	cppcheck --quiet $(CPPCHECK_OPTIONS) --check-config $(LUFA_ROOT_PATH)
-	cppcheck --quiet $(CPPCHECK_OPTIONS) --enable=all $(SUPPRESS_WARNINGS:%=--suppress=%) $(LUFA_ROOT_PATH)
-
 %:
 	
+
+.PHONY: all begin end
+
+# Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa.core.in
+include $(LUFA_PATH)/Build/lufa.cppcheck.in

@@ -12,6 +12,8 @@
 # all module headers in a simple C and C++
 # application.
 
+# Path to the LUFA library core
+LUFA_PATH         = ../../LUFA/
 
 # List of device families per architecture, one device per architecture sub-family
 AVR8_FAMILIES  = at90usb1287 at90usb1286 atmega16u4 atmega16u2 at90usb162
@@ -37,21 +39,22 @@ end:
 	@echo
 
 %.avr8:
-	$(MAKE) -s -f makefile.avr8 clean
-	$(MAKE) -s -f makefile.avr8 all MCU=$(@:%.avr8=%) elf
+	$(MAKE) -s -f makefile.test clean elf ARCH=AVR8 MCU=$(@:%.avr8=%)
 
 %.xmega:
-	$(MAKE) -s -f makefile.xmega clean
-	$(MAKE) -s -f makefile.xmega all MCU=$(@:%.xmega=%) elf
+	$(MAKE) -s -f makefile.test clean elf ARCH=XMEGA MCU=$(@:%.xmega=%)
 
 %.uc3:
-	$(MAKE) -s -f makefile.uc3 clean
-	$(MAKE) -s -f makefile.uc3 all MCU=$(@:%.uc3=%) elf
+	$(MAKE) -s -f makefile.test clean elf ARCH=UC3 MCU=$(@:%.uc3=%)
 
 clean:
-	$(MAKE) -s -f makefile.avr8 clean
-	$(MAKE) -s -f makefile.xmega clean
-	$(MAKE) -s -f makefile.uc3 clean
+	$(MAKE) -s -f makefile.test clean ARCH=AVR8 MCU=$(firstword $(AVR8_FAMILIES))
+	$(MAKE) -s -f makefile.test clean ARCH=XMEGA MCU=$(firstword $(XMEGA_FAMILIES))
+	$(MAKE) -s -f makefile.test clean ARCH=UC3 MCU=$(firstword $(UC3_FAMILIES))
 
 %:
-	
+
+.PHONY: all arch_avr8 arch_xmega arch_uc3 begin end
+
+# Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa.core.in

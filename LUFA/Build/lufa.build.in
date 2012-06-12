@@ -6,11 +6,15 @@
 #           www.lufa-lib.org
 #
 
-LUFA_BUILD_MODULES += BUILD
-LUFA_BUILD_TARGETS += size checksource all elf hex clean
+LUFA_BUILD_MODULES         += BUILD
+LUFA_BUILD_TARGETS         += size symbol-sizes all elf hex lss clean
+LUFA_BUILD_MANDATORY_VARS  += TARGET ARCH MCU SRC F_USB LUFA_PATH
+LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR
+LUFA_BUILD_PROVIDED_VARS   += 
+LUFA_BUILD_PROVIDED_MACROS += 
 
 # -----------------------------------------------------------------------------
-#               LUFA Compiler Buildsystem Makefile Module.
+#               LUFA GCC Compiler Buildsystem Makefile Module.
 # -----------------------------------------------------------------------------
 # DESCRIPTION:
 #   Provides a set of targets to build a C, C++ and/or Assembly application
@@ -18,11 +22,13 @@ LUFA_BUILD_TARGETS += size checksource all elf hex clean
 # -----------------------------------------------------------------------------
 # TARGETS:
 #
-#    size                      - List application size
-#    checksource               - Check existance of listed input source files
+#    size                      - List built application size
+#    symbol-sizes              - Print application symbols from the binary ELF
+#                                file as a list sorted by size in bytes
 #    all                       - Build application and list size
 #    elf                       - Build application ELF debug object file
 #    hex                       - Build application HEX object files
+#    lss                       - Build application LSS assembly listing file
 #    clean                     - Remove output files
 #
 # MANDATORY PARAMETERS:
@@ -30,7 +36,7 @@ LUFA_BUILD_TARGETS += size checksource all elf hex clean
 #    TARGET                    - Application name
 #    ARCH                      - Device architecture name
 #    MCU                       - Microcontroller device model name
-#    SRC                       - List of input source files (.c, .cpp/.c++, .S)
+#    SRC                       - List of input source files (*.c, *.cpp, *.S)
 #    F_USB                     - Speed of the input clock of the USB controller
 #                                in Hz
 #    LUFA_PATH                 - Path to the LUFA library core
@@ -42,67 +48,84 @@ LUFA_BUILD_TARGETS += size checksource all elf hex clean
 #    C_STANDARD                - C Language Standard to use
 #    CPP_STANDARD              - C++ Language Standard to use
 #    F_CPU                     - Speed of the CPU, in Hz
-#    CC_FLAGS                  - Flags to pass to the compiler
+#    C_FLAGS                   - Flags to pass to the C compiler only
+#    CPP_FLAGS                 - Flags to pass to the C++ compiler only
+#    ASM_FLAGS                 - Flags to pass to the assembler only
+#    CC_FLAGS                  - Common flags to pass to the C/C++ compiler and
+#                                assembler
 #    LD_FLAGS                  - Flags to pass to the linker
+#    OBJDIR                    - Directory for the output object and dependency
+#                                files; if equal to ".", the output files will
+#                                be generated in the same folder as the sources
+#
+# PROVIDED VARIABLES:
+#
+#    (None)
+#
+# PROVIDED MACROS:
+#
+#    (None)
 #
 # -----------------------------------------------------------------------------
 
+ERROR_IF_UNSET   = $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
+ERROR_IF_EMPTY   = $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
+ERROR_IF_NONBOOL = $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
+
+# Default values of optionally user-supplied variables
+BOARD           ?= NONE
+OPTIMIZATION    ?= s
+F_CPU           ?=
+C_STANDARD      ?= gnu99
+CPP_STANDARD    ?= gnu++98
+C_FLAGS         ?=
+CPP_FLAGS       ?=
+ASM_FLAGS       ?=
+CC_FLAGS        ?=
+OBJDIR          ?= .
+
+# Sanity check user supplied values
+$(foreach MANDATORY_VAR, $(LUFA_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
+$(call ERROR_IF_EMPTY, MCU)
+$(call ERROR_IF_EMPTY, TARGET)
+$(call ERROR_IF_EMPTY, ARCH)
+$(call ERROR_IF_EMPTY, F_USB)
+$(call ERROR_IF_EMPTY, LUFA_PATH)
+$(call ERROR_IF_EMPTY, BOARD)
+$(call ERROR_IF_EMPTY, OPTIMIZATION)
+$(call ERROR_IF_EMPTY, C_STANDARD)
+$(call ERROR_IF_EMPTY, CPP_STANDARD)
+$(call ERROR_IF_EMPTY, OBJDIR)
+
+# Determine the utility prefix to use for the selected architecture
+ifeq ($(ARCH), AVR8)
+   CROSS        := avr-
+else ifeq ($(ARCH), XMEGA)
+   CROSS        := avr-
+   $(warning The XMEGA device support is currently EXPERIMENTAL (incomplete and/or non-functional), and is included for preview purposes only.)
+else ifeq ($(ARCH), UC3)
+   CROSS        := avr32-
+   $(warning The UC3 device support is currently EXPERIMENTAL (incomplete and/or non-functional), and is included for preview purposes only.)
+else
+   $(error Unsupported architecture "$(ARCH)")
+endif
+
 # Output Messages
-MSG_BUILD_BEGIN = Begin compilation of project \"$(TARGET)\"...
-MSG_BUILD_END   = Finished building project \"$(TARGET)\"...
-MSG_COMPILE_CMD = '  [CC]      :'
-MSG_REMOVE_CMD  = '  [RM]      :'
-MSG_LINKER_CMD  = '  [LNK]     :'
-MSG_SIZE_CMD    = '  [SIZE]    :'
-MSG_OBJCPY_CMD  = '  [OBJCPY]  :'
-MSG_OBJDMP_CMD  = '  [OBJDMP]  :'
-
-# Sanity check the user MCU, TARGET, ARCH, SRC, F_USB and LUFA_PATH makefile options
-ifeq ($(TARGET),)
-   $(error Makefile TARGET value not set.)
-endif
-ifeq ($(ARCH),)
-   $(error Makefile ARCH value not set.)
-endif
-ifeq ($(MCU),)
-   $(error Makefile MCU value not set.)
-endif
-ifeq ($(SRC),)
-   $(error Makefile SRC value not set.)
-endif
-ifeq ($(F_USB),)
-   $(error Makefile F_USB value not set.)
-endif
-ifeq ($(LUFA_PATH),)
-   $(error Makefile LUFA_PATH value not set.)
-endif
-
-# Default values of user-supplied variables
-BOARD         ?= NONE
-OPTIMIZATION  ?= s
-F_CPU         ?=
-C_STANDARD    ?= c99
-CPP_STANDARD  ?= c++98
+MSG_BUILD_BEGIN  := Begin compilation of project \"$(TARGET)\"...
+MSG_BUILD_END    := Finished building project \"$(TARGET)\".
+MSG_COMPILE_CMD  := ' [CC]      :'
+MSG_ASSEMBLE_CMD := ' [AS]      :'
+MSG_NM_CMD       := ' [NM]      :'
+MSG_REMOVE_CMD   := ' [RM]      :'
+MSG_LINKER_CMD   := ' [LNK]     :'
+MSG_SIZE_CMD     := ' [SIZE]    :'
+MSG_OBJCPY_CMD   := ' [OBJCPY]  :'
+MSG_OBJDMP_CMD   := ' [OBJDMP]  :'
 
 # Convert input source file list to differentiate them by type
 C_SOURCE   = $(filter %.c, $(SRC))
-CPP_SOURCE = $(filter %.cpp, $(SRC)) $(filter %.c++, $(SRC))
+CPP_SOURCE = $(filter %.cpp, $(SRC))
 ASM_SOURCE = $(filter %.S, $(SRC))
-
-# Convert input source filenames into a list of required output object files
-OBJECT_FILES = $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.c++=%.o) $(CPP_SOURCE:%.c++=%.o) $(ASM_SOURCE:%.S=%.o)
-
-# Create a list of flags to pass to the compiler
-CC_FLAGS += -mmcu=$(MCU) -I. -I$(LUFA_PATH)/.. -gdwarf-2 -pipe
-CC_FLAGS += -Wall -Wstrict-prototypes
-CC_FLAGS += -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections -fshort-enums -fno-inline-small-functions -fpack-struct -fshort-enums
-CC_FLAGS += -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
-ifneq ($(F_CPU),)
-   CC_FLAGS += -DF_CPU=$(F_CPU)UL
-endif
-
-# Create a list of flags to pass to the linker
-LD_FLAGS += -Wl,-Map=$(TARGET).map,--cref -Wl,--relax -Wl,--gc-sections -lm
 
 # Create a list of unknown source file types, if any are found throw an error
 UNKNOWN_SOURCE = $(filter-out $(C_SOURCE) $(CPP_SOURCE) $(ASM_SOURCE), $(SRC))
@@ -110,73 +133,131 @@ ifneq ($(UNKNOWN_SOURCE),)
    $(error Unknown input source formats: $(UNKNOWN_SOURCE))
 endif
 
+# Convert input source filenames into a list of required output object files
+OBJECT_FILES = $(filter %.o, $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.cpp=%.o) $(ASM_SOURCE:%.S=%.o))
+ifneq ($(OBJDIR),.)
+   $(shell mkdir $(OBJDIR) 2>&1 | /dev/null)   
+   VPATH           += $(dir $(SRC))
+   
+   OBJECT_FILES    := $(addprefix $(patsubst %/,%,$(OBJDIR))/, $(notdir $(OBJECT_FILES)))
+endif
+
+DEPENDENCY_FILES = $(OBJECT_FILES:%.o=%.d)
+
+# Create a list of common flags to pass to the compiler/linker/assembler
+BASE_CC_FLAGS    := 
+ifeq ($(ARCH), AVR8)
+   BASE_CC_FLAGS += -mmcu=$(MCU) -gdwarf-2 -fshort-enums -fno-inline-small-functions -fpack-struct
+else ifeq ($(ARCH), XMEGA)
+   BASE_CC_FLAGS += -mmcu=$(MCU) -gdwarf-2 -fshort-enums -fno-inline-small-functions -fpack-struct
+else ifeq ($(ARCH), UC3)
+   BASE_CC_FLAGS += -mpart=$(MCU:at32%=%) -g3 -masm-addr-pseudos
+endif
+BASE_CC_FLAGS += -Wall -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections
+BASE_CC_FLAGS += -I. -I$(patsubst %/,%,$(LUFA_PATH))/..
+BASE_CC_FLAGS += -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)UL
+ifneq ($(F_CPU),)
+   BASE_CC_FLAGS += -DF_CPU=$(F_CPU)UL
+endif
+
+# Additional language specific compiler flags
+BASE_C_FLAGS   := -x c -O$(OPTIMIZATION) -std=$(C_STANDARD) -Wstrict-prototypes
+BASE_CPP_FLAGS := -x c++ -O$(OPTIMIZATION) -std=$(CPP_STANDARD)
+BASE_ASM_FLAGS := -x assembler-with-cpp
+
+# Create a list of flags to pass to the linker
+BASE_LD_FLAGS := -lm -Wl,-Map=$(TARGET).map,--cref -Wl,--gc-sections 
+ifeq ($(ARCH), UC3)
+   BASE_LD_FLAGS += --rodata-writable --direct-data   
+else
+   BASE_LD_FLAGS += -Wl,--relax
+endif
+
 # Determine flags to pass to the size utility based on its reported features
-SIZE_MCU_FLAG    = $(shell avr-size --help | grep -- --mcu > /dev/null && echo --mcu=$(MCU) )
-SIZE_FORMAT_FLAG = $(shell avr-size --help | grep -- --format=.*avr > /dev/null && echo --format=avr )
+SIZE_MCU_FLAG    := $(shell $(CROSS)size --help | grep -- --mcu > /dev/null && echo --mcu=$(MCU) )
+SIZE_FORMAT_FLAG := $(shell $(CROSS)size --help | grep -- --format=.*avr > /dev/null && echo --format=avr )
 
 
-begin:
+build_begin:
 	@echo ""
 	@echo $(MSG_BUILD_BEGIN)
+	@echo ""
 	
-end:
+build_end:
 	@echo $(MSG_BUILD_END)
 	@echo ""
 
-checksource:
-	@for f in $(SRC) $(CPPSRC) $(ASRC); do \
-		if [ -f $$f ]; then \
-			echo "Found Source File: $$f" ; \
-		else \
-			echo "Source File Not Found: $$f" ; \
+gcc_version:
+	@$(CROSS)gcc --version
+
+check_source:
+	@for f in $(SRC); do \
+		if [ ! -f $$f ]; then \
+			echo "Error: Source file not found: $$f"; \
+			exit 1; \
 		fi; \
 	 done
 
-size:
-	@echo $(MSG_SIZE_CMD) Determining size of \"$(TARGET).elf\"
-	@if test -f $(TARGET).elf; then \
-	    avr-size $(SIZE_MCU_FLAG) $(SIZE_FORMAT_FLAG) $(TARGET).elf ; 2>/dev/null; \
-	 fi
+size: $(TARGET).elf
+	@echo $(MSG_SIZE_CMD) Determining size of \"$<\"
+	@echo ""
+	$(CROSS)size $(SIZE_MCU_FLAG) $(SIZE_FORMAT_FLAG) $< ; 2>/dev/null;
 
-.PHONY: begin hex lss end size
-all: begin hex end size
+symbol-sizes: $(TARGET).elf
+	@echo $(MSG_NM_CMD) Extracting \"$<\" symbols with decimal byte sizes
+	avr-nm --size-sort --demangle --radix=d $<
+
+clean:
+	@echo $(MSG_REMOVE_CMD) Removing object files of \"$(TARGET)\"
+	rm -f $(OBJECT_FILES)
+	@echo $(MSG_REMOVE_CMD) Removing dependency files of \"$(TARGET)\"
+	rm -f $(DEPENDENCY_FILES)
+	@echo $(MSG_REMOVE_CMD) Removing output files of \"$(TARGET)\"
+	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map $(TARGET).lss $(TARGET).sym
+
+all: build_begin check_source gcc_version elf hex lss sym size build_end
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex $(TARGET).eep
 lss: $(TARGET).lss
+sym: $(TARGET).sym
 
-%.o: %.c
-	@echo $(MSG_COMPILE_CMD) Compiling C file \"$^\"
-	avr-gcc -c $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(C_STANDARD) $< -o $@
+$(OBJDIR)/%.o: %.c $(MAKEFILE_LIST)
+	@echo $(MSG_COMPILE_CMD) Compiling C file \"$(notdir $<)\"
+	$(CROSS)gcc -c $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
 
-%.o: %.cpp
-%.o: %.c++
-	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$^\"
-	avr-gcc -c $(CC_FLAGS) -O$(OPTIMIZATION) --std=$(CPP_STANDARD) -x c++ $< -o $@
+$(OBJDIR)/%.o: %.cpp $(MAKEFILE_LIST)
+	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$(notdir $<)\"
+	$(CROSS)gcc -c $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
 	
-%.o: %.S
-	@echo $(MSG_COMPILE_CMD) Assembling \"$^\"
-	avr-gcc -c $(CC_FLAGS) -x assembler-with-cpp $< -o $@
+$(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
+	@echo $(MSG_ASSEMBLE_CMD) Assembling \"$(notdir $<)\"
+	$(CROSS)gcc -c $(BASE_CC_FLAGS) $(BASE_ASM_FLAGS) $(CC_FLAGS) $(ASM_FLAGS) $< -o $@
 
-.PRECIOUS : $(OBJECT_FILES)
+.PRECIOUS  : $(OBJECT_FILES)
+.SECONDARY : %.elf
 %.elf: $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
-	avr-gcc $^ $(CC_FLAGS) $(LD_FLAGS) -o $@ 
+	$(CROSS)gcc $(BASE_CC_FLAGS) $(BASE_LD_FLAGS) $(CC_FLAGS) $(LD_FLAGS) $^ -o $@
 
 %.hex: %.elf
-	@echo $(MSG_OBJCPY_CMD) Extracting HEX file data from \"$@\"
-	avr-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
+	@echo $(MSG_OBJCPY_CMD) Extracting HEX file data from \"$<\"
+	$(CROSS)objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
 
 %.eep: %.elf
-	@echo $(MSG_OBJCPY_CMD) Extracting EEP file data from \"$@\"
-	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex $< $@ || exit 0
+	@echo $(MSG_OBJCPY_CMD) Extracting EEP file data from \"$<\"
+	$(CROSS)objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex $< $@ || exit 0
 
 %.lss: %.elf
-	@echo $(MSG_OBJDMP_CMD) Extracting LSS file data from \"$@\"
-	avr-objdump -h -S -z $< > $@
+	@echo $(MSG_OBJDMP_CMD) Extracting LSS file data from \"$<\"
+	$(CROSS)objdump -h -S -z $< > $@
 
-clean:
-	@echo $(MSG_REMOVE_CMD) Removing object files \"$(OBJECT_FILES)\"
-	rm -f $(OBJECT_FILES)
-	@echo $(MSG_REMOVE_CMD) Removing output files \"$(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map $(TARGET).lss\"
-	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).eep $(TARGET).map $(TARGET).lss
+%.sym: %.elf
+	@echo $(MSG_NM_CMD) Extracting SYM file data from \"$<\"
+	$(CROSS)nm -n $< > $@
+
+# Include build dependency files
+-include $(DEPENDENCY_FILES)
+
+# Phony build targets for this module
+.PHONY: build_begin build_end gcc_version check_source size symbol-sizes elf hex lss clean
