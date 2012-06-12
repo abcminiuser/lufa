@@ -41,8 +41,8 @@
  *
  *  \section Sec_Dependencies Module Source Dependencies
  *  The following files must be built with any user project that uses this module:
- *    - LUFA/Platform/UC3/InterruptManagement.c
- *    - LUFA/Platform/UC3/Exception.S
+ *    - LUFA/Platform/UC3/InterruptManagement.c <i>(Makefile source module name: LUFA_SRC_PLATFORM)</i>
+ *    - LUFA/Platform/UC3/Exception.S <i>(Makefile source module name: LUFA_SRC_PLATFORM)</i>
  *
  *  \section Sec_ModDescription Module Description
  *  Interrupt controller driver for the AVR32 UC3 microcontrollers, for the configuration of interrupt
@@ -81,19 +81,20 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Type Defines: */
+			#if defined(__GNUC__)
 			typedef void (*InterruptHandlerPtr_t)(void);
+			#elif defined(__ICCAVR32__)
+			typedef void (__interrupt *InterruptHandlerPtr_t)(void);			
+			#endif
 
 		/* External Variables: */
-			#if defined(__INCLUDE_FROM_INTMANAGEMENT_C)
-				extern const void        EVBA_Table;
-			#endif
 			extern InterruptHandlerPtr_t InterruptHandlers[AVR32_INTC_NUM_INT_GRPS];
 			extern const uint32_t        Autovector_Table[];
 	#endif
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			/** Converts a given interrupt index into its assocated interrupt group.
+			/** Converts a given interrupt index into its associated interrupt group.
 			 *
 			 *  \param[in] IRQIndex  Index of the interrupt request to convert.
 			 *
@@ -101,7 +102,7 @@
 			 */
 			#define INTC_IRQ_GROUP(IRQIndex)  (IRQIndex / 32)
 
-			/** Converts a given interrupt index into its assocated interrupt line.
+			/** Converts a given interrupt index into its associated interrupt line.
 			 *
 			 *  \param[in] IRQIndex  Index of the interrupt request to convert.
 			 *
@@ -136,8 +137,10 @@
 			                                             const uint8_t InterruptLevel,
 			                                             const InterruptHandlerPtr_t Handler)
 			{
+				#if defined(__GNUC__)
 				InterruptHandlers[GroupNumber] = Handler;
 				AVR32_INTC.ipr[GroupNumber]    = Autovector_Table[InterruptLevel];
+				#endif
 			}
 
 			/** Retrieves the pending interrupts for a given interrupt group. The result of this function should be masked

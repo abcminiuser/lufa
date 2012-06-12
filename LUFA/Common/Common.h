@@ -109,9 +109,10 @@
 			#include "Endianness.h"
 		#elif (ARCH == ARCH_UC3)
 			#include <avr32/io.h>
+			#include <math.h>
 
 			// === TODO: Find abstracted way to handle these ===
-			#define PROGMEM                  const
+			#define PROGMEM                  
 			#define pgm_read_byte(x)         *x
 			#define memcmp_P(...)            memcmp(__VA_ARGS__)
 			#define memcpy_P(...)            memcpy(__VA_ARGS__)
@@ -206,24 +207,6 @@
 				#define STRINGIFY_EXPANDED(x)   STRINGIFY(x)
 			#endif
 
-			#if !defined(ISR) || defined(__DOXYGEN__)
-				/** Macro for the definition of interrupt service routines, so that the compiler can insert the required
-				 *  prologue and epilogue code to properly manage the interrupt routine without affecting the main thread's
-				 *  state with unintentional side-effects.
-				 *
-				 *  Interrupt handlers written using this macro may still need to be registered with the microcontroller's
-				 *  Interrupt Controller (if present) before they will properly handle incoming interrupt events.
-				 *
-				 *  \note This macro is only supplied on some architectures, where the standard library does not include a valid
-				 *        definition. If an existing definition exists, the alternative definition here will be ignored.
-				 *
-				 *  \ingroup Group_GlobalInt
-				 *
-				 *  \param[in] Name  Unique name of the interrupt service routine.
-				 */
-				#define ISR(Name, ...)          void Name (void) __attribute__((__interrupt__)) __VA_ARGS__; void Name (void)
-			#endif
-
 		/* Inline Functions: */
 			/** Function to reverse the individual bits in a byte - i.e. bit 7 is moved to bit 0, bit 6 to bit 1,
 			 *  etc.
@@ -264,8 +247,8 @@
 				#elif (ARCH == ARCH_UC3)
 				while (Milliseconds--)
 				{
-					__builtin_mtsr(AVR32_COUNT, 0);
-					while ((uint32_t)__builtin_mfsr(AVR32_COUNT) < (F_CPU / 1000));
+					WRITE_SYS_REGISTER(AVR32_COUNT, 0);
+					while ((uint32_t)READ_SYS_REGISTER(AVR32_COUNT) < (F_CPU / 1000));
 				}
 				#elif (ARCH == ARCH_XMEGA)
 				if (GCC_IS_COMPILE_CONST(Milliseconds))
@@ -291,12 +274,12 @@
 			static inline uint_reg_t GetGlobalInterruptMask(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
 			static inline uint_reg_t GetGlobalInterruptMask(void)
 			{
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 
 				#if (ARCH == ARCH_AVR8)
 				return SREG;
 				#elif (ARCH == ARCH_UC3)
-				return __builtin_mfsr(AVR32_SR);
+				return READ_SYS_REGISTER(AVR32_SR);
 				#elif (ARCH == ARCH_XMEGA)
 				return SREG;
 				#endif
@@ -313,20 +296,20 @@
 			static inline void SetGlobalInterruptMask(const uint_reg_t GlobalIntState) ATTR_ALWAYS_INLINE;
 			static inline void SetGlobalInterruptMask(const uint_reg_t GlobalIntState)
 			{
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 
 				#if (ARCH == ARCH_AVR8)
 				SREG = GlobalIntState;
 				#elif (ARCH == ARCH_UC3)
 				if (GlobalIntState & AVR32_SR_GM)
-				  __builtin_ssrf(AVR32_SR_GM_OFFSET);
+				  SET_STATUS_FLAG(AVR32_SR_GM_OFFSET);
 				else
-				  __builtin_csrf(AVR32_SR_GM_OFFSET);
+				  CLEAR_STATUS_FLAG(AVR32_SR_GM_OFFSET);
 				#elif (ARCH == ARCH_XMEGA)
 				SREG = GlobalIntState;
 				#endif
 
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 			}
 
 			/** Enables global interrupt handling for the device, allowing interrupts to be handled.
@@ -336,17 +319,17 @@
 			static inline void GlobalInterruptEnable(void) ATTR_ALWAYS_INLINE;
 			static inline void GlobalInterruptEnable(void)
 			{
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 
 				#if (ARCH == ARCH_AVR8)
 				sei();
 				#elif (ARCH == ARCH_UC3)
-				__builtin_csrf(AVR32_SR_GM_OFFSET);
+				CLEAR_STATUS_FLAG(AVR32_SR_GM_OFFSET);
 				#elif (ARCH == ARCH_XMEGA)
 				sei();
 				#endif
 
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 			}
 
 			/** Disabled global interrupt handling for the device, preventing interrupts from being handled.
@@ -356,17 +339,17 @@
 			static inline void GlobalInterruptDisable(void) ATTR_ALWAYS_INLINE;
 			static inline void GlobalInterruptDisable(void)
 			{
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 
 				#if (ARCH == ARCH_AVR8)
 				cli();
 				#elif (ARCH == ARCH_UC3)
-				__builtin_ssrf(AVR32_SR_GM_OFFSET);
+				SET_STATUS_FLAG(AVR32_SR_GM_OFFSET);
 				#elif (ARCH == ARCH_XMEGA)
 				cli();
 				#endif
 
-				GCC_MEMORY_BARRIER();
+				MEMORY_BARRIER();
 			}
 
 	/* Disable C linkage for C++ Compilers: */

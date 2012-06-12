@@ -91,10 +91,10 @@
 			#error Do not include this file directly. Include LUFA/Drivers/Peripheral/ADC.h instead.
 		#endif
 
-		#if !(defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
-		      defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
-			  defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || \
-			  defined(__AVR_ATmega32U6__))
+		#if !(IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB646) || \
+		      IS_PART_DEFINED(AT90USB1287) || IS_PART_DEFINED(AT90USB647) || \
+			  IS_PART_DEFINED(ATmega16U4)  || IS_PART_DEFINED(ATmega32U4) || \
+			  IS_PART_DEFINED(ATmega32U6))
 			#error The ADC peripheral driver is not currently available for your selected microcontroller model.
 		#endif
 
@@ -177,7 +177,7 @@
 			/** MUX mask define for the ADC1 channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading(). */
 			#define ADC_CHANNEL1                    (0x01 << MUX0)
 
-			#if (!(defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__)) || defined(__DOXYGEN__))
+			#if (!(IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4)) || defined(__DOXYGEN__))
 				/** MUX mask define for the ADC2 channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading().
 				 *
 				 *  \note Not available on all AVR models.
@@ -203,7 +203,7 @@
 			/** MUX mask define for the ADC7 channel of the ADC. See \ref ADC_StartReading and \ref ADC_GetChannelReading. */
 			#define ADC_CHANNEL7                    (0x07 << MUX0)
 
-			#if (defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || defined(__DOXYGEN__))
+			#if (IS_PART_DEFINED(ATmega16U4)  || IS_PART_DEFINED(ATmega32U4) || defined(__DOXYGEN__))
 				/** MUX mask define for the ADC8 channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading().
 				 *
 				 *  \note Not available on all AVR models.
@@ -248,7 +248,7 @@
 				#define ADC_INT_TEMP_SENS           ((1 << 8) | (0x07 << MUX0))
 			#endif
 
-			/** MUX mask define for the internal 1.1V bandgap channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading(). */
+			/** MUX mask define for the internal 1.1V band-gap channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading(). */
 			#define ADC_1100MV_BANDGAP              (0x1E << MUX0)
 
 			/** Retrieves the ADC MUX mask for the given ADC channel number.
@@ -275,12 +275,12 @@
 			 */
 			static inline void ADC_SetupChannel(const uint8_t ChannelIndex)
 			{
-				#if (defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
-					 defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
-					 defined(__AVR_ATmega32U6__))
+				#if (IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB646) || \
+					 IS_PART_DEFINED(AT90USB1287) || IS_PART_DEFINED(AT90USB647) || \
+					 IS_PART_DEFINED(ATmega32U6))
 				DDRF  &= ~(1 << ChannelIndex);
 				DIDR0 |=  (1 << ChannelIndex);
-				#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
+				#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				if (ChannelIndex < 8)
 				{
 					DDRF  &= ~(1 << ChannelIndex);
@@ -317,12 +317,12 @@
 			 */
 			static inline void ADC_DisableChannel(const uint8_t ChannelIndex)
 			{
-				#if (defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
-					 defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
-					 defined(__AVR_ATmega32U6__))
+				#if (IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB646) || \
+					 IS_PART_DEFINED(AT90USB1287) || IS_PART_DEFINED(AT90USB647) || \
+					 IS_PART_DEFINED(ATmega32U6))
 				DDRF  &= ~(1 << ChannelIndex);
 				DIDR0 &= ~(1 << ChannelIndex);
-				#elif (defined(__AVR_ATmega16U4__) || defined(__AVR_ATmega32U4__))
+				#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				if (ChannelIndex < 8)
 				{
 					DDRF  &= ~(1 << ChannelIndex);
@@ -360,7 +360,7 @@
 			{
 				ADMUX = MUXMask;
 
-				#if (defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || defined(__DOXYGEN__))
+				#if (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4) || defined(__DOXYGEN__))
 				if (MUXMask & (1 << 8))
 				  ADCSRB |=  (1 << MUX5);
 				else

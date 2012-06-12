@@ -131,10 +131,10 @@
 			#error Do not include this file directly. Include LUFA/Drivers/Peripheral/TWI.h instead.
 		#endif
 
-		#if !(defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || \
-		      defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB647__) || \
-			  defined(__AVR_ATmega16U4__)  || defined(__AVR_ATmega32U4__) || \
-			  defined(__AVR_ATmega32U6__))
+		#if !(IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB646) || \
+		      IS_PART_DEFINED(AT90USB1287) || IS_PART_DEFINED(AT90USB647) || \
+			  IS_PART_DEFINED(ATmega16U4)  || IS_PART_DEFINED(ATmega32U4) || \
+			  IS_PART_DEFINED(ATmega32U6))
 			#error The TWI peripheral driver is not currently available for your selected microcontroller model.
 		#endif
 

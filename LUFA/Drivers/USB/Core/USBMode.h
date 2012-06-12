@@ -60,6 +60,9 @@
 			extern "C" {
 		#endif
 
+	/* Includes: */
+		#include "../../../Common/Common.h"
+
 	/* Preprocessor Checks: */
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
@@ -163,78 +166,78 @@
 		#define USB_CAN_BE_BOTH
 	#else
 		/* Macros: */
-			#if (defined(__AVR_AT90USB162__) || defined(__AVR_AT90USB82__)  || \
-			     defined(__AVR_ATmega32U2__) || defined(__AVR_ATmega16U2__) || defined(__AVR_ATmega8U2__))
+			#if (IS_PART_DEFINED(AT90USB162) || IS_PART_DEFINED(AT90USB82)  || \
+			     IS_PART_DEFINED(ATmega32U2) || IS_PART_DEFINED(ATmega16U2) || IS_PART_DEFINED(ATmega8U2))
 				#define USB_SERIES_2_AVR
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega16U4__))
+			#elif (IS_PART_DEFINED(ATmega32U4) || IS_PART_DEFINED(ATmega16U4))
 				#define USB_SERIES_4_AVR
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATmega32U6__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB1286__))
+			#elif (IS_PART_DEFINED(ATmega32U6) || IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286))
 				#define USB_SERIES_6_AVR
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_AT90USB647__) || defined(__AVR_AT90USB1287__))
+			#elif (IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(AT90USB1287))
 				#define USB_SERIES_7_AVR
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3A0512__) || defined(__AVR32_UC3A0256__) || \
-			       defined(__AVR32_UC3A0128__) || defined(__AVR32_UC3A064__))
+			#elif (IS_PART_DEFINED(UC3A0512) || IS_PART_DEFINED(UC3A0256) || \
+			       IS_PART_DEFINED(UC3A0128) || IS_PART_DEFINED(UC3A064))
 				#define USB_SERIES_UC3A0_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3A1512__) || defined(__AVR32_UC3A1256__) || \
-			       defined(__AVR32_UC3A1128__) || defined(__AVR32_UC3A164__))
+			#elif (IS_PART_DEFINED(UC3A1512) || IS_PART_DEFINED(UC3A1256) || \
+			       IS_PART_DEFINED(UC3A1128) || IS_PART_DEFINED(UC3A164))
 				#define USB_SERIES_UC3A1_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3A3256__) || defined(__AVR32_UC3A3256S__) || \
-			       defined(__AVR32_UC3A3128__) || defined(__AVR32_UC3A3128S__) || \
-			       defined(__AVR32_UC3A364__)  || defined(__AVR32_UC3A364S__))
+			#elif (IS_PART_DEFINED(UC3A3256) || IS_PART_DEFINED(UC3A3256S) || \
+			       IS_PART_DEFINED(UC3A3128) || IS_PART_DEFINED(UC3A3128S) || \
+			       IS_PART_DEFINED(UC3A364)  || IS_PART_DEFINED(UC3A364S))
 				#define USB_SERIES_UC3A3_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3A4256__) || defined(__AVR32_UC3A4256S__) || \
-			       defined(__AVR32_UC3A4128__) || defined(__AVR32_UC3A4128S__) || \
-			       defined(__AVR32_UC3A464__)  || defined(__AVR32_UC3A464S__))
+			#elif (IS_PART_DEFINED(UC3A4256) || IS_PART_DEFINED(UC3A4256S) || \
+			       IS_PART_DEFINED(UC3A4128) || IS_PART_DEFINED(UC3A4128S) || \
+			       IS_PART_DEFINED(UC3A464)  || IS_PART_DEFINED(UC3A464S))
 				#define USB_SERIES_UC3A4_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3B0512__) || defined(__AVR32_UC3B0256__) || \
-			       defined(__AVR32_UC3B0128__) || defined(__AVR32_UC3B064__))
+			#elif (IS_PART_DEFINED(UC3B0512) || IS_PART_DEFINED(UC3B0256) || \
+			       IS_PART_DEFINED(UC3B0128) || IS_PART_DEFINED(UC3B064))
 				#define USB_SERIES_UC3B0_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR32_UC3B1512__) || defined(__AVR32_UC3B1256__) || \
-			       defined(__AVR32_UC3B1128__) || defined(__AVR32_UC3B164__))
+			#elif (IS_PART_DEFINED(UC3B1512) || IS_PART_DEFINED(UC3B1256) || \
+			       IS_PART_DEFINED(UC3B1128) || IS_PART_DEFINED(UC3B164))
 				#define USB_SERIES_UC3B1_AVR32
 				#define USB_CAN_BE_DEVICE
 				#define USB_CAN_BE_HOST
-			#elif (defined(__AVR_ATxmega128A1U__) || defined(__AVR_ATxmega64A1U__))
+			#elif (IS_PART_DEFINED(ATxmega128A1U) || IS_PART_DEFINED(ATxmega64A1U))
 				#define USB_SERIES_A1U_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega64A3U__) || defined(__AVR_ATxmega128A3U__) || \
-			       defined(__AVR_ATxmega192A3U__) || defined(__AVR_ATxmega256A3U__))
+			#elif (IS_PART_DEFINED(ATxmega64A3U)  || IS_PART_DEFINED(ATxmega128A3U) || \
+			       IS_PART_DEFINED(ATxmega192A3U) || IS_PART_DEFINED(ATxmega256A3U))
 				#define USB_SERIES_A3U_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega256A3BU__))
+			#elif (IS_PART_DEFINED(ATxmega256A3BU))
 				#define USB_SERIES_A3BU_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega16A4U__) || defined(__AVR_ATxmega32A4U__) || \
-			       defined(__AVR_ATxmega64A4U__) || defined(__AVR_ATxmega128A4U__))
+			#elif (IS_PART_DEFINED(ATxmega16A4U) || IS_PART_DEFINED(ATxmega32A4U) || \
+			       IS_PART_DEFINED(ATxmega64A4U) || IS_PART_DEFINED(ATxmega128A4U))
 				#define USB_SERIES_A4U_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega128B1__) || defined(__AVR_ATxmega64B1__))
+			#elif (IS_PART_DEFINED(ATxmega128B1) || IS_PART_DEFINED(ATxmega64B1))
 				#define USB_SERIES_B1_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega128B3__) || defined(__AVR_ATxmega64B3__))
+			#elif (IS_PART_DEFINED(ATxmega128B3) || IS_PART_DEFINED(ATxmega64B3))
 				#define USB_SERIES_B3_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega128C3__) || defined(__AVR_ATxmega64C3__) || \
-			       defined(__AVR_ATxmega192C3__) || defined(__AVR_ATxmega256C3__) || \
-				   defined(__AVR_ATxmega384C3__))
+			#elif (IS_PART_DEFINED(ATxmega128C3) || IS_PART_DEFINED(ATxmega64C3) || \
+			       IS_PART_DEFINED(ATxmega192C3) || IS_PART_DEFINED(ATxmega256C3) || \
+				   IS_PART_DEFINED(ATxmega384C3))
 				#define USB_SERIES_C3_XMEGA
 				#define USB_CAN_BE_DEVICE
-			#elif (defined(__AVR_ATxmega16C4__) || defined(__AVR_ATxmega32C4__))
+			#elif (IS_PART_DEFINED(ATxmega16C4) || IS_PART_DEFINED(ATxmega32C4))
 				#define USB_SERIES_C4_XMEGA
 				#define USB_CAN_BE_DEVICE
 			#endif

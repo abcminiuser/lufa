@@ -6,11 +6,15 @@
 #           www.lufa-lib.org
 #
 
-LUFA_BUILD_MODULES += AVRDUDE
-LUFA_BUILD_TARGETS += program
+LUFA_BUILD_MODULES         += AVRDUDE
+LUFA_BUILD_TARGETS         += avrdude avrdude-ee
+LUFA_BUILD_MANDATORY_VARS  += MCU TARGET
+LUFA_BUILD_OPTIONAL_VARS   += AVRDUDE_PROGRAMMER AVRDUDE_PORT AVRDUDE_FLAGS
+LUFA_BUILD_PROVIDED_VARS   += 
+LUFA_BUILD_PROVIDED_MACROS += 
 
 # -----------------------------------------------------------------------------
-#               LUFA DFU Bootloader Buildsystem Makefile Module.
+#             LUFA AVRDUDE Programmer Buildsystem Makefile Module.
 # -----------------------------------------------------------------------------
 # DESCRIPTION:
 #   Provides a set of targets to re-program a device using the open source
@@ -18,7 +22,10 @@ LUFA_BUILD_TARGETS += program
 # -----------------------------------------------------------------------------
 # TARGETS:
 #
-#    program                   - Program target with application using avr-dude
+#    avrdude                   - Program target FLASH with application using
+#                                avrdude
+#    avrdude-ee                - Program target EEPROM with application data
+#                                using avrdude
 #
 # MANDATORY PARAMETERS:
 #
@@ -31,24 +38,42 @@ LUFA_BUILD_TARGETS += program
 #    AVRDUDE_PORT              - Name of communication port to use
 #    AVRDUDE_FLAGS             - Flags to pass to avr-dude
 #
+# PROVIDED VARIABLES:
+#
+#    (None)
+#
+# PROVIDED MACROS:
+#
+#    (None)
+#
 # -----------------------------------------------------------------------------
 
+ERROR_IF_UNSET   = $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
+ERROR_IF_EMPTY   = $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
+ERROR_IF_NONBOOL = $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
+
+# Default values of optionally user-supplied variables
+AVRDUDE_PROGRAMMER ?= jtagicemkii
+AVRDUDE_PORT       ?= usb
+AVRDUDE_FLAGS      ?= 
+
+# Sanity check user supplied values
+$(foreach MANDATORY_VAR, $(LUFA_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
+$(call ERROR_IF_EMPTY, MCU)
+$(call ERROR_IF_EMPTY, TARGET)
+$(call ERROR_IF_EMPTY, AVRDUDE_PROGRAMMER)
+$(call ERROR_IF_EMPTY, AVRDUDE_PORT)
+
 # Output Messages
-MSG_AVRDUDE_CMD   = '  [AVRDUDE]  :'
+MSG_AVRDUDE_CMD    := ' [AVRDUDE] :'
 
-# Default values of user-supplied variables
-AVRDUDE_PROGRAMMER  ?= jtagicemkii
-AVRDUDE_PORT        ?= usb
-AVRDUDE_FLAGS       ?= -U flash:w:$(TARGET).hex
+avrdude: $(TARGET).hex $(MAKEFILE_LIST)
+	@echo $(MSG_AVRDUDE_CMD) Programming device \"$(MCU)\" FLASH with settings \"$(AVRDUDE_FLASH_FLAGS)\" using \"$(AVRDUDE_PROGRAMMER)\" on port \"$(AVRDUDE_PORT)\"
+	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U flash:w:$< $(AVRDUDE_FLAGS)
 
-# Sanity check the user MCU and TARGET makefile options
-ifeq ($(MCU),)
-   $(error Makefile MCU value not set.)
-endif
-ifeq ($(TARGET),)
-   $(error Makefile TARGET value not set.)
-endif
+avrdude-ee: $(TARGET).eep $(MAKEFILE_LIST)
+	@echo $(MSG_AVRDUDE_CMD) Programming device \"$(MCU)\" EEPROM with settings \"$(AVRDUDE_EEP_FLAGS)\" using \"$(AVRDUDE_PROGRAMMER)\" on port \"$(AVRDUDE_PORT)\"
+	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U eeprom:w:$< $(AVRDUDE_FLAGS)
 
-program: $(TARGET).hex
-	@echo $(MSG_AVRDUDE_CMD) Programming device \"$(MCU)\" with settings \"$(AVRDUDE_FLAGS)\" using \"$(AVRDUDE_PROGRAMMER)\" on port \"$(AVRDUDE_PORT)\"
-	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) $(AVRDUDE_FLAGS)
+# Phony build targets for this module
+.PHONY: avrdude avrdude-ee

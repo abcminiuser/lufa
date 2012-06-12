@@ -34,6 +34,9 @@
 #define  __INCLUDE_FROM_INTMANAGEMENT_C
 #include "InterruptManagement.h"
 
+#if defined(__GNUC__)
+extern const void EVBA_Table;
+
 /** Interrupt vector table, containing the ISR to call for each interrupt group */
 InterruptHandlerPtr_t InterruptHandlers[AVR32_INTC_NUM_INT_GRPS];
 
@@ -50,19 +53,22 @@ InterruptHandlerPtr_t INTC_GetInterruptHandler(const uint_reg_t InterruptLevel)
 {
 	return InterruptHandlers[AVR32_INTC.icr[AVR32_INTC_INT3 - InterruptLevel]];
 }
+#endif
 
 /** Initializes the interrupt controller ready to handle interrupts. This must be called at the
  *  start of the user program before any interrupts are registered or enabled.
  */
 void INTC_Init(void)
 {
+	#if defined(__GNUC__)
 	for (uint8_t InterruptGroup = 0; InterruptGroup < AVR32_INTC_NUM_INT_GRPS; InterruptGroup++)
 	{
 		InterruptHandlers[InterruptGroup] = Unhandled_Interrupt;
 		AVR32_INTC.ipr[InterruptGroup]    = Autovector_Table[AVR32_INTC_INT0];
 	}
 
-	__builtin_mtsr(AVR32_EVBA, (uintptr_t)&EVBA_Table);
+	WRITE_SYS_REGISTER(AVR32_EVBA, (uintptr_t)&EVBA_Table);
+	#endif
 }
 
 #endif
