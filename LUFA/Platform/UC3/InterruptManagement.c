@@ -34,17 +34,11 @@
 #define  __INCLUDE_FROM_INTMANAGEMENT_C
 #include "InterruptManagement.h"
 
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__DOXYGEN__)
 extern const void EVBA_Table;
 
 /** Interrupt vector table, containing the ISR to call for each interrupt group */
 InterruptHandlerPtr_t InterruptHandlers[AVR32_INTC_NUM_INT_GRPS];
-
-/** ISR for unhandled interrupt groups */
-ISR(Unhandled_Interrupt)
-{
-	for (;;);
-}
 
 /** Retrieves the associated interrupt handler for the interrupt group currently being fired. This
  *  is called directly from the exception handler routine before dispatching to the ISR.
@@ -55,6 +49,16 @@ InterruptHandlerPtr_t INTC_GetInterruptHandler(const uint_reg_t InterruptLevel)
 }
 #endif
 
+/** ISR for unhandled interrupt groups */
+#if defined(__GNUC__) || defined(__DOXYGEN__)
+ISR(__unhandled_interrupt)
+#elif defined(__ICCAVR32__)
+__interrupt void __unhandled_interrupt(void)
+#endif
+{
+	for (;;);
+}
+
 /** Initializes the interrupt controller ready to handle interrupts. This must be called at the
  *  start of the user program before any interrupts are registered or enabled.
  */
@@ -63,7 +67,7 @@ void INTC_Init(void)
 	#if defined(__GNUC__)
 	for (uint8_t InterruptGroup = 0; InterruptGroup < AVR32_INTC_NUM_INT_GRPS; InterruptGroup++)
 	{
-		InterruptHandlers[InterruptGroup] = Unhandled_Interrupt;
+		InterruptHandlers[InterruptGroup] = __unhandled_interrupt;
 		AVR32_INTC.ipr[InterruptGroup]    = Autovector_Table[AVR32_INTC_INT0];
 	}
 

@@ -150,14 +150,14 @@
 			 *  as a discrete block and not as a list of separate statements which may cause problems when used as
 			 *  a block (such as inline \c if statements).
 			 */
-			#define MACROS                  do
+			#define MACROS                        do
 
 			/** Macro for encasing other multi-statement macros. This should be used along with a preceding closing
 			 *  brace at the end of any multi-statement macro, so that the macros contents as a whole are treated
 			 *  as a discrete block and not as a list of separate statements which may cause problems when used as
 			 *  a block (such as inline \c if statements).
 			 */
-			#define MACROE                  while (0)
+			#define MACROE                        while (0)
 
 			/** Convenience macro to determine the larger of two values.
 			 *
@@ -170,7 +170,7 @@
 			 *  \return The larger of the two input parameters
 			 */
 			#if !defined(MAX) || defined(__DOXYGEN__)
-				#define MAX(x, y)               (((x) > (y)) ? (x) : (y))
+				#define MAX(x, y)                 (((x) > (y)) ? (x) : (y))
 			#endif
 
 			/** Convenience macro to determine the smaller of two values.
@@ -184,7 +184,7 @@
 			 *  \return The smaller of the two input parameters
 			 */
 			#if !defined(MIN) || defined(__DOXYGEN__)
-				#define MIN(x, y)               (((x) < (y)) ? (x) : (y))
+				#define MIN(x, y)                 (((x) < (y)) ? (x) : (y))
 			#endif
 
 			#if !defined(STRINGIFY) || defined(__DOXYGEN__)
@@ -195,7 +195,7 @@
 				 *
 				 *  \return String version of the input.
 				 */
-				#define STRINGIFY(x)            #x
+				#define STRINGIFY(...)            #__VA_ARGS__
 
 				/** Converts the given input into a string after macro expansion, via the C Preprocessor. This macro puts
 				 *  literal quotation marks around the expanded input, converting the source into a string literal.
@@ -204,15 +204,15 @@
 				 *
 				 *  \return String version of the expanded input.
 				 */
-				#define STRINGIFY_EXPANDED(x)   STRINGIFY(x)
+				#define STRINGIFY_EXPANDED(...)  STRINGIFY(__VA_ARGS__)
 			#endif
 
-			#define MEMORY_BARRIER()              __COMPILER_SPECIFIC(MEMORY_BARRIER())
-			#define IS_PART_DEFINED(x)            __COMPILER_SPECIFIC(IS_PART_DEFINED(x))
-			#define READ_SYS_REGISTER(Reg)        __COMPILER_SPECIFIC(READ_SYS_REGISTER(Reg))
-			#define WRITE_SYS_REGISTER(Reg, Val)  __COMPILER_SPECIFIC(WRITE_SYS_REGISTER(Reg, Val))
-			#define CLEAR_STATUS_FLAG(Bitmask)    __COMPILER_SPECIFIC(CLEAR_STATUS_FLAG(Bitmask))
-			#define SET_STATUS_FLAG(Bitmask)      __COMPILER_SPECIFIC(SET_STATUS_FLAG(Bitmask))
+			#define MEMORY_BARRIER()             __COMPILER_SPECIFIC(MEMORY_BARRIER())
+			#define IS_PART_DEFINED(x)           __COMPILER_SPECIFIC(IS_PART_DEFINED(x))
+			#define READ_SYS_REGISTER(Reg)       __COMPILER_SPECIFIC(READ_SYS_REGISTER(Reg))
+			#define WRITE_SYS_REGISTER(Reg, Val) __COMPILER_SPECIFIC(WRITE_SYS_REGISTER(Reg, Val))
+			#define CLEAR_STATUS_FLAG(Bitmask)   __COMPILER_SPECIFIC(CLEAR_STATUS_FLAG(Bitmask))
+			#define SET_STATUS_FLAG(Bitmask)     __COMPILER_SPECIFIC(SET_STATUS_FLAG(Bitmask))
 
 			#if !defined(ISR) || defined(__DOXYGEN__)
 				/** Macro for the definition of interrupt service routines, so that the compiler can insert the required
@@ -229,7 +229,7 @@
 				 *
 				 *  \param[in] Name  Unique name of the interrupt service routine.
 				 */
-				 #define ISR(Name, ...) __COMPILER_SPECIFIC(ISR(Name, __VA_ARGS__))
+				 #define ISR(Name, ...)           __COMPILER_SPECIFIC(ISR(Name, __VA_ARGS__))
 			#endif
 			
 		/* Inline Functions: */
