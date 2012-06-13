@@ -141,7 +141,7 @@ ifeq ($(ARCH), AVR8)
 else ifeq ($(ARCH), XMEGA)
    BASE_CC_FLAGS += --variable_enum_size enabled
 else ifeq ($(ARCH), UC3)
-   BASE_CC_FLAGS +=  
+   BASE_CC_FLAGS += --code_model=large --data_model=large 
 endif
 BASE_CC_FLAGS += --silent --debug --cpu=$(MCU)
 BASE_CC_FLAGS += -I. -I$(patsubst %/,%,$(LUFA_PATH))/..
@@ -151,14 +151,15 @@ ifneq ($(F_CPU),)
 endif
 
 # Additional language specific compiler flags
-BASE_C_FLAGS   := -e --diag_suppress Pe546,Pa082 --require_prototypes --variable_enum_size enabled --vla --no_tbaa --char_is_unsigned --discard_unused_publics -O$(OPTIMIZATION) 
+BASE_C_FLAGS   := -e --diag_suppress Pe546,Pa082 --dlib_config DLib_Config_Normal.h --require_prototypes --vla --no_tbaa --char_is_unsigned -O$(OPTIMIZATION) 
 BASE_CPP_FLAGS := $(BASE_C_FLAGS) --$(CPP_STANDARD)
 BASE_ASM_FLAGS := 
 
+# TODO: FIXME!
+IAR_PATH := C:\Program\ Files\ \(x86\)\IAR\ Systems\Embedded\ Workbench\ 6.0\ Kickstart
+
 # Create a list of flags to pass to the linker
-BASE_LD_FLAGS := 
-# TODO:
-#   -f "C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\config\lnk$(MCU:at32%=%).xcl" -D_SSTACK_SIZE=1000 -D_CSTACK_SIZE=2000 -D_HEAP_SIZE=1000 -I"C:\Program Files (x86)\IAR Systems\Embedded Workbench 6.0 Kickstart\avr32\LIB\" -rt -s __program_start -g__init_all_ihandlers -g__handle_all_exceptions
+BASE_LD_FLAGS := -l $(TARGET).map $(IAR_PATH)\avr32\lib\dlavr32allasn.r82 -f $(IAR_PATH)\avr32\config\lnk$(MCU:at32%=%).xcl -D_SSTACK_SIZE=1000 -D_CSTACK_SIZE=2000 -D_HEAP_SIZE=1000 -I$(IAR_PATH)\avr32\LIB\ -rt -s __program_start -g__init_all_ihandlers -g__handle_all_exceptions
 
 build_begin:
 	@echo ""
@@ -183,7 +184,7 @@ clean:
 	@echo $(MSG_REMOVE_CMD) Removing dependency files of \"$(TARGET)\"
 	rm -f $(DEPENDENCY_FILES)
 	@echo $(MSG_REMOVE_CMD) Removing output files of \"$(TARGET)\"
-	rm -f $(TARGET).elf $(TARGET).hex
+	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).map
 
 all: build_begin check_source elf hex build_end
 
@@ -206,7 +207,7 @@ $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
 .SECONDARY : %.elf
 %.elf: $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"
-	xlink $(BASE_LD_FLAGS) $(LD_FLAGS) -c$(CROSS) -Felf -yp -S $^ -o $@
+	xlink $(BASE_LD_FLAGS) $(LD_FLAGS) -Felf -yp -S $^ -o $@
 
 %.hex : $(OBJECT_FILES)
 	@echo $(MSG_LINKER_CMD) Linking object files into \"$@\"

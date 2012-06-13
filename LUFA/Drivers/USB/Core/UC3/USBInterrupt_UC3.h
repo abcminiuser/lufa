@@ -358,7 +358,7 @@
 				 */
 				void USB_GEN_vect(void);
 			#else
-				ISR(USB_GEN_vect);
+				ISR(USB_GEN_vect, AVR32_USBB_IRQ_GROUP, 1);
 			#endif
 
 	/* Disable C linkage for C++ Compilers: */

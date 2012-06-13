@@ -145,7 +145,7 @@
 				#define ATTR_ALIGNED(Bytes)              __attribute__ ((aligned(Bytes)))
 			#elif defined(__ICCAVR32__)
 				#if !defined(__DOXYGEN__)
-					#define __IAR_PRAGMA(x)              _Pragma(#x)
+					#define __IAR_ATTR_PRAGMA(...)       _Pragma(#__VA_ARGS__)
 				#endif
 				
 				#define ATTR_NO_RETURN                   __noreturn
@@ -153,7 +153,7 @@
 				#define ATTR_NON_NULL_PTR_ARG(...)       
 				#define ATTR_NAKED                       
 				#define ATTR_NO_INLINE                   
-				#define ATTR_ALWAYS_INLINE               /*__IAR_PRAGMA(inline = forced)*/
+				#define ATTR_ALWAYS_INLINE               /*__IAR_ATTR_PRAGMA(inline = forced)*/
 				#define ATTR_PURE                        
 				#define ATTR_CONST                       
 				#define ATTR_DEPRECATED                  
@@ -162,7 +162,7 @@
 				#define ATTR_INIT_SECTION(SectionIndex)  
 				#define ATTR_ALIAS(Func)                 
 				#define ATTR_PACKED                      
-				#define ATTR_ALIGNED(Bytes)              __IAR_PRAGMA(data_alignment = Bytes)
+				#define ATTR_ALIGNED(Bytes)              __IAR_ATTR_PRAGMA(data_alignment = Bytes)
 			#endif
 
 #endif

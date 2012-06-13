@@ -125,7 +125,11 @@
 					#define IAR_IS_PART_DEFINED(x)            defined(__AT32 ## x ## __)				
 				#endif
 
-				#define IAR_ISR(Name, ...)                    __interrupt void Name (void); __interrupt void Name (void)
+				#if !defined(__DOXYGEN__)
+					#define __IAR_ISR_PRAGMA(...)             _Pragma(#__VA_ARGS__)
+				#endif
+				
+				#define IAR_ISR(Name, Group, Level)           __IAR_ISR_PRAGMA(handler = Group, Level) __interrupt void Name (void)
 				
 				#define IAR_READ_SYS_REGISTER(Reg)            __get_system_register(Reg)
 				#define IAR_WRITE_SYS_REGISTER(Reg, Val)      __set_system_register(Reg, Val)
