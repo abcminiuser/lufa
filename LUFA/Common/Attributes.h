@@ -161,7 +161,7 @@
 				#define ATTR_NO_INIT                     __no_init
 				#define ATTR_INIT_SECTION(SectionIndex)  
 				#define ATTR_ALIAS(Func)                 
-				#define ATTR_PACKED                      
+				#define ATTR_PACKED                      __IAR_ATTR_PRAGMA(pack(1))
 				#define ATTR_ALIGNED(Bytes)              __IAR_ATTR_PRAGMA(data_alignment = Bytes)
 			#endif
 
