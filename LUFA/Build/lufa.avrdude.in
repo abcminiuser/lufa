@@ -48,9 +48,11 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #
 # -----------------------------------------------------------------------------
 
-ERROR_IF_UNSET   = $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
-ERROR_IF_EMPTY   = $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
-ERROR_IF_NONBOOL = $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
+SHELL = /bin/sh
+
+ERROR_IF_UNSET   ?= $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
+ERROR_IF_EMPTY   ?= $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
+ERROR_IF_NONBOOL ?= $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
 
 # Default values of optionally user-supplied variables
 AVRDUDE_PROGRAMMER ?= jtagicemkii
@@ -67,13 +69,16 @@ $(call ERROR_IF_EMPTY, AVRDUDE_PORT)
 # Output Messages
 MSG_AVRDUDE_CMD    := ' [AVRDUDE] :'
 
+# Construct base avrdude command flags
+BASE_AVRDUDE_FLAGS := -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+
 avrdude: $(TARGET).hex $(MAKEFILE_LIST)
 	@echo $(MSG_AVRDUDE_CMD) Programming device \"$(MCU)\" FLASH with settings \"$(AVRDUDE_FLASH_FLAGS)\" using \"$(AVRDUDE_PROGRAMMER)\" on port \"$(AVRDUDE_PORT)\"
-	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U flash:w:$< $(AVRDUDE_FLAGS)
+	avrdude $(BASE_AVRDUDE_FLAGS) -U flash:w:$< $(AVRDUDE_FLAGS)
 
 avrdude-ee: $(TARGET).eep $(MAKEFILE_LIST)
 	@echo $(MSG_AVRDUDE_CMD) Programming device \"$(MCU)\" EEPROM with settings \"$(AVRDUDE_EEP_FLAGS)\" using \"$(AVRDUDE_PROGRAMMER)\" on port \"$(AVRDUDE_PORT)\"
-	avrdude -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER) -U eeprom:w:$< $(AVRDUDE_FLAGS)
+	avrdude $(BASE_AVRDUDE_FLAGS) -U eeprom:w:$< $(AVRDUDE_FLAGS)
 
 # Phony build targets for this module
 .PHONY: avrdude avrdude-ee

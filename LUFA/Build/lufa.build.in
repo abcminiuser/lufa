@@ -68,9 +68,11 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #
 # -----------------------------------------------------------------------------
 
-ERROR_IF_UNSET   = $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
-ERROR_IF_EMPTY   = $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
-ERROR_IF_NONBOOL = $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
+SHELL = /bin/sh
+
+ERROR_IF_UNSET   ?= $(if $(filter undefined, $(origin $(strip $(1)))), $(error Makefile $(strip $(1)) value not set))
+ERROR_IF_EMPTY   ?= $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $(1)) option cannot be blank))
+ERROR_IF_NONBOOL ?= $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
 
 # Default values of optionally user-supplied variables
 BOARD           ?= NONE
@@ -114,7 +116,7 @@ endif
 MSG_BUILD_BEGIN  := Begin compilation of project \"$(TARGET)\"...
 MSG_BUILD_END    := Finished building project \"$(TARGET)\".
 MSG_COMPILE_CMD  := ' [GCC]     :'
-MSG_ASSEMBLE_CMD := ' [AS]      :'
+MSG_ASSEMBLE_CMD := ' [GAS]     :'
 MSG_NM_CMD       := ' [NM]      :'
 MSG_REMOVE_CMD   := ' [RM]      :'
 MSG_LINKER_CMD   := ' [LNK]     :'
@@ -145,7 +147,7 @@ endif
 DEPENDENCY_FILES = $(OBJECT_FILES:%.o=%.d)
 
 # Create a list of common flags to pass to the compiler/linker/assembler
-BASE_CC_FLAGS    := 
+BASE_CC_FLAGS    := -pipe
 ifeq ($(ARCH), AVR8)
    BASE_CC_FLAGS += -mmcu=$(MCU) -gdwarf-2 -fshort-enums -fno-inline-small-functions -fpack-struct
 else ifeq ($(ARCH), XMEGA)
