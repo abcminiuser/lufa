@@ -1,0 +1,166 @@
+\documentclass[a4paper,oneside,notitlepage]{book}
+
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage[left=3cm, right=3cm, top=3cm, bottom=3cm]{geometry}
+\usepackage{fancyhdr}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\lstset{language=c,breaklines=true,tabsize=3,showspaces=false,showstringspaces=false,basicstyle=\scriptsize\ttfamily,float=tbpH,frame=single,keywordstyle=\color{blue},commentstyle=\color{dkgreen}}
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=black}
+\setlength{\parskip}{2ex}
+\setlength{\parindent}{0pt}
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{30pt}
+\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+\newcommand{\subscript}[1]{\ensuremath{_{\textrm{#1}}}}
+
+\pagestyle{fancy}
+\lfoot{\color{red}PRELIMINARY}
+
+%===========================================================================
+
+\begin{document}
+\title{LUFA-next Specification Document \\ \color{red}PRELIMINARY}
+\author{Dean Camera}
+
+\maketitle
+
+\tableofcontents
+\cleardoublepage
+
+%===========================================================================
+\label{chp:Overview}
+\chapter{Overview}
+This document serves as an overview of a new API redesign proposal for the \textbf{LUFA} project, currently an acronym for \textit{The Lightweight USB Framework for AVRs}. This document outlines a specification for a new proposed embedded USB stack, which will offer a wider architecture, device and compiler support, using the lessons learned from the current implementation to ensure that the current design limitations can be overcome.
+
+Once the new implementation is complete, the library name will be retained, but the acronym's meaning will be slightly altered; \textit{The Lightweight USB Framework for Architectures}. While a non-ideal ``bacronym'', this will allow the current well-known library name to be retained.
+
+\section{Introduction}
+
+\section{Design Rationale}
+
+\section{Design Goals}
+
+\section{Targets}
+
+\subsection{Targeted Languages}
+The LUFA-next library will target solely the \textbf{C language in C99 standards compliance mode}, but will offer C++ linkage for those wishing to integrate the stack into their own projects. C++ wrapper classes \textit{may} be offered at a later stage, to encapsulate the library APIs into a set of thin C++ class abstractions to allow for templating and object-orientated API wrappers to be used.
+
+\subsection{Targeted Architectures}
+Initially, the library will be targeted at two architectures; \textbf{the Atmel AVR8 architecture, and the Atmel XMEGA architecture}. These two architectures have been selected due to their wildly different USB controller designs, and their very different internal resources. The library design will be flexible to accomodate multiple backend architectures, with \textbf{Atmel SAM3}, \textbf{NXP LPC} and \textbf{external USB controller chips} gaining eventual support in the library.
+
+\subsection{Targeted Compilers}
+Like the current design, LUFA-next will be targeted primarily at the free \textbf{GCC compiler}, however it will also offer \text{IAR compiler} support in the initial implementation to ensure that the design is not tied to a single compiler. Compiler language extensions \textit{will} be allowed, however these may only be used where a compiler agnostic fallback mechanism can be substituted for other compilers.
+
+%===========================================================================
+\label{chp:Implementation}
+\chapter{Implementation}
+
+\section{API}
+
+\subsection{Device Mode}
+
+\subsection{Host Mode}
+
+\section{Application Samples}
+
+\subsection{Vendor Class Application Sample}
+
+\begin{center}
+\begin{lstlisting}
+uint8_t Vendor_Tx_Buffer[VENDOR_TXRX_EPSIZE];
+
+USB_Endpoint_Instance_t Vendor_Endpoint_Tx =
+	{
+		.Config =
+			{
+				.StackInstance = &USB_Instance,
+				.Address       = VENDOR_TX_EPADDR,
+				.Type          = Bulk,
+				.BankSize      = VENDOR_TXRX_EPSIZE,
+				
+				.Buffer        = Vendor_Tx_Buffer,
+			}
+	};
+
+uint8_t Vendor_Rx_Buffer[VENDOR_TXRX_EPSIZE];
+
+USB_Endpoint_Instance_t Vendor_Endpoint_Rx =
+	{
+		.Config =
+			{
+				.StackInstance = &USB_Instance,
+				.Address       = VENDOR_RX_EPADDR,
+				.Type          = Bulk,
+				.BankSize      = VENDOR_TXRX_EPSIZE,
+				
+				.Buffer        = Vendor_Rx_Buffer,
+			}
+	};
+
+USB_Instance_t USB_Instance =
+	{
+		.Config =
+			{
+				.Controller = &USB1,
+			}
+	};
+
+int main(void)
+{
+	Clock_Configure();
+	Board_Init();
+
+	USB_Init(&USB_Instance);	
+	USB_Endpoint_Configure(&USB_Instance, &Vendor_Endpoint_Tx);
+	USB_Endpoint_Configure(&USB_Instance, &Vendor_Endpoint_Rx);
+	
+	USB_Endpoint_Read(&USB_Instance, &Vendor_Endpoint_Rx, CALLBACK_USB_Vendor_DataReceived);
+
+	GlobalInterruptsEnable();
+	
+	for (;;)
+	{
+		if (Buttons_GetStatus() & BUTTONS_BUTTON1)
+		{
+			USB_Endpoint_Write(&USB_Instance, &Vendor_Endpoint_Tx, NULL);
+		}
+	
+		EnterSleepMode();
+	}
+}
+
+void CALLBACK_USB_Vendor_DataReceived(const USB_Instance_t* const StackInstance,
+                                      const USB_Endpoint_Instance_t* const EndpointInstance)
+{
+
+}
+
+void EVENT_USB_Device_ControlRequest(const USB_Instance_t* const StackInstance)
+{
+	
+}
+\end{lstlisting}
+\end{center}
+
+\subsection{CDC Application Sample}
+
+%===========================================================================
+\label{chp:Verification}
+\chapter{Verification}
+
+\subsection{Compliance Testing}
+
+\subsection{Unit Testing}
+
+\subsection{Functional Testing}
+
+\end{document}
