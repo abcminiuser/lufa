@@ -13,15 +13,15 @@
 # application.
 
 # Path to the LUFA library core
-LUFA_PATH         = ../../LUFA/
+LUFA_PATH := ../../LUFA/
 
 # List of device families per architecture, one device per architecture sub-family
-AVR8_FAMILIES  = at90usb1287 at90usb1286 atmega16u4 atmega16u2 at90usb162
-XMEGA_FAMILIES = atxmega128a1u atxmega128a3u atxmega256a3bu atxmega128a4u atxmega128b1 atxmega128b3 atxmega128c3 atxmega32c4
-UC3_FAMILIES   = uc3a0256 uc3a1256 uc3a3256 uc3a4256 uc3b0256 uc3b1256
+AVR8_FAMILIES   := at90usb1287 at90usb1286 atmega16u4 atmega16u2 at90usb162
+XMEGA_FAMILIES  := atxmega128a1u atxmega128a3u atxmega256a3bu atxmega128a4u atxmega128b1 atxmega128b3 atxmega128c3 atxmega32c4
+UC3_FAMILIES    := uc3a0256 uc3a1256 uc3a3256 uc3a4256 uc3b0256 uc3b1256
 
 # List of all device families, with a family postfix
-DEVICE_FAMILIES = $(AVR8_FAMILIES:%=%.avr8) $(XMEGA_FAMILIES:%=%.xmega) $(UC3_FAMILIES:%=%.uc3)
+DEVICE_FAMILIES := $(AVR8_FAMILIES:%=%.avr8) $(XMEGA_FAMILIES:%=%.xmega) $(UC3_FAMILIES:%=%.uc3)
 
 
 all: begin $(DEVICE_FAMILIES) clean end
@@ -40,20 +40,20 @@ end:
 
 %.avr8:
 	@echo Building ModuleTest for ARCH=AVR8 MCU=$(@:%.avr8=%)...
-	$(MAKE) -s -f makefile.test clean elf ARCH=AVR8 MCU=$(@:%.avr8=%)
+	$(MAKE) -f makefile.test clean elf ARCH=AVR8 MCU=$(@:%.avr8=%)
 
 %.xmega:
 	@echo Building ModuleTest for ARCH=XMEGA MCU=$(@:%.xmega=%)...
-	$(MAKE) -s -f makefile.test clean elf ARCH=XMEGA MCU=$(@:%.xmega=%)
+	$(MAKE) -f makefile.test clean elf ARCH=XMEGA MCU=$(@:%.xmega=%)
 
 %.uc3:
 	@echo Building ModuleTest for ARCH=UC3 MCU=$(@:%.uc3=%)...
-	$(MAKE) -s -f makefile.test clean elf ARCH=UC3 MCU=$(@:%.uc3=%)
+	$(MAKE) -f makefile.test clean elf ARCH=UC3 MCU=$(@:%.uc3=%)
 
 clean:
-	$(MAKE) -s -f makefile.test clean ARCH=AVR8 MCU=$(firstword $(AVR8_FAMILIES))
-	$(MAKE) -s -f makefile.test clean ARCH=XMEGA MCU=$(firstword $(XMEGA_FAMILIES))
-	$(MAKE) -s -f makefile.test clean ARCH=UC3 MCU=$(firstword $(UC3_FAMILIES))
+	$(MAKE) -f makefile.test clean ARCH=AVR8 MCU=$(firstword $(AVR8_FAMILIES))
+	$(MAKE) -f makefile.test clean ARCH=XMEGA MCU=$(firstword $(XMEGA_FAMILIES))
+	$(MAKE) -f makefile.test clean ARCH=UC3 MCU=$(firstword $(UC3_FAMILIES))
 
 %:
 
