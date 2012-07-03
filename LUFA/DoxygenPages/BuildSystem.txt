@@ -12,6 +12,9 @@
  *  application makefile. The system is written in GNU Make, and each module is independant of
  *  one-another.
  *
+ *  For details on the prerequisites needed for Linux and Windows machines to be able to use the LUFA
+ *  build system, see \ref Sec_Prerequisites.
+ *
  *  To use a LUFA build system module, simply add an include to your project makefile:
  *  \code
  *  include $(LUFA_PATH)/Build/lufa.core.in
@@ -70,6 +73,14 @@
  *    <td>Display a size-sorted list of symbols from the compiled application, in decimal bytes.</td>
  *   </tr>
  *   <tr>
+ *    <td><tt>check-source</tt></td>
+ *    <td>Display a list of input SRC source files which cannot be found (if any).</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>lib</tt></td>
+ *    <td>Build and archive all source files into a library A binary file.</td>
+ *   </tr>
+ *   <tr>
  *    <td><tt>all</tt></td>
  *    <td>Build and link the application into ELF debug and HEX binary files.</td>
  *   </tr>
@@ -88,6 +99,10 @@
  *   <tr>
  *    <td><tt>clean</tt></td>
  *    <td>Remove all intermediatary files and binary output files.</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>mostlyclean</tt></td>
+ *    <td>Remove all intermediatary files but preserve any binary output files.</td>
  *   </tr>
  *  </table>
  *
@@ -682,7 +697,7 @@
  *   </tr>
  *   <tr>
  *    <td><tt>hid-teensy</tt></td>
- *    <td>Program the device EEPROM memory with the application's executable data using <tt>teensy_loader_cli</tt>.</td>
+ *    <td>Program the device FLASH memory with the application's executable data using <tt>teensy_loader_cli</tt>.</td>
  *   </tr>
  *  </table>
  *
