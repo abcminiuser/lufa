@@ -20,7 +20,7 @@ SRC          = $(TARGET).c Descriptors.c USBDeviceMode.c USBHostMode.c Lib/SCSI.
                Lib/uIPManagement.c Lib/DHCPCommon.c Lib/DHCPClientApp.c Lib/DHCPServerApp.c Lib/HTTPServerApp.c \
                Lib/TELNETServerApp.c Lib/uip/uip.c Lib/uip/uip_arp.c Lib/uip/timer.c Lib/uip/clock.c \
                Lib/uip/uip-split.c Lib/FATFs/diskio.c Lib/FATFs/ff.c $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
-LUFA_PATH    = ../../LUFA/
+LUFA_PATH    = ../../LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/ -ILib/uip/ -ILib/FATFs/
 LD_FLAGS     =
 
@@ -28,9 +28,12 @@ LD_FLAGS     =
 all:
 
 # Include LUFA build script makefiles
-include $(LUFA_PATH)/Build/lufa.core.in
-include $(LUFA_PATH)/Build/lufa.sources.in
-include $(LUFA_PATH)/Build/lufa.build.in
-include $(LUFA_PATH)/Build/lufa.doxygen.in
-include $(LUFA_PATH)/Build/lufa.dfu.in
-include $(LUFA_PATH)/Build/lufa.avrdude.in
+include $(LUFA_PATH)/Build/lufa_core.mk
+include $(LUFA_PATH)/Build/lufa_sources.mk
+include $(LUFA_PATH)/Build/lufa_build.mk
+include $(LUFA_PATH)/Build/lufa_cppcheck.mk
+include $(LUFA_PATH)/Build/lufa_doxygen.mk
+include $(LUFA_PATH)/Build/lufa_dfu.mk
+include $(LUFA_PATH)/Build/lufa_hid.mk
+include $(LUFA_PATH)/Build/lufa_avrdude.mk
+include $(LUFA_PATH)/Build/lufa_atprogram.mk

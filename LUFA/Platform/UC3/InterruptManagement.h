@@ -41,8 +41,8 @@
  *
  *  \section Sec_Dependencies Module Source Dependencies
  *  The following files must be built with any user project that uses this module:
- *    - LUFA/Platform/UC3/InterruptManagement.c
- *    - LUFA/Platform/UC3/Exception.S
+ *    - LUFA/Platform/UC3/InterruptManagement.c <i>(Makefile source module name: LUFA_SRC_PLATFORM)</i>
+ *    - LUFA/Platform/UC3/Exception.S <i>(Makefile source module name: LUFA_SRC_PLATFORM)</i>
  *
  *  \section Sec_ModDescription Module Description
  *  Interrupt controller driver for the AVR32 UC3 microcontrollers, for the configuration of interrupt
@@ -71,7 +71,7 @@
 #define _UC3_INTERRUPT_MANAGEMENT_H_
 
 	/* Includes: */
-		#include <LUFA/Common/Common.h>
+		#include "../../Common/Common.h"
 
 	/* Enable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)
@@ -93,7 +93,7 @@
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			/** Converts a given interrupt index into its assocated interrupt group.
+			/** Converts a given interrupt index into its associated interrupt group.
 			 *
 			 *  \param[in] IRQIndex  Index of the interrupt request to convert.
 			 *
@@ -101,7 +101,7 @@
 			 */
 			#define INTC_IRQ_GROUP(IRQIndex)  (IRQIndex / 32)
 
-			/** Converts a given interrupt index into its assocated interrupt line.
+			/** Converts a given interrupt index into its associated interrupt line.
 			 *
 			 *  \param[in] IRQIndex  Index of the interrupt request to convert.
 			 *

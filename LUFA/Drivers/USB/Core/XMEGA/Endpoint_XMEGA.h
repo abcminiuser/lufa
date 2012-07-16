@@ -90,14 +90,18 @@
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			#if !defined(CONTROL_ONLY_DEVICE) || defined(__DOXYGEN__)
+			#if (!defined(MAX_ENDPOINT_INDEX) && !defined(CONTROL_ONLY_DEVICE)) || defined(__DOXYGEN__)
 				/** Total number of endpoints (including the default control endpoint at address 0) which may
 				 *  be used in the device. Different USB AVR models support different amounts of endpoints,
 				 *  this value reflects the maximum number of endpoints for the currently selected AVR model.
 				 */
 				#define ENDPOINT_TOTAL_ENDPOINTS            16
 			#else
-				#define ENDPOINT_TOTAL_ENDPOINTS            1
+				#if defined(CONTROL_ONLY_DEVICE)
+					#define ENDPOINT_TOTAL_ENDPOINTS        1
+				#else
+					#define ENDPOINT_TOTAL_ENDPOINTS        (MAX_ENDPOINT_INDEX + 1)
+				#endif
 			#endif
 
 	/* Private Interface - For use in library only: */
@@ -242,8 +246,12 @@
 			{
 				uint8_t EPConfigMask = (USB_EP_INTDSBL_bm | ((Banks > 1) ? USB_EP_PINGPONG_bm : 0) | Endpoint_BytesToEPSizeMask(Size));
 
+				if ((Address & ENDPOINT_EPNUM_MASK) >= ENDPOINT_TOTAL_ENDPOINTS)
+				  return false;
+
 				// TODO - Fix once limitations are lifted
-				if ((Banks > 1) || (Size > 64))
+				EPConfigMask &= ~USB_EP_PINGPONG_bm;
+				if (Size > 64)
 				  return false;
 
 				switch (Type)

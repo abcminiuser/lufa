@@ -97,7 +97,7 @@ static uint16_t EndAddr = 0x0000;
  *  low when the application attempts to start via a watchdog reset, the bootloader will re-start. If set to the value
  *  \ref MAGIC_BOOT_KEY the special init function \ref Application_Jump_Check() will force the application to start.
  */
-uint32_t MagicBootKey ATTR_NO_INIT;
+uint16_t MagicBootKey ATTR_NO_INIT;
 
 
 /** Special startup routine to check if the bootloader was started via a watchdog reset, and if the magic application
@@ -106,8 +106,29 @@ uint32_t MagicBootKey ATTR_NO_INIT;
  */
 void Application_Jump_Check(void)
 {
+	bool JumpToApplication = false;
+
+	#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
+		/* Disable JTAG debugging */
+		JTAG_DISABLE();
+
+		/* Enable pull-up on the JTAG TCK pin so we can use it to select the mode */
+		PORTF |= (1 << 4);
+		Delay_MS(10);
+
+		/* If the TCK pin is not jumpered to ground, start the user application instead */
+		JumpToApplication |= ((PINF & (1 << 4)) != 0);
+
+		/* Re-enable JTAG debugging */
+		JTAG_ENABLE();
+	#endif
+
 	/* If the reset source was the bootloader and the key is correct, clear it and jump to the application */
 	if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
+	  JumpToApplication |= true;
+
+	/* If a request has been made to jump to the user application, honor it */
+	if (JumpToApplication)
 	{
 		/* Turn off the watchdog */
 		MCUSR &= ~(1<<WDRF);
@@ -129,23 +150,6 @@ int main(void)
 {
 	/* Configure hardware required by the bootloader */
 	SetupHardware();
-
-	#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
-	/* Disable JTAG debugging */
-	MCUCR |= (1 << JTD);
-	MCUCR |= (1 << JTD);
-
-	/* Enable pull-up on the JTAG TCK pin so we can use it to select the mode */
-	PORTF |= (1 << 4);
-	Delay_MS(10);
-
-	/* If the TCK pin is not jumpered to ground, start the user application instead */
-	RunBootloader = (!(PINF & (1 << 4)));
-
-	/* Re-enable JTAG debugging */
-	MCUCR &= ~(1 << JTD);
-	MCUCR &= ~(1 << JTD);
-	#endif
 
 	/* Turn on first LED on the board to indicate that the bootloader has started */
 	LEDs_SetAllLEDs(LEDS_LED1);
