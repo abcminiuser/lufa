@@ -10,7 +10,7 @@
 
 
 # Path to the root of the LUFA tree
-LUFA_ROOT = ../
+LUFA_ROOT := ../
 
 all:
 
@@ -32,7 +32,7 @@ make-as4-projects:
 	@for project_makefile in `find $(LUFA_ROOT)/Demos $(LUFA_ROOT)/Projects $(LUFA_ROOT)/Bootloaders -name makefile*`; do \
 	  target_name=`grep "TARGET *=" $$project_makefile | cut -d'=' -f2 | sed 's/ //g'`; \
 	  target_folder=`dirname $$project_makefile`;                                   \
-	  as4_date=`date "+%e-%b-%Y %H:%M:%S"`;                                         \
+	  as4_date=`date "+%-e-%b-%Y %-H:%-M:%-S"`;                                     \
 	                                                                                \
 	  if ( test -n "$$target_name" ); then                                          \
 	    echo Creating AS4 project for project $$target_name;                        \
@@ -83,9 +83,12 @@ check-documentation-placeholders:
 
 # Validate the working branch - compile all documentation, demos/projects/examples and run build tests
 validate-branch:
-	make -C $(LUFA_ROOT) doxygen
-	make -C $(LUFA_ROOT) all
-	make -C $(LUFA_ROOT)/BuildTests all
+	$(MAKE) -C $(LUFA_ROOT) doxygen
+	$(MAKE) -C $(LUFA_ROOT) all DEBUG_LEVEL=0
+	$(MAKE) -C $(LUFA_ROOT)/BuildTests all
 
 # Validate the working branch for general release, check for placeholder documentation then build and test everything
 validate-release: check-documentation-placeholders validate-branch
+
+
+.PHONY: all upgrade-doxygen make-as4-projects check-documentation-placeholders validate-branch

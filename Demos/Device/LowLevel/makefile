@@ -13,31 +13,34 @@
 # custom LUFA library build options are reflected in the compiled
 # code.
 
-all:
-	$(MAKE) -s -C AudioInput clean all
-	$(MAKE) -s -C AudioOutput clean all
-	$(MAKE) -s -C DualVirtualSerial clean all
-	$(MAKE) -s -C GenericHID clean all
-	$(MAKE) -s -C Joystick clean all
-	$(MAKE) -s -C Keyboard clean all
-	$(MAKE) -s -C KeyboardMouse clean all
-	$(MAKE) -s -C MassStorage clean all
-	$(MAKE) -s -C MIDI clean all
-	$(MAKE) -s -C Mouse clean all
-	$(MAKE) -s -C RNDISEthernet clean all
-	$(MAKE) -s -C VirtualSerial clean all
+PROJECT_DIRECTORIES := $(shell ls -d */)
 
-%:
-	$(MAKE) -s -C AudioInput $@
-	$(MAKE) -s -C AudioOutput $@
-	$(MAKE) -s -C DualVirtualSerial $@
-	$(MAKE) -s -C GenericHID $@
-	$(MAKE) -s -C Joystick $@
-	$(MAKE) -s -C Keyboard $@
-	$(MAKE) -s -C KeyboardMouse $@
-	$(MAKE) -s -C MassStorage $@
-	$(MAKE) -s -C MIDI $@
-	$(MAKE) -s -C Mouse $@
-	$(MAKE) -s -C RNDISEthernet $@
-	$(MAKE) -s -C VirtualSerial $@
+# This makefile is potentially infinitely recursive if something really bad
+# happens when determining the set of project directories - hard-abort if
+# more than 10 levels deep to avoid angry emails.
+ifeq ($(MAKELEVEL), 10)
+   $(error EMERGENCY ABORT: INFINITE RECURSION DETECTED)
+endif
 
+# Need to special-case building without a per-project object directory
+ifeq ($(OBJDIR),)
+   # If no target specified, force "clean all" and disallow parallel build   
+   ifeq ($(MAKECMDGOALS),)
+      MAKECMDGOALS := clean all
+      .NOTPARALLEL:
+   endif
+
+   # If one of the targets is to build, force "clean" beforehand and disallow parallel build   
+   ifneq ($(findstring all, $(MAKECMDGOALS)),)
+      MAKECMDGOALS := clean $(MAKECMDGOALS)
+      .NOTPARALLEL:
+   endif
+endif
+
+%: $(PROJECT_DIRECTORIES)
+	@echo . > /dev/null
+
+$(PROJECT_DIRECTORIES):
+	@$(MAKE) -C $@ $(MAKECMDGOALS)
+    
+.PHONY: $(PROJECT_DIRECTORIES)
