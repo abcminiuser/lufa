@@ -69,10 +69,13 @@ bool Pipe_ConfigurePipe(const uint8_t Address,
 	uint8_t Number = (Address & PIPE_EPNUM_MASK);
 	uint8_t Token  = (Address & PIPE_DIR_IN) ? PIPE_TOKEN_IN : PIPE_TOKEN_OUT;
 	
+	if (Number >= PIPE_TOTAL_PIPES)
+	  return false;
+
 	if (Type == EP_TYPE_CONTROL)
 	  Token = PIPE_TOKEN_SETUP;
 
-	USB_Pipe_FIFOPos[Number]     = &AVR32_USBB_SLAVE[Number * 0x10000];
+	USB_Pipe_FIFOPos[Number]     = &AVR32_USBB_SLAVE[Number * PIPE_HSB_ADDRESS_SPACE_SIZE];
 
 #if defined(ORDERED_EP_CONFIG)
 	Pipe_SelectPipe(Number);
@@ -84,7 +87,7 @@ bool Pipe_ConfigurePipe(const uint8_t Address,
 	                                ((uint32_t)Token << AVR32_USBB_PTOKEN_OFFSET) |
 	                                ((Banks > 1) ? AVR32_USBB_PBK_MASK : 0)       |
 	                                Pipe_BytesToEPSizeMask(Size) |
-	                                ((EndpointNumber & PIPE_EPNUM_MASK) << AVR32_USBB_PEPNUM_OFFSET));
+	                                ((uint32_t)Number << AVR32_USBB_PEPNUM_OFFSET));
 
 	Pipe_SetInfiniteINRequests();
 

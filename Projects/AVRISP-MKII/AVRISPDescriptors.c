@@ -38,6 +38,7 @@
 #include "AVRISPDescriptors.h"
 
 #if defined(RESET_TOGGLES_LIBUSB_COMPAT) || defined(__DOXYGEN__)
+	/** Indicates if an external reset has occurred and the compatibility mode needs to be altered */
 	static bool AVRISP_NeedCompatibilitySwitch ATTR_NO_INIT;
 
 	/** Current AVRISP data IN endpoint address. */
@@ -207,7 +208,8 @@ uint16_t AVRISP_GetDescriptor(const uint16_t wValue,
 			break;
 		case DTYPE_Configuration:
 			*DescriptorMemorySpace = MEMSPACE_RAM;
-			#if defined(RESET_TOGGLES_LIBUSB_COMPAT)			
+			#if defined(RESET_TOGGLES_LIBUSB_COMPAT)
+				/* Update the configuration descriptor with the current endpoint address */
 				AVRISP_ConfigurationDescriptor.AVRISP_DataInEndpoint.EndpointAddress = AVRISP_CurrDataINEndpointAddress;
 			#endif
 
@@ -253,7 +255,7 @@ uint16_t AVRISP_GetDescriptor(const uint16_t wValue,
  */
 void CheckExternalReset(void)
 {	
-	/* If an external reset occured, we need to change compatibility mode */
+	/* If an external reset occurred, we need to change compatibility mode */
 	AVRISP_NeedCompatibilitySwitch = (MCUSR == (1 << EXTRF));
 
 	MCUSR = 0;
@@ -307,5 +309,7 @@ void UpdateCurrentCompatibilityMode(void)
 			}
 			break;
 	}
+	
+	Delay_MS(500);
 }
 #endif

@@ -11,9 +11,11 @@
 # possible board targets using their respective
 # compiler.
 
-# Path to the root of the LUFA tree to scan
-LUFA_ROOT_PATH    = ../..
+# Path to the LUFA library core
+LUFA_PATH := ../../LUFA/
 
+# Build test cannot be run with multiple parallel jobs
+.NOTPARALLEL:
 
 all: begin makeboardlist testboards clean end
 
@@ -26,7 +28,7 @@ end:
 	@echo
 
 makeboardlist:
-	@grep "BOARD_" $(LUFA_ROOT_PATH)/LUFA/Common/BoardTypes.h | cut -d'#' -f2 | cut -d' ' -f2 | grep "BOARD_" > BoardList.txt
+	@grep "BOARD_" $(patsubst %/,%,$(LUFA_PATH))/Common/BoardTypes.h | cut -d'#' -f2 | cut -d' ' -f2 | grep "BOARD_" > BoardList.txt
 	
 testboards:
 	@echo "buildtest:" > BuildMakefile
@@ -45,8 +47,7 @@ testboards:
 	     echo "Found board configuration for $$build_board - $$build_arch, $$build_mcu";            \
 		                                                                                            \
 		 printf "\t@echo Building dummy project for $$build_board...\n" >> BuildMakefile;           \
-		 printf "\tmake -s -f makefile.%s clean\n" $$build_arch >> BuildMakefile;                   \
-		 printf "\tmake -s -f makefile.%s MCU=%s BOARD=%s elf\n\n" $$build_arch $$build_mcu $$build_board >> BuildMakefile; \
+		 printf "\t$(MAKE) -f makefile.test clean elf MCU=%s ARCH=%s BOARD=%s\n\n" $$build_mcu $$build_arch $$build_board >> BuildMakefile; \
 	   fi;                                                                                          \
 	 done < BoardList.txt
 	 
@@ -55,9 +56,13 @@ testboards:
 clean:
 	rm -f BuildMakefile
 	rm -f BoardList.txt
-	$(MAKE) -f makefile.avr8 clean
-	$(MAKE) -f makefile.xmega clean
-	$(MAKE) -f makefile.uc3 clean
+	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=AVR8 MCU=at90usb1287
+	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=XMEGA MCU=atxmega128a1u
+	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=UC3 MCU=uc3a0256
 
 %:
-	
+
+.PHONY: all begin end makeboardlist testboards clean
+
+# Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa_core.mk

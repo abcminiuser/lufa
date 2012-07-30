@@ -9,9 +9,10 @@
 #  Makefile for the LUFA library itself.
 # ---------------------------------------
 
-LUFA_VERSION_NUM        = $(shell grep LUFA_VERSION_STRING Version.h | cut -d'"' -f2)
-EXCLUDE_FROM_EXPORT     = Documentation DoxygenPages CodeTemplates Build *.conf *.tar *.o *.lss *.lst *.hex *.elf *.bin
-DOXYGEN_OVERRIDE_PARAMS = PROJECT_NUMBER=$(LUFA_VERSION_NUM)
+LUFA_VERSION_NUM        := $(shell grep LUFA_VERSION_STRING Version.h | cut -d'"' -f2)
+EXCLUDE_FROM_EXPORT     := Documentation DoxygenPages CodeTemplates Build *.conf *.tar *.o *.d *.lss *.lst *.hex *.elf *.hex *.eep *.map *.bin
+
+all:
 
 export_tar:
 	@echo Exporting LUFA library to a TAR archive...
@@ -24,19 +25,26 @@ version:
 
 # Check if this is being included from a legacy or non LUFA build system makefile
 ifneq ($(LUFA_PATH),)
-  LUFA_ROOT_PATH = $(LUFA_PATH)/LUFA/
-  include $(LUFA_PATH)/LUFA/Build/lufa.sources.in
-else
-  LUFA_PATH      = .
-  ARCH           = {AVR8,UC3,XMEGA}
+  LUFA_ROOT_PATH = $(patsubst %/,%,$(LUFA_PATH))/LUFA/
   
-  all:
+  include $(patsubst %/,%,$(LUFA_PATH))/LUFA/Build/lufa.sources.in
+else
+  LUFA_BUILD_MODULES     += MASTER
+  LUFA_BUILD_TARGETS     += export_tar version
 
+  LUFA_PATH               = .
+  ARCH                    = {AVR8,UC3,XMEGA}
+  DOXYGEN_OVERRIDE_PARAMS = QUIET=YES PROJECT_NUMBER=$(LUFA_VERSION_NUM)
+  
   clean:
 	rm -f $(LUFA_SRC_ALL_FILES:%.c=%.o)
+	rm -f $(LUFA_SRC_ALL_FILES:%.c=%.d)
 	rm -f $(LUFA_SRC_ALL_FILES:%.c=%.lst)
 
-  # Include LUFA build script makefiles
-  include Build/lufa.sources.in
-  include Build/lufa.doxygen.in
+  include Build/lufa_core.mk
+  include Build/lufa_sources.mk
+  include Build/lufa_doxygen.mk
 endif
+
+
+.PHONY: all export_tar version clean

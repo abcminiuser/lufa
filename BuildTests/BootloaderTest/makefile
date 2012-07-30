@@ -10,9 +10,11 @@
 # test attempts to build all the bootloaders
 # with all supported device configurations.
 
-# Path to the root of the LUFA tree to scan
-LUFA_ROOT_PATH    = ../..
+# Path to the LUFA library core
+LUFA_PATH := ../../LUFA/
 
+# Build test cannot be run with multiple parallel jobs
+.NOTPARALLEL:
 
 all: begin testbootloaders clean end
 
@@ -40,12 +42,12 @@ testbootloaders:
 	     build_board=`echo $$build_cfg | cut -d':' -f3`;      \
 	     build_flashsize=`echo $$build_cfg | cut -d':' -f4`;  \
 	     build_bootsize=`echo $$build_cfg | cut -d':' -f5`;   \
+	     build_fusb=`echo $$build_cfg | cut -d':' -f6`;       \
 	                                                          \
-	     printf "Found bootloader configuration for bootloader '%s' (FLASH: %3s KB | BOOT: %3s KB | MCU: %12s / %4s)\n" $$build_bootloader $$build_flashsize $$build_bootsize $$build_mcu $$build_arch; \
+	     printf "Found '%s' bootloader configuration (FLASH: %3s KB | BOOT: %3s KB | MCU: %12s / %4s | BOARD: %s | F_USB: %sMHz)\n" $$build_bootloader $$build_flashsize $$build_bootsize $$build_mcu $$build_arch $$build_board $$build_fusb; \
 	                                                          \
-	     printf "\t@echo Building bootloader %s - %s - FLASH: %s KB, BOOT: %s KB\n" $$build_bootloader $$build_mcu $$build_flashsize $$build_bootsize >> BuildMakefile; \
-	     printf "\tmake -s -C $(LUFA_ROOT_PATH)/Bootloaders/%s/ clean\n" $$build_bootloader >> BuildMakefile; \
-	     printf "\tmake -s -C $(LUFA_ROOT_PATH)/Bootloaders/%s/ MCU=%s BOARD=%s FLASH_SIZE_KB=%s BOOT_SECTION_SIZE_KB=%s elf\n\n" $$build_bootloader $$build_mcu $$build_board $$build_flashsize $$build_bootsize >> BuildMakefile; \
+	     printf "\t@echo Building bootloader %s - %s - FLASH: %s KB, BOOT: %s KB, BOARD: %s, F_USB: %sMHz\n" $$build_bootloader $$build_mcu $$build_flashsize $$build_bootsize $$build_board $$build_fusb >> BuildMakefile; \
+	     printf "\t$(MAKE) -C $(patsubst %/,%,$(LUFA_PATH))/../Bootloaders/%s/ clean elf ARCH=%s MCU=%s BOARD=%s FLASH_SIZE_KB=%s BOOT_SECTION_SIZE_KB=%s F_USB=%s000000 DEBUG_LEVEL=0\n\n" $$build_bootloader $$build_arch $$build_mcu $$build_board $$build_flashsize $$build_bootsize $$build_fusb >> BuildMakefile; \
 	   fi;                                                    \
 	 done < BootloaderDeviceMap.cfg
 	 
@@ -55,4 +57,8 @@ clean:
 	rm -f BuildMakefile
 
 %:
-	
+
+.PHONY: all begin end testbootloaders clean
+
+# Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa_core.mk
