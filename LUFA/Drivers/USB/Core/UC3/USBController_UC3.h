@@ -84,6 +84,16 @@
 			#error F_USB is not defined. You must define F_USB to the frequency of the clock input to the USB module.
 		#endif
 
+		#if (defined(USB_SERIES_UC3A3_AVR) || defined(USB_SERIES_UC3A4_AVR))
+			#if ((F_USB < 12000000) || (F_USB % 12000000))
+				#error Invalid F_USB specified. F_USB must be a multiple of 12MHz for UC3A3 and UC3A4 devices.
+			#endif		
+		#else
+			#if ((F_USB < 48000000) || (F_USB % 48000000))
+				#error Invalid F_USB specified. F_USB must be a multiple of 48MHz for UC3A and UC3B devices.
+			#endif		
+		#endif
+		
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name USB Controller Option Masks */
@@ -172,7 +182,7 @@
 			 *                      from the \ref USB_Modes_t enum.
 			 *
 			 *  \param[in] Options  Mask indicating the options which should be used when initializing the USB
-			 *                      interface to control the USB interface's behaviour. This should be comprised of
+			 *                      interface to control the USB interface's behavior. This should be comprised of
 			 *                      a \c USB_OPT_REG_* mask to control the regulator, a \c USB_OPT_*_PLL mask to control the
 			 *                      PLL, and a \c USB_DEVICE_OPT_* mask (when the device mode is enabled) to set the device
 			 *                      mode speed.

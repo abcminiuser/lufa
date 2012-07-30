@@ -30,11 +30,11 @@
 
 /** \file
  *
- *  Header file for TeensyHID.c.
+ *  Header file for BootloaderHID.c.
  */
 
-#ifndef _TEENSYHID_H_
-#define _TEENSYHID_H_
+#ifndef _BOOTLOADERHID_H_
+#define _BOOTLOADERHID_H_
 
 	/* Includes: */
 		#include <avr/io.h>
@@ -53,7 +53,7 @@
 		#define COMMAND_STARTAPPLICATION   0xFFFF
 
 		/** Magic bootloader key to unlock forced application start mode. */
-		#define MAGIC_BOOT_KEY            0xDC42CACA
+		#define MAGIC_BOOT_KEY             0xDC42
 		
 	/* Function Prototypes: */
 		static void SetupHardware(void);
