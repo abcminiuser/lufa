@@ -14,6 +14,8 @@
 # Path to the LUFA library core
 LUFA_PATH := ../../LUFA/
 
+# Build test cannot be run with multiple parallel jobs
+.NOTPARALLEL:
 
 all: begin makeboardlist testboards clean end
 
@@ -63,4 +65,4 @@ clean:
 .PHONY: all begin end makeboardlist testboards clean
 
 # Include LUFA build script makefiles
-include $(LUFA_PATH)/Build/lufa.core.in
+include $(LUFA_PATH)/Build/lufa_core.mk

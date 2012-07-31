@@ -7,6 +7,9 @@
  /** \page Page_ChangeLog Project Changelog
   *
   *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  - No Changes.
+  *
+  *  \section Sec_ChangeLog120730 Version 120730
   *  <b>New:</b>
   *  - Core:
   *   - Added new, revamped modular build system with new makefile templates
@@ -14,6 +17,7 @@
   *   - Added support for the DorkbotPDX Duce board
   *   - Added support for the Olimex AVR-USB-32U4 board
   *   - Added support for the Olimex AVR-USB-T32U4 board
+  *   - Added support for the Olimex AVR-ISP-MK2 board
   *   - Added new Endpoint_ConfigureEndpointTable() function
   *   - Added new Pipe_ConfigurePipeTable() function
   *   - Added build test to verify correct compilation of all board drivers using all driver APIs
@@ -69,6 +73,7 @@
   *   - Fixed swapped Little Endian/Big Endian endpoint and pipe write code for the UC3 devices (thanks to Andrew Chu)
   *   - Fixed the JTAG_DISABLE() macro clearing all other bits in MCUSR when called
   *   - Fixed incorrect Micropendous board LED driver LEDs_SetAllLEDs() and LEDs_ChangeLEDs() function implementations (thanks to MitchJS)
+  *   - Fixed endianess issues in the RNDIS host class driver for UC3 devices (thanks to Andrew Chu)  
   *  - Library Applications:
   *   - Fixed error in the AVRISP-MKII programmer when ISP mode is used at 64KHz (thanks to Ben R. Porter)
   *   - Fixed AVRISP-MKII programmer project failing to compile for the U4 chips when VTARGET_ADC_CHANNEL is defined to an invalid channel and NO_VTARGET_DETECT is

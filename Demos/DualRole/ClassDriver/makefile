@@ -13,7 +13,7 @@
 # custom LUFA library build options are reflected in the compiled
 # code.
 
-PROJECT_DIRECTORIES = $(shell ls -d */)
+PROJECT_DIRECTORIES := $(shell ls -d */)
 
 # This makefile is potentially infinitely recursive if something really bad
 # happens when determining the set of project directories - hard-abort if
@@ -22,11 +22,25 @@ ifeq ($(MAKELEVEL), 10)
    $(error EMERGENCY ABORT: INFINITE RECURSION DETECTED)
 endif
 
-all:
+# Need to special-case building without a per-project object directory
 ifeq ($(OBJDIR),)
-	@$(foreach PROJECT, $(PROJECT_DIRECTORIES), $(MAKE) -C $(PROJECT) clean all;)
+   # If no target specified, force "clean all" and disallow parallel build   
+   ifeq ($(MAKECMDGOALS),)
+      MAKECMDGOALS := clean all
+      .NOTPARALLEL:
+   endif
+
+   # If one of the targets is to build, force "clean" beforehand and disallow parallel build   
+   ifneq ($(findstring all, $(MAKECMDGOALS)),)
+      MAKECMDGOALS := clean $(MAKECMDGOALS)
+      .NOTPARALLEL:
+   endif
 endif
 
-%:
-	@$(foreach PROJECT, $(PROJECT_DIRECTORIES), $(MAKE) -C $(PROJECT) $@;)
+%: $(PROJECT_DIRECTORIES)
+	@echo . > /dev/null
 
+$(PROJECT_DIRECTORIES):
+	@$(MAKE) -C $@ $(MAKECMDGOALS)
+    
+.PHONY: $(PROJECT_DIRECTORIES)

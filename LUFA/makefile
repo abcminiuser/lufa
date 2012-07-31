@@ -25,9 +25,9 @@ version:
 
 # Check if this is being included from a legacy or non LUFA build system makefile
 ifneq ($(LUFA_PATH),)
-  LUFA_ROOT_PATH = $(LUFA_PATH)/LUFA/
+  LUFA_ROOT_PATH = $(patsubst %/,%,$(LUFA_PATH))/LUFA/
   
-  include $(LUFA_PATH)/LUFA/Build/lufa.sources.in
+  include $(patsubst %/,%,$(LUFA_PATH))/LUFA/Build/lufa.sources.in
 else
   LUFA_BUILD_MODULES     += MASTER
   LUFA_BUILD_TARGETS     += export_tar version
@@ -41,9 +41,9 @@ else
 	rm -f $(LUFA_SRC_ALL_FILES:%.c=%.d)
 	rm -f $(LUFA_SRC_ALL_FILES:%.c=%.lst)
 
-  include Build/lufa.core.in
-  include Build/lufa.sources.in
-  include Build/lufa.doxygen.in
+  include Build/lufa_core.mk
+  include Build/lufa_sources.mk
+  include Build/lufa_doxygen.mk
 endif
 
 
