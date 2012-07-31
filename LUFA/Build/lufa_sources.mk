@@ -75,7 +75,7 @@ LUFA_SRC_USB         := $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/Device_$(ARCH
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/USBInterrupt_$(ARCH).c    \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/EndpointStream_$(ARCH).c  \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/PipeStream_$(ARCH).c      \
-                        $(LUFA_ROOT_PATH)/Drivers/USB/Core/ConfigDescriptor.c                \
+                        $(LUFA_ROOT_PATH)/Drivers/USB/Core/ConfigDescriptors.c               \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/DeviceStandardReq.c               \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/Events.c                          \
                         $(LUFA_ROOT_PATH)/Drivers/USB/Core/HostStandardReq.c                 \
@@ -101,7 +101,8 @@ LUFA_SRC_SERIAL      := $(LUFA_ROOT_PATH)/Drivers/Peripheral/$(ARCH)/Serial_$(AR
 LUFA_SRC_TWI         := $(LUFA_ROOT_PATH)/Drivers/Peripheral/$(ARCH)/TWI_$(ARCH).c
 
 ifeq ($(ARCH), UC3)
-   LUFA_SRC_PLATFORM := $(LUFA_PATH)/Platform/UC3/Exception.S $(LUFA_PATH)/Platform/UC3/InterruptManagement.c
+   LUFA_SRC_PLATFORM := $(LUFA_ROOT_PATH)/Platform/UC3/Exception.S   \
+                        $(LUFA_ROOT_PATH)/Platform/UC3/InterruptManagement.c
 else
    LUFA_SRC_PLATFORM :=
 endif

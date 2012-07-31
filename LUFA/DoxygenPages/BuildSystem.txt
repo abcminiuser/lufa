@@ -17,7 +17,7 @@
  *
  *  To use a LUFA build system module, simply add an include to your project makefile:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.core.in
+ *  include $(LUFA_PATH)/Build/lufa_core.mk
  *  \endcode
  *
  *  And the associated build module targets will be added to your project's build makefile automatically.
@@ -53,7 +53,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.build.in
+ *  include $(LUFA_PATH)/Build/lufa_build.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_BUILD_Requirements Requirements
@@ -155,6 +155,14 @@
  *    <td>Version of the C++ standard to apply when compiling C++ source files (see GCC manual).</td>
  *   </tr>
  *   <tr>
+ *    <td><tt>DEBUG_FORMAT</tt></td>
+ *    <td>Format of the debug information to embed in the generated object files (see GCC manual).</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>DEBUG_LEVEL</tt></td>
+ *    <td>Level of the debugging information to embed in the generated object files (see GCC manual).</td>
+ *   </tr>
+ *   <tr>
  *    <td><tt>F_CPU</tt></td>
  *    <td>Speed of the processor CPU clock, in Hz.</td>
  *   </tr>
@@ -172,7 +180,7 @@
  *   </tr>
  *   <tr>
  *    <td><tt>CC_FLAGS</tt></td>
- *    <td>Common flags to pass to the compiler, assembler and linker, after the automatically generated flags.</td>
+ *    <td>Common flags to pass to the C/C++ compiler and assembler, after the automatically generated flags.</td>
  *   </tr>
  *   <tr>
  *    <td><tt>LD_FLAGS</tt></td>
@@ -181,11 +189,15 @@
  *   <tr>
  *    <td><tt>OBJDIR</tt></td>
  *    <td>Directory to place the generated object and dependency files. If set to "." the same folder as the source file will be used.
- *        \note When this option is enabled, all source filenames must be unique.</td>
+ *        \note When this option is enabled, all source filenames <b>must</b> be unique.</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>OBJECT_FILES</tt></td>
+ *    <td>List of additional object files that should be linked into the resulting binary.</td>
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_BUILD_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_BUILD_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -208,7 +220,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.core.in
+ *  include $(LUFA_PATH)/Build/lufa_core.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_CORE_Requirements Requirements
@@ -264,7 +276,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_CORE_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_CORE_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -288,7 +300,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.atprogram.in
+ *  include $(LUFA_PATH)/Build/lufa_atprogram.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_ATPROGRAM_Requirements Requirements
@@ -339,7 +351,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_ATPROGRAM_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_ATPROGRAM_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -363,7 +375,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.avrdude.in
+ *  include $(LUFA_PATH)/Build/lufa_avrdude.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_AVRDUDE_Requirements Requirements
@@ -415,7 +427,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_AVRDUDE_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_AVRDUDE_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -439,7 +451,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.cppcheck.in
+ *  include $(LUFA_PATH)/Build/lufa_cppcheck.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_CPPCHECK_Requirements Requirements
@@ -507,7 +519,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_CPPCHECK_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_CPPCHECK_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -533,7 +545,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.dfu.in
+ *  include $(LUFA_PATH)/Build/lufa_dfu.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_DFU_Requirements Requirements
@@ -584,7 +596,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_DFU_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_DFU_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -609,7 +621,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.doxygen.in
+ *  include $(LUFA_PATH)/Build/lufa_doxygen.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_DOXYGEN_Requirements Requirements
@@ -653,7 +665,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_DOXYGEN_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_DOXYGEN_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -679,7 +691,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.hid.in
+ *  include $(LUFA_PATH)/Build/lufa_hid.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_HID_Requirements Requirements
@@ -696,8 +708,20 @@
  *    <td>Program the device FLASH memory with the application's executable data using <tt>hid_bootloader_cli</tt>.</td>
  *   </tr>
  *   <tr>
- *    <td><tt>hid-teensy</tt></td>
+ *    <td><tt>hid-ee</tt></td>
+ *    <td>Program the device EEPROM memory with the application's EEPROM data using <tt>hid_bootloader_cli</tt> and
+ *        a temporary AVR application programmed into the target's FLASH.
+ *        \note This will erase the currently loaded application in the target.</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>teensy</tt></td>
  *    <td>Program the device FLASH memory with the application's executable data using <tt>teensy_loader_cli</tt>.</td>
+ *   </tr>
+ *   <tr>
+ *    <td><tt>teensy-ee</tt></td>
+ *    <td>Program the device EEPROM memory with the application's EEPROM data using <tt>teensy_loader_cli</tt> and
+ *        a temporary AVR application programmed into the target's FLASH.
+ *        \note This will erase the currently loaded application in the target.</td>
  *   </tr>
  *  </table>
  *
@@ -722,7 +746,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_HID_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_HID_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>
@@ -748,7 +772,7 @@
  *
  *  To use this module in your application makefile, add the following code:
  *  \code
- *  include $(LUFA_PATH)/Build/lufa.sources.in
+ *  include $(LUFA_PATH)/Build/lufa_sources.mk
  *  \endcode
  *
  *  \section SSec_BuildModule_SOURCES_Requirements Requirements
@@ -783,7 +807,7 @@
  *   </tr>
  *  </table>
  *
- *  \section SSec_BuildModule_SOURCES_ProvideVariables Module Provided Variables
+ *  \section SSec_BuildModule_SOURCES_ProvidedVariables Module Provided Variables
  *
  *  <table>
  *   <tr>

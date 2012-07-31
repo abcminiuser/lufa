@@ -18,7 +18,7 @@ OPTIMIZATION = s
 TARGET       = AVRISP-MKII
 SRC          = $(TARGET).c AVRISPDescriptors.c Lib/V2Protocol.c Lib/V2ProtocolParams.c Lib/ISP/ISPProtocol.c Lib/ISP/ISPTarget.c Lib/XPROG/XPROGProtocol.c \
                Lib/XPROG/XPROGTarget.c Lib/XPROG/XMEGANVM.c Lib/XPROG/TINYNVM.c $(LUFA_SRC_USB)
-LUFA_PATH    = ../../LUFA/
+LUFA_PATH    = ../../LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
 LD_FLAGS     =
 
@@ -26,12 +26,12 @@ LD_FLAGS     =
 all:
 
 # Include LUFA build script makefiles
-include $(LUFA_PATH)/Build/lufa.core.in
-include $(LUFA_PATH)/Build/lufa.sources.in
-include $(LUFA_PATH)/Build/lufa.build.in
-include $(LUFA_PATH)/Build/lufa.cppcheck.in
-include $(LUFA_PATH)/Build/lufa.doxygen.in
-include $(LUFA_PATH)/Build/lufa.dfu.in
-include $(LUFA_PATH)/Build/lufa.hid.in
-include $(LUFA_PATH)/Build/lufa.avrdude.in
-include $(LUFA_PATH)/Build/lufa.atprogram.in
+include $(LUFA_PATH)/Build/lufa_core.mk
+include $(LUFA_PATH)/Build/lufa_sources.mk
+include $(LUFA_PATH)/Build/lufa_build.mk
+include $(LUFA_PATH)/Build/lufa_cppcheck.mk
+include $(LUFA_PATH)/Build/lufa_doxygen.mk
+include $(LUFA_PATH)/Build/lufa_dfu.mk
+include $(LUFA_PATH)/Build/lufa_hid.mk
+include $(LUFA_PATH)/Build/lufa_avrdude.mk
+include $(LUFA_PATH)/Build/lufa_atprogram.mk

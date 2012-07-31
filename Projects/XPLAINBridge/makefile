@@ -9,7 +9,7 @@
 #         LUFA Project Makefile.
 # --------------------------------------
 
-AVRISP_PATH  = ../AVRISP-MKII/
+AVRISP_PATH  = ../AVRISP-MKII
 
 MCU          = at90usb1287
 ARCH         = AVR8
@@ -22,21 +22,28 @@ SRC          = $(TARGET).c Lib/SoftUART.c USARTDescriptors.c $(AVRISP_PATH)/AVRI
                $(AVRISP_PATH)/Lib/V2ProtocolParams.c $(AVRISP_PATH)/Lib/ISP/ISPProtocol.c $(AVRISP_PATH)/Lib/ISP/ISPTarget.c \
                $(AVRISP_PATH)/Lib/XPROG/XPROGProtocol.c $(AVRISP_PATH)/Lib/XPROG/XPROGTarget.c $(AVRISP_PATH)/Lib/XPROG/XMEGANVM.c \
                $(AVRISP_PATH)/Lib/XPROG/TINYNVM.c $(LUFA_SRC_USB) $(LUFA_SRC_USBCLASS)
-
-LUFA_PATH    = ../../LUFA/
+LUFA_PATH    = ../../LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/ -I$(AVRISP_PATH)
 LD_FLAGS     =
 
 # Default target
 all:
 
+# Since this project borrows files from the AVRISP-MKII project which may also have an
+# identical OBJDIR directory, we need to enforce the use of this project's object file
+# directory as the one where the build object files are to be stored by pre-pending the
+# absolute path of the current project to the OBJDIR variable.
+ifneq ($(OBJDIR),)
+  override OBJDIR:=$(shell pwd)/$(OBJDIR)
+endif
+
 # Include LUFA build script makefiles
-include $(LUFA_PATH)/Build/lufa.core.in
-include $(LUFA_PATH)/Build/lufa.sources.in
-include $(LUFA_PATH)/Build/lufa.build.in
-include $(LUFA_PATH)/Build/lufa.cppcheck.in
-include $(LUFA_PATH)/Build/lufa.doxygen.in
-include $(LUFA_PATH)/Build/lufa.dfu.in
-include $(LUFA_PATH)/Build/lufa.hid.in
-include $(LUFA_PATH)/Build/lufa.avrdude.in
-include $(LUFA_PATH)/Build/lufa.atprogram.in
+include $(LUFA_PATH)/Build/lufa_core.mk
+include $(LUFA_PATH)/Build/lufa_sources.mk
+include $(LUFA_PATH)/Build/lufa_build.mk
+include $(LUFA_PATH)/Build/lufa_cppcheck.mk
+include $(LUFA_PATH)/Build/lufa_doxygen.mk
+include $(LUFA_PATH)/Build/lufa_dfu.mk
+include $(LUFA_PATH)/Build/lufa_hid.mk
+include $(LUFA_PATH)/Build/lufa_avrdude.mk
+include $(LUFA_PATH)/Build/lufa_atprogram.mk
