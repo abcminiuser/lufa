@@ -7,9 +7,9 @@
 #
 
 LUFA_BUILD_MODULES         += IAR
-LUFA_BUILD_TARGETS         += ALL ELF HEX CLEAN
+LUFA_BUILD_TARGETS         += all elf hex clean mostlyclean
 LUFA_BUILD_MANDATORY_VARS  += TARGET ARCH MCU SRC F_USB LUFA_PATH
-LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR
+LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR OBJECT_FILES
 LUFA_BUILD_PROVIDED_VARS   += 
 LUFA_BUILD_PROVIDED_MACROS += 
 
@@ -26,6 +26,8 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #    elf                       - Build application ELF debug object file
 #    hex                       - Build application HEX object files
 #    clean                     - Remove output files
+#    mostlyclean               - Remove intermediatary output files, but
+#                                preserve binaries
 #
 # MANDATORY PARAMETERS:
 #
@@ -52,6 +54,7 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #    OBJDIR                    - Directory for the output object and dependency
 #                                files; if equal to ".", the output files will
 #                                be generated in the same folder as the sources
+#    OBJECT_FILES              - Extra object files to link in to the binaries
 #
 # PROVIDED VARIABLES:
 #
@@ -77,6 +80,7 @@ CPP_FLAGS       ?=
 ASM_FLAGS       ?=
 CC_FLAGS        ?=
 OBJDIR          ?= .
+OBJECT_FILES    ?=
 
 # Sanity check user supplied values
 $(foreach MANDATORY_VAR, $(LUFA_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
@@ -124,12 +128,16 @@ ifneq ($(UNKNOWN_SOURCE),)
 endif
 
 # Convert input source filenames into a list of required output object files
-OBJECT_FILES = $(filter %.o, $(C_SOURCE:%.c=%.o) $(CPP_SOURCE:%.cpp=%.o) $(ASM_SOURCE:%.S=%.o))
+OBJECT_FILES += $(addsuffix .o, $(basename $(SRC)))
 ifneq ($(OBJDIR),.)
-   $(shell mkdir $(OBJDIR) 2>&1 | /dev/null)   
+   $(shell mkdir $(OBJDIR) 2> /dev/null)   
    VPATH           += $(dir $(SRC))
-   
    OBJECT_FILES    := $(addprefix $(patsubst %/,%,$(OBJDIR))/, $(notdir $(OBJECT_FILES)))
+   
+   # Check if any object file (without path) appears more than once in the object file list
+   ifneq ($(words $(sort $(OBJECT_FILES))), $(words $(OBJECT_FILES)))
+       $(error Cannot build with OBJDIR parameter set - one or more object file name is not unique)
+   endif
 endif
 
 DEPENDENCY_FILES = $(OBJECT_FILES:%.o=%.d)
