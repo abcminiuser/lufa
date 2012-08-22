@@ -127,6 +127,9 @@ int main(void)
 		USB_USBTask();
 	}
 
+	/* Leave a bit of time for the host to close */
+	Delay_MS(500);
+
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
 	USB_Detach();
 	
