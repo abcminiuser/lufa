@@ -127,6 +127,9 @@ int main(void)
 		USB_USBTask();
 	}
 
+	/* Leave a bit of time for the host to close */
+	Delay_MS(500);
+
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
 	USB_Detach();
 	
@@ -188,6 +191,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  */
 void EVENT_USB_Device_ControlRequest(void)
 {
+	if (!(Endpoint_IsSETUPReceived()))
+		return;
+
 	/* Ignore any requests that aren't directed to the CDC interface */
 	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
 	    (REQTYPE_CLASS | REQREC_INTERFACE))
@@ -206,9 +212,13 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				Endpoint_ClearSETUP();
 
+				while (!(Endpoint_IsINReady()));
+
 				/* Write the line coding data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
-				Endpoint_ClearOUT();
+
+				Endpoint_ClearIN();
+				Endpoint_ClearStatusStage();
 			}
 
 			break;
@@ -217,11 +227,26 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				Endpoint_ClearSETUP();
 
+				while (!(Endpoint_IsOUTReceived()))
+				{
+					if (USB_DeviceState == DEVICE_STATE_Unattached)
+						return;
+				}
+
 				/* Read the line coding data in from the host into the global struct */
 				Endpoint_Read_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
-				Endpoint_ClearIN();
+				Endpoint_ClearOUT();
+				Endpoint_ClearStatusStage();
 			}
 
+			break;
+
+		case CDC_REQ_SetControlLineState:
+			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
+			{
+				Endpoint_ClearSETUP();
+				Endpoint_ClearStatusStage();
+			}
 			break;
 	}
 }
