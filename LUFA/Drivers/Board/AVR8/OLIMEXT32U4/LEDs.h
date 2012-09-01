@@ -44,8 +44,8 @@
  *
  *  <table>
  *    <tr><th>Name</th><th>Color</th><th>Info</th><th>Active Level</th><th>Port Pin</th></tr>
- *    <tr><td>LEDS_LED1</td><td>Green</td><td>TX</td><td>High</td><td>PORTD.5</td></tr>
- *    <tr><td>LEDS_LED2</td><td>Yellow</td><td>RX</td><td>High</td><td>PORTB.0</td></tr>
+ *    <tr><td>LEDS_LED1</td><td>Yellow</td><td>RX</td><td>High</td><td>PORTB.0</td></tr>
+ *    <tr><td>LEDS_LED2</td><td>Green</td><td>TX</td><td>High</td><td>PORTD.5</td></tr>
  *    <tr><td>LEDS_LED3</td><td>N/A</td><td>General Indicator (Not Mounted)</td><td>High</td><td>PORTE.6</td></tr>
  *  </table>
  *
@@ -71,18 +71,18 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */
-			#define LEDS_PORTB_LEDS       (LEDS_LED2)
-			#define LEDS_PORTD_LEDS       (LEDS_LED1)
+			#define LEDS_PORTB_LEDS       (LEDS_LED1)
+			#define LEDS_PORTD_LEDS       (LEDS_LED2)
 			#define LEDS_PORTE_LEDS       (LEDS_LED3)
 	#endif
 	
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** LED mask for the first LED on the board. */
-			#define LEDS_LED1        (1 << 5)
+			#define LEDS_LED1        (1 << 0)
 
 			/** LED mask for the second LED on the board. */
-			#define LEDS_LED2        (1 << 0)
+			#define LEDS_LED2        (1 << 5)
 
 			/** LED mask for the third LED on the board. */
 			#define LEDS_LED3        (1 << 6)
