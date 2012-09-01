@@ -38,6 +38,7 @@
  *  can be incorporated into many different applications.
  *
  *  \li Accelerometer Game Joystick: http://www.crictor.co.il/he/episodes/joystick/
+ *  \li AD9833 based USB Function Generator: http://tuomasnylund.fi/drupal6/content/ad9833-based-usb-function-generator
  *  \li AERY development platform for the AVR32 devices: http://www.aery32.com/
  *  \li Arcade Controller: http://fletchtronics.net/arcade-controller-made-petunia
  *  \li Arcade Joystick: http://jamie.lentin.co.uk/embedded/arcade-joystick/
@@ -86,7 +87,7 @@
  *  \li Music Playing Alarm Clock (Tutorial): http://www.instructables.com/id/Music-Playing-Alarm-Clock/
  *  \li Nehebkau, Laptop Controlled Keyboard and Mouse: http://www.frank-zhao.com/cache/nehebkau.php
  *  \li NeroJTAG, a JTAG dongle: https://github.com/makestuff/neroJtag
- *  \li NES Controller USB modification: http://projects.peterpolidoro.net/video/NESUSB.htm
+ *  \li NES Controller USB modification: https://github.com/nfd/nes_adapter
  *  \li Nikon wireless camera remote control (Norwegian): http://hekta.org/~hpe1119/
  *  \li Opendous-JTAG, an open source ARM JTAG debugger: http://code.google.com/p/opendous-jtag/
  *  \li Openkubus, an open source hardware-based authentication dongle: http://code.google.com/p/openkubus/
@@ -96,6 +97,7 @@
  *  \li Programmable XBOX controller: http://richard-burke.dyndns.org/wordpress/pan-galactic-gargantuan-gargle-brain-aka-xbox-360-usb-controller/
  *  \li PSGroove, a Playstation 3 Homebrew dongle: http://github.com/psgroove
  *  \li PS/2 to USB adapter: https://github.com/makestuff/p2ukbd
+ *  \li RaspiFace, an Arduino platform bridge for the Raspberry Pi: http://www.raspiface.com/
  *  \li Reprap with LUFA, a LUFA powered 3D printer: http://code.google.com/p/at90usb1287-code-for-arduino-and-eclipse/
  *  \li RFPirate, a RF experimentation platform: https://github.com/ebuller/RF-Pirate
  *  \li RF Transciever using the MRF49XA: http://alternet.us.com/?page_id=1494

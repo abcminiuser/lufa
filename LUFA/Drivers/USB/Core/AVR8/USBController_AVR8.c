@@ -35,7 +35,7 @@
 #define  __INCLUDE_FROM_USB_CONTROLLER_C
 #include "../USBController.h"
 
-#if (!defined(USB_HOST_ONLY) && !defined(USB_DEVICE_ONLY))
+#if defined(USB_CAN_BE_BOTH)
 volatile uint8_t USB_CurrentMode = USB_MODE_None;
 #endif
 
@@ -61,6 +61,13 @@ void USB_Init(
 {
 	#if !defined(USE_STATIC_OPTIONS)
 	USB_Options = Options;
+	#endif
+
+	#if defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR)
+	/* Workaround for AVR8 bootloaders that fail to turn off the OTG pad before running
+	 * the loaded application. This causes VBUS detection to fail unless we first force
+	 * it off to reset it. */
+	USB_OTGPAD_Off();
 	#endif
 
 	if (!(USB_Options & USB_OPT_REG_DISABLED))

@@ -7,7 +7,29 @@
  /** \page Page_ChangeLog Project Changelog
   *
   *  \section Sec_ChangeLogXXXXXX Version XXXXXX
-  *  - No Changes.
+  *  <b>New:</b>
+  *  - Core:
+  *   - Added support for the Arduino Leonardo board
+  *   - Added new doxygen_upgrade and doxygen_create targets to the DOXYGEN build system module
+  *  - Library Applications:
+  *   - <i>None</i>
+  *
+  *  <b>Changed:</b>
+  *  - Core:
+  *   - Added workaround for broken VBUS detection on AVR8 devices when a bootloader starts the application
+  *     via a software jump without first turning off the OTG pad (thanks to Simon Inns)
+  *  - Library Applications:
+  *   - <i>None</i>
+  *
+  *  <b>Fixed:</b>
+  *  - Core:
+  *   - Fixed inverted LEDs_GetLEDs() function implementation for the Benito, Minimus and Arduino UNO boards
+  *   - Fixed missing Win-32bit compatibility sections in the LUFA INF driver files (thanks to Christan Beharrell)
+  *   - Fixed logic hole breaking USB operations on a USB controller with only one supported USB mode and no USB_DEVICE_ONLY or USB_HOST_ONLY
+  *     configuration token set
+  *  - Library Applications:
+  *   - Fixed broken RESET_TOGGLES_LIBUSB_COMPAT compile time option in the AVRISP-MKII project
+  *   - Fixed incompatibility in the CDC class bootloader on some systems (thanks to Sylvain Munaut)
   *
   *  \section Sec_ChangeLog120730 Version 120730
   *  <b>New:</b>
