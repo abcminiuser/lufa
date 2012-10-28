@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -66,7 +66,7 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */
-			#define DATAFLASH_CHIPCS_MASK                (1 << 4)
+			#define DATAFLASH_CHIPCS_MASK                DATAFLASH_CHIP1
 			#define DATAFLASH_CHIPCS_PORT                PORTF
 	#endif
 
@@ -134,7 +134,7 @@
 			/** Determines the currently selected dataflash chip.
 			 *
 			 *  \return Mask of the currently selected Dataflash chip, either \ref DATAFLASH_NO_CHIP if no chip is selected
-			 *  or a DATAFLASH_CHIPn mask (where n is the chip number).
+			 *          or a DATAFLASH_CHIPn mask (where n is the chip number).
 			 */
 			static inline uint8_t Dataflash_GetSelectedChip(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t Dataflash_GetSelectedChip(void)
@@ -144,7 +144,7 @@
 
 			/** Selects the given dataflash chip.
 			 *
-			 *  \param[in]  ChipMask  Mask of the Dataflash IC to select, in the form of DATAFLASH_CHIPn mask (where n is
+			 *  \param[in]  ChipMask  Mask of the Dataflash IC to select, in the form of a \c DATAFLASH_CHIPn mask (where n is
 			 *              the chip number).
 			 */
 			static inline void Dataflash_SelectChip(const uint8_t ChipMask) ATTR_ALWAYS_INLINE;

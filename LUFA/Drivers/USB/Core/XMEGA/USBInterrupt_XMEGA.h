@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -74,10 +74,12 @@
 				{
 					case USB_INT_BUSEVENTI:
 						USB.INTCTRLA |= USB_BUSEVIE_bm;
-						return;
+						break;
 					case USB_INT_SOFI:
 						USB.INTCTRLA |= USB_SOFIE_bm;
-						return;
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -88,10 +90,12 @@
 				{
 					case USB_INT_BUSEVENTI:
 						USB.INTCTRLA &= ~USB_BUSEVIE_bm;
-						return;
+						break;
 					case USB_INT_SOFI:
 						USB.INTCTRLA &= ~USB_SOFIE_bm;
-						return;
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -102,16 +106,18 @@
 				{
 					case USB_INT_BUSEVENTI_Suspend:
 						USB.INTFLAGSACLR = USB_SUSPENDIF_bm;
-						return;
+						break;
 					case USB_INT_BUSEVENTI_Resume:
 						USB.INTFLAGSACLR = USB_RESUMEIF_bm;
-						return;
+						break;
 					case USB_INT_BUSEVENTI_Reset:
 						USB.INTFLAGSACLR = USB_RSTIF_bm;
-						return;
+						break;
 					case USB_INT_SOFI:
 						USB.INTFLAGSACLR = USB_SOFIF_bm;
-						return;
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -124,9 +130,9 @@
 						return ((USB.INTCTRLA & USB_BUSEVIE_bm) ? true : false);
 					case USB_INT_SOFI:
 						return ((USB.INTCTRLA & USB_SOFIE_bm) ? true : false);
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 			static inline bool USB_INT_HasOccurred(const uint8_t Interrupt) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
@@ -142,9 +148,9 @@
 						return ((USB.INTFLAGSACLR & USB_RSTIF_bm) ? true : false);
 					case USB_INT_SOFI:
 						return ((USB.INTFLAGSACLR & USB_SOFIF_bm) ? true : false);
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 		/* Includes: */

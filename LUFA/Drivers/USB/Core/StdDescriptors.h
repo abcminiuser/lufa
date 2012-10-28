@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -724,8 +724,8 @@
 		/* Macros: */
 			#define VERSION_TENS(x)                   (int)((int)(x) / 10)
 			#define VERSION_ONES(x)                   (int)((int)(x) % 10)
-			#define VERSION_TENTHS(x)                 (int)(((x *  1) - ((int)(x *  1))) * 10)
-			#define VERSION_HUNDREDTHS(x)             (int)(((x * 10) - ((int)(x * 10))) * 10)
+			#define VERSION_TENTHS(x)                 (int)((x - (int)x) * 10)
+			#define VERSION_HUNDREDTHS(x)             (int)((x * 100) - ((int)(x * 10) * 10))
 	#endif
 
 	/* Disable C linkage for C++ Compilers: */

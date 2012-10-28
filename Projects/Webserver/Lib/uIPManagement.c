@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -189,6 +189,7 @@ static void uIPManagement_ProcessIncomingPacket(void)
 	}
 
 	/* If the packet contains an Ethernet frame, process it */
+	// cppcheck-suppress redundantOperationIn
 	if (uip_len > 0)
 	{
 		switch (((struct uip_eth_hdr*)uip_buf)->type)

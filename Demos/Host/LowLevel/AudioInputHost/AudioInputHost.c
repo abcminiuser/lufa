@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -46,7 +46,7 @@ int main(void)
 	puts_P(PSTR(ESC_FG_CYAN "Audio Input Host Demo running.\r\n" ESC_FG_WHITE));
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
-	sei();
+	GlobalInterruptEnable();
 
 	for (;;)
 	{
@@ -152,6 +152,9 @@ void EVENT_USB_Host_DeviceEnumerationComplete(void)
 	/* Set the sample rate on the streaming interface endpoint */
 	if ((ErrorCode = USB_Host_SendControlRequest(&SampleRate)) != HOST_SENDCONTROL_Successful)
 	{
+		printf_P(PSTR(ESC_FG_RED "Could not set requested Audio sample rate.\r\n"
+		                         " -- Error Code: %d\r\n" ESC_FG_WHITE), ErrorCode);
+
 		LEDs_SetAllLEDs(LEDMASK_USB_ERROR);
 		USB_Host_SetDeviceConfiguration(0);
 		return;

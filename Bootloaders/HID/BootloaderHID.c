@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -59,6 +59,7 @@ void Application_Jump_Check(void)
 	if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 	{
 		MagicBootKey = 0;
+		
 		// cppcheck-suppress constStatement
 		((void (*)(void))0x0000)();
 	}
@@ -73,7 +74,7 @@ int main(void)
 	SetupHardware();
 
 	/* Enable global interrupts so that the USB stack can function */
-	sei();
+	GlobalInterruptEnable();
 
 	while (RunBootloader)
 	  USB_USBTask();

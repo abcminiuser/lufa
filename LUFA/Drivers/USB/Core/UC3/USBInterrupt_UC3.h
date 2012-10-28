@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -134,6 +134,8 @@
 						AVR32_USBB.USBCON.vberre      = true;
 						break;
 					#endif
+					default:
+						break;
 				}
 			}
 
@@ -187,6 +189,8 @@
 						AVR32_USBB.USBCON.vberre      = false;
 						break;
 					#endif
+					default:
+						break;
 				}
 			}
 
@@ -252,6 +256,8 @@
 						(void)AVR32_USBB.USBSTACLR;
 						break;
 					#endif
+					default:
+						break;
 				}
 			}
 
@@ -292,9 +298,9 @@
 					case USB_INT_VBERRI:
 						return AVR32_USBB.USBCON.vberre;
 					#endif
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 			static inline bool USB_INT_HasOccurred(const uint8_t Interrupt) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
@@ -334,9 +340,9 @@
 					case USB_INT_VBERRI:
 						return AVR32_USBB.USBSTA.vberri;
 					#endif
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 		/* Includes: */

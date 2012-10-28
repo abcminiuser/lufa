@@ -9,9 +9,9 @@
 LUFA_BUILD_MODULES         += BUILD
 LUFA_BUILD_TARGETS         += size symbol-sizes all lib elf hex lss clean mostlyclean
 LUFA_BUILD_MANDATORY_VARS  += TARGET ARCH MCU SRC F_USB LUFA_PATH
-LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR OBJECT_FILES DEBUG_TYPE DEBUG_LEVEL
-LUFA_BUILD_PROVIDED_VARS   += 
-LUFA_BUILD_PROVIDED_MACROS += 
+LUFA_BUILD_OPTIONAL_VARS   += BOARD OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR OBJECT_FILES DEBUG_TYPE DEBUG_LEVEL LINKER_RELAXATIONS
+LUFA_BUILD_PROVIDED_VARS   +=
+LUFA_BUILD_PROVIDED_MACROS +=
 
 # -----------------------------------------------------------------------------
 #               LUFA GCC Compiler Buildsystem Makefile Module.
@@ -60,6 +60,9 @@ LUFA_BUILD_PROVIDED_MACROS +=
 #    CC_FLAGS                  - Common flags to pass to the C/C++ compiler and
 #                                assembler
 #    LD_FLAGS                  - Flags to pass to the linker
+#    LINKER_RELAXATIONS        - Enable or disable linker relaxations to
+#                                decrease binary size (note: can cause link
+#                                failures on systems with an unpatched binutils)
 #    OBJDIR                    - Directory for the output object and dependency
 #                                files; if equal to ".", the output files will
 #                                be generated in the same folder as the sources
@@ -86,19 +89,20 @@ ERROR_IF_EMPTY   ?= $(if $(strip $($(strip $(1)))), , $(error Makefile $(strip $
 ERROR_IF_NONBOOL ?= $(if $(filter Y N, $($(strip $(1)))), , $(error Makefile $(strip $(1)) option must be Y or N))
 
 # Default values of optionally user-supplied variables
-BOARD           ?= NONE
-OPTIMIZATION    ?= s
-F_CPU           ?=
-C_STANDARD      ?= gnu99
-CPP_STANDARD    ?= gnu++98
-C_FLAGS         ?=
-CPP_FLAGS       ?=
-ASM_FLAGS       ?=
-CC_FLAGS        ?=
-OBJDIR          ?= .
-OBJECT_FILES    ?=
-DEBUG_FORMAT    ?= dwarf-2
-DEBUG_LEVEL     ?= 2
+BOARD              ?= NONE
+OPTIMIZATION       ?= s
+F_CPU              ?=
+C_STANDARD         ?= gnu99
+CPP_STANDARD       ?= gnu++98
+C_FLAGS            ?=
+CPP_FLAGS          ?=
+ASM_FLAGS          ?=
+CC_FLAGS           ?=
+OBJDIR             ?= .
+OBJECT_FILES       ?=
+DEBUG_FORMAT       ?= dwarf-2
+DEBUG_LEVEL        ?= 2
+LINKER_RELAXATIONS ?= Y
 
 # Sanity check user supplied values
 $(foreach MANDATORY_VAR, $(LUFA_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
@@ -114,6 +118,7 @@ $(call ERROR_IF_EMPTY, CPP_STANDARD)
 $(call ERROR_IF_EMPTY, OBJDIR)
 $(call ERROR_IF_EMPTY, DEBUG_FORMAT)
 $(call ERROR_IF_EMPTY, DEBUG_LEVEL)
+$(call ERROR_IF_NONBOOL, LINKER_RELAXATIONS)
 
 # Determine the utility prefix to use for the selected architecture
 ifeq ($(ARCH), AVR8)
@@ -158,14 +163,14 @@ OBJECT_FILES += $(addsuffix .o, $(basename $(SRC)))
 ifneq ($(OBJDIR),.)
    # Prefix all the object filenames with the output object file directory path
    OBJECT_FILES    := $(addprefix $(patsubst %/,%,$(OBJDIR))/, $(notdir $(OBJECT_FILES)))
-   
+
    # Check if any object file (without path) appears more than once in the object file list
    ifneq ($(words $(sort $(OBJECT_FILES))), $(words $(OBJECT_FILES)))
        $(error Cannot build with OBJDIR parameter set - one or more object file name is not unique)
    endif
 
    # Create the output object file directory if it does not exist and add it to the virtual path list
-   $(shell mkdir $(OBJDIR) 2> /dev/null)   
+   $(shell mkdir $(OBJDIR) 2> /dev/null)
    VPATH           += $(dir $(SRC))
 endif
 
@@ -194,7 +199,10 @@ BASE_CPP_FLAGS := -x c++ -O$(OPTIMIZATION) -std=$(CPP_STANDARD)
 BASE_ASM_FLAGS := -x assembler-with-cpp
 
 # Create a list of flags to pass to the linker
-BASE_LD_FLAGS := -lm -Wl,-Map=$(TARGET).map,--cref -Wl,--gc-sections -Wl,--relax 
+BASE_LD_FLAGS := -lm -Wl,-Map=$(TARGET).map,--cref -Wl,--gc-sections
+ifeq ($(LINKER_RELAXATIONS), Y)
+   BASE_LD_FLAGS += -Wl,--relax
+endif
 ifeq ($(ARCH), AVR8)
    BASE_LD_FLAGS += -mmcu=$(MCU)
 else ifeq ($(ARCH), XMEGA)
@@ -204,15 +212,18 @@ else ifeq ($(ARCH), UC3)
 endif
 
 # Determine flags to pass to the size utility based on its reported features (only invoke if size target required)
+# and on an architecture where this non-standard patch is available
+ifneq ($(ARCH), UC3)
 size: SIZE_MCU_FLAG    := $(shell $(CROSS)-size --help | grep -- --mcu > /dev/null && echo --mcu=$(MCU) )
 size: SIZE_FORMAT_FLAG := $(shell $(CROSS)-size --help | grep -- --format=.*avr > /dev/null && echo --format=avr )
+endif
 
 # Pre-build informational target, to give compiler and project name information when building
 build_begin:
 	@echo $(MSG_INFO_MESSAGE) Begin compilation of project \"$(TARGET)\"...
 	@echo ""
 	@$(CROSS)-gcc --version
-	
+
 # Post-build informational target, to project name information when building has completed
 build_end:
 	@echo $(MSG_INFO_MESSAGE) Finished building project \"$(TARGET)\".
@@ -228,7 +239,7 @@ symbol-sizes: $(TARGET).elf
 	@echo $(MSG_NM_CMD) Extracting \"$<\" symbols with decimal byte sizes
 	$(CROSS)-nm --size-sort --demangle --radix=d $<
 
-# Cleans intermediatary build files, leaving only the compiled application files
+# Cleans intermediary build files, leaving only the compiled application files
 mostlyclean:
 	@echo $(MSG_REMOVE_CMD) Removing object files of \"$(TARGET)\"
 	rm -f $(OBJECT_FILES)
@@ -274,7 +285,7 @@ $(OBJDIR)/%.o: %.c $(MAKEFILE_LIST)
 $(OBJDIR)/%.o: %.cpp $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$(notdir $<)\"
 	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
-	
+
 # Assembles an input ASM source file and generates a linkable object file for it
 $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
 	@echo $(MSG_ASSEMBLE_CMD) Assembling \"$(notdir $<)\"
@@ -308,7 +319,7 @@ $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
 # Creates an assembly listing file from an input project ELF file, containing interleaved assembly and source data
 %.lss: %.elf
 	@echo $(MSG_OBJDMP_CMD) Extracting LSS file data from \"$<\"
-	$(CROSS)-objdump -h -S -z $< > $@
+	$(CROSS)-objdump -h -d -S -z $< > $@
 
 # Creates a symbol file listing the loadable and discarded symbols from an input project ELF file
 %.sym: %.elf

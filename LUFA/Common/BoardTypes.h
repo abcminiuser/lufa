@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -219,6 +219,12 @@
 			/** Selects the Arduino Leonardo specific board drivers, including the driver for the board LEDs. */
 			#define BOARD_LEONARDO             51
 			
+			/** Selects the UC3-A3 Xplained specific board drivers, including the Button and LED drivers. */
+			#define BOARD_UC3A3_XPLAINED       52
+			
+			/** Selects the USB2AX version 3.1 specific board drivers, including the Button and LEDs drivers. */
+			#define BOARD_USB2AX_V31           53
+
 			#if !defined(__DOXYGEN__)
 				#define BOARD_                 BOARD_NONE
 

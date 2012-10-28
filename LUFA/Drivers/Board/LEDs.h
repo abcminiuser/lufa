@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -56,7 +56,7 @@
  *  provides an interface to configure, test and change the status of all the board LEDs.
  *
  *  If the \c BOARD value is set to \c BOARD_USER, this will include the \c /Board/LEDs.h file in the user project
- *  directory. Otherwise, it will include the appropriate built in board driver header file. If the BOARD value
+ *  directory. Otherwise, it will include the appropriate built-in board driver header file. If the BOARD value
  *  is set to \c BOARD_NONE, this driver is silently disabled.
  *
  *  For possible \c BOARD makefile values, see \ref Group_BoardTypes.
@@ -174,7 +174,7 @@
 			#include "UC3/EVK1104/LEDs.h"
 		#elif (BOARD == BOARD_A3BU_XPLAINED)
 			#include "XMEGA/A3BU_XPLAINED/LEDs.h"
-		#elif ((BOARD == BOARD_USB2AX) || (BOARD == BOARD_USB2AX_V3))
+		#elif ((BOARD == BOARD_USB2AX) || (BOARD == BOARD_USB2AX_V3) || (BOARD == BOARD_USB2AX_V31))
 			#include "AVR8/USB2AX/LEDs.h"
 		#elif ((BOARD == BOARD_MICROPENDOUS_REV1) || (BOARD == BOARD_MICROPENDOUS_REV2) || \
 		       (BOARD == BOARD_MICROPENDOUS_32U2))
@@ -195,6 +195,8 @@
 			#include "AVR8/OLIMEXISPMK2/LEDs.h"
 		#elif (BOARD == BOARD_LEONARDO)
 			#include "AVR8/LEONARDO/LEDs.h"
+		#elif (BOARD == BOARD_UC3A3_XPLAINED)
+			#include "UC3/UC3A3_XPLAINED/LEDs.h"
 		#else
 			#include "Board/LEDs.h"
 		#endif
@@ -222,6 +224,8 @@
 	#if defined(__DOXYGEN__)
 		/** Initializes the board LED driver so that the LEDs can be controlled. This sets the appropriate port
 		 *  I/O pins as outputs, and sets the LEDs to default to off.
+		 *
+		 *  This must be called before any LED driver functions are used.
 		 */
 		static inline void LEDs_Init(void);
 
@@ -265,7 +269,7 @@
 		/** Returns the status of all the board LEDs; set LED masks in the return value indicate that the
 		 *  corresponding LED is on.
 		 *
-		 *  \return Mask of the board LEDs which are currently turned on.
+		 *  \return Mask of \c LEDS_LED* constants indicating which of the board LEDs are currently turned on.
 		 */
 		static inline uint_reg_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
 	#endif

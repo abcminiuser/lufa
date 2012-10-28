@@ -40,6 +40,7 @@
  *  \li Accelerometer Game Joystick: http://www.crictor.co.il/he/episodes/joystick/
  *  \li AD9833 based USB Function Generator: http://tuomasnylund.fi/drupal6/content/ad9833-based-usb-function-generator
  *  \li AERY development platform for the AVR32 devices: http://www.aery32.com/
+ *  \li AM Radio transmitter: http://amcinnes.info/2012/uc_am_xmit/
  *  \li Arcade Controller: http://fletchtronics.net/arcade-controller-made-petunia
  *  \li Arcade Joystick: http://jamie.lentin.co.uk/embedded/arcade-joystick/
  *  \li AttoBasic AVR BASIC interpreter: http://www.cappels.org/dproj/AttoBasic2_1/AttoBasic_2.1_with_USB_and_Arduino_support.html
@@ -69,11 +70,14 @@
  *  \li Hardware Volume Control: https://github.com/davidk/hw-volume-control
  *  \li Hiduino, a USB-MIDI replacement firmware for the Arduino Uno: http://code.google.com/p/hiduino/
  *  \li Ikea RGB LED USB modification: http://slashhome.se/p/projects/id/ikea_dioder_usb/#project
+ *  \li IR electricity meter monitor: http://sourceforge.net/projects/irmetermon/
  *  \li IR Remote to Keyboard decoder: http://netzhansa.blogspot.com/2010/04/our-living-room-hi-fi-setup-needs-mp3.html
  *  \li Jukebox panic button: http://thinkl33t.co.uk/the-panic-button
+ *  \li Kinesis replacement firmware: https://github.com/chrisandreae/kinesis-firmware
  *  \li LED Panel controller: http://projects.peterpolidoro.net/caltech/panelscontroller/panelscontroller.htm
  *  \li Linux Secure Storage Dongle: http://github.com/TomMD/teensy
  *  \li LUFA powered DDR dance mat (French): http://logicien-parfait.fr/dokuwiki/doku.php?id=projet:ddr_repair
+ *  \li Macintosh SIMM ROM Programmer: https://code.google.com/p/mac-rom-simm-programmer/
  *  \li MakeTV Episode Dispenser: http://www.youtube.com/watch?v=BkWUi18hl3g
  *  \li MidiMonster, a USB-to-MIDI gateway board: http://www.dorkbotpdx.org/wiki/midimonster
  *  \li MIDI Theremin: http://baldwisdom.com/usb-midi-controller-theremin-style-on-arduino-uno/
@@ -89,6 +93,7 @@
  *  \li NeroJTAG, a JTAG dongle: https://github.com/makestuff/neroJtag
  *  \li NES Controller USB modification: https://github.com/nfd/nes_adapter
  *  \li Nikon wireless camera remote control (Norwegian): http://hekta.org/~hpe1119/
+ *  \li Numpad keyboard: http://tuomasnylund.fi/drupal6/content/usb-cherry-mx-numpad
  *  \li Opendous-JTAG, an open source ARM JTAG debugger: http://code.google.com/p/opendous-jtag/
  *  \li Openkubus, an open source hardware-based authentication dongle: http://code.google.com/p/openkubus/
  *  \li Orbee, a USB connected RGB Orb for notifications: http://www.franksworkshop.com.au/Electronics/Orbee/Orbee.htm
@@ -98,6 +103,7 @@
  *  \li PSGroove, a Playstation 3 Homebrew dongle: http://github.com/psgroove
  *  \li PS/2 to USB adapter: https://github.com/makestuff/p2ukbd
  *  \li RaspiFace, an Arduino platform bridge for the Raspberry Pi: http://www.raspiface.com/
+ *  \li Reflow oven controller: http://danstrother.com/2011/01/15/reflow-oven-controller/
  *  \li Reprap with LUFA, a LUFA powered 3D printer: http://code.google.com/p/at90usb1287-code-for-arduino-and-eclipse/
  *  \li RFPirate, a RF experimentation platform: https://github.com/ebuller/RF-Pirate
  *  \li RF Transciever using the MRF49XA: http://alternet.us.com/?page_id=1494
@@ -117,6 +123,8 @@
  *  \li UDFS, a BBC Micro USB disk filing system: https://github.com/makestuff/udfs
  *  \li Universal USB AVR Module: http://usbavr.bplaced.net/
  *  \li USB2AX, a USB to Dynamixel network adapter: http://paranoidstudio.assembla.com/wiki/show/paranoidstudio/USB2AX
+ *  \li USB Business Card: http://www.limpkin.fr/index.php?post/2012/09/15/My-new-business-card
+ *  \li USB Function Generator: http://tuomasnylund.fi/drupal6/content/ad9833-based-usb-function-generator
  *  \li USB Infrared Receiver/Transmitter: http://vaton4.web2001.cz/
  *  \li USB Interface for Playstation Portable Devices: http://forums.ps2dev.org/viewtopic.php?t=11001
  *  \li USB MIDI to DMX controller: http://github.com/hanshuebner/miDiMX
@@ -124,6 +132,7 @@
  *  \li Userial, a USB to Serial converter with SPI, I2C and other protocols: http://www.tty1.net/userial/
  *  \li Wii Classic Controller to USB converter: https://github.com/crazyiop/wii-classic-2-usb
  *  \li Wireless MIDI Guitar system: http://www.ise.pw.edu.pl/~wzab/wireless_guitar_system/
+ *  \li XBOX 360 Statup Sound Changer: http://www.homebrew-connection.org/change-your-xbox-360-startup-sounds-yourself/
  *  \li Xnormidi, a C MIDI library: http://x37v.info/projects/xnormidi
  *  \li XUM1541, a Commodore 64 floppy drive to USB adapter: http://www.root.org/~nate/c64/xum1541/
  *  \li Zeus, a touch screen computer for music manipulation: http://www.benbengler.com/developments_zeus.html
@@ -141,6 +150,7 @@
  *  \li CFFA3000, a CompactFlash interface for the Apple II: http://www.dreher.net/CFforAppleII
  *  \li Digital Survey Instruments Magnetometer and Pointer: http://www.digitalsurveyinstruments.com/
  *  \li FinchRobot, a robot designed for educational use: http://www.finchrobot.com/
+ *  \li Flysight, a GPS logger for wingsuit pilots: http://flysight.ca/
  *  \li HummingBird Kit, a robotics learning platform: http://www.hummingbirdkit.com/
  *  \li Penguino, an Arduino Board With On-Board LUFA Powered Debugger/Programmer: http://wiki.icy.com.au/PenguinoAVR
  *  \li PIR-1, an IR control interface for consumer electronics: http://www.promixis.com/pir-1.php
@@ -153,6 +163,7 @@
  *  \li Retrode, a USB Games Console Cartridge Reader: http://www.retrode.org
  *  \li RFI21.1EU UHF RFID reader: http://www.metra.cz/rfid/uhf-rfid-ctecky/rfi21-1eu-uhf-rfid-ctecka.htm
  *  \li SmartCardDetective, a Smart Card analysis tool: http://www.smartcarddetective.com/
+ *  \li TimelapsePlus, a digital camera time lapse tool: https://github.com/timelapseplus/TimelapsePlus-Firmware
  *  \li USBTINY-MKII, an AVRISP-MKII Clone AVR Programmer: http://tom-itx.dyndns.org:81/~webpage/boards/USBTiny_Mkii/USBTiny_Mkii_index.php
  *  \li UDS18B20 USB Temperature sensor: http://toughlog.org/uds18b20/
  *  \li VMeter, a USB MIDI touch strip controller: http://www.vmeter.net/

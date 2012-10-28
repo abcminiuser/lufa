@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -138,7 +138,10 @@ void CDC_Device_USBTask(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 	  return;
 
 	#if !defined(NO_CLASS_DRIVER_AUTOFLUSH)
-	CDC_Device_Flush(CDCInterfaceInfo);
+	Endpoint_SelectEndpoint(CDCInterfaceInfo->Config.DataINEndpoint.Address);
+	
+	if (Endpoint_IsINReady())
+	  CDC_Device_Flush(CDCInterfaceInfo);
 	#endif
 }
 

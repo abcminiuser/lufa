@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -38,6 +38,8 @@
  */
 
 /** \defgroup Group_USB USB Core - LUFA/Drivers/USB/USB.h
+ *
+ *  \brief Core driver for the microcontroller hardware USB module
  *
  *  \section Sec_Dependencies Module Source Dependencies
  *  The following files must be built with any user project that uses this module:
@@ -72,6 +74,8 @@
  */
 
 /** \defgroup Group_USBClassDrivers USB Class Drivers
+ *
+ *  \brief Drivers for the various standardized USB device classes
  *
  *  Drivers for both host and device mode of the standard USB classes, for rapid application development.
  *  Class drivers give a framework which sits on top of the low level library API, allowing for standard
