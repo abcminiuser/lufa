@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -57,7 +57,7 @@
  *  actions can be taken.
  *
  *  If the \c BOARD value is set to \c BOARD_USER, this will include the \c /Board/Buttons.h file in the user project
- *  directory. Otherwise, it will include the appropriate built in board driver header file.
+ *  directory. Otherwise, it will include the appropriate built-in board driver header file.
  *
  *  For possible \c BOARD makefile values, see \ref Group_BoardTypes.
  *
@@ -144,11 +144,13 @@
 		#elif (BOARD == BOARD_B1_XPLAINED)
 			#include "XMEGA/B1_XPLAINED/Buttons.h"
 		#elif (BOARD == BOARD_OLIMEX32U4)
-			#include "AVR8/OLIMEX32U4/Buttons.h"		
+			#include "AVR8/OLIMEX32U4/Buttons.h"
 		#elif (BOARD == BOARD_OLIMEXT32U4)
-			#include "AVR8/OLIMEXT32U4/Buttons.h"		
+			#include "AVR8/OLIMEXT32U4/Buttons.h"
 		#elif (BOARD == BOARD_OLIMEXISPMK2)
-			#include "AVR8/OLIMEXISPMK2/Buttons.h"	
+			#include "AVR8/OLIMEXISPMK2/Buttons.h"
+		#elif (BOARD == BOARD_UC3A3_XPLAINED)
+			#include "UC3/UC3A3_XPLAINED/Buttons.h"
 		#else
 			#include "Board/Buttons.h"
 		#endif
@@ -167,7 +169,7 @@
 
 		/** Returns a mask indicating which board buttons are currently pressed.
 		 *
-		 *  \return Mask indicating which board buttons are currently pressed.
+		 *  \return Mask of \c BUTTONS_BUTTON* constants indicating which board buttons are currently pressed.
 		 */
 		static inline uint_reg_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
 	#endif

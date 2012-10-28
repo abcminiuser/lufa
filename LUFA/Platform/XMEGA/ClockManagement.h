@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -188,9 +188,9 @@
 						OSC.CTRL |= OSC_RC32KEN_bm;
 						while (!(OSC.STATUS & OSC_RC32KRDY_bm));
 						return true;
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 			/** Stops the given internal oscillator of the XMEGA microcontroller.
@@ -213,9 +213,9 @@
 					case CLOCK_SRC_INT_RC32KHZ:
 						OSC.CTRL &= ~OSC_RC32KEN_bm;
 						return true;
+					default:
+						return false;
 				}
-
-				return false;
 			}
 
 			/** Starts the PLL of the XMEGA microcontroller, with the given options. This routine blocks until the PLL is ready for use.

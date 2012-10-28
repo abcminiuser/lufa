@@ -10,16 +10,19 @@
   *  <b>New:</b>
   *  - Core:
   *   - Added support for the Arduino Leonardo board
-  *   - Added new doxygen_upgrade and doxygen_create targets to the DOXYGEN build system module
+  *   - Added support for the Atmel UC3-A3 Xplained board
+  *   - Added support for the Xevelabs USB2AX revision 3.1 board
+  *   - Added new \c doxygen_upgrade and \c doxygen_create targets to the DOXYGEN build system module
   *  - Library Applications:
-  *   - <i>None</i>
+  *   - Added a different device serial number when the AVRISP-MKII Clone project is in libUSB compatibility mode, so that
+  *     both the libUSB and Jungo drivers can be installed at the same time without having to use a filter driver
   *
   *  <b>Changed:</b>
   *  - Core:
   *   - Added workaround for broken VBUS detection on AVR8 devices when a bootloader starts the application
   *     via a software jump without first turning off the OTG pad (thanks to Simon Inns)
   *  - Library Applications:
-  *   - <i>None</i>
+  *   -  Increased throughput in the USBtoSerial project now that data transmission is non-blocking (thanks to Joseph Lacerte)
   *
   *  <b>Fixed:</b>
   *  - Core:
@@ -27,9 +30,16 @@
   *   - Fixed missing Win-32bit compatibility sections in the LUFA INF driver files (thanks to Christan Beharrell)
   *   - Fixed logic hole breaking USB operations on a USB controller with only one supported USB mode and no USB_DEVICE_ONLY or USB_HOST_ONLY
   *     configuration token set
+  *   - Fixed possible rounding in the VERSION_BCD() macros for some 0.01 step increments (thanks to Oliver Zander)
+  *   - Fixed incorrect Dataflash functionality in the USBKEY board if the driver is modified for a single Dataflash chip (thanks to Jonathan Oakley)
+  *   - Fixed incorrect definitions of \c HID_KEYBOARD_LED_KANA, \c HID_KEYBOARD_SC_KEYPAD_EQUAL_SIGN and \c HID_KEYBOARD_SC_KEYPAD_EQUAL_SIGN_AS400
+  *     and added a missing definition for \c HID_KEYBOARD_SC_APPLICATION (thanks to David Monro)
+  *   - Fixed maximum allowed keyboard key code usage of \c 0x65 rather than \c 0xFF for the \c HID_DESCRIPTOR_KEYBOARD() macro (thanks to David Monro)
   *  - Library Applications:
   *   - Fixed broken RESET_TOGGLES_LIBUSB_COMPAT compile time option in the AVRISP-MKII project
   *   - Fixed incompatibility in the CDC class bootloader on some systems (thanks to Sylvain Munaut)
+  *   - Fixed lengthy timeouts in the USBtoSerial project if no application on the host is consuming data (thanks to Nicolas Saugnier)
+  *   - Fixed lengthy automatic data flushing in the CDC and MIDI device class drivers
   *
   *  \section Sec_ChangeLog120730 Version 120730
   *  <b>New:</b>

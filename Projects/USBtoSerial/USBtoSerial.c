@@ -18,7 +18,7 @@
   advertising or publicity pertaining to distribution of the
   software without specific, written prior permission.
 
-  The author disclaim all warranties with regard to this
+  The author disclaims all warranties with regard to this
   software, including all implied warranties of merchantability
   and fitness.  In no event shall the author be liable for any
   special, indirect or consequential damages or any damages
@@ -90,7 +90,7 @@ int main(void)
 	RingBuffer_InitBuffer(&USARTtoUSB_Buffer, USARTtoUSB_Buffer_Data, sizeof(USARTtoUSB_Buffer_Data));
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
-	sei();
+	GlobalInterruptEnable();
 
 	for (;;)
 	{
@@ -106,23 +106,31 @@ int main(void)
 
 		/* Check if the UART receive buffer flush timer has expired or the buffer is nearly full */
 		uint16_t BufferCount = RingBuffer_GetCount(&USARTtoUSB_Buffer);
-		if ((TIFR0 & (1 << TOV0)) || (BufferCount > (uint8_t)(sizeof(USARTtoUSB_Buffer_Data) * .75)))
+		if (BufferCount)
 		{
-			/* Clear flush timer expiry flag */
-			TIFR0 |= (1 << TOV0);
+			Endpoint_SelectEndpoint(VirtualSerial_CDC_Interface.Config.DataINEndpoint.Address);
 
-			/* Read bytes from the USART receive buffer into the USB IN endpoint */
-			while (BufferCount--)
+			/* Check if a packet is already enqueued to the host - if so, we shouldn't try to send more data
+			 * until it completes as there is a chance nothing is listening and a lengthy timeout could occur */
+			if (Endpoint_IsINReady())
 			{
-				/* Try to send the next byte of data to the host, abort if there is an error without dequeuing */
-				if (CDC_Device_SendByte(&VirtualSerial_CDC_Interface,
-				                        RingBuffer_Peek(&USARTtoUSB_Buffer)) != ENDPOINT_READYWAIT_NoError)
-				{
-					break;
-				}
+				/* Never send more than one bank size less one byte to the host at a time, so that we don't block
+				 * while a Zero Length Packet (ZLP) to terminate the transfer is sent if the host isn't listening */
+				uint8_t BytesToSend = MIN(BufferCount, (CDC_TXRX_EPSIZE - 1));
 
-				/* Dequeue the already sent byte from the buffer now we have confirmed that no transmission error occurred */
-				RingBuffer_Remove(&USARTtoUSB_Buffer);
+				/* Read bytes from the USART receive buffer into the USB IN endpoint */
+				while (BytesToSend--)
+				{
+					/* Try to send the next byte of data to the host, abort if there is an error without dequeuing */
+					if (CDC_Device_SendByte(&VirtualSerial_CDC_Interface,
+											RingBuffer_Peek(&USARTtoUSB_Buffer)) != ENDPOINT_READYWAIT_NoError)
+					{
+						break;
+					}
+
+					/* Dequeue the already sent byte from the buffer now we have confirmed that no transmission error occurred */
+					RingBuffer_Remove(&USARTtoUSB_Buffer);
+				}
 			}
 		}
 
@@ -148,9 +156,6 @@ void SetupHardware(void)
 	/* Hardware Initialization */
 	LEDs_Init();
 	USB_Init();
-
-	/* Start the flush timer so that overflows occur rapidly to push received bytes to the USB interface */
-	TCCR0B = (1 << CS02);
 }
 
 /** Event handler for the library USB Connection event. */
