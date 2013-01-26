@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -45,7 +45,7 @@ uint8_t TWI_StartTransmission(const uint8_t SlaveAddress,
 		TWCR = ((1 << TWINT) | (1 << TWSTA) | (1 << TWEN));
 
 		TimeoutRemaining = (TimeoutMS * 100);
-		while (TimeoutRemaining-- && !(BusCaptured))
+		while (TimeoutRemaining && !(BusCaptured))
 		{
 			if (TWCR & (1 << TWINT))
 			{
@@ -65,6 +65,7 @@ uint8_t TWI_StartTransmission(const uint8_t SlaveAddress,
 			}
 
 			_delay_us(10);
+			TimeoutRemaining--;
 		}
 
 		if (!(TimeoutRemaining))
@@ -77,12 +78,13 @@ uint8_t TWI_StartTransmission(const uint8_t SlaveAddress,
 		TWCR = ((1 << TWINT) | (1 << TWEN));
 
 		TimeoutRemaining = (TimeoutMS * 100);
-		while (TimeoutRemaining--)
+		while (TimeoutRemaining)
 		{
 			if (TWCR & (1 << TWINT))
 			  break;
 
 			_delay_us(10);
+			TimeoutRemaining--;
 		}
 
 		if (!(TimeoutRemaining))

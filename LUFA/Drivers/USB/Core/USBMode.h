@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -67,6 +67,9 @@
 		#if !defined(__INCLUDE_FROM_USB_DRIVER)
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
 		#endif
+		
+	/* Includes: */
+		#include "../../../Common/Common.h"
 
 	/* Public Interface - May be used in end-application: */
 	#if defined(__DOXYGEN__)
@@ -109,7 +112,7 @@
 		 *  (i.e. AT32UC3A4*) when defined.
 		 */
 		#define USB_SERIES_UC3A4_AVR
-		
+
 		/** Indicates that the target AVR microcontroller belongs to the AVR32 UC3B0 Series USB controller
 		 *  (i.e. AT32UC3B0*) when defined.
 		 */
@@ -178,7 +181,7 @@
 			#elif (IS_PART_DEFINED(ATmega32U4) || IS_PART_DEFINED(ATmega16U4))
 				#define USB_SERIES_4_AVR
 				#define USB_CAN_BE_DEVICE
-			#elif (IS_PART_DEFINED(ATmega32U6) || IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286))
+			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286))
 				#define USB_SERIES_6_AVR
 				#define USB_CAN_BE_DEVICE
 			#elif (IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(AT90USB1287))

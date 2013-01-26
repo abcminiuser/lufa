@@ -1,6 +1,6 @@
 #
 #             LUFA Library
-#     Copyright (C) Dean Camera, 2012.
+#     Copyright (C) Dean Camera, 2013.
 #
 #  dean [at] fourwalledcubicle [dot] com
 #           www.lufa-lib.org
@@ -19,19 +19,15 @@ upgrade-doxygen:
 	@echo Upgrading Doxygen.conf files...
 	@for doxygen_conf in `find $(LUFA_ROOT) -name Doxygen.conf`; do                                       \
 	  doxygen -u $$doxygen_conf;                                                                          \
-	  sed "s/MARKDOWN_SUPPORT *= *YES/MARKDOWN_SUPPORT       = NO/1" $$doxygen_conf > $$doxygen_conf.new; \
-	  sed "s/DISABLE_INDEX *= *NO/DISABLE_INDEX       = YES/1" $$doxygen_conf.new > $$doxygen_conf.new2;  \
-	  mv -u $$doxygen_conf.new2 $$doxygen_conf;                                                           \
-	  rm $$doxygen_conf.new;                                                                              \
 	done;
 	@echo Doxygen configuration update complete.
 
 # Make all possible bootloaders for all targets and configurations as set by the BootloaderTest build test
-# and store them in a seperate directory called "Bootloaders"
+# and store them in a separate directory called "Bootloaders"
 make_bootloaders:
 	@echo "build_bootloaders:" > BuildMakefile
 	@printf "\t-mkdir Bootloaders 2>/dev/null\n\n" >> BuildMakefile
-	
+
 	@while read line;                                         \
 	 do                                                       \
 	   build_cfg=`echo $$line | grep -v "#" | sed 's/ //g'`;  \
@@ -83,4 +79,4 @@ validate-branch:
 validate-release: check-documentation-placeholders validate-branch
 
 
-.PHONY: all upgrade-doxygen make-as4-projects make_bootloaders check-documentation-placeholders validate-branch
+.PHONY: all upgrade-doxygen make_bootloaders check-documentation-placeholders validate-branch

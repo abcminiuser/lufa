@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -148,7 +148,7 @@ void EVENT_USB_Host_DeviceEnumerationComplete(void)
 		                         " -- Error Code: %d\r\n" ESC_FG_WHITE), ErrorCode);
 
 		LEDs_SetAllLEDs(LEDMASK_USB_ERROR);
-		return;	
+		return;
 	}
 
 	puts_P(PSTR("CDC Device Enumerated.\r\n"));

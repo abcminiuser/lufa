@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -225,6 +225,9 @@
 			/** Selects the USB2AX version 3.1 specific board drivers, including the Button and LEDs drivers. */
 			#define BOARD_USB2AX_V31           53
 
+			/** Selects the Stange-ISP specific board drivers, including the Button and LEDs drivers. */
+			#define BOARD_STANGE_ISP           54
+			
 			#if !defined(__DOXYGEN__)
 				#define BOARD_                 BOARD_NONE
 

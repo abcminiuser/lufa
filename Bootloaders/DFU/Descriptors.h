@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -85,11 +85,6 @@
 			#define AVR_SIGNATURE_1               0x1E
 			#define AVR_SIGNATURE_2               0x96
 			#define AVR_SIGNATURE_3               0x82
-		#elif defined(__AVR_ATmega32U6__)
-			#define PRODUCT_ID_CODE               0x2FFB
-			#define AVR_SIGNATURE_1               0x1E
-			#define AVR_SIGNATURE_2               0x95
-			#define AVR_SIGNATURE_3               0x88
 		#elif defined(__AVR_ATmega32U4__)
 			#define PRODUCT_ID_CODE               0x2FF4
 			#define AVR_SIGNATURE_1               0x1E

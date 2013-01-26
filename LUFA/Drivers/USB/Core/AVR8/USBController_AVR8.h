@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -91,7 +91,7 @@
 				#define USB_PLL_PSC                0
 			#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				#define USB_PLL_PSC                0
-			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(ATmega32U6))
+			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB1286))
 				#define USB_PLL_PSC                ((1 << PLLP1) | (1 << PLLP0))
 			#elif (IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(AT90USB1287))
 				#define USB_PLL_PSC                ((1 << PLLP1) | (1 << PLLP0))
@@ -103,7 +103,7 @@
 				#define USB_PLL_PSC                (1 << PLLP0)
 			#elif (IS_PART_DEFINED(ATmega16U4) || IS_PART_DEFINED(ATmega32U4))
 				#define USB_PLL_PSC                (1 << PINDIV)
-			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB647) || IS_PART_DEFINED(ATmega32U6))
+			#elif (IS_PART_DEFINED(AT90USB646) || IS_PART_DEFINED(AT90USB647))
 				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP1))
 			#elif (IS_PART_DEFINED(AT90USB1286) || IS_PART_DEFINED(AT90USB1287))
 				#define USB_PLL_PSC                ((1 << PLLP2) | (1 << PLLP0))
