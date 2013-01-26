@@ -12,7 +12,7 @@
  *  \li \subpage Page_UC3Support - Atmel AVR32 UC3 Support
  *  \li \subpage Page_XMEGASupport - Atmel XMEGA Support
  */
- 
+
 /**
  *  \page Page_AVR8Support Atmel 8-Bit AVR (AVR8) Support
  *
@@ -62,11 +62,6 @@
  *   <td bgcolor="#EE0000">No</td>
  *  </tr>
  *  <tr>
- *   <td>ATMEGA32U6</td>
- *   <td bgcolor="#00EE00">Yes</td>
- *   <td bgcolor="#EE0000">No</td>
- *  </tr>
- *  <tr>
  *   <td>AT90USB646</td>
  *   <td bgcolor="#00EE00">Yes</td>
  *   <td bgcolor="#EE0000">No</td>
@@ -98,7 +93,7 @@
  *   - STK526
  *   - XPLAIN (Original green board, <i>not</i> the newer blue XPLAINED family boards)
  *
- *  \section Sec_AVR8Support_ThirdParty Supported Third Party Models
+ *  \section Sec_AVR8Support_ThirdParty Supported Third Party Boards
  *  Currently supported third-party boards (see \ref Group_BoardTypes for makefile \c BOARD constant names):
  *   - Adafruit U4 Breakout Board
  *   - Arduino Uno
@@ -121,12 +116,13 @@
  *   - Paranoid Studio's US2AX (V1, V2 and V3 hardware revisions)
  *   - PJRC Teensy (1.x and 2.x versions)
  *   - Sparkfun U2 Breakout Board
+ *   - Stange ISP Programmer Board
  *   - TCNISO Blackcat USB JTAG
  *   - Tempusdictum Benito
  *   - Tom's USBTINY-MKII (all revisions and versions)
  *   - Custom User Boards (with Board Drivers if desired, see \ref Page_WritingBoardDrivers)
  */
- 
+
 /**
  *  \page Page_UC3Support Atmel 32-Bit UC3 AVR (UC3)
  *
@@ -141,16 +137,6 @@
  *   <th width="150px">Part</th>
  *   <th width="150px">USB Device Mode</th>
  *   <th width="150px">USB Host Mode</th>
- *  </tr>
- *  <tr>
- *   <td>AT32UC3A064</td>
- *   <td bgcolor="#00EE00">Yes</td>
- *   <td bgcolor="#00EE00">Yes</td>
- *  </tr>
- *  <tr>
- *   <td>AT32UC3A164</td>
- *   <td bgcolor="#00EE00">Yes</td>
- *   <td bgcolor="#00EE00">Yes</td>
  *  </tr>
  *  <tr>
  *   <td>AT32UC3A364</td>
@@ -292,12 +278,12 @@
  *   - EVK1104
  *   - UC3-A3 Xplained
  *
- *  \section Sec_UC3Support_ThirdParty Supported Third Party Models
+ *  \section Sec_UC3Support_ThirdParty Supported Third Party Boards
  *
  *  Currently supported third-party boards (see \ref Group_BoardTypes for makefile \c BOARD constant names):
  *   - Custom User Boards (with Board Drivers if desired, see \ref Page_WritingBoardDrivers)
  */
- 
+
 /**
  *  \page Page_XMEGASupport Atmel USB XMEGA AVR (XMEGA)
  *
@@ -425,7 +411,7 @@
  *   - XMEGA A3BU Xplained
  *   - XMEGA B1 Xplained
  *
- *  \section Sec_XMEGASupport_ThirdParty Supported Third Party Models
+ *  \section Sec_XMEGASupport_ThirdParty Supported Third Party Boards
  *  Currently supported third-party boards (see \ref Group_BoardTypes for makefile \c BOARD constant names):
  *   - Custom User Boards (with Board Drivers if desired, see \ref Page_WritingBoardDrivers)
  */

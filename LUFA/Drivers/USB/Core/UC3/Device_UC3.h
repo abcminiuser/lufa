@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -209,7 +209,12 @@
 			static inline void USB_Device_SetDeviceAddress(const uint8_t Address)
 			{
 				AVR32_USBB.UDCON.uadd  = Address;
-				AVR32_USBB.UDCON.adden = (Address ? true : false);
+			}
+
+			static inline void USB_Device_EnableDeviceAddress(void) ATTR_ALWAYS_INLINE;
+			static inline void USB_Device_EnableDeviceAddress(void)
+			{
+				AVR32_USBB.UDCON.adden = true;
 			}
 
 			static inline bool USB_Device_IsAddressSet(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;

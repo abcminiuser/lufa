@@ -12,6 +12,7 @@
   *   - Added support for the Arduino Leonardo board
   *   - Added support for the Atmel UC3-A3 Xplained board
   *   - Added support for the Xevelabs USB2AX revision 3.1 board
+  *   - Added support for the Dimex Stange-ISP board (thanks to Gerhard Wesser)
   *   - Added new \c doxygen_upgrade and \c doxygen_create targets to the DOXYGEN build system module
   *  - Library Applications:
   *   - Added a different device serial number when the AVRISP-MKII Clone project is in libUSB compatibility mode, so that
@@ -22,7 +23,9 @@
   *   - Added workaround for broken VBUS detection on AVR8 devices when a bootloader starts the application
   *     via a software jump without first turning off the OTG pad (thanks to Simon Inns)
   *  - Library Applications:
-  *   -  Increased throughput in the USBtoSerial project now that data transmission is non-blocking (thanks to Joseph Lacerte)
+  *   - Increased throughput in the USBtoSerial project now that data transmission is non-blocking (thanks to Joseph Lacerte)
+  *   - Updated bootloader makefiles to remove dependency on the \c bc command line calculator tool
+  *   - Updated AVRISP-MKII Clone Programmer project so that the SCK clock period is saved in EEPROM (thanks to Gerhard Wesser)
   *
   *  <b>Fixed:</b>
   *  - Core:
@@ -35,11 +38,16 @@
   *   - Fixed incorrect definitions of \c HID_KEYBOARD_LED_KANA, \c HID_KEYBOARD_SC_KEYPAD_EQUAL_SIGN and \c HID_KEYBOARD_SC_KEYPAD_EQUAL_SIGN_AS400
   *     and added a missing definition for \c HID_KEYBOARD_SC_APPLICATION (thanks to David Monro)
   *   - Fixed maximum allowed keyboard key code usage of \c 0x65 rather than \c 0xFF for the \c HID_DESCRIPTOR_KEYBOARD() macro (thanks to David Monro)
+  *   - Fixed hardware race condition that could cause failed device enumerations for AVR8 and UC3 architectures (thanks to Mike Beyhs)
+  *   - Fixed incorrect Minimus board LED definitions (thanks to Joonas Lahtinen)
+  *   - Fixed incorrect ordering of the linker options in the build system causing link failures in some cases
+  *   - Fixed bug in the TWI peripheral driver for the AVR8 devices causing incorrect failure codes to be returned in some cases (thanks to Peter K)
   *  - Library Applications:
   *   - Fixed broken RESET_TOGGLES_LIBUSB_COMPAT compile time option in the AVRISP-MKII project
   *   - Fixed incompatibility in the CDC class bootloader on some systems (thanks to Sylvain Munaut)
   *   - Fixed lengthy timeouts in the USBtoSerial project if no application on the host is consuming data (thanks to Nicolas Saugnier)
   *   - Fixed lengthy automatic data flushing in the CDC and MIDI device class drivers
+  *   - Fixed incorrect LED masks for received data display in the Device GenericHID demos (thanks to Denys Berkovskyy)
   *
   *  \section Sec_ChangeLog120730 Version 120730
   *  <b>New:</b>
@@ -53,7 +61,7 @@
   *   - Added new Endpoint_ConfigureEndpointTable() function
   *   - Added new Pipe_ConfigurePipeTable() function
   *   - Added build test to verify correct compilation of all board drivers using all driver APIs
-  *   - Added build test to verify correct compilation of all bootloaders using all supported devices  
+  *   - Added build test to verify correct compilation of all bootloaders using all supported devices
   *   - Added build test to verify that there are no detectable errors in the codebase via static analysis
   *   - Added new JTAG_ENABLE() macro for the AVR8 architecture
   *  - Library Applications:
@@ -105,7 +113,7 @@
   *   - Fixed swapped Little Endian/Big Endian endpoint and pipe write code for the UC3 devices (thanks to Andrew Chu)
   *   - Fixed the JTAG_DISABLE() macro clearing all other bits in MCUSR when called
   *   - Fixed incorrect Micropendous board LED driver LEDs_SetAllLEDs() and LEDs_ChangeLEDs() function implementations (thanks to MitchJS)
-  *   - Fixed endianess issues in the RNDIS host class driver for UC3 devices (thanks to Andrew Chu)  
+  *   - Fixed endianess issues in the RNDIS host class driver for UC3 devices (thanks to Andrew Chu)
   *  - Library Applications:
   *   - Fixed error in the AVRISP-MKII programmer when ISP mode is used at 64KHz (thanks to Ben R. Porter)
   *   - Fixed AVRISP-MKII programmer project failing to compile for the U4 chips when VTARGET_ADC_CHANNEL is defined to an invalid channel and NO_VTARGET_DETECT is

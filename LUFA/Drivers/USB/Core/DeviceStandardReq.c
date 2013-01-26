@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -124,9 +124,9 @@ void USB_Device_ProcessControlRequest(void)
 
 static void USB_Device_SetAddress(void)
 {
-	uint8_t    DeviceAddress    = (USB_ControlRequest.wValue & 0x7F);
-	uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
-	GlobalInterruptDisable();
+	uint8_t DeviceAddress = (USB_ControlRequest.wValue & 0x7F);
+
+	USB_Device_SetDeviceAddress(DeviceAddress);
 
 	Endpoint_ClearSETUP();
 
@@ -134,10 +134,9 @@ static void USB_Device_SetAddress(void)
 
 	while (!(Endpoint_IsINReady()));
 
-	USB_Device_SetDeviceAddress(DeviceAddress);
-	USB_DeviceState = (DeviceAddress) ? DEVICE_STATE_Addressed : DEVICE_STATE_Default;
+	USB_Device_EnableDeviceAddress();
 
-	SetGlobalInterruptMask(CurrentGlobalInt);
+	USB_DeviceState = (DeviceAddress) ? DEVICE_STATE_Addressed : DEVICE_STATE_Default;
 }
 
 static void USB_Device_SetConfiguration(void)

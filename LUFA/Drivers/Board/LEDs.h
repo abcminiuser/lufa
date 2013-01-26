@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -197,6 +197,8 @@
 			#include "AVR8/LEONARDO/LEDs.h"
 		#elif (BOARD == BOARD_UC3A3_XPLAINED)
 			#include "UC3/UC3A3_XPLAINED/LEDs.h"
+		#elif (BOARD == BOARD_STANGE_ISP)
+			#include "AVR8/STANGE_ISP/LEDs.h"
 		#else
 			#include "Board/LEDs.h"
 		#endif

@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2012.
+     Copyright (C) Dean Camera, 2013.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2012  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2013  Dean Camera (dean [at] fourwalledcubicle [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -46,7 +46,7 @@
 		#include "XPROGProtocol.h"
 		#include "XPROGTarget.h"
 		#include "Config/AppConfig.h"
-		
+
 	/* Preprocessor Checks: */
 		#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
 			#undef ENABLE_ISP_PROTOCOL
@@ -71,7 +71,7 @@
 		#define XMEGA_NVM_REG_INTCTRL                0x0D
 		#define XMEGA_NVM_REG_STATUS                 0x0F
 		#define XMEGA_NVM_REG_LOCKBITS               0x10
-		
+
 		#define XMEGA_NVM_BIT_CTRLA_CMDEX            (1 << 0)
 
 		#define XMEGA_NVM_CMD_NOOP                   0x00
@@ -113,13 +113,22 @@
 		bool XMEGANVM_WaitWhileNVMControllerBusy(void);
 		bool XMEGANVM_EnablePDI(void);
 		void XMEGANVM_DisablePDI(void);
-		bool XMEGANVM_GetMemoryCRC(const uint8_t CRCCommand, uint32_t* const CRCDest);
-		bool XMEGANVM_ReadMemory(const uint32_t ReadAddress, uint8_t* ReadBuffer, uint16_t ReadSize);
-		bool XMEGANVM_WriteByteMemory(const uint8_t WriteCommand, const uint32_t WriteAddress, const uint8_t Byte);
-		bool XMEGANVM_WritePageMemory(const uint8_t WriteBuffCommand, const uint8_t EraseBuffCommand,
-		                              const uint8_t WritePageCommand, const uint8_t PageMode, const uint32_t WriteAddress,
-		                              const uint8_t* WriteBuffer, uint16_t WriteSize);
-		bool XMEGANVM_EraseMemory(const uint8_t EraseCommand, const uint32_t Address);
+		bool XMEGANVM_GetMemoryCRC(const uint8_t CRCCommand,
+			                       uint32_t* const CRCDest);
+		bool XMEGANVM_ReadMemory(const uint32_t ReadAddress,
+		                         uint8_t* ReadBuffer, uint16_t ReadSize);
+		bool XMEGANVM_WriteByteMemory(const uint8_t WriteCommand,
+		                              const uint32_t WriteAddress,
+		                              const uint8_t Byte);
+		bool XMEGANVM_WritePageMemory(const uint8_t WriteBuffCommand,
+		                              const uint8_t EraseBuffCommand,
+		                              const uint8_t WritePageCommand,
+		                              const uint8_t PageMode,
+		                              const uint32_t WriteAddress,
+		                              const uint8_t* WriteBuffer,
+		                              uint16_t WriteSize);
+		bool XMEGANVM_EraseMemory(const uint8_t EraseCommand,
+		                          const uint32_t Address);
 
 		#if defined(INCLUDE_FROM_XMEGANVM_C)
 			static void XMEGANVM_SendNVMRegAddress(const uint8_t Register);
