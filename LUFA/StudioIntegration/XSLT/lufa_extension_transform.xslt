@@ -57,4 +57,12 @@
 		</xsl:attribute>
 	</xsl:template>
 
+	<xsl:template match="online-help/index-page/@url">
+		<xsl:attribute name="url">
+			<xsl:value-of select="current()"/>
+			<xsl:value-of select="$lufa-version"/>
+			<xsl:text>/html/</xsl:text>
+		</xsl:attribute>
+	</xsl:template>
+
 </xsl:stylesheet>

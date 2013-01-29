@@ -12,7 +12,9 @@
   *   - Added support for the Arduino Leonardo board
   *   - Added support for the Atmel UC3-A3 Xplained board
   *   - Added support for the Xevelabs USB2AX revision 3.1 board
+  *   - Added support for the Dimex Stange-ISP board (thanks to Gerhard Wesser)
   *   - Added new \c doxygen_upgrade and \c doxygen_create targets to the DOXYGEN build system module
+  *   - Added new Board Hardware Information board driver
   *  - Library Applications:
   *   - Added a different device serial number when the AVRISP-MKII Clone project is in libUSB compatibility mode, so that
   *     both the libUSB and Jungo drivers can be installed at the same time without having to use a filter driver
@@ -24,9 +26,11 @@
   *  - Library Applications:
   *   - Increased throughput in the USBtoSerial project now that data transmission is non-blocking (thanks to Joseph Lacerte)
   *   - Updated bootloader makefiles to remove dependency on the \c bc command line calculator tool
+  *   - Updated AVRISP-MKII Clone Programmer project so that the SCK clock period is saved in EEPROM (thanks to Gerhard Wesser)
   *
   *  <b>Fixed:</b>
   *  - Core:
+  *   - Fixed incorrectly issuing STALL response to unsupported control request SETUP packets, rather than in the data/status stage
   *   - Fixed inverted LEDs_GetLEDs() function implementation for the Benito, Minimus and Arduino UNO boards
   *   - Fixed missing Win-32bit compatibility sections in the LUFA INF driver files (thanks to Christan Beharrell)
   *   - Fixed logic hole breaking USB operations on a USB controller with only one supported USB mode and no USB_DEVICE_ONLY or USB_HOST_ONLY
@@ -38,6 +42,8 @@
   *   - Fixed maximum allowed keyboard key code usage of \c 0x65 rather than \c 0xFF for the \c HID_DESCRIPTOR_KEYBOARD() macro (thanks to David Monro)
   *   - Fixed hardware race condition that could cause failed device enumerations for AVR8 and UC3 architectures (thanks to Mike Beyhs)
   *   - Fixed incorrect Minimus board LED definitions (thanks to Joonas Lahtinen)
+  *   - Fixed incorrect ordering of the linker options in the build system causing link failures in some cases
+  *   - Fixed bug in the TWI peripheral driver for the AVR8 devices causing incorrect failure codes to be returned in some cases (thanks to Peter K)
   *  - Library Applications:
   *   - Fixed broken RESET_TOGGLES_LIBUSB_COMPAT compile time option in the AVRISP-MKII project
   *   - Fixed incompatibility in the CDC class bootloader on some systems (thanks to Sylvain Munaut)

@@ -45,8 +45,9 @@
 
 		#include "Descriptors.h"
 		#include "Config/AppConfig.h"
-		
-		#include <LUFA/Drivers/Board/LEDs.h>
+
+		#include <LUFA/Platform/Platform.h>
+		#include <LUFA/Drivers/Board/Board.h>
 		#include <LUFA/Drivers/USB/USB.h>
 
 	/* Macros: */
