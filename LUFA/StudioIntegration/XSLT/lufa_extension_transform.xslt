@@ -22,11 +22,11 @@
 	<xsl:template match="lufa-manifest">
 		<xsl:comment>This file has been automatically generated from the LUFA Atmel Studio integration XML files.</xsl:comment>
 
-		<fdk xml-version="2.0">
+		<extension-container xmlversion="2.0">
 			<xsl:for-each select="xml-source">
-				<xsl:apply-templates select="document(@filename)/lufa/fdk/*"/>
+				<xsl:apply-templates select="document(@filename)/lufa/extension-container/*"/>
 			</xsl:for-each>
-		</fdk>
+		</extension-container>
 	</xsl:template>
 
 	<!-- Recursively match and copy/process all nodes/attributes -->
@@ -51,6 +51,14 @@
 	     used -->
 	<xsl:template match="online-help/*/@baseurl">
 		<xsl:attribute name="baseurl">
+			<xsl:value-of select="current()"/>
+			<xsl:value-of select="$lufa-version"/>
+			<xsl:text>/html/</xsl:text>
+		</xsl:attribute>
+	</xsl:template>
+
+	<xsl:template match="online-help/index-page/@url">
+		<xsl:attribute name="url">
 			<xsl:value-of select="current()"/>
 			<xsl:value-of select="$lufa-version"/>
 			<xsl:text>/html/</xsl:text>

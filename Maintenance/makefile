@@ -19,19 +19,15 @@ upgrade-doxygen:
 	@echo Upgrading Doxygen.conf files...
 	@for doxygen_conf in `find $(LUFA_ROOT) -name Doxygen.conf`; do                                       \
 	  doxygen -u $$doxygen_conf;                                                                          \
-	  sed "s/MARKDOWN_SUPPORT *= *YES/MARKDOWN_SUPPORT       = NO/1" $$doxygen_conf > $$doxygen_conf.new; \
-	  sed "s/DISABLE_INDEX *= *NO/DISABLE_INDEX       = YES/1" $$doxygen_conf.new > $$doxygen_conf.new2;  \
-	  mv -u $$doxygen_conf.new2 $$doxygen_conf;                                                           \
-	  rm $$doxygen_conf.new;                                                                              \
 	done;
 	@echo Doxygen configuration update complete.
 
 # Make all possible bootloaders for all targets and configurations as set by the BootloaderTest build test
-# and store them in a seperate directory called "Bootloaders"
-make_bootloaders:
+# and store them in a separate directory called "Bootloaders"
+bootloaders:
 	@echo "build_bootloaders:" > BuildMakefile
 	@printf "\t-mkdir Bootloaders 2>/dev/null\n\n" >> BuildMakefile
-	
+
 	@while read line;                                         \
 	 do                                                       \
 	   build_cfg=`echo $$line | grep -v "#" | sed 's/ //g'`;  \
@@ -76,7 +72,6 @@ check-documentation-placeholders:
 # Validate the working branch - compile all documentation, demos/projects/examples and run build tests
 validate-branch:
 	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT)) doxygen
-	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT))/LUFA/StudioIntegration all
 	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT)) all DEBUG_LEVEL=0
 	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT))/BuildTests all
 
@@ -84,4 +79,4 @@ validate-branch:
 validate-release: check-documentation-placeholders validate-branch
 
 
-.PHONY: all upgrade-doxygen make-as4-projects make_bootloaders check-documentation-placeholders validate-branch
+.PHONY: all upgrade-doxygen bootloaders check-documentation-placeholders validate-branch
