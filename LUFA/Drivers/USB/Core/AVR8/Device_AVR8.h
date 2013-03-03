@@ -213,10 +213,12 @@
 				UDADDR = (UDADDR & (1 << ADDEN)) | (Address & 0x7F);
 			}
 
-			static inline void USB_Device_EnableDeviceAddress(void) ATTR_ALWAYS_INLINE;
-			static inline void USB_Device_EnableDeviceAddress(void)
+			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address)
 			{
-				  UDADDR |= (1 << ADDEN);
+				(void)Address;
+				
+				UDADDR |= (1 << ADDEN);
 			}
 
 			static inline bool USB_Device_IsAddressSet(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
