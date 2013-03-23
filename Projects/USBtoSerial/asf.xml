@@ -1,7 +1,7 @@
 <asf xmlversion="1.0">
 	<project caption="USB to Serial Converter" id="lufa.projects.usb_to_serial.avr8">
 		<require idref="lufa.projects.usb_to_serial"/>
-		<require idref="lufa.boards.dummy"/>
+		<require idref="lufa.boards.dummy.avr8"/>
 		<generator value="as5_8"/>
 
 		<device-support value="at90usb1287"/>
@@ -39,6 +39,7 @@
 
 		<require idref="lufa.common"/>
 		<require idref="lufa.platform"/>
+		<require idref="lufa.drivers.peripheral.usart"/>
 		<require idref="lufa.drivers.usb"/>
 		<require idref="lufa.drivers.misc.ringbuffer"/>
 	</module>
