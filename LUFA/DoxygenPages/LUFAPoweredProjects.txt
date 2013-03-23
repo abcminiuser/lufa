@@ -38,6 +38,7 @@
  *  can be incorporated into many different applications.
  *
  *  \li Accelerometer Game Joystick: http://www.crictor.co.il/he/episodes/joystick/
+ *  \li Adjacent Reality Motion Tracker: http://www.adjacentreality.org/
  *  \li AD9833 based USB Function Generator: http://tuomasnylund.fi/drupal6/content/ad9833-based-usb-function-generator
  *  \li AERY development platform for the AVR32 devices: http://www.aery32.com/
  *  \li AM Radio transmitter: http://amcinnes.info/2012/uc_am_xmit/
@@ -104,6 +105,7 @@
  *  \li PPM signal generator over USB: https://github.com/G33KatWork/USBPPM
  *  \li Programmable keyboard controller: http://41j.com/blog/2011/10/a-programmable-keyboard-controller/
  *  \li Programmable XBOX controller: http://richard-burke.dyndns.org/wordpress/pan-galactic-gargantuan-gargle-brain-aka-xbox-360-usb-controller/
+ *  \li Project Surface, a touch interface controller for Windows 8: https://code.google.com/p/project-surface/
  *  \li PSGroove, a Playstation 3 Homebrew dongle: http://github.com/psgroove
  *  \li PS/2 to USB adapter: https://github.com/makestuff/p2ukbd
  *  \li RaspiFace, an Arduino platform bridge for the Raspberry Pi: http://www.raspiface.com/
@@ -149,7 +151,8 @@
  *  solutions with no source code given. Those companies which have purchased a Commercial License to LUFA (see \ref Page_LicenseInfo)
  *  are not listed here unless specifically requested.
  *
- *  \li Arduino Uno, the official Arduino board: http://www.arduino.cc
+ *  \li Alphasphere, a MIDI input sphere device for music creation: http://www.alphasphere.com/
+ *  \li Arduino Uno and Leonardo, official Arduino boards: http://www.arduino.cc
  *  \li ARPS Locator: http://la3t.hamradio.no/lab//?id=tracker_en
  *  \li AsTeRICS assistive technologies project, HID actuator: http://www.asterics.eu
  *  \li Ceberus, a MadCatz Xbox 360 arcade stick modifier: http://www.phreakmods.com/products/cerberus
@@ -185,6 +188,7 @@
  *  \li Elektor Magazine, "USB is Cool/Sucks" by Jerry Jacobs and Chris Vossen (minor mention), January 2010 Issue
  *  \li Elektor Magazine, "20 x Open Source" by Jens Nickel, March 2010 Issue
  *  \li Circuit Cellar Magazine, "Advanced USB Design Debugging" by Collin O'Flynn, August 2010 Issue
+ *  \li Elektor Magazine, "Taming the Beast (2)" by Clemens Valens/Raymond Vermeulen, January 2013 Issue
  *
  *  \section Sec_LUFANotableMentions Other Notable Mentions of LUFA
  *  The following are non-magazine but notable mentions of the LUFA library.

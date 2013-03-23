@@ -211,9 +211,11 @@
 				AVR32_USBB.UDCON.uadd  = Address;
 			}
 
-			static inline void USB_Device_EnableDeviceAddress(void) ATTR_ALWAYS_INLINE;
-			static inline void USB_Device_EnableDeviceAddress(void)
+			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address)
 			{
+				(void)Address;
+
 				AVR32_USBB.UDCON.adden = true;
 			}
 
