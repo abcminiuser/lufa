@@ -12,8 +12,8 @@
  *
  *  \li Series 7 USB AVRs (AT90USBxxx7)
  *  \li Series 6 USB AVRs (AT90USBxxx6)
- *  \li Series 4 USB AVRs (ATMEGAxxU4)
- *  \li Series 2 USB AVRs (AT90USBxx2, ATMEGAxxU2)
+ *  \li Series 4 USB AVRs (ATMEGAxxU4) - <i>See \ref SSec_Aux_Space</i>
+ *  \li Series 2 USB AVRs (AT90USBxx2, ATMEGAxxU2) - <i>See \ref SSec_Aux_Space</i>
  *
  *  \section Sec_Info USB Information:
  *
@@ -117,7 +117,7 @@
  *  #define BOOTLOADER_MAGIC_SIGNATURE         0xDCFB
  *
  *  #define BOOTLOADER_CLASS_SIGNATURE_START   (BOOTLOADER_API_TABLE_START + (BOOTLOADER_API_TABLE_SIZE - 4))
- *  #define BOOTLOADER_DFU_SIGNATURE           0xDFB1
+ *  #define BOOTLOADER_DFU_SIGNATURE           0xDF10
  *
  *  #define BOOTLOADER_ADDRESS_START           (BOOTLOADER_API_TABLE_START + (BOOTLOADER_API_TABLE_SIZE - 8))
  *  #define BOOTLOADER_ADDRESS_LENGTH          4
@@ -150,6 +150,16 @@
  *  |                            |
  *  |                            |
  *  |                            |
+ *  |                            |
+ *  +----------------------------+ FLASHEND - BOOT_AUX_SECTION_SIZE
+ *  | Booloader Start Trampoline |
+ *  | (Not User App. Accessible) |
+ *  +----------------------------+ FLASHEND - (BOOT_AUX_SECTION_SIZE - 4)
+ *  |                            |
+ *  |     Auxillery Bootloader   |
+ *  |  Space for Smaller Devices |
+ *  | (Not User App. Accessible) |
+ *  |                            |
  *  +----------------------------+ FLASHEND - BOOT_SECTION_SIZE
  *  |                            |
  *  |   Bootloader Application   |
@@ -166,6 +176,24 @@
  *  |   (User App. Accessible)   |
  *  +----------------------------+ FLASHEND
  *  \endverbatim
+ *
+ *  \subsection SSec_Aux_Space Auxiliary Bootloader Section
+ *  To make the bootloader function on smaller devices (those with a physical
+ *  bootloader section of smaller than 6KB)
+ *
+ *  \section Sec_KnownIssues Known Issues:
+ *
+ *  \par On Linux machines, the DFU bootloader is inaccessible.
+ *  On many Linux systems, non-root users do not have automatic access to newly
+ *  inserted DFU devices. Root privileges or a UDEV rule is required to gain
+ *  access.
+ *  See <a href=https://groups.google.com/d/msg/lufa-support/CP9cy2bc8yo/kBqsOu-RBeMJ>here</a> for resolution steps.
+ *
+ *  \par After loading an application, it is not run automatically on startup.
+ *  Some USB AVR boards ship with the BOOTRST fuse set, causing the bootloader
+ *  to run automatically when the device is reset. In most cases, the BOOTRST
+ *  fuse should be disabled and the HWBE fuse used instead to run the bootloader
+ *  when needed.
  *
  *  \section Sec_Options Project Options
  *

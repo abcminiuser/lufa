@@ -84,7 +84,7 @@ static SCSI_Request_Sense_Response_t SenseData =
  *  to the appropriate SCSI command handling routine if the issued command is supported by the device, else it returns
  *  a command failure due to a ILLEGAL REQUEST.
  *
- *  \return Boolean true if the command completed successfully, false otherwise
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise
  */
 bool SCSI_DecodeSCSICommand(void)
 {
@@ -114,6 +114,7 @@ bool SCSI_DecodeSCSICommand(void)
 		case SCSI_CMD_MODE_SENSE_6:
 			CommandSuccess = SCSI_Command_ModeSense_6();
 			break;
+		case SCSI_CMD_START_STOP_UNIT:
 		case SCSI_CMD_TEST_UNIT_READY:
 		case SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL:
 		case SCSI_CMD_VERIFY_10:
@@ -145,7 +146,7 @@ bool SCSI_DecodeSCSICommand(void)
 /** Command processing for an issued SCSI INQUIRY command. This command returns information about the device's features
  *  and capabilities to the host.
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Inquiry(void)
 {
@@ -182,7 +183,7 @@ static bool SCSI_Command_Inquiry(void)
 /** Command processing for an issued SCSI REQUEST SENSE command. This command returns information about the last issued command,
  *  including the error code and additional error information so that the host can determine why a command failed to complete.
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Request_Sense(void)
 {
@@ -207,7 +208,7 @@ static bool SCSI_Command_Request_Sense(void)
 /** Command processing for an issued SCSI READ CAPACITY (10) command. This command returns information about the device's capacity
  *  on the selected Logical Unit (drive), as a number of OS-sized blocks.
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Read_Capacity_10(void)
 {
@@ -234,7 +235,7 @@ static bool SCSI_Command_Read_Capacity_10(void)
  *  board, and indicates if they are present and functioning correctly. Only the Self-Test portion of the diagnostic command is
  *  supported.
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Send_Diagnostic(void)
 {
@@ -272,7 +273,7 @@ static bool SCSI_Command_Send_Diagnostic(void)
  *
  *  \param[in] IsDataRead  Indicates if the command is a READ (10) command or WRITE (10) command (DATA_READ or DATA_WRITE)
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_ReadWrite_10(const bool IsDataRead)
 {
@@ -324,7 +325,7 @@ static bool SCSI_Command_ReadWrite_10(const bool IsDataRead)
 /** Command processing for an issued SCSI MODE SENSE (6) command. This command returns various informational pages about
  *  the SCSI device, as well as the device's Write Protect status.
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_ModeSense_6(void)
 {

@@ -86,7 +86,7 @@ static SCSI_Request_Sense_Response_t SenseData =
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise
  */
 bool SCSI_DecodeSCSICommand(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
@@ -116,6 +116,7 @@ bool SCSI_DecodeSCSICommand(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 		case SCSI_CMD_MODE_SENSE_6:
 			CommandSuccess = SCSI_Command_ModeSense_6(MSInterfaceInfo);
 			break;
+		case SCSI_CMD_START_STOP_UNIT:
 		case SCSI_CMD_TEST_UNIT_READY:
 		case SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL:
 		case SCSI_CMD_VERIFY_10:
@@ -149,7 +150,7 @@ bool SCSI_DecodeSCSICommand(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Inquiry(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
@@ -187,7 +188,7 @@ static bool SCSI_Command_Inquiry(USB_ClassInfo_MS_Device_t* const MSInterfaceInf
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Request_Sense(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
@@ -209,7 +210,7 @@ static bool SCSI_Command_Request_Sense(USB_ClassInfo_MS_Device_t* const MSInterf
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Read_Capacity_10(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
@@ -232,7 +233,7 @@ static bool SCSI_Command_Read_Capacity_10(USB_ClassInfo_MS_Device_t* const MSInt
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_Send_Diagnostic(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
@@ -271,7 +272,7 @@ static bool SCSI_Command_Send_Diagnostic(USB_ClassInfo_MS_Device_t* const MSInte
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *  \param[in] IsDataRead  Indicates if the command is a READ (10) command or WRITE (10) command (DATA_READ or DATA_WRITE)
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_ReadWrite_10(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo,
                                       const bool IsDataRead)
@@ -324,7 +325,7 @@ static bool SCSI_Command_ReadWrite_10(USB_ClassInfo_MS_Device_t* const MSInterfa
  *
  *  \param[in] MSInterfaceInfo  Pointer to the Mass Storage class interface structure that the command is associated with
  *
- *  \return Boolean true if the command completed successfully, false otherwise.
+ *  \return Boolean \c true if the command completed successfully, \c false otherwise.
  */
 static bool SCSI_Command_ModeSense_6(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
