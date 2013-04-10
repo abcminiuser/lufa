@@ -11,25 +11,38 @@
 
 LUFA_ROOT            := ..
 DOXYGEN_TAG_FILE_XML := $(LUFA_ROOT)/Documentation/lufa_doc_tags.xml
+DOXYGEN_COMBINED_XML := $(LUFA_ROOT)/Documentation/xml/lufa_doc.xml
 TEMP_MANIFEST_XML    := manifest.xml
 EXTENSION_OUTPUT_XML := $(LUFA_ROOT)/../extension.xml
 MODULE_OUTPUT_XML    := $(LUFA_ROOT)/asf.xml
 XML_FILES            := $(filter-out $(TEMP_MANIFEST_FILE), $(shell ls *.xml))
 LUFA_VERSION_NUM     := $(shell grep LUFA_VERSION_STRING $(LUFA_ROOT)/Version.h | cut -d'"' -f2)
-EXT_VERSION_NUM      := $(shell date +"%y.%m.%d").$(LUFA_VERSION_NUM)
+
+ifneq ($(LUFA_VERSION_NUM),000000)
+  EXT_VERSION_NUM    := $(shell date +"%y.%m.%d").$(LUFA_VERSION_NUM)
+  EXT_VSIX_NAME      := LUFA-RELEASE-$(LUFA_VERSION_NUM).vsix
+else
+  EXT_VERSION_NUM    := 0.$(shell date +"%y%m%d.%H%M%S")
+  EXT_VSIX_NAME      := LUFA-TESTING-$(shell date +"%y.%m.%d-%H.%M.%S").vsix
+
+  $(warning No LUFA version set - assuming a test version should be created.)
+endif
 
 all: generate_xml check_filenames generate_vsix
 
 clean:
-	@rm -f $(TEMP_MANIFEST_XML) $(MODULE_OUTPUT_XML) $(EXTENSION_OUTPUT_XML)
+	@rm -f $(TEMP_MANIFEST_XML) $(MODULE_OUTPUT_XML) $(EXTENSION_OUTPUT_XML) $(DOXYGEN_TAG_FILE_XML) $(DOXYGEN_COMBINED_XML)
 
 $(DOXYGEN_TAG_FILE_XML):
-	$(MAKE) -C ../ doxygen
+	$(MAKE) -C ../ doxygen DOXYGEN_OVERRIDE_PARAMS="GENERATE_TAGFILE=Documentation/lufa_doc_tags.xml GENERATE_XML=yes"
 
-$(TEMP_MANIFEST_XML): $(DOXYGEN_TAG_FILE_XML)
+$(DOXYGEN_COMBINED_XML): $(DOXYGEN_TAG_FILE_XML)
+	@xsltproc $(dir $@)/combine.xslt $(dir $@)/index.xml > $(DOXYGEN_COMBINED_XML)
+
+$(TEMP_MANIFEST_XML): $(DOXYGEN_TAG_FILE_XML) $(DOXYGEN_COMBINED_XML)
 	@echo "Generating Manifest XML..."
 
-	@printf "<lufa-manifest version=\"%s\" tagfile=\"%s\">\n" $(LUFA_VERSION_NUM) $(DOXYGEN_TAG_FILE_XML) > $@
+	@printf "<lufa-manifest version=\"%s\" tagfile=\"%s\" docfile=\"%s\">\n" $(LUFA_VERSION_NUM) $(DOXYGEN_TAG_FILE_XML) $(DOXYGEN_COMBINED_XML) > $@
 	@for i in $(XML_FILES); do \
 		printf "\t<xml-source filename=\"%s\"/>\n" $$i >> $@; \
 	done;
@@ -49,12 +62,16 @@ generate_xml: $(TEMP_MANIFEST_XML)
 	@rm $(TEMP_MANIFEST_XML)
 
 generate_vsix: $(EXTENSION_OUTPUT_XML) $(MODULE_OUTPUT_XML)
+	@echo "Cleaning all projects..."
+	@make -C $(LUFA_ROOT)/../ clean
+
 	@echo "Generating ASF cache files..."
 	@rm -f $(LUFA_ROOT)/../content.xml.cache
 	@rm -f $(LUFA_ROOT)/../ExampleProjects.xml
 	@python generate_caches.py $(LUFA_ROOT)/../
 
 	@echo "Archiving Content..."
+	@rm -f contents.zip
 	@cd $(LUFA_ROOT)/../ && zip contents.zip -q -0 -r --exclude=*Documentation* --exclude=*StudioIntegration* LUFA Bootloaders Demos Projects extension.xml README.txt
 
 	@echo "Creating VSIX Dependencies..."
@@ -66,7 +83,7 @@ generate_vsix: $(EXTENSION_OUTPUT_XML) $(MODULE_OUTPUT_XML)
 	@xsltproc --stringparam lufa-version "$(LUFA_VERSION_NUM)" XSLT/lufa_asfmanifest_transform.xslt VSIX/asf-manifest.xml > $(LUFA_ROOT)/../asf-manifest.xml
 
 	@echo "Generating Atmel Studio VSIX Extension file..."
-	@cd $(LUFA_ROOT)/../ && zip LUFA-$(LUFA_VERSION_NUM).vsix -q -9 contents.zip exampleProjects.xml content.xml.cache License.txt Preview.png PreviewThumb.png "[Content_Types].xml" extension.vsixmanifest asf-manifest.xml extension.xml
+	@cd $(LUFA_ROOT)/../ && zip $(EXT_VSIX_NAME) -q -9 contents.zip exampleProjects.xml content.xml.cache License.txt Preview.png PreviewThumb.png "[Content_Types].xml" extension.vsixmanifest asf-manifest.xml extension.xml
 	@echo "Atmel Studio VSIX Extension file generated."
 
 check_filenames: $(MODULE_OUTPUT_XML)
@@ -82,5 +99,8 @@ check_filenames: $(MODULE_OUTPUT_XML)
 		done || exit 1; \
 	done;
 	@echo Verified referenced filenames of ASF.xml modules.
+
+sanity_check:
+	python ProjectGenerator/project_generator.py -b $(LUFA_ROOT)/../ --main-ext-uuid=0e160d5c-e331-48d9-850b-e0387912171b CHECK
 
 .PHONY: all clean generate_xml generate_vsix check_filenames
