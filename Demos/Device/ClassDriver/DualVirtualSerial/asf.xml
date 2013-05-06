@@ -1,5 +1,5 @@
 <asf xmlversion="1.0">
-	<project caption="Dual Virtual Serial Device Demo (Class Driver APIs)" id="lufa.demos.device.class.dual_cdc.example">
+	<project caption="Dual Virtual Serial Device Demo (Class Driver APIs)" id="lufa.demos.device.class.dual_cdc.example.avr8">
 		<require idref="lufa.demos.device.class.dual_cdc"/>
 		<require idref="lufa.boards.dummy.avr8"/>
 		<generator value="as5_8"/>
@@ -9,6 +9,18 @@
 
 		<build type="define" name="F_CPU" value="8000000UL"/>
 		<build type="define" name="F_USB" value="8000000UL"/>
+	</project>
+
+	<project caption="Dual Virtual Serial Device Demo (Class Driver APIs)" id="lufa.demos.device.class.dual_cdc.example.xmega">
+		<require idref="lufa.demos.device.class.dual_cdc"/>
+		<require idref="lufa.boards.dummy.xmega"/>
+		<generator value="as5_8"/>
+
+		<device-support value="atxmega256a3bu"/>
+		<config name="lufa.drivers.board.name" value="a3bu_xplained"/>
+
+		<build type="define" name="F_CPU" value="32000000UL"/>
+		<build type="define" name="F_USB" value="48000000UL"/>
 	</project>
 
 	<module type="application" id="lufa.demos.device.class.dual_cdc" caption="Dual Virtual Serial Device Demo (Class Driver APIs)">
@@ -43,7 +55,5 @@
 		<require idref="lufa.platform"/>
 		<require idref="lufa.drivers.usb"/>
 		<require idref="lufa.drivers.board"/>
-		<require idref="lufa.drivers.board.leds"/>
-		<require idref="lufa.drivers.board.joystick"/>
 	</module>
 </asf>

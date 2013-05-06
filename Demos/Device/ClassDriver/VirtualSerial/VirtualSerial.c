@@ -120,6 +120,7 @@ void SetupHardware(void)
 #endif
 
 	/* Hardware Initialization */
+	LEDs_Init();
 #if defined(BOARD_HAS_JOYSTICK)
 	Joystick_Init();
 #endif
@@ -136,7 +137,7 @@ void CheckUserInput(void)
 	static bool ActionSent    = false;
 
 #if defined(BOARD_HAS_JOYSTICK)
-	uint8_t     JoyStatus_LCL = Joystick_GetStatus();
+	uint8_t JoyStatus_LCL = Joystick_GetStatus();
 
 	if (JoyStatus_LCL & JOY_UP)
 	  ReportString = "Joystick Up\r\n";
@@ -151,7 +152,7 @@ void CheckUserInput(void)
 #endif
 
 #if defined(BOARD_HAS_BUTTONS)
-	uint8_t     ButtonStatus_LCL = Buttons_GetStatus();
+	uint8_t ButtonStatus_LCL = Buttons_GetStatus();
 
 	if (ButtonStatus_LCL & BUTTONS_BUTTON1)
 	  ReportString = "Button 1\r\n";
