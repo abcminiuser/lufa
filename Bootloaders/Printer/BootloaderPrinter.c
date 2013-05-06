@@ -35,6 +35,35 @@
 
 #include "BootloaderPrinter.h"
 
+/** LUFA Printer Class driver interface configuration and state information. This structure is
+ *  passed to all Printer Class driver functions, so that multiple instances of the same class
+ *  within a device can be differentiated from one another.
+ */
+USB_ClassInfo_PRNT_Device_t TextOnly_Printer_Interface =
+	{
+		.Config =
+			{
+				.InterfaceNumber          = 0,
+				.DataINEndpoint           =
+					{
+						.Address          = PRINTER_IN_EPADDR,
+						.Size             = PRINTER_IO_EPSIZE,
+						.Banks            = 1,
+					},
+				.DataOUTEndpoint =
+					{
+						.Address          = PRINTER_OUT_EPADDR,
+						.Size             = PRINTER_IO_EPSIZE,
+						.Banks            = 1,
+					},
+				.IEEE1284String =
+					"MFG:Generic;"
+					"MDL:Generic_/_Text_Only;"
+					"CMD:1284.4;"
+					"CLS:PRINTER",
+			},
+	};
+
 /** Intel HEX parser state machine state information, to track the contents of
  *  a HEX file streamed in as a sequence of arbitrary bytes.
  */
@@ -105,37 +134,23 @@ void Application_Jump_Check(void)
 }
 
 /**
- * Determines if a given input byte of data is an ASCII encoded HEX value.
- *
- * \note Input HEX bytes are expected to be in uppercase only.
- *
- * \param[in] Byte  ASCII byte of data to check
- *
- * \return Boolean \c true if the input data is ASCII encoded HEX, \c false otherwise.
- */
-static bool IsHex(const char Byte)
-{
-	return ((Byte >= 'A') && (Byte <= 'F')) ||
-	       ((Byte >= '0') && (Byte <= '9'));
-}
-
-/**
  * Converts a given input byte of data from an ASCII encoded HEX value to an integer value.
  *
  * \note Input HEX bytes are expected to be in uppercase only.
  *
  * \param[in] Byte  ASCII byte of data to convert
  *
- * \return Integer converted value of the input ASCII encoded HEX byte of data.
+ * \return Integer converted value of the input ASCII encoded HEX byte of data, or -1 if the
+ *         input is not valid ASCII encoded HEX.
  */
-static uint8_t HexToDecimal(const char Byte)
+static int8_t HexToDecimal(const char Byte)
 {
 	if ((Byte >= 'A') && (Byte <= 'F'))
 	  return (10 + (Byte - 'A'));
 	else if ((Byte >= '0') && (Byte <= '9'))
 	  return (Byte - '0');
 
-	return 0;
+	return -1;
 }
 
 /**
@@ -151,7 +166,6 @@ static void ParseIntelHEXByte(const char ReadCharacter)
 	{
 		HEXParser.Checksum     = 0;
 		HEXParser.CurrAddress  = HEXParser.CurrBaseAddress;
-		HEXParser.ParserState  = HEX_PARSE_STATE_WAIT_LINE;
 		HEXParser.ReadMSB      = false;
 
 		/* ASCII ':' indicates the start of a new HEX record */
@@ -162,11 +176,12 @@ static void ParseIntelHEXByte(const char ReadCharacter)
 	}
 
 	/* Only allow ASCII HEX encoded digits, ignore all other characters */
-	if (!IsHex(ReadCharacter))
+	int8_t ReadCharacterDec = HexToDecimal(ReadCharacter);
+	if (ReadCharacterDec < 0)
 	  return;
 
 	/* Read and convert the next nibble of data from the current character */
-	HEXParser.Data    = (HEXParser.Data << 4) | HexToDecimal(ReadCharacter);
+	HEXParser.Data    = (HEXParser.Data << 4) | ReadCharacterDec;
 	HEXParser.ReadMSB = !HEXParser.ReadMSB;
 
 	/* Only process further when a full byte (two nibbles) have been read */
@@ -310,26 +325,25 @@ int main(void)
 
 	while (RunBootloader)
 	{
-		USB_USBTask();
+		uint8_t BytesReceived = PRNT_Device_BytesReceived(&TextOnly_Printer_Interface);
 
-		Endpoint_SelectEndpoint(PRINTER_OUT_EPADDR);
+		if (BytesReceived)
+		{
+			LEDs_SetAllLEDs(LEDMASK_USB_BUSY);
 
-		/* Check if we have received new printer data from the host */
-		if (Endpoint_IsOUTReceived()) {
-			LEDs_ToggleLEDs(LEDMASK_USB_BUSY);
-
-			/* Read all bytes of data from the host and parse them */
-			while (Endpoint_IsReadWriteAllowed())
+			while (BytesReceived--)
 			{
-				/* Feed the next byte of data to the HEX parser */
-				ParseIntelHEXByte(Endpoint_Read_8());
-			}
+				int16_t ReceivedByte = PRNT_Device_ReceiveByte(&TextOnly_Printer_Interface);
 
-			/* Send an ACK to the host, ready for the next data packet */
-			Endpoint_ClearOUT();
+				/* Feed the next byte of data to the HEX parser */
+				ParseIntelHEXByte(ReceivedByte);
+			}
 
 			LEDs_SetAllLEDs(LEDMASK_USB_READY);
 		}
+
+		PRNT_Device_USBTask(&TextOnly_Printer_Interface);
+		USB_USBTask();
 	}
 
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
@@ -397,8 +411,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	bool ConfigSuccess = true;
 
 	/* Setup Printer Data Endpoints */
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(PRINTER_IN_EPADDR,  EP_TYPE_BULK, PRINTER_IO_EPSIZE, 1);
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(PRINTER_OUT_EPADDR, EP_TYPE_BULK, PRINTER_IO_EPSIZE, 1);
+	ConfigSuccess &= PRNT_Device_ConfigureEndpoints(&TextOnly_Printer_Interface);
 
 	/* Indicate endpoint configuration success or failure */
 	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);
@@ -410,58 +423,5 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  */
 void EVENT_USB_Device_ControlRequest(void)
 {
-	/* Process Printer specific control requests */
-	switch (USB_ControlRequest.bRequest)
-	{
-		case PRNT_REQ_GetDeviceID:
-			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
-			{
-				/* Generic printer IEEE 1284 identification string, will bind to an in-built driver on
-				 * Windows systems, and will fall-back to a text-only printer driver on *nix.
-				 */
-				const char PrinterIDString[] =
-					"MFG:Generic;"
-					"MDL:Generic_/_Text_Only;"
-					"CMD:1284.4;"
-					"CLS:PRINTER";
-
-				Endpoint_ClearSETUP();
-
-				while (!(Endpoint_IsINReady()))
-				{
-					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
-				}
-
-				Endpoint_Write_16_BE(sizeof(PrinterIDString));
-				Endpoint_Write_Control_Stream_LE(PrinterIDString, strlen(PrinterIDString));
-				Endpoint_ClearStatusStage();
-			}
-
-			break;
-		case PRNT_REQ_GetPortStatus:
-			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
-			{
-				Endpoint_ClearSETUP();
-
-				while (!(Endpoint_IsINReady()))
-				{
-					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
-				}
-
-				Endpoint_Write_8(PRNT_PORTSTATUS_NOTERROR | PRNT_PORTSTATUS_SELECT);
-				Endpoint_ClearStatusStage();
-			}
-
-			break;
-		case PRNT_REQ_SoftReset:
-			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
-			{
-				Endpoint_ClearSETUP();
-				Endpoint_ClearStatusStage();
-			}
-
-			break;
-	}
+	PRNT_Device_ProcessControlRequest(&TextOnly_Printer_Interface);
 }
