@@ -7,7 +7,7 @@
 *.bin
 *.lss
 *.map
-*.vsix
 *.bak
+*.class
 LUFA/StudioIntegration/ProjectGenerator/*
 LUFA/StudioIntegration/DocBook/*

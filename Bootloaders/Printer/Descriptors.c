@@ -38,7 +38,7 @@
 #include "Descriptors.h"
 
 
-/** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
+/** Device descriptor structure. This descriptor, located in SRAM memory, describes the overall
  *  device characteristics, including the supported USB version, control endpoint size and the
  *  number of device configurations. The descriptor is read out by the USB host when the enumeration
  *  process begins.
@@ -58,14 +58,14 @@ const USB_Descriptor_Device_t DeviceDescriptor =
 	.ProductID              = 0x206B,
 	.ReleaseNumber          = VERSION_BCD(00.01),
 
-	.ManufacturerStrIndex   = 0x01,
-	.ProductStrIndex        = 0x02,
+	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
+	.ProductStrIndex        = STRING_ID_Product,
 	.SerialNumStrIndex      = NO_DESCRIPTOR,
 
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-/** Configuration descriptor structure. This descriptor, located in FLASH memory, describes the usage
+/** Configuration descriptor structure. This descriptor, located in SRAM memory, describes the usage
  *  of the device in one of its supported configurations, including information about any device interfaces
  *  and endpoints. The descriptor is read out by the USB host during the enumeration process when selecting
  *  a configuration so that the host may correctly communicate with the USB device.
@@ -124,7 +124,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 		}
 };
 
-/** Language descriptor structure. This descriptor, located in FLASH memory, is returned when the host requests
+/** Language descriptor structure. This descriptor, located in SRAM memory, is returned when the host requests
  *  the string descriptor with index 0 (the first index). It is actually an array of 16-bit integers, which indicate
  *  via the language ID table available at USB.org what languages the device supports for its string descriptors.
  */
@@ -186,17 +186,17 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 		case DTYPE_String:
 			switch (DescriptorNumber)
 			{
-				case 0x00:
+				case STRING_ID_Language:
 					Address = &LanguageString;
-					Size    = pgm_read_byte(&LanguageString.Header.Size);
+					Size    = LanguageString.Header.Size;
 					break;
-				case 0x01:
+				case STRING_ID_Manufacturer:
 					Address = &ManufacturerString;
-					Size    = pgm_read_byte(&ManufacturerString.Header.Size);
+					Size    = ManufacturerString.Header.Size;
 					break;
-				case 0x02:
+				case STRING_ID_Product:
 					Address = &ProductString;
-					Size    = pgm_read_byte(&ProductString.Header.Size);
+					Size    = ProductString.Header.Size;
 					break;
 			}
 
