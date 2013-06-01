@@ -75,61 +75,89 @@
 			/** LED mask for the second LED on the board. */
 			#define LEDS_LED2        (1 << 1)
 
+      /** LED mask for the RED status LED on the board. */
+      #define LEDS_LED3        (1 << 4)
+
+      /** LED mask for the GREEN status LED on the board */
+      #define LEDS_LED4        (1 << 5)
+
 			/** LED mask for all the LEDs on the board. */
-			#define LEDS_ALL_LEDS    (LEDS_LED1 | LEDS_LED2)
+			#define LEDS_ALL_LEDS    (LEDS_LED1 | LEDS_LED2 | LEDS_LED3 | LEDS_LED4)
 
 			/** LED mask for none of the board LEDs. */
 			#define LEDS_NO_LEDS     0
+
+
+      /** Mask for the LEDs on Port R (Orange LEDs) */
+      #define LEDS_PORTR_bm (LEDS_LED1 | LEDS_LED2)
+
+      /** Mask for the LEDs on Port D (Red/Green LEDs) */
+      #define LEDS_PORTD_bm (LEDS_LED3 | LEDS_LED4)
 
 		/* Inline Functions: */
 		#if !defined(__DOXYGEN__)
 			static inline void LEDs_Init(void)
 			{
-				PORTR.DIRSET    = LEDS_ALL_LEDS;
-				PORTR.OUTCLR    = LEDS_ALL_LEDS;
+				PORTR.DIRSET    = LEDS_ALL_LEDS & LEDS_PORTR_bm;
+				PORTR.OUTCLR    = LEDS_ALL_LEDS & LEDS_PORTR_bm;
 				
-				PORTCFG.MPCMASK = LEDS_ALL_LEDS;
-				PORTR.PIN0CTRL  = PORT_INVEN_bm;				
+				PORTCFG.MPCMASK = LEDS_ALL_LEDS & LEDS_PORTR_bm;
+				PORTR.PIN0CTRL  = PORT_INVEN_bm;
+
+        PORTD.DIRSET    = LEDS_ALL_LEDS & LEDS_PORTD_bm;
+        PORTD.OUTCLR    = LEDS_ALL_LEDS & LEDS_PORTD_bm;
+
+        // LED3 is GND to turn on, so invert it.
+        PORTD.PIN4CTRL  = PORT_INVEN_bm;
+        // LED4 is GND to turn off, so we don't invert it.
 			}
 
 			static inline void LEDs_Disable(void)
 			{
-				PORTR.DIRCLR    = LEDS_ALL_LEDS;
-				PORTR.OUTCLR    = LEDS_ALL_LEDS;
+				PORTR.DIRCLR    = LEDS_ALL_LEDS & LEDS_PORTR_bm;
+				PORTR.OUTCLR    = LEDS_ALL_LEDS & LEDS_PORTR_bm;
 
 				PORTCFG.MPCMASK = 0;
 				PORTR.PIN0CTRL  = LEDS_ALL_LEDS;
+
+        PORTD.DIRCLR    = LEDS_ALL_LEDS & LEDS_PORTD_bm;
+        PORTD.OUTCLR    = LEDS_ALL_LEDS & LEDS_PORTD_bm;
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTSET = LEDMask;
+				PORTR_OUTSET = LEDMask & LEDS_PORTR_bm;
+				PORTD_OUTSET = LEDMask & LEDS_PORTD_bm;
 			}
 
 			static inline void LEDs_TurnOffLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTCLR = LEDMask;
+				PORTR_OUTCLR = LEDMask & LEDS_PORTR_bm;
+				PORTD_OUTCLR = LEDMask & LEDS_PORTD_bm;
 			}
 
 			static inline void LEDs_SetAllLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUT = (PORTR.OUT & ~LEDS_ALL_LEDS) | LEDMask;
+				PORTR_OUT = (PORTR.OUT & ~(LEDS_PORTR_bm)) | (LEDMask & LEDS_PORTR_bm);
+				PORTD_OUT = (PORTD.OUT & ~(LEDS_PORTD_bm)) | (LEDMask & LEDS_PORTD_bm);
 			}
 
 			static inline void LEDs_ChangeLEDs(const uint8_t LEDMask, const uint8_t ActiveMask)
 			{
-				PORTR_OUT = (PORTR.OUT & ~LEDMask) | ActiveMask;
+				PORTR_OUT = (PORTR.OUT & ~(LEDMask & LEDS_PORTR_bm)) | (ActiveMask & LEDS_PORTR_bm);
+				PORTD_OUT = (PORTD.OUT & ~(LEDMask & LEDS_PORTD_bm)) | (ActiveMask & LEDS_PORTD_bm);
 			}
 
 			static inline void LEDs_ToggleLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTTGL = LEDMask;
+				PORTR_OUTTGL = LEDMask & LEDS_PORTR_bm;
+				PORTD_OUTTGL = LEDMask & LEDS_PORTD_bm;
 			}
 
 			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
-				return (PORTR_OUT & LEDS_ALL_LEDS);
+				return (PORTR_OUT & LEDS_PORTR_bm) | (PORTD_OUT & LEDS_PORTD_bm);
 			}
 		#endif
 
