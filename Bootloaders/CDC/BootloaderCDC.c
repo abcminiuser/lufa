@@ -63,6 +63,33 @@ static bool RunBootloader = true;
  */
 uint16_t MagicBootKey ATTR_NO_INIT;
 
+/** Routine to check if the reset source was the watchdog. */
+static inline uint8_t Reset_Source_Was_Watchdog() {
+#if (ARCH == ARCH_AVR8)
+  return (MCUSR & (1 << WDRF));
+#elif (ARCH == ARCH_XMEGA)
+  return (RST.STATUS & RST_WDRF_bm);
+#endif
+}
+
+/** Routine to turn off the watchdog reset status bit. */
+static inline void Turn_Off_Watchdog_Reset_Status() {
+#if (ARCH == ARCH_AVR8)
+  MSUSR &= ~(1 << WDRF);
+#elif (ARCH == ARCH_XMEGA)
+  RST.STATUS = RST_WDRF_bm;
+#endif
+}
+
+/** wdt_disable() is not defined by avr/wdt.h for XMEGA devices.  */
+#if (ARCH == ARCH_XMEGA)
+static inline void wdt_disable(void);
+static inline void wdt_disable() {
+  uint8_t temp = (WDT.CTRL & ~WDT_ENABLE_bm) | WDT_CEN_bm;
+  CCP = CCP_IOREG_gc;
+  WDT.CTRL = temp;
+}
+#endif
 
 /** Special startup routine to check if the bootloader was started via a watchdog reset, and if the magic application
  *  start key has been loaded into \ref MagicBootKey. If the bootloader started via the watchdog and the key is valid,
@@ -88,14 +115,14 @@ void Application_Jump_Check(void)
 	#endif
 
 	/* If the reset source was the bootloader and the key is correct, clear it and jump to the application */
-	if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
+	if (Reset_Source_Was_Watchdog() && (MagicBootKey == MAGIC_BOOT_KEY))
 	  JumpToApplication |= true;
 
 	/* If a request has been made to jump to the user application, honor it */
 	if (JumpToApplication)
 	{
 		/* Turn off the watchdog */
-		MCUSR &= ~(1<<WDRF);
+    Turn_Off_Watchdog_Reset_Status();
 		wdt_disable();
 
 		/* Clear the boot key and jump to the user application */
@@ -121,6 +148,7 @@ int main(void)
 	/* Enable global interrupts so that the USB stack can function */
 	GlobalInterruptEnable();
 
+  LEDs_SetAllLEDs(LEDS_LED2);
 	while (RunBootloader)
 	{
 		CDC_Task();
@@ -143,27 +171,51 @@ int main(void)
 static void SetupHardware(void)
 {
 	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
+  Turn_Off_Watchdog_Reset_Status();
 	wdt_disable();
 
+#if (ARCH == ARCH_AVR8)
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
 
 	/* Relocate the interrupt vector table to the bootloader section */
 	MCUCR = (1 << IVCE);
 	MCUCR = (1 << IVSEL);
+#elif (ARCH == ARCH_XMEGA)
+  /** Set the frequency correctly */
+  /* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
+  XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
+  XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
+  /* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
+  XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
+  XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+  PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+
+  uint8_t temp = PMIC.CTRL | PMIC_IVSEL_bm;
+  CCP = CCP_IOREG_gc;
+  PMIC.CTRL = temp;
+#endif
 
 	/* Initialize the USB and other board hardware drivers */
 	USB_Init();
 	LEDs_Init();
 
+#if (ARCH == ARCH_AVR8)
 	/* Bootloader active LED toggle timer initialization */
 	TIMSK1 = (1 << TOIE1);
 	TCCR1B = ((1 << CS11) | (1 << CS10));
+#elif (ARCH == ARCH_XMEGA)
+  TCC0.INTCTRLA = TC_OVFINTLVL_LO_gc;
+  TCC0.CTRLA = TC_CLKSEL_DIV256_gc;
+#endif
 }
 
 /** ISR to periodically toggle the LEDs on the board to indicate that the bootloader is active. */
+#if (ARCH == ARCH_AVR8)
 ISR(TIMER1_OVF_vect, ISR_BLOCK)
+#elif (ARCH == ARCH_XMEGA)
+ISR(TCC0_OVF_vect, ISR_BLOCK)
+#endif
 {
 	LEDs_ToggleLEDs(LEDS_LED1 | LEDS_LED2);
 }
@@ -265,7 +317,9 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 	if (Command == AVR109_COMMAND_BlockRead)
 	{
 		/* Re-enable RWW section */
+#if (ARCH == ARCH_AVR8)
 		boot_rww_enable();
+#endif
 
 		while (BlockSize--)
 		{
@@ -273,7 +327,9 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 			{
 				/* Read the next FLASH byte from the current FLASH page */
 				#if (FLASHEND > 0xFFFF)
+        LEDs_TurnOnLEDs(LEDS_LED3);
 				WriteNextResponseByte(pgm_read_byte_far(CurrAddress | HighByte));
+        LEDs_TurnOffLEDs(LEDS_LED3);
 				#else
 				WriteNextResponseByte(pgm_read_byte(CurrAddress | HighByte));
 				#endif
@@ -300,13 +356,10 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 
 		if (MemoryType == MEMORY_TYPE_FLASH)
 		{
+#if (ARCH == ARCH_AVR8)
 			boot_page_erase(PageStartAddress);
 			boot_spm_busy_wait();
-		}
-
-		while (BlockSize--)
-		{
-			if (MemoryType == MEMORY_TYPE_FLASH)
+      while (BlockSize--)
 			{
 				/* If both bytes in current word have been written, increment the address counter */
 				if (HighByte)
@@ -324,28 +377,38 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 
 				HighByte = !HighByte;
 			}
-			else
-			{
-				/* Write the next EEPROM byte from the endpoint */
-				eeprom_write_byte((uint8_t*)((intptr_t)(CurrAddress >> 1)), FetchNextCommandByte());
-
-				/* Increment the address counter after use */
-				CurrAddress += 2;
-			}
-		}
-
-		/* If in FLASH programming mode, commit the page after writing */
-		if (MemoryType == MEMORY_TYPE_FLASH)
-		{
 			/* Commit the flash page to memory */
 			boot_page_write(PageStartAddress);
 
 			/* Wait until write operation has completed */
 			boot_spm_busy_wait();
+#elif (ARCH == ARCH_XMEGA)
+			uint8_t buffer[SPM_PAGESIZE];
+			for (int i = 0; i < BlockSize; i++) {
+				buffer[i] = FetchNextCommandByte();
+			}
+			uint32_t tempaddress = CurrAddress;
+			LEDs_TurnOnLEDs(LEDS_LED4);
+			SP_LoadFlashPage(buffer);
+			SP_EraseWriteApplicationPage(tempaddress);
+			SP_WaitForSPM();
+			CurrAddress += BlockSize;
+			LEDs_TurnOffLEDs(LEDS_LED4);
+#endif
+		}
+		else
+		{
+			while (BlockSize--) {
+				/* Write the next EEPROM byte from the endpoint */
+				eeprom_write_byte((uint8_t*)((intptr_t)(CurrAddress >> 1)), FetchNextCommandByte());
+
+				/* Increment the address counter after use */
+				CurrAddress += 1;
+			}
 		}
 
-		/* Send response byte back to the host */
-		WriteNextResponseByte('\r');
+  /* Send response byte back to the host */
+	WriteNextResponseByte('\r');
 	}
 }
 #endif
@@ -417,6 +480,8 @@ static void CDC_Task(void)
 	/* Read in the bootloader command (first byte sent from host) */
 	uint8_t Command = FetchNextCommandByte();
 
+  uint16_t tmpword = 0;
+
 	if (Command == AVR109_COMMAND_ExitBootloader)
 	{
 		RunBootloader = false;
@@ -484,10 +549,15 @@ static void CDC_Task(void)
 		/* Clear the application section of flash */
 		for (uint32_t CurrFlashAddress = 0; CurrFlashAddress < (uint32_t)BOOT_START_ADDR; CurrFlashAddress += SPM_PAGESIZE)
 		{
+#if (ARCH == ARCH_AVR8)
 			boot_page_erase(CurrFlashAddress);
 			boot_spm_busy_wait();
 			boot_page_write(CurrFlashAddress);
 			boot_spm_busy_wait();
+#elif (ARCH == ARCH_XMEGA)
+      SP_EraseApplicationSection();
+      SP_WaitForSPM();
+#endif
 		}
 
 		/* Send confirmation byte back to the host */
@@ -497,27 +567,46 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_WriteLockbits)
 	{
 		/* Set the lock bits to those given by the host */
+#if (ARCH == ARCH_AVR8)
 		boot_lock_bits_set(FetchNextCommandByte());
-
+#elif (ARCH == ARCH_XMEGA)
+    SP_WriteLockBits( FetchNextCommandByte());
+#endif
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
 	}
 	#endif
 	else if (Command == AVR109_COMMAND_ReadLockbits)
 	{
+#if (ARCH == ARCH_AVR8)
 		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_LOCK_BITS));
+#elif (ARCH == ARCH_XMEGA)
+		WriteNextResponseByte(SP_ReadLockBits());
+#endif
 	}
 	else if (Command == AVR109_COMMAND_ReadLowFuses)
 	{
+#if (ARCH == ARCH_AVR8)
 		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_LOW_FUSE_BITS));
+#elif (ARCH == ARCH_XMEGA)
+		WriteNextResponseByte(SP_ReadFuseByte(0));
+#endif
 	}
 	else if (Command == AVR109_COMMAND_ReadHighFuses)
 	{
+#if (ARCH == ARCH_AVR8)
 		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS));
+#elif (ARCH == ARCH_XMEGA)
+		WriteNextResponseByte(SP_ReadFuseByte(1));
+#endif
 	}
 	else if (Command == AVR109_COMMAND_ReadExtendedFuses)
 	{
+#if (ARCH == ARCH_AVR8)
 		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS));
+#elif (ARCH == ARCH_XMEGA)
+		WriteNextResponseByte(SP_ReadFuseByte(2));
+#endif
 	}
 	#if !defined(NO_BLOCK_SUPPORT)
 	else if (Command == AVR109_COMMAND_GetBlockWriteSupport)
@@ -537,30 +626,45 @@ static void CDC_Task(void)
 	#if !defined(NO_FLASH_BYTE_SUPPORT)
 	else if (Command == AVR109_COMMAND_FillFlashPageWordHigh)
 	{
+#if (ARCH == ARCH_AVR8)
 		/* Write the high byte to the current flash page */
 		boot_page_fill(CurrAddress, FetchNextCommandByte());
+#elif (ARCH == ARCH_XMEGA)
+    tmpword |= FetchNextCommandByte() << 8;
+    /* Write the word to the flash */
+    SP_LoadFlashWord(CurrAddress << 1, tmpword);
+    CurrAddress += 2;
+#endif
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
 	}
 	else if (Command == AVR109_COMMAND_FillFlashPageWordLow)
 	{
+#if (ARCH == ARCH_AVR8)
 		/* Write the low byte to the current flash page */
 		boot_page_fill(CurrAddress | 0x01, FetchNextCommandByte());
-
 		/* Increment the address */
 		CurrAddress += 2;
+#elif (ARCH == ARCH_XMEGA)
+    tmpword = FetchNextCommandByte();
+#endif
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
 	}
 	else if (Command == AVR109_COMMAND_WriteFlashPage)
 	{
+#if (ARCH == ARCH_AVR8)
 		/* Commit the flash page to memory */
 		boot_page_write(CurrAddress);
 
 		/* Wait until write operation has completed */
 		boot_spm_busy_wait();
+#elif (ARCH == ARCH_XMEGA)
+    SP_WriteApplicationPage(CurrAddress << 1);
+    SP_WaitForSPM();
+#endif
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');

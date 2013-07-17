@@ -36,10 +36,16 @@
 #ifndef _CDC_H_
 #define _CDC_H_
 
+#include <LUFA/Common/Common.h>
+
 	/* Includes: */
 		#include <avr/io.h>
 		#include <avr/wdt.h>
+#if (ARCH == ARCH_AVR8)
 		#include <avr/boot.h>
+#elif (ARCH == ARCH_XMEGA)
+    #include "sp_driver.h"
+#endif
 		#include <avr/eeprom.h>
 		#include <avr/power.h>
 		#include <avr/interrupt.h>
@@ -138,6 +144,8 @@
 			#endif
 			static uint8_t FetchNextCommandByte(void);
 			static void    WriteNextResponseByte(const uint8_t Response);
+      static inline uint8_t Reset_Source_Was_Watchdog(void);
+      static inline void Turn_Off_Watchdog_Reset_Status(void);
 		#endif
 
 #endif
