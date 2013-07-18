@@ -66,18 +66,18 @@ uint16_t MagicBootKey ATTR_NO_INIT;
 /** Routine to check if the reset source was the watchdog. */
 static inline uint8_t Reset_Source_Was_Watchdog() {
 #if (ARCH == ARCH_AVR8)
-  return (MCUSR & (1 << WDRF));
+	return (MCUSR & (1 << WDRF));
 #elif (ARCH == ARCH_XMEGA)
-  return (RST.STATUS & RST_WDRF_bm);
+	return (RST.STATUS & RST_WDRF_bm);
 #endif
 }
 
 /** Routine to turn off the watchdog reset status bit. */
 static inline void Turn_Off_Watchdog_Reset_Status() {
 #if (ARCH == ARCH_AVR8)
-  MSUSR &= ~(1 << WDRF);
+	MSUSR &= ~(1 << WDRF);
 #elif (ARCH == ARCH_XMEGA)
-  RST.STATUS = RST_WDRF_bm;
+	RST.STATUS = RST_WDRF_bm;
 #endif
 }
 
@@ -114,15 +114,20 @@ void Application_Jump_Check(void)
 		JTAG_ENABLE();
 	#endif
 
+	#if (BOARD == BOARD_A3BU_XPLAINED)
+		/* Check if SW0 is pressed. If not, go into the application. */
+		JumpToApplication |= (PORTE.IN & (1 << 5) == 1);
+	#endif
+
 	/* If the reset source was the bootloader and the key is correct, clear it and jump to the application */
 	if (Reset_Source_Was_Watchdog() && (MagicBootKey == MAGIC_BOOT_KEY))
-	  JumpToApplication |= true;
+		JumpToApplication |= true;
 
 	/* If a request has been made to jump to the user application, honor it */
 	if (JumpToApplication)
 	{
 		/* Turn off the watchdog */
-    Turn_Off_Watchdog_Reset_Status();
+		Turn_Off_Watchdog_Reset_Status();
 		wdt_disable();
 
 		/* Clear the boot key and jump to the user application */
@@ -148,7 +153,6 @@ int main(void)
 	/* Enable global interrupts so that the USB stack can function */
 	GlobalInterruptEnable();
 
-  LEDs_SetAllLEDs(LEDS_LED2);
 	while (RunBootloader)
 	{
 		CDC_Task();
@@ -182,18 +186,18 @@ static void SetupHardware(void)
 	MCUCR = (1 << IVCE);
 	MCUCR = (1 << IVSEL);
 #elif (ARCH == ARCH_XMEGA)
-  /** Set the frequency correctly */
-  /* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
-  XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
-  XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
-  /* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
-  XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
-  XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
-  PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+	/** Set the frequency correctly */
+	/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
+	XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
+	XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
+	/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
+	XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
+	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
 
-  uint8_t temp = PMIC.CTRL | PMIC_IVSEL_bm;
-  CCP = CCP_IOREG_gc;
-  PMIC.CTRL = temp;
+	uint8_t temp = PMIC.CTRL | PMIC_IVSEL_bm;
+	CCP = CCP_IOREG_gc;
+	PMIC.CTRL = temp;
 #endif
 
 	/* Initialize the USB and other board hardware drivers */
@@ -327,9 +331,9 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 			{
 				/* Read the next FLASH byte from the current FLASH page */
 				#if (FLASHEND > 0xFFFF)
-        LEDs_TurnOnLEDs(LEDS_LED3);
+				LEDs_TurnOnLEDs(LEDS_LED3);
 				WriteNextResponseByte(pgm_read_byte_far(CurrAddress | HighByte));
-        LEDs_TurnOffLEDs(LEDS_LED3);
+				LEDs_TurnOffLEDs(LEDS_LED3);
 				#else
 				WriteNextResponseByte(pgm_read_byte(CurrAddress | HighByte));
 				#endif
@@ -359,7 +363,7 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 #if (ARCH == ARCH_AVR8)
 			boot_page_erase(PageStartAddress);
 			boot_spm_busy_wait();
-      while (BlockSize--)
+			while (BlockSize--)
 			{
 				/* If both bytes in current word have been written, increment the address counter */
 				if (HighByte)
@@ -630,10 +634,10 @@ static void CDC_Task(void)
 		/* Write the high byte to the current flash page */
 		boot_page_fill(CurrAddress, FetchNextCommandByte());
 #elif (ARCH == ARCH_XMEGA)
-    tmpword |= FetchNextCommandByte() << 8;
-    /* Write the word to the flash */
-    SP_LoadFlashWord(CurrAddress << 1, tmpword);
-    CurrAddress += 2;
+		tmpword |= FetchNextCommandByte() << 8;
+		/* Write the word to the flash */
+		SP_LoadFlashWord(CurrAddress << 1, tmpword);
+		CurrAddress += 2;
 #endif
 
 		/* Send confirmation byte back to the host */
@@ -647,7 +651,7 @@ static void CDC_Task(void)
 		/* Increment the address */
 		CurrAddress += 2;
 #elif (ARCH == ARCH_XMEGA)
-    tmpword = FetchNextCommandByte();
+		tmpword = FetchNextCommandByte();
 #endif
 
 		/* Send confirmation byte back to the host */
@@ -662,8 +666,8 @@ static void CDC_Task(void)
 		/* Wait until write operation has completed */
 		boot_spm_busy_wait();
 #elif (ARCH == ARCH_XMEGA)
-    SP_WriteApplicationPage(CurrAddress << 1);
-    SP_WaitForSPM();
+		SP_WriteApplicationPage(CurrAddress << 1);
+		SP_WaitForSPM();
 #endif
 
 		/* Send confirmation byte back to the host */
