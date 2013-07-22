@@ -116,7 +116,7 @@ void Application_Jump_Check(void)
 
 	#if (BOARD == BOARD_A3BU_XPLAINED)
 		/* Check if SW0 is pressed. If not, go into the application. */
-		JumpToApplication |= (PORTE.IN & (1 << 5) == 1);
+		JumpToApplication |= PORTE.IN & _BV(5);
 	#endif
 
 	/* If the reset source was the bootloader and the key is correct, clear it and jump to the application */
@@ -134,7 +134,7 @@ void Application_Jump_Check(void)
 		MagicBootKey = 0;
 
 		// cppcheck-suppress constStatement
-		((void (*)(void))0x0000)();
+		asm("jmp 0"); // Note: same as ((void (*)(void))0x0000)();
 	}
 }
 
