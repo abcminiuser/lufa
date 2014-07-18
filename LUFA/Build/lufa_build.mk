@@ -316,17 +316,17 @@ $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
 # Extracts out the loadable FLASH memory data from the project ELF file, and creates an Intel HEX format file of it
 %.hex: %.elf
 	@echo $(MSG_OBJCPY_CMD) Extracting HEX file data from \"$<\"
-	$(CROSS)-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $< $@
+	$(CROSS)-objcopy -O ihex -R .eeprom -R .fuse -R .lock -R .signature $(OBJCPY_FLAGS) $< $@
 
 # Extracts out the loadable FLASH memory data from the project ELF file, and creates an Binary format file of it
 %.bin: %.elf
 	@echo $(MSG_OBJCPY_CMD) Extracting BIN file data from \"$<\"
-	$(CROSS)-objcopy -O binary -R .eeprom -R .fuse -R .lock -R .signature $< $@
+	$(CROSS)-objcopy -O binary -R .eeprom -R .fuse -R .lock -R .signature $(OBJCPY_FLAGS) $< $@
 
 # Extracts out the loadable EEPROM memory data from the project ELF file, and creates an Intel HEX format file of it
 %.eep: %.elf
 	@echo $(MSG_OBJCPY_CMD) Extracting EEP file data from \"$<\"
-	$(CROSS)-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings $< $@ || exit 0
+	$(CROSS)-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings $(OBJCPY_FLAGS) $< $@ || exit 0
 
 # Creates an assembly listing file from an input project ELF file, containing interleaved assembly and source data
 %.lss: %.elf
