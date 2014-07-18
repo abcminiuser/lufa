@@ -36,6 +36,17 @@
 
 #include "VirtualSerial.h"
 
+#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA))
+#include <avr/io.h>
+#include <avr/wdt.h>
+#include <avr/power.h>
+#include <avr/interrupt.h>
+#elif (ARCH == ARCH_UC3)
+#include <avr32/io.h>
+#endif
+#include <string.h>
+#include <stdio.h>
+
 /** LUFA CDC Class driver interface configuration and state information. This structure is
  *  passed to all CDC Class driver functions, so that multiple instances of the same class
  *  within a device can be differentiated from one another.
@@ -69,8 +80,9 @@ USB_ClassInfo_CDC_Device_t VirtualSerial_CDC_Interface =
 /** Standard file stream for the CDC interface when set up, so that the virtual CDC COM port can be
  *  used like any regular character stream in the C APIs.
  */
+#if defined(FDEV_SETUP_STREAM)
 static FILE USBSerialStream;
-
+#endif
 
 /** Main program entry point. This routine contains the overall program flow, including initial
  *  setup of all components and the main program loop.
@@ -79,8 +91,10 @@ int main(void)
 {
 	SetupHardware();
 
+#if defined(FDEV_SETUP_STREAM)
 	/* Create a regular character stream for the interface so that it can be used with the stdio.h functions */
 	CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
+#endif
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
@@ -117,6 +131,16 @@ void SetupHardware(void)
 	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
 
 	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+#elif (ARCH == ARCH_UC3)
+        // Start the master external oscillator which will be used as the main clock reference
+        UC3CLK_StartExternalOscillator(0, EXOSC_MODE_8MHZ_OR_MORE, EXOSC_START_0CLK);
+        // Start the PLL for the CPU clock, switch CPU to it
+        UC3CLK_StartPLL(0, CLOCK_SRC_OSC0, F_CPU, F_USB);
+        UC3CLK_SetCPUClockSource(CLOCK_SRC_OSC0, F_CPU);
+
+        // Init interrupt controller driver
+        INTC_Init();
+        INTC_RegisterGroupHandler(INTC_IRQ_GROUP(AVR32_USBB_IRQ), 1, &USB_GEN_vect);
 #endif
 
 	/* Hardware Initialization */
@@ -149,11 +173,14 @@ void CheckJoystickMovement(void)
 	{
 		ActionSent = true;
 
+#if defined(FDEV_SETUP_STREAM)
 		/* Write the string to the virtual COM port via the created character stream */
 		fputs(ReportString, &USBSerialStream);
-
+#else
 		/* Alternatively, without the stream: */
-		// CDC_Device_SendString(&VirtualSerial_CDC_Interface, ReportString);
+		CDC_Device_SendString(&VirtualSerial_CDC_Interface, ReportString);
+#endif
+
 	}
 }
 
