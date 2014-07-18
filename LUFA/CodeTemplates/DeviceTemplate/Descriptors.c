@@ -53,8 +53,8 @@ const USB_Descriptor_Device_t DeviceDescriptor =
 
 	.Endpoint0Size          = 64,
 
-	.VendorID               = 0x0000,
-	.ProductID              = 0x0000,
+	.VendorID               = CPU_TO_LE16(0x0000),
+	.ProductID              = CPU_TO_LE16(0x0000),
 	.ReleaseNumber          = VERSION_BCD(0,0,2),
 
 	.ManufacturerStrIndex   = 0x01,
@@ -75,7 +75,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 		{
 			.Header                   = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
-			.TotalConfigurationSize   = sizeof(USB_Descriptor_Configuration_t),
+			.TotalConfigurationSize   = CPU_TO_LE16(sizeof(USB_Descriptor_Configuration_t))
 			.TotalInterfaces          = 0,
 
 			.ConfigurationNumber      = 1,

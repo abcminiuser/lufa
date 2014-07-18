@@ -54,8 +54,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
 
-	.VendorID               = 0x03EB,
-	.ProductID              = 0x204E,
+	.VendorID               = CPU_TO_LE16(0x03EB),
+	.ProductID              = CPU_TO_LE16(0x204E),
 	.ReleaseNumber          = VERSION_BCD(0,0,1),
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
@@ -76,7 +76,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
-			.TotalConfigurationSize = sizeof(USB_Descriptor_Configuration_t),
+			.TotalConfigurationSize = CPU_TO_LE16(sizeof(USB_Descriptor_Configuration_t)),
 			.TotalInterfaces        = 4,
 
 			.ConfigurationNumber    = 1,
@@ -148,7 +148,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC1_NOTIFICATION_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_NOTIFICATION_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_NOTIFICATION_EPSIZE),
 			.PollingIntervalMS      = 0xFF
 		},
 
@@ -174,7 +174,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC1_RX_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_TXRX_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_TXRX_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 
@@ -184,7 +184,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC1_TX_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_TXRX_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_TXRX_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 
@@ -249,7 +249,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC2_NOTIFICATION_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_NOTIFICATION_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_NOTIFICATION_EPSIZE),
 			.PollingIntervalMS      = 0xFF
 		},
 
@@ -275,7 +275,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC2_RX_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_TXRX_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_TXRX_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 
@@ -285,7 +285,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = CDC2_TX_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = CDC_TXRX_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(CDC_TXRX_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		}
 };

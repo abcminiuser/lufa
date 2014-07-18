@@ -72,8 +72,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
 
-	.VendorID               = 0x03EB,
-	.ProductID              = 0x2041,
+	.VendorID               = CPU_TO_LE16(0x03EB),
+	.ProductID              = CPU_TO_LE16(0x2041),
 	.ReleaseNumber          = VERSION_BCD(0,0,1),
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
@@ -94,7 +94,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
-			.TotalConfigurationSize = sizeof(USB_Descriptor_Configuration_t),
+			.TotalConfigurationSize = CPU_TO_LE16(sizeof(USB_Descriptor_Configuration_t)),
 			.TotalInterfaces        = 1,
 
 			.ConfigurationNumber    = 1,
@@ -129,7 +129,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.CountryCode            = 0x00,
 			.TotalReportDescriptors = 1,
 			.HIDReportType          = HID_DTYPE_Report,
-			.HIDReportLength        = sizeof(MouseReport)
+			.HIDReportLength        = CPU_TO_LE16(sizeof(MouseReport))
 		},
 
 	.HID_ReportINEndpoint =
@@ -138,7 +138,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = MOUSE_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = MOUSE_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(MOUSE_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		}
 };
