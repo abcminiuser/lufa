@@ -253,9 +253,9 @@ mostlyclean:
 	rm -f $(DEPENDENCY_FILES)
 
 # Cleans all build files, leaving only the original source code
-clean: mostlyclean
+clean:: mostlyclean
 	@echo $(MSG_REMOVE_CMD) Removing output files of \"$(TARGET)\"
-	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).bin $(TARGET).eep $(TARGET).map $(TARGET).lss $(TARGET).sym $(TARGET).a
+	rm -f $(TARGET).elf $(TARGET).hex $(TARGET).bin $(TARGET).eep $(TARGET).map $(TARGET).lss $(TARGET).sym lib$(TARGET).a
 
 # Performs a complete build of the user application and prints size information afterwards
 all: build_begin elf hex bin lss sym size build_end
