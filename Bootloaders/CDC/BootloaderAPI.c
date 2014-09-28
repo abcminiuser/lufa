@@ -37,39 +37,69 @@
 
 void BootloaderAPI_ErasePage(const uint32_t Address)
 {
+#if (ARCH == ARCH_AVR8)
 	boot_page_erase_safe(Address);
 	boot_spm_busy_wait();
 	boot_rww_enable();
+#elif (ARCH == ARCH_XMEGA)
+	SP_EraseApplicationPage(Address);
+	SP_WaitForSPM();
+#endif
 }
 
 void BootloaderAPI_WritePage(const uint32_t Address)
 {
+#if (ARCH == ARCH_AVR8)
 	boot_page_write_safe(Address);
 	boot_spm_busy_wait();
 	boot_rww_enable();
+#elif (ARCH == ARCH_XMEGA)
+	SP_WriteApplicationPage(Address);
+	SP_WaitForSPM();
+#endif
 }
 
 void BootloaderAPI_FillWord(const uint32_t Address, const uint16_t Word)
 {
+#if (ARCH == ARCH_AVR8)
 	boot_page_fill_safe(Address, Word);
+#elif (ARCH == ARCH_XMEGA)
+	SP_LoadFlashWord(Address, Word);
+#endif
 }
 
 uint8_t BootloaderAPI_ReadSignature(const uint16_t Address)
 {
+#if (ARCH == ARCH_AVR8)
 	return boot_signature_byte_get(Address);
+#elif (ARCH == ARCH_XMEGA)
+	return SP_ReadUserSignatureByte(Address);
+#endif
 }
 
 uint8_t BootloaderAPI_ReadFuse(const uint16_t Address)
 {
+#if (ARCH == ARCH_AVR8)
 	return boot_lock_fuse_bits_get(Address);
+#elif (ARCH == ARCH_XMEGA)
+	return SP_ReadFuseByte(Address);
+#endif
 }
 
 uint8_t BootloaderAPI_ReadLock(void)
 {
+#if (ARCH == ARCH_AVR8)
 	return boot_lock_fuse_bits_get(GET_LOCK_BITS);
+#elif (ARCH == ARCH_XMEGA)
+	return SP_ReadLockBits();
+#endif
 }
 
 void BootloaderAPI_WriteLock(const uint8_t LockBits)
 {
+#if (ARCH == ARCH_AVR8)
 	boot_lock_bits_set_safe(LockBits);
+#elif (ARCH == ARCH_XMEGA)
+	SP_WriteLockBits(LockBits);
+#endif
 }

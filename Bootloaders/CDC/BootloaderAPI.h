@@ -36,12 +36,16 @@
 #ifndef _BOOTLOADER_API_H_
 #define _BOOTLOADER_API_H_
 
+		#include <LUFA/Common/Common.h>
 	/* Includes: */
 		#include <avr/io.h>
+#if (ARCH == ARCH_AVR8)
 		#include <avr/boot.h>
+#elif (ARCH == ARCH_XMEGA)
+    #include "sp_driver.h"
+#endif
 		#include <stdbool.h>
 
-		#include <LUFA/Common/Common.h>
 
 		#include "Config/AppConfig.h"
 
