@@ -63,8 +63,6 @@ void USB_Device_ProcessControlRequest(void)
 	  *(RequestHeader++) = Endpoint_Read_8();
 	#endif
 
-	EVENT_USB_Device_ControlRequest();
-
 	if (!Endpoint_IsSETUPReceived())
 	{
 		return;
