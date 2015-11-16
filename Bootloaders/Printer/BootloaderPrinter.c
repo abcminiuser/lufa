@@ -481,7 +481,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	PRNT_Device_ProcessControlRequest(&TextOnly_Printer_Interface);
+	return PRNT_Device_ProcessControlRequest(&TextOnly_Printer_Interface);
 }
