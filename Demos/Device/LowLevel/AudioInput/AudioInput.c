@@ -130,7 +130,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Process General and Audio specific control requests */
 	switch (USB_ControlRequest.bRequest)
@@ -144,6 +144,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Check if the host is enabling the audio interface (setting AlternateSetting to 1) */
 				StreamingAudioInterfaceSelected = ((USB_ControlRequest.wValue) != 0);
+				return 1;
 			}
 
 			break;
@@ -155,6 +156,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				Endpoint_ClearSETUP();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -179,6 +181,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 					/* Adjust sample reload timer to the new frequency */
 					OCR0A = ((F_CPU / 8 / CurrentAudioSampleFrequency) - 1);
+					return 1;
 				}
 			}
 
@@ -203,11 +206,13 @@ void EVENT_USB_Device_ControlRequest(void)
 					Endpoint_ClearSETUP();
 					Endpoint_Write_Control_Stream_LE(SampleRate, sizeof(SampleRate));
 					Endpoint_ClearOUT();
+					return 1;
 				}
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** ISR to handle the reloading of the data endpoint with the next sample. */
