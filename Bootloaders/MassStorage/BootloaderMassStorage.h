@@ -87,7 +87,7 @@
 		void EVENT_USB_Device_Connect(void) AUX_BOOT_SECTION;
 		void EVENT_USB_Device_Disconnect(void) AUX_BOOT_SECTION;
 		void EVENT_USB_Device_ConfigurationChanged(void) AUX_BOOT_SECTION;
-		void EVENT_USB_Device_ControlRequest(void) AUX_BOOT_SECTION;
+		int EVENT_USB_Device_ControlRequest(void) AUX_BOOT_SECTION;
 
 		bool CALLBACK_MS_Device_SCSICommandReceived(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo) AUX_BOOT_SECTION;
 
