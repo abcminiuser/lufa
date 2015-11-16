@@ -37,13 +37,13 @@
 #define  __INCLUDE_FROM_MASSSTORAGE_DEVICE_C
 #include "MassStorageClassDevice.h"
 
-void MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
+int MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if (USB_ControlRequest.wIndex != MSInterfaceInfo->Config.InterfaceNumber)
-	  return;
+	  return 0;
 
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -54,6 +54,7 @@ void MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfac
 				Endpoint_ClearStatusStage();
 
 				MSInterfaceInfo->State.IsMassStoreReset = true;
+				return 1;
 			}
 
 			break;
@@ -65,10 +66,12 @@ void MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfac
 				Endpoint_Write_8(MSInterfaceInfo->Config.TotalLUNs - 1);
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool MS_Device_ConfigureEndpoints(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo)
