@@ -68,13 +68,13 @@ static const uint32_t PROGMEM AdapterSupportedOIDList[]  =
 		CPU_TO_LE32(OID_802_3_XMIT_MORE_COLLISIONS),
 	};
 
-void RNDIS_Device_ProcessControlRequest(USB_ClassInfo_RNDIS_Device_t* const RNDISInterfaceInfo)
+int RNDIS_Device_ProcessControlRequest(USB_ClassInfo_RNDIS_Device_t* const RNDISInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if (USB_ControlRequest.wIndex != RNDISInterfaceInfo->Config.ControlInterfaceNumber)
-	  return;
+	  return 0;
 
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -86,6 +86,7 @@ void RNDIS_Device_ProcessControlRequest(USB_ClassInfo_RNDIS_Device_t* const RNDI
 				Endpoint_ClearIN();
 
 				RNDIS_Device_ProcessRNDISControlMessage(RNDISInterfaceInfo);
+				return 1;
 			}
 
 			break;
@@ -105,10 +106,12 @@ void RNDIS_Device_ProcessControlRequest(USB_ClassInfo_RNDIS_Device_t* const RNDI
 				Endpoint_ClearOUT();
 
 				MessageHeader->MessageLength = CPU_TO_LE32(0);
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool RNDIS_Device_ConfigureEndpoints(USB_ClassInfo_RNDIS_Device_t* const RNDISInterfaceInfo)
