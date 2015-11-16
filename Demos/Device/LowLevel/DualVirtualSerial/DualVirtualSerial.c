@@ -156,7 +156,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Determine which interface's Line Coding data is being set from the wIndex parameter */
 	void* LineEncodingData = (USB_ControlRequest.wIndex == 0) ? &LineEncoding1 : &LineEncoding2;
@@ -172,6 +172,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the line coding data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(LineEncodingData, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
@@ -183,6 +184,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Read the line coding data in from the host into the global struct */
 				Endpoint_Read_Control_Stream_LE(LineEncodingData, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearIN();
+				return 1;
 			}
 
 			break;
@@ -191,10 +193,12 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				Endpoint_ClearSETUP();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Function to manage CDC data transmission and reception to and from the host for the first CDC interface, which sends joystick
