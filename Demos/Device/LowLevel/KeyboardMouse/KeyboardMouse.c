@@ -130,7 +130,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	uint8_t* ReportData;
 	uint8_t  ReportSize;
@@ -161,6 +161,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Clear the report data afterwards */
 				memset(ReportData, 0, ReportSize);
+				return 1;
 			}
 
 			break;
@@ -173,7 +174,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				while (!(Endpoint_IsOUTReceived()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0;
 				}
 
 				/* Read in the LED report from the host */
@@ -184,10 +185,12 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Process the incoming LED report */
 				Keyboard_ProcessLEDReport(LEDStatus);
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Processes a given Keyboard LED report from the host, and sets the board LEDs to match. Since the Keyboard
