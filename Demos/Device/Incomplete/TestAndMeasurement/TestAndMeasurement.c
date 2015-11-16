@@ -153,7 +153,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	uint8_t TMCRequestStatus = TMC_STATUS_SUCCESS;
 
@@ -188,6 +188,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -211,6 +212,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -243,6 +245,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -266,6 +269,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -294,6 +298,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -316,6 +321,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -327,10 +333,12 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the device capabilities to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&Capabilities, sizeof(TMC_Capabilities_t));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 void ProcessSentMessage(uint8_t* const Data, const uint8_t Length)
