@@ -247,13 +247,13 @@ ISR(TIMER1_OVF_vect, ISR_BLOCK)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Ignore any requests that aren't directed to the DFU interface */
 	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
 	    (REQTYPE_CLASS | REQREC_INTERFACE))
 	{
-		return;
+		return 0;
 	}
 
 	/* Activity - toggle indicator LEDs */
@@ -283,7 +283,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				while (!(Endpoint_IsOUTReceived()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0;
 				}
 
 				/* First byte of the data stage is the DNLOAD request's command */
@@ -415,6 +415,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			Endpoint_ClearOUT();
 
 			Endpoint_ClearStatusStage();
+			return 1;
 
 			break;
 		case DFU_REQ_UPLOAD:
@@ -423,7 +424,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			while (!(Endpoint_IsINReady()))
 			{
 				if (USB_DeviceState == DEVICE_STATE_Unattached)
-				  return;
+				  return 0;
 			}
 
 			if (DFU_State != dfuUPLOAD_IDLE)
@@ -515,6 +516,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			Endpoint_ClearIN();
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 		case DFU_REQ_GETSTATUS:
 			Endpoint_ClearSETUP();
@@ -522,7 +524,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			while (!(Endpoint_IsINReady()))
 			{
 				if (USB_DeviceState == DEVICE_STATE_Unattached)
-				  return;
+				  return 0;
 			}
 
 			/* Write 8-bit status value */
@@ -541,6 +543,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			Endpoint_ClearIN();
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 		case DFU_REQ_CLRSTATUS:
 			Endpoint_ClearSETUP();
@@ -549,6 +552,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			DFU_Status = OK;
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 		case DFU_REQ_GETSTATE:
 			Endpoint_ClearSETUP();
@@ -556,7 +560,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			while (!(Endpoint_IsINReady()))
 			{
 				if (USB_DeviceState == DEVICE_STATE_Unattached)
-				  return;
+				  return 0;
 			}
 
 			/* Write the current device state to the endpoint */
@@ -565,6 +569,7 @@ void EVENT_USB_Device_ControlRequest(void)
 			Endpoint_ClearIN();
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 		case DFU_REQ_ABORT:
 			Endpoint_ClearSETUP();
@@ -573,8 +578,10 @@ void EVENT_USB_Device_ControlRequest(void)
 			DFU_State = dfuIDLE;
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 	}
+	return 0;
 }
 
 /** Routine to discard the specified number of bytes from the control endpoint stream. This is used to
