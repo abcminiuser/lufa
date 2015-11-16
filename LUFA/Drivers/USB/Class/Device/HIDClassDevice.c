@@ -37,13 +37,13 @@
 #define  __INCLUDE_FROM_HID_DEVICE_C
 #include "HIDClassDevice.h"
 
-void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo)
+int HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if (USB_ControlRequest.wIndex != HIDInterfaceInfo->Config.InterfaceNumber)
-	  return;
+	  return 0;
 
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -74,6 +74,7 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 
 				Endpoint_Write_Control_Stream_LE(ReportData, ReportSize);
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
@@ -91,6 +92,7 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 
 				CALLBACK_HID_Device_ProcessHIDReport(HIDInterfaceInfo, ReportID, ReportType,
 				                                     &ReportData[ReportID ? 1 : 0], ReportSize - (ReportID ? 1 : 0));
+				return 1;
 			}
 
 			break;
@@ -102,6 +104,7 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 				Endpoint_Write_8(HIDInterfaceInfo->State.UsingReportProtocol);
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -112,6 +115,7 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 				Endpoint_ClearStatusStage();
 
 				HIDInterfaceInfo->State.UsingReportProtocol = ((USB_ControlRequest.wValue & 0xFF) != 0x00);
+				return 1;
 			}
 
 			break;
@@ -122,6 +126,7 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 				Endpoint_ClearStatusStage();
 
 				HIDInterfaceInfo->State.IdleCount = ((USB_ControlRequest.wValue & 0xFF00) >> 6);
+				return 1;
 			}
 
 			break;
@@ -133,10 +138,12 @@ void HID_Device_ProcessControlRequest(USB_ClassInfo_HID_Device_t* const HIDInter
 				Endpoint_Write_8(HIDInterfaceInfo->State.IdleCount >> 2);
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool HID_Device_ConfigureEndpoints(USB_ClassInfo_HID_Device_t* const HIDInterfaceInfo)
