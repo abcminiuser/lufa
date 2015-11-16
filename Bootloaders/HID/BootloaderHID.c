@@ -119,13 +119,13 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Ignore any requests that aren't directed to the HID interface */
 	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
 	    (REQTYPE_CLASS | REQREC_INTERFACE))
 	{
-		return;
+		return 0;
 	}
 
 	/* Process HID specific control requests */
@@ -184,7 +184,10 @@ void EVENT_USB_Device_ControlRequest(void)
 			Endpoint_ClearOUT();
 
 			Endpoint_ClearStatusStage();
+			return 1;
 			break;
 	}
+	
+	return 0;
 }
 
