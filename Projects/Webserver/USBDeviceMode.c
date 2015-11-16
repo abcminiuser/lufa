@@ -139,10 +139,16 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	RNDIS_Device_ProcessControlRequest(&Ethernet_RNDIS_Interface_Device);
-	MS_Device_ProcessControlRequest(&Disk_MS_Interface);
+	int request_handled;
+	
+	request_handled = RNDIS_Device_ProcessControlRequest(&Ethernet_RNDIS_Interface_Device);
+	if (!request_handled) {
+		request_handled = MS_Device_ProcessControlRequest(&Disk_MS_Interface);
+	}
+	
+	return request_handled;
 }
 
 /** Mass Storage class driver callback function the reception of SCSI commands from the host, which must be processed.
