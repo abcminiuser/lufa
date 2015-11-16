@@ -182,9 +182,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+	return CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
 }
 
 /** ISR to manage the reception of data from the serial port, placing received bytes into a circular buffer
