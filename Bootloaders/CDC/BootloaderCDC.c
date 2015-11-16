@@ -219,13 +219,13 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Ignore any requests that aren't directed to the CDC interface */
 	if ((USB_ControlRequest.bmRequestType & (CONTROL_REQTYPE_TYPE | CONTROL_REQTYPE_RECIPIENT)) !=
 	    (REQTYPE_CLASS | REQREC_INTERFACE))
 	{
-		return;
+		return 0;
 	}
 
 	/* Activity - toggle indicator LEDs */
@@ -242,6 +242,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the line coding data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
@@ -253,6 +254,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Read the line coding data in from the host into the global struct */
 				Endpoint_Read_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearIN();
+				return 1;
 			}
 
 			break;
@@ -261,10 +263,12 @@ void EVENT_USB_Device_ControlRequest(void)
 	        {
 	            Endpoint_ClearSETUP();
 	            Endpoint_ClearStatusStage();
+	            return 1;
 	        }
 
 	        break;
 	}
+	return 0;
 }
 
 #if !defined(NO_BLOCK_SUPPORT)
