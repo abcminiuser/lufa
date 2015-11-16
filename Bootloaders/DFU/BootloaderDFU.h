@@ -198,7 +198,7 @@
 		static void SetupHardware(void);
 		static void ResetHardware(void);
 
-		void EVENT_USB_Device_ControlRequest(void);
+		int EVENT_USB_Device_ControlRequest(void);
 
 		#if defined(INCLUDE_FROM_BOOTLOADER_C)
 			static void DiscardFillerBytes(uint8_t NumberOfBytes);
