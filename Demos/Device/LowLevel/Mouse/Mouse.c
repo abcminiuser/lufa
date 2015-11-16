@@ -141,7 +141,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Handle HID Class specific requests */
 	switch (USB_ControlRequest.bRequest)
@@ -162,6 +162,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Clear the report data afterwards */
 				memset(&MouseReportData, 0, sizeof(MouseReportData));
+				return 1;
 			}
 
 			break;
@@ -175,6 +176,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -186,6 +188,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Set or clear the flag depending on what the host indicates that the current Protocol should be */
 				UsingReportProtocol = (USB_ControlRequest.wValue != 0);
+				return 1;
 			}
 
 			break;
@@ -197,6 +200,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Get idle period in MSB, must multiply by 4 to get the duration in milliseconds */
 				IdleCount = ((USB_ControlRequest.wValue & 0xFF00) >> 6);
+				return 1;
 			}
 
 			break;
@@ -210,10 +214,12 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Event handler for the USB device Start Of Frame event. */
