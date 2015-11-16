@@ -118,7 +118,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Handle HID Class specific requests */
 	switch (USB_ControlRequest.bRequest)
@@ -136,10 +136,12 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the report data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&JoystickReportData, sizeof(JoystickReportData));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Fills the given HID report data structure with the next HID report to send to the host.
