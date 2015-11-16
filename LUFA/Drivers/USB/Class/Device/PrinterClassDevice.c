@@ -37,13 +37,13 @@
 #define  __INCLUDE_FROM_PRINTER_DEVICE_C
 #include "PrinterClassDevice.h"
 
-void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTInterfaceInfo)
+int PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if (USB_ControlRequest.wIndex != PRNTInterfaceInfo->Config.InterfaceNumber)
-	  return;
+	  return 0;
 
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -55,13 +55,14 @@ void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTIn
 				while (!(Endpoint_IsINReady()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0;
 				}
 
 				uint16_t IEEEStringLen = strlen(PRNTInterfaceInfo->Config.IEEE1284String);
 				Endpoint_Write_16_BE(IEEEStringLen);
 				Endpoint_Write_Control_Stream_LE(PRNTInterfaceInfo->Config.IEEE1284String, IEEEStringLen);
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -73,11 +74,12 @@ void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTIn
 				while (!(Endpoint_IsINReady()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0;
 				}
 
 				Endpoint_Write_8(PRNTInterfaceInfo->State.PortStatus);
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -90,10 +92,12 @@ void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTIn
 				PRNTInterfaceInfo->State.IsPrinterReset = true;
 
 				EVENT_PRNT_Device_SoftReset(PRNTInterfaceInfo);
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool PRNT_Device_ConfigureEndpoints(USB_ClassInfo_PRNT_Device_t* const PRNTInterfaceInfo)
