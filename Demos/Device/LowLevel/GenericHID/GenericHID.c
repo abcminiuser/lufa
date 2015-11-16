@@ -118,7 +118,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Handle HID Class specific requests */
 	switch (USB_ControlRequest.bRequest)
@@ -135,7 +135,8 @@ void EVENT_USB_Device_ControlRequest(void)
 				Endpoint_Write_Control_Stream_LE(&GenericData, sizeof(GenericData));
 				Endpoint_ClearOUT();
 			}
-
+			
+			return 1;
 			break;
 		case HID_REQ_SetReport:
 			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
@@ -151,8 +152,10 @@ void EVENT_USB_Device_ControlRequest(void)
 				ProcessGenericHIDReport(GenericData);
 			}
 
+			return 1;
 			break;
 	}
+	return 0;
 }
 
 /** Function to process the last received report from the host.
