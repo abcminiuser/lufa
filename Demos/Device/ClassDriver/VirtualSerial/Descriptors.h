@@ -37,9 +37,12 @@
 #define _DESCRIPTORS_H_
 
 	/* Includes: */
-		#include <avr/pgmspace.h>
-
 		#include <LUFA/Drivers/USB/USB.h>
+		#include <LUFA/Platform/Platform.h>
+
+#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA))
+		#include <avr/pgmspace.h>
+#endif
 
 	/* Macros: */
 		/** Endpoint address of the CDC device-to-host notification IN endpoint. */

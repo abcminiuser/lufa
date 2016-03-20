@@ -1,0 +1,50 @@
+#
+#             LUFA Library
+#     Copyright (C) Dean Camera, 2014.
+#
+#  dean [at] fourwalledcubicle [dot] com
+#           www.lufa-lib.org
+#
+# --------------------------------------
+#         LUFA Project Makefile.
+# --------------------------------------
+
+# Run "make help" for target help.
+
+MCU          = at32uc3b0256
+ARCH         = UC3
+BOARD        = EVK1101
+F_CPU        = 12000000
+F_USB        = 48000000
+OPTIMIZATION = 2
+TARGET       = VirtualSerial
+SRC          = $(TARGET).c Descriptors.c \
+	       $(LUFA_SRC_USB) \
+               $(LUFA_SRC_USBCLASS) \
+	       $(LUFA_SRC_PLATFORM)
+LUFA_PATH    = ../../../../LUFA
+CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
+
+# Specific to the EVK1101
+# Allows to run with DFU
+LD_FLAGS     = -Wl,--section-start,.reset=0x80002000
+OBJCPY_FLAGS = --change-section-address .reset=0x80002000
+
+# Specific to the big endian platforms
+# Allows to create UTF-16LE string descriptors
+Descriptors.o : CC_FLAGS+=-fshort-wchar -fwide-exec-charset=UTF-16LE
+
+# Default target
+all:
+
+# Include LUFA build script makefiles
+include $(LUFA_PATH)/Build/lufa_core.mk
+include $(LUFA_PATH)/Build/lufa_sources.mk
+include $(LUFA_PATH)/Build/lufa_build.mk
+include $(LUFA_PATH)/Build/lufa_cppcheck.mk
+include $(LUFA_PATH)/Build/lufa_doxygen.mk
+include $(LUFA_PATH)/Build/lufa_dfu.mk
+include $(LUFA_PATH)/Build/lufa_hid.mk
+include $(LUFA_PATH)/Build/lufa_avrdude.mk
+include $(LUFA_PATH)/Build/lufa_atprogram.mk
+

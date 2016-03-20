@@ -69,8 +69,8 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.Endpoint0Size          = FIXED_CONTROL_ENDPOINT_SIZE,
 
-	.VendorID               = 0x03EB,
-	.ProductID              = 0x2061,
+	.VendorID               = CPU_TO_LE16(0x03EB),
+	.ProductID              = CPU_TO_LE16(0x2061),
 	.ReleaseNumber          = VERSION_BCD(0,0,1),
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
@@ -91,7 +91,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                 = {.Size = sizeof(USB_Descriptor_Configuration_Header_t), .Type = DTYPE_Configuration},
 
-			.TotalConfigurationSize = sizeof(USB_Descriptor_Configuration_t),
+			.TotalConfigurationSize = CPU_TO_LE16(sizeof(USB_Descriptor_Configuration_t)),
 			.TotalInterfaces        = 2,
 
 			.ConfigurationNumber    = 1,
@@ -124,7 +124,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = MASS_STORAGE_IN_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = MASS_STORAGE_IO_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(MASS_STORAGE_IO_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 
@@ -134,7 +134,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = MASS_STORAGE_OUT_EPADDR,
 			.Attributes             = (EP_TYPE_BULK | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = MASS_STORAGE_IO_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(MASS_STORAGE_IO_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 
@@ -162,7 +162,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 			.CountryCode            = 0x00,
 			.TotalReportDescriptors = 1,
 			.HIDReportType          = HID_DTYPE_Report,
-			.HIDReportLength        = sizeof(KeyboardReport)
+			.HIDReportLength        = CPU_TO_LE16(sizeof(KeyboardReport))
 		},
 
 	.HID_ReportINEndpoint =
@@ -171,7 +171,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 			.EndpointAddress        = KEYBOARD_EPADDR,
 			.Attributes             = (EP_TYPE_INTERRUPT | ENDPOINT_ATTR_NO_SYNC | ENDPOINT_USAGE_DATA),
-			.EndpointSize           = KEYBOARD_EPSIZE,
+			.EndpointSize           = CPU_TO_LE16(KEYBOARD_EPSIZE),
 			.PollingIntervalMS      = 0x05
 		},
 };
