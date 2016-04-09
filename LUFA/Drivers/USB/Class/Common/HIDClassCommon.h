@@ -582,7 +582,15 @@
 			HID_DTYPE_Report        = 0x22, /**< Descriptor header type value, to indicate a HID class HID report descriptor. */
 		};
 
-		/** Enum for the different types of HID reports. */
+		/** Enum for the different types of HID report requests. */
+		enum HID_ReportRequestTypes_t
+		{
+			HID_REPORT_REQUEST_In      = 1, /**< Indicates that the request is an IN report type. */
+			HID_REPORT_REQUEST_Out     = 2, /**< Indicates that the request is an OUT report type. */
+			HID_REPORT_REQUEST_Feature = 3, /**< Indicates that the request is a FEATURE report type. */
+		};
+
+		/** Enum for the different types of HID report items. */
 		enum HID_ReportItemTypes_t
 		{
 			HID_REPORT_ITEM_In      = 0, /**< Indicates that the item is an IN report type. */
