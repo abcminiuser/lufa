@@ -298,6 +298,77 @@ int hard_reboot(void)
 #endif
 
 
+#if defined(USE_HIDAPI)
+
+// http://www.signal11.us/oss/hidapi/
+#include <hidapi.h>
+
+static hid_device* hidapi_device = NULL;
+
+int teensy_open(void)
+{
+    hid_init();
+    hidapi_device = hid_open(0x16C0, 0x0478, NULL);
+
+    if(!hidapi_device){
+        hidapi_device = hid_open(0x03eb, 0x2067, NULL);
+    }
+
+    if (!hidapi_device) return 0;
+    return 1;
+}
+
+int teensy_write(void *buf, int len, double timeout)
+{
+    if (!hidapi_device) return 0;
+
+    // Add report ID (0)
+    uint8_t newbuf[len + 1];
+    newbuf[0] = 0x00;
+    memcpy(newbuf + 1, buf, len);
+
+    int r = hid_write(hidapi_device, newbuf, len + 1);
+    //int r = hid_send_feature_report(hidapi_device, newbuf, len + 1);
+
+    if (r < 0) return 0;
+    return 1;
+}
+
+int teensy_read(void *buf, int len)
+{
+    if (!hidapi_device) return 0;
+
+    // Add report ID (0)
+    uint8_t newbuf[len + 1];
+    newbuf[0] = 0x00;
+
+    int r = hid_get_feature_report(hidapi_device, newbuf, len + 1);
+    memcpy(buf, newbuf + 1, len);
+
+    if (r < 0) return 0;
+    return 1;
+}
+
+void teensy_close(void)
+{
+    if (!hidapi_device) return;
+    hid_close (hidapi_device);
+    hidapi_device = NULL;
+    hid_exit();
+}
+
+int hard_reboot(void)
+{
+    if (!teensy_open()) return 0;
+	int r = teensy_write("reboot", 6, 1);
+    teensy_close();
+    if (r < 0) return 0;
+    return 1;
+}
+
+#endif
+
+
 /****************************************************************/
 /*                                                              */
 /*               USB Access - Microsoft WIN32                   */
