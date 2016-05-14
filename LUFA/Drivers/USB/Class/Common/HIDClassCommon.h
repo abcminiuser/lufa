@@ -713,27 +713,36 @@
 			uint16_t wDescriptorLength; /**< Length of the associated HID report descriptor, in bytes. */
 		} ATTR_PACKED USB_HID_StdDescriptor_HID_t;
 
-		typedef struct{
-		  uint8_t bNumber;
+		#define USB_HID_DESCRIPTOR_PHYSICAL_SET_SIZE(bLength) \
+			(1 + (bLength * 2))
 
-		  uint16_t bLength;
+		#define USB_HID_DESCRIPTOR_PHYSICAL(bLength) \
+			struct{ \
+				uint8_t bPhysicalInfo; \
+				USB_HID_Physical_Data_t dPhysical[bLength]; \
+			} ATTR_PACKED
+
+		typedef struct{
+			uint8_t bNumber;
+
+			uint16_t bLength;
 		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_Header_t;
 
 		typedef struct{
-      uint8_t bDesignator;
-      uint8_t bFlags;
-    } ATTR_PACKED USB_HID_Physical_Data_t;
+			uint8_t bDesignator;
+			uint8_t bFlags;
+		} ATTR_PACKED USB_HID_Physical_Data_t;
 
 		typedef struct{
-		  uint8_t bPhysicalInfo;
+			uint8_t bPhysicalInfo;
 
-		  const USB_HID_Physical_Data_t *dPhysical;
+			const USB_HID_Physical_Data_t dPhysical[];
 		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_t;
 
 		typedef struct{
-		  USB_HID_Descriptor_Physical_Set_Header_t Header;
+			USB_HID_Descriptor_Physical_Set_Header_t Header;
 
-		  const USB_HID_Descriptor_Physical_Set_t *Sets;
+			const USB_HID_Descriptor_Physical_Set_t *Sets;
 		} ATTR_PACKED USB_HID_Descriptor_Physical_t;
 
 		/** \brief Standard HID Boot Protocol Mouse Report.
