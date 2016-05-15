@@ -770,36 +770,44 @@
 			uint16_t wDescriptorLength; /**< Length of the associated HID report descriptor, in bytes. */
 		} ATTR_PACKED USB_HID_StdDescriptor_HID_t;
 
+		/** Macro for calculating the size in bytes of the physical descriptor set */
 		#define USB_HID_DESCRIPTOR_PHYSICAL_SET_SIZE(bLength) \
 			(1 + (bLength * 2))
 
+		/** Macro for creating a physical descriptor set. Since the size is unknown by the LUFA */
 		#define USB_HID_DESCRIPTOR_PHYSICAL(bLength) \
 			struct{ \
 				uint8_t bPhysicalInfo; \
 				USB_HID_Physical_Data_t dPhysical[bLength]; \
 			} ATTR_PACKED
 
+		/** \brief HID class-specific Physical Descriptor Header.
+		 * The physical descriptor head declares the number and length of any physical descriptor sets defined
+		 */
 		typedef struct{
-			uint8_t bNumber;
+			uint8_t bNumber; /**< Number of Physical Descriptor Sets */
 
-			uint16_t bLength;
+			uint16_t bLength; /**< Number of designators per Physical Descriptor Set */
 		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_Header_t;
 
+		/** \brief HID class-specific Physical Designator. */
 		typedef struct{
-			uint8_t bDesignator;
-			uint8_t bFlags;
+			uint8_t bDesignator; /**< \see \ref HID_PhysicalDesignator_t */
+			uint8_t bFlags; /**< The \see \ref HID_PhysicalQualifier_t for the designator and Effort */
 		} ATTR_PACKED USB_HID_Physical_Data_t;
 
+		/** \brief HID class-specific HID Physical Descriptor Set */
 		typedef struct{
-			uint8_t bPhysicalInfo;
+			uint8_t bPhysicalInfo; /**< The \see \ref HID_PhysicalBias_t and the preference */
 
-			const USB_HID_Physical_Data_t dPhysical[];
+			const USB_HID_Physical_Data_t dPhysical[]; /**< An array of \see \ref USB_HID_Physical_Data_t */
 		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_t;
 
+		/** \brief HID class-specific HID Physical Descriptor. */
 		typedef struct{
-			USB_HID_Descriptor_Physical_Set_Header_t Header;
+			USB_HID_Descriptor_Physical_Set_Header_t Header; /**< The Physical Descriptor Header at Index 0 */
 
-			const USB_HID_Descriptor_Physical_Set_t *Sets;
+			const USB_HID_Descriptor_Physical_Set_t *Sets; /**< Pointer to all the Physical Descriptor Sets */
 		} ATTR_PACKED USB_HID_Descriptor_Physical_t;
 
 		/** \brief Standard HID Boot Protocol Mouse Report.

@@ -84,8 +84,10 @@
 		/** Size in bytes of the Joystick HID reporting IN endpoint. */
 		#define JOYSTICK_EPSIZE              8
 
+		/** Number of Designators in the Physical Descriptor. */
 		#define PHYSICAL_DESIGNATORS 2
 
+		/** Number of Physical Descriptor Sets. */
 		#define PHYSICAL_DESIGNATOR_SETS 2
 
 	/* Function Prototypes: */
