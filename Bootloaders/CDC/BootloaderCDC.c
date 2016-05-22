@@ -102,14 +102,16 @@ void Application_Jump_Check(void)
 		}
 
 		/* On a power-on reset, we ALWAYS want to go to the sketch if there is one. */
-		else if ((mcusr_state & (1 << PORF))) {
+		else if (mcusr_state & (1 << PORF)) {
 			JumpToApplication = true;
 		}
 
 		/* On a watchdog reset, if the bootKey isn't set, and there's a sketch, we should just
 		 * go straight to the sketch. */
-		else if ((mcusr_state & (1 << WDRF)) && (MagicBootKey != MAGIC_BOOT_KEY)) {
-			JumpToApplication = true;
+		else if (mcusr_state & (1 << WDRF)) {
+			if(MagicBootKey != MAGIC_BOOT_KEY){
+				JumpToApplication = true;
+			}
 		}
 	#elif ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
 		/* Disable JTAG debugging */
