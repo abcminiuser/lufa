@@ -113,7 +113,7 @@ void Application_Jump_Check(void)
 		else
 		{
 			/* If the reset source was the bootloader and the key is correct, jump to the application;
-			 * this can happen in the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
+			 * this can happen if the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
 			if ((mcusr_state & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 				JumpToApplication = true;
 		}
@@ -125,7 +125,7 @@ void Application_Jump_Check(void)
 		/* Clear the boot key and jump to the user application */
 		MagicBootKey = 0;
 
-		// cppcheck-suppress constStatement
+		/* cppcheck-suppress constStatement */
 		((void (*)(void))0x0000)();
 	}
 }
