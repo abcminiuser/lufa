@@ -80,15 +80,37 @@ void Application_Jump_Check(void)
 	bool JumpToApplication = false;
 
 	#if (BOARD == BOARD_LEONARDO)
-		/* Enable pull-up on the IO13 pin so we can use it to select the mode */
-		PORTC |= (1 << 7);
-		Delay_MS(10);
+		/* First case: external reset, bootKey NOT in memory. We'll put the bootKey in memory, then spin
+		 * our wheels for about 1000ms, then proceed to the sketch, if there is one. If, during that 1000ms,
+		 * another external reset occurs, on the next pass through this decision tree, execution will fall
+		 * through to the bootloader. */
+		if ((mcusr_state & (1 << EXTRF))) {
+			if (MagicBootKey != MAGIC_BOOT_KEY)
+			{
+				/* Set Bootkey and give the user a few ms to repress and enter bootloader mode */
+				MagicBootKey = MAGIC_BOOT_KEY;
 
-		/* If IO13 is not jumpered to ground, start the user application instead */
-		JumpToApplication = ((PINC & (1 << 7)) != 0);
+				/* Wait for a possible double tab */
+				_delay_ms(1000);
 
-		/* Disable pull-up after the check has completed */
-		PORTC &= ~(1 << 7);
+				/* User was too slow/normal reset, start sketch now */
+				MagicBootKey = 0;
+
+				/* Single rab reset, start sketch */
+				JumpToApplication = true;
+			}
+		}
+
+		/* On a power-on reset, we ALWAYS want to go to the sketch if there is one. */
+		else if ((mcusr_state & (1 << PORF))) {
+			JumpToApplication = true;
+		}
+
+		/* On a watchdog reset, if the bootKey isn't set, and there's a sketch, we should just
+		 * go straight to the sketch. */
+		else if ((mcusr_state & (1 << WDRF)) && (MagicBootKey != MAGIC_BOOT_KEY)) {
+			JumpToApplication = true;
+		}
 	#elif ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
 		/* Disable JTAG debugging */
 		JTAG_DISABLE();
@@ -157,8 +179,10 @@ int main(void)
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
 	USB_Detach();
 
-	/* Unlock the forced application start mode of the bootloader if it is restarted */
-	MagicBootKey = MAGIC_BOOT_KEY;
+	#if (BOARD != BOARD_LEONARDO)
+		/* Unlock the forced application start mode of the bootloader if it is restarted */
+		MagicBootKey = MAGIC_BOOT_KEY;
+	#endif
 
 	/* Enable the watchdog and force a timeout to reset the AVR */
 	wdt_enable(WDTO_250MS);
