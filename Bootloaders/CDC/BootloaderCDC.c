@@ -70,6 +70,11 @@ uint16_t MagicBootKey ATTR_NO_INIT;
  */
 void Application_Jump_Check(void)
 {
+	/* Turn off the watchdog */
+	uint8_t mcusr_state = MCUSR;
+	MCUSR = 0;
+	wdt_disable();
+
 	bool JumpToApplication = false;
 
 	#if (BOARD == BOARD_LEONARDO)
@@ -99,22 +104,16 @@ void Application_Jump_Check(void)
 		/* Check if the device's BOOTRST fuse is set */
 		if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
 		{
-			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
-			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
+			/* If the reset source was not an external reset or the key is correct, jump to the application */
+			if (!(mcusr_state & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
 			  JumpToApplication = true;
-
-			/* Clear reset source */
-			MCUSR &= ~(1 << EXTRF);
 		}
 		else
 		{
-			/* If the reset source was the bootloader and the key is correct, clear it and jump to the application;
+			/* If the reset source was the bootloader and the key is correct, jump to the application;
 			 * this can happen in the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
-			if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
+			if ((mcusr_state & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 				JumpToApplication = true;
-
-			/* Clear reset source */
-			MCUSR &= ~(1 << WDRF);
 		}
 	#endif
 
@@ -124,10 +123,6 @@ void Application_Jump_Check(void)
 	/* If a request has been made to jump to the user application, honor it */
 	if (JumpToApplication && ApplicationValid)
 	{
-		/* Turn off the watchdog */
-		MCUSR &= ~(1 << WDRF);
-		wdt_disable();
-
 		/* Clear the boot key and jump to the user application */
 		MagicBootKey = 0;
 
@@ -175,10 +170,6 @@ int main(void)
 /** Configures all hardware required for the bootloader. */
 static void SetupHardware(void)
 {
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
-
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
 
