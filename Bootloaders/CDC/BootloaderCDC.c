@@ -74,6 +74,9 @@ void Application_Jump_Check(void)
 	MCUSR = 0;
 	wdt_disable();
 
+	/* Don't run the user application if the reset vector is blank (no app loaded) */
+	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
+
 	bool JumpToApplication = false;
 
 	#if (BOARD == BOARD_LEONARDO)
@@ -116,11 +119,8 @@ void Application_Jump_Check(void)
 		}
 	#endif
 
-	/* Don't run the user application if the reset vector is blank (no app loaded) */
-	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
-
 	/* If a request has been made to jump to the user application, honor it */
-	if (JumpToApplication && ApplicationValid)
+	if (ApplicationValid && JumpToApplication)
 	{
 		/* Clear the boot key and jump to the user application */
 		MagicBootKey = 0;
