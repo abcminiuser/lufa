@@ -63,7 +63,7 @@ const uint8_t PROGMEM WebUSBAllowedOrigins[] = {
 const uint8_t PROGMEM BOSDescriptor[] =
 {
 	BOS_DESCRIPTOR(2, // 2 capability descriptors in use
-		WEBUSB_CAPABILITY_DESCRIPTOR(WEBUSB_ID, 1), // Vendor request ID, URL ID to take the user to
+		WEBUSB_CAPABILITY_DESCRIPTOR(WEBUSB_ID, URL_ID_Config), // Vendor request ID, URL ID to take the user to
 		// Required to force WinUSB driver for driverless WebUSB compatibility
 		MS_OS_20_CAPABILITY_DESCRIPTOR(MS_OS_ID, sizeof(MS_OS_Descriptor)) // Vendor request ID, Descriptor set length
 	)

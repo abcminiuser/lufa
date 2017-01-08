@@ -795,16 +795,6 @@
 			{
 				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
 
-				uint16_t TotalLength; /**< Length of this descriptor and all of its sub descriptors. */
-				uint8_t TotalCapabilityDescriptors; /**< The number of separate device capability descriptors in the BOS. */
-				
-				uint8_t DeviceCapabilities[];
-			} ATTR_PACKED USB_Descriptor_BOS_t;
-			
-			typedef struct
-			{
-				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
-
 				uint8_t Scheme; /**< URL Scheme. */
 				
 				uint8_t URL[];
