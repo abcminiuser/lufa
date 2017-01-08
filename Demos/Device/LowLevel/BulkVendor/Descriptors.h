@@ -86,11 +86,19 @@
 			STRING_ID_Product      = 2, /**< Product string ID */
 		};
 
+		enum URLDescriptors_t
+		{
+			URL_ID_Localhost  = 1,
+			URL_ID_Config = 2,
+		};
+
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 		                                    const uint16_t wIndex,
 		                                    const void** const DescriptorAddress)
 		                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
+
+		void USB_Process_BOS(void);
 
 #endif
 
