@@ -58,6 +58,11 @@ void Application_Jump_Check(void)
 	/* If the reset source was the bootloader and the key is correct, clear it and jump to the application */
 	if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 	{
+		/* Turn off the watchdog */
+		MCUSR &= ~(1 << WDRF);
+		wdt_disable();
+
+		/* Clear the boot key and jump to the user application */
 		MagicBootKey = 0;
 
 		// cppcheck-suppress constStatement
@@ -97,6 +102,9 @@ static void SetupHardware(void)
 	/* Disable watchdog if enabled by bootloader/fuses */
 	MCUSR &= ~(1 << WDRF);
 	wdt_disable();
+
+	/* Disable clock division */
+	clock_prescale_set(clock_div_1);
 
 	/* Relocate the interrupt vector table to the bootloader section */
 	MCUCR = (1 << IVCE);
@@ -138,14 +146,14 @@ void EVENT_USB_Device_ControlRequest(void)
 			while (!(Endpoint_IsOUTReceived()));
 
 			/* Read in the write destination address */
-			#if (FLASHEND > 0xFFFF)
+			#if (FLASHEND > USHRT_MAX)
 			uint32_t PageAddress = ((uint32_t)Endpoint_Read_16_LE() << 8);
 			#else
 			uint16_t PageAddress = Endpoint_Read_16_LE();
 			#endif
 
 			/* Check if the command is a program page command, or a start application command */
-			#if (FLASHEND > 0xFFFF)
+			#if (FLASHEND > USHRT_MAX)
 			if ((uint16_t)(PageAddress >> 8) == COMMAND_STARTAPPLICATION)
 			#else
 			if (PageAddress == COMMAND_STARTAPPLICATION)
@@ -153,7 +161,8 @@ void EVENT_USB_Device_ControlRequest(void)
 			{
 				RunBootloader = false;
 			}
-			else
+			// Do not overwrite the bootloader or write out of bounds
+			else if (PageAddress < BOOT_START_ADDR)
 			{
 				/* Erase the given FLASH page, ready to be programmed */
 				boot_page_erase(PageAddress);
