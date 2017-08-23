@@ -225,18 +225,18 @@
 			enum USB_DeviceCapabilityTypes_t
 			{
 				/* Commented out types are not implemented. */
-				/* DCTYPE_WirelessUSB              = 0x01, /**< Defines the set of Wireless USB-specific device level capabilities. */
-				/* DCTYPE_USB_2_0_Extension        = 0x02, /**< USB 2.0 Extension Descriptor. */
-				/* DCTYPE_SuperSpeedUSB            = 0x03, /**< Defines the set of SuperSpeed USB specific device level capabilities. */
-				/* DCTYPE_ContainerID              = 0x04, /**< Defines the instance unique ID used to identify the instance across all operating modes. */
+				/* DCTYPE_WirelessUSB              = 0x01, */ /**< Defines the set of Wireless USB-specific device level capabilities. */
+				/* DCTYPE_USB_2_0_Extension        = 0x02, */ /**< USB 2.0 Extension Descriptor. */
+				/* DCTYPE_SuperSpeedUSB            = 0x03, */ /**< Defines the set of SuperSpeed USB specific device level capabilities. */
+				/* DCTYPE_ContainerID              = 0x04, */ /**< Defines the instance unique ID used to identify the instance across all operating modes. */
 				DCTYPE_Platform                 = 0x05, /**< Defines a device capability specific to a particular platform/operating system. */
-				/* DCTYPE_PowerDelivery            = 0x06, /**< Defines the various PD Capabilities of this device. */
-				/* DCTYPE_BatteryInfo              = 0x07, /**< Provides information on each battery supported by the device. */
-				/* DCTYPE_PD_ConsumerPort          = 0x08, /**< The consumer characteristics of a port on the device. */
-				/* DCTYPE_PD_ProviderPort          = 0x09, /**< The provider characteristics of a port on the device. */
-				/* DCTYPE_SuperSpeedPlus           = 0x0A, /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
-				/* DCTYPE_PrecisionTimeMeasurement = 0x0B, /**< Precision Time Measurement (PTM) Capability Descriptor. */
-				/* DCTYPE_WirelessUSBExt           = 0x0C, /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
+				/* DCTYPE_PowerDelivery            = 0x06, */ /**< Defines the various PD Capabilities of this device. */
+				/* DCTYPE_BatteryInfo              = 0x07, */ /**< Provides information on each battery supported by the device. */
+				/* DCTYPE_PD_ConsumerPort          = 0x08, */ /**< The consumer characteristics of a port on the device. */
+				/* DCTYPE_PD_ProviderPort          = 0x09, */ /**< The provider characteristics of a port on the device. */
+				/* DCTYPE_SuperSpeedPlus           = 0x0A, */ /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
+				/* DCTYPE_PrecisionTimeMeasurement = 0x0B, */ /**< Precision Time Measurement (PTM) Capability Descriptor. */
+				/* DCTYPE_WirelessUSBExt           = 0x0C, */ /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
 			};
 
 			/** Enum for possible Class, Subclass and Protocol values of device and interface descriptors. */
