@@ -479,7 +479,7 @@
 
 				uint16_t TotalLength; /**< Length of this descriptor and all of its sub descriptors. */
 				uint8_t NumberOfDeviceCapabilityDescriptors; /**< The number of separate device capability descriptors in the BOS. */
-			} ATTR_PACKED USB_Descriptor_BOS_t;
+			} ATTR_PACKED USB_Descriptor_BOS_Header_t;
 
 			/** \brief Standard USB Binary Object Store (BOS) Descriptor (USB-IF naming conventions).
 			 *
@@ -498,14 +498,52 @@
 				                           */
 				uint16_t wTotalLength; /**< Length of this descriptor and all of its sub descriptors. */
 				uint8_t  bNumDeviceCaps; /**< The number of separate device capability descriptors in the BOS. */
-			} ATTR_PACKED USB_StdDescriptor_BOS_t;
+			} ATTR_PACKED USB_StdDescriptor_BOS_Header_t;
+
+			/** \brief Standard USB Device Capability Descriptor (LUFA naming conventions).
+			 *
+			 *  Type define for a standard Device Capability Descriptor. This structure uses LUFA-specific element names
+			 *  to make each element's purpose clearer.
+			 *
+			 *  \see \ref USB_StdDescriptor_DeviceCapability_t for the version of this type with standard element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
+
+				uint8_t DeviceCapability; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
+				uint8_t Capability_Dependent[]; /**< This is a variable-length field containing data associated with the
+													   *   specific capability. This field may be zero bytes in length.
+													   */
+			} ATTR_PACKED USB_Descriptor_DeviceCapability_t;
+
+			/** \brief Standard USB Device Capability Descriptor (USB-IF naming conventions).
+			 *
+			 *  Type define for a standard Device Capability Descriptor. This structure uses the relevant standard's given element names
+			 *  to ensure compatibility with the standard.
+			 *
+			 *  \see \ref USB_Descriptor_DeviceCapability_t for the version of this type with non-standard LUFA specific element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				uint8_t bLength; /**< Size of the descriptor, in bytes. */
+				uint8_t bDescriptorType; /**< Type of the descriptor: \ref USB_DescriptorTypes_t DTYPE_DeviceCapability */
+				uint8_t bDevCapabilityType; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
+				uint8_t Capability_Dependent[]; /**< This is a variable-length field containing data associated with the
+													   *   specific capability. This field may be zero bytes in length.
+													   */
+			} ATTR_PACKED USB_StdDescriptor_DeviceCapability_t;
 
 			/** \brief Standard USB Device Capability Platform Descriptor (LUFA naming conventions).
 			 *
 			 *  Type define for a standard Device Capability Platform Descriptor. This structure uses LUFA-specific element names
 			 *  to make each element's purpose clearer.
 			 *
-			 *  \see \ref USB_StdDeviceCapabilityDescriptor_Platform_t for the version of this type with standard element names.
+			 *  \see \ref USB_StdDescriptor_DeviceCapability_Platform_t for the version of this type with standard element names.
 			 *
 			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
 			 */
@@ -521,14 +559,14 @@
 				uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
 										   *   specific capability. This field may be zero bytes in length.
 										   */
-			} ATTR_PACKED USB_DeviceCapabilityDescriptor_Platform_t;
+			} ATTR_PACKED USB_Descriptor_DeviceCapability_Platform_t;
 
 			/** \brief Standard USB Device Capability Platform Descriptor (USB-IF naming conventions).
 			 *
-			 *  Type define for a standard BOS Descriptor. This structure uses the relevant standard's given element names
+			 *  Type define for a standard Device Capability Platform Descriptor. This structure uses the relevant standard's given element names
 			 *  to ensure compatibility with the standard.
 			 *
-			 *  \see \ref USB_DeviceCapabilityDescriptor_Platform_t for the version of this type with non-standard LUFA specific element names.
+			 *  \see \ref USB_Descriptor_DeviceCapability_Platform_t for the version of this type with non-standard LUFA specific element names.
 			 *
 			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
 			 */
@@ -544,7 +582,7 @@
 				uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
  										   *   specific capability. This field may be zero bytes in length.
 										   */
-			} ATTR_PACKED USB_StdDeviceCapabilityDescriptor_Platform_t;
+			} ATTR_PACKED USB_StdDescriptor_DeviceCapability_Platform_t;
 
 			/** \brief Standard USB Configuration Descriptor (LUFA naming conventions).
 			 *
