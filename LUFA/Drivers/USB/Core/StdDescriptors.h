@@ -525,11 +525,11 @@
 					uint8_t DeviceCapability; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
 					uint8_t Reserved; /**< This field is reserved and shall be set to zero. */
 					uint8_t PlatformUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
-														   *   specific capability of the device.
-														   */
+											   *   specific capability of the device.
+											   */
 					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
-														   *   specific capability. This field may be zero bytes in length.
-														   */
+											   *   specific capability. This field may be zero bytes in length.
+											   */
 				} ATTR_PACKED USB_Descriptor_DeviceCapability_Platform_t;
 
 				/** \brief Standard USB Device Capability Platform Descriptor (USB-IF naming conventions).
@@ -548,11 +548,11 @@
 					uint8_t bDevCapabilityType; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
 					uint8_t bReserved; /**< This field is reserved and shall be set to zero. */
 					uint8_t PlatformCapabilityUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
-																	 *	 specific capability of the device.
-																	 */
+														 *	 specific capability of the device.
+														 */
 					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
-														   *   specific capability. This field may be zero bytes in length.
-														   */
+											   *   specific capability. This field may be zero bytes in length.
+											   */
 				} ATTR_PACKED USB_StdDescriptor_DeviceCapability_Platform_t;
 
 			/** \brief Standard USB Device Capability Descriptor (LUFA naming conventions).
