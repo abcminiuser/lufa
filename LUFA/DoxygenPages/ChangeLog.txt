@@ -6,6 +6,11 @@
 
  /** \page Page_ChangeLog Project Changelog
   *
+  *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  <b>Fixed:</b>
+  *  - Core:
+  *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)
+  *
   *  \section Sec_ChangeLog170418 Version 170418
   *  <b>New:</b>
   *  - Core:
