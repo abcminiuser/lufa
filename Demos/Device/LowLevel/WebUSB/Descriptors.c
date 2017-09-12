@@ -207,24 +207,21 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 			if (BOS_size == 0) {
 				/* The stuff inside this scope should probably be abstracted to a USB_Device_BuildBOSReturnBytes
 				 * function.*/
-				if (BOSDescriptor.BOS_Header.TotalLength > BOSDescriptor.BOS_Header.Header.Size) {
-
-					for (uint8_t i=0; i < BOSDescriptor.BOS_Header.TotalLength; i++) {
-						BOS_bytes[i] = 0;
-					}
-
-					memcpy(BOS_bytes, &BOSDescriptor, BOSDescriptor.BOS_Header.Header.Size);
-
-					uint8_t offset = BOSDescriptor.BOS_Header.Header.Size;
-
-					for (uint8_t i=0; i < BOSDescriptor.BOS_Header.NumberOfDeviceCapabilityDescriptors; i++) {
-						memcpy(BOS_bytes + offset, BOSDescriptor.CapabilityDescriptors[i],
-						       (size_t) BOSDescriptor.CapabilityDescriptors[i]->Header.Size);
-						offset += BOSDescriptor.CapabilityDescriptors[i]->Header.Size;
-					}
-
-					BOS_size = sizeof(BOS_bytes);
+				for (uint8_t i = 0; i < BOSDescriptor.BOS_Header.TotalLength; i++) {
+					BOS_bytes[i] = 0;
 				}
+
+				memcpy(BOS_bytes, &BOSDescriptor, BOSDescriptor.BOS_Header.Header.Size);
+
+				uint8_t offset = BOSDescriptor.BOS_Header.Header.Size;
+
+				for (uint8_t i = 0; i < BOSDescriptor.BOS_Header.NumberOfDeviceCapabilityDescriptors; i++) {
+					memcpy(BOS_bytes + offset, BOSDescriptor.CapabilityDescriptors[i],
+					       (size_t) BOSDescriptor.CapabilityDescriptors[i]->Header.Size);
+					offset += BOSDescriptor.CapabilityDescriptors[i]->Header.Size;
+				}
+
+				BOS_size = sizeof(BOS_bytes);
 			}
 			Address = &BOS_bytes;
 			Size = BOS_size;
