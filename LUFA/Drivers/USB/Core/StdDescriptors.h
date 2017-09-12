@@ -375,12 +375,12 @@
 			{
 				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
 				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
-										   *   given by the specific class.
-										   */
+				                           *   given by the specific class.
+				                           */
 				uint16_t bcdUSB; /**< BCD of the supported USB specification.
-								  *
-								  *   \see \ref VERSION_BCD() utility macro.
-								  */
+				                  *
+				                  *   \see \ref VERSION_BCD() utility macro.
+				                  */
 				uint8_t  bDeviceClass; /**< USB device class. */
 				uint8_t  bDeviceSubClass; /**< USB device subclass. */
 				uint8_t  bDeviceProtocol; /**< USB device protocol. */
@@ -388,34 +388,34 @@
 				uint16_t idVendor; /**< Vendor ID for the USB product. */
 				uint16_t idProduct; /**< Unique product ID for the USB product. */
 				uint16_t bcdDevice; /**< Product release (version) number.
-									 *
-									 *   \see \ref VERSION_BCD() utility macro.
-									 */
+				                     *
+				                     *   \see \ref VERSION_BCD() utility macro.
+				                     */
 				uint8_t  iManufacturer; /**< String index for the manufacturer's name. The
-										 *   host will request this string via a separate
-										 *   control request for the string descriptor.
-										 *
-										 *   \note If no string supplied, use \ref NO_DESCRIPTOR.
-										 */
+				                         *   host will request this string via a separate
+				                         *   control request for the string descriptor.
+				                         *
+				                         *   \note If no string supplied, use \ref NO_DESCRIPTOR.
+				                         */
 				uint8_t  iProduct; /**< String index for the product name/details.
-									*
-									*  \see ManufacturerStrIndex structure entry.
-									*/
+				                    *
+				                    *  \see ManufacturerStrIndex structure entry.
+				                    */
 				uint8_t iSerialNumber; /**< String index for the product's globally unique hexadecimal
-										*   serial number, in uppercase Unicode ASCII.
-										*
-										*  \note On some microcontroller models, there is an embedded serial number
-										*        in the chip which can be used for the device serial number.
-										*        To use this serial number, set this to \c USE_INTERNAL_SERIAL.
-										*        On unsupported devices, this will evaluate to \ref NO_DESCRIPTOR
-										*        and will cause the host to generate a pseudo-unique value for the
-										*        device upon insertion.
-										*
-										*  \see \c ManufacturerStrIndex structure entry.
-										*/
+				                        *   serial number, in uppercase Unicode ASCII.
+				                        *
+				                        *  \note On some microcontroller models, there is an embedded serial number
+				                        *        in the chip which can be used for the device serial number.
+				                        *        To use this serial number, set this to \c USE_INTERNAL_SERIAL.
+				                        *        On unsupported devices, this will evaluate to \ref NO_DESCRIPTOR
+				                        *        and will cause the host to generate a pseudo-unique value for the
+				                        *        device upon insertion.
+				                        *
+				                        *  \see \c ManufacturerStrIndex structure entry.
+				                        */
 				uint8_t  bNumConfigurations; /**< Total number of configurations supported by
-											  *   the device.
-											  */
+				                              *   the device.
+				                              */
 			} ATTR_PACKED USB_StdDescriptor_Device_t;
 
 			/** \brief Standard USB Device Qualifier Descriptor (LUFA naming conventions).
@@ -430,17 +430,17 @@
 				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
 
 				uint16_t USBSpecification; /**< BCD of the supported USB specification.
-														*
-														*   \see \ref VERSION_BCD() utility macro.
-														*/
+				                            *
+				                            *   \see \ref VERSION_BCD() utility macro.
+				                            */
 				uint8_t  Class; /**< USB device class. */
 				uint8_t  SubClass; /**< USB device subclass. */
 				uint8_t  Protocol; /**< USB device protocol. */
 
 				uint8_t  Endpoint0Size; /**< Size of the control (address 0) endpoint's bank in bytes. */
 				uint8_t  NumberOfConfigurations; /**< Total number of configurations supported by
-															  *   the device.
-															  */
+				                                  *   the device.
+				                                  */
 				uint8_t  Reserved; /**< Reserved for future use, must be 0. */
 			} ATTR_PACKED USB_Descriptor_DeviceQualifier_t;
 
@@ -455,19 +455,19 @@
 			{
 				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
 				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
-													   *   given by the specific class.
-													   */
+				                           *   given by the specific class.
+				                           */
 				uint16_t bcdUSB; /**< BCD of the supported USB specification.
-											  *
-											  *   \see \ref VERSION_BCD() utility macro.
-											  */
+				                  *
+				                  *   \see \ref VERSION_BCD() utility macro.
+				                  */
 				uint8_t  bDeviceClass; /**< USB device class. */
 				uint8_t  bDeviceSubClass; /**< USB device subclass. */
 				uint8_t  bDeviceProtocol; /**< USB device protocol. */
 				uint8_t  bMaxPacketSize0; /**< Size of the control (address 0) endpoint's bank in bytes. */
 				uint8_t  bNumConfigurations; /**< Total number of configurations supported by
-														  *   the device.
-														  */
+				                              *   the device.
+				                              */
 				uint8_t  bReserved; /**< Reserved for future use, must be 0. */
 			} ATTR_PACKED USB_StdDescriptor_DeviceQualifier_t;
 
@@ -525,11 +525,11 @@
 					uint8_t DeviceCapability; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
 					uint8_t Reserved; /**< This field is reserved and shall be set to zero. */
 					uint8_t PlatformUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
-											   *   specific capability of the device.
-											   */
+					                           *   specific capability of the device.
+					                           */
 					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
-											   *   specific capability. This field may be zero bytes in length.
-											   */
+					                           *   specific capability. This field may be zero bytes in length.
+					                           */
 				} ATTR_PACKED USB_Descriptor_DeviceCapability_Platform_t;
 
 				/** \brief Standard USB Device Capability Platform Descriptor (USB-IF naming conventions).
@@ -548,11 +548,11 @@
 					uint8_t bDevCapabilityType; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
 					uint8_t bReserved; /**< This field is reserved and shall be set to zero. */
 					uint8_t PlatformCapabilityUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
-														 *	 specific capability of the device.
-														 */
+					                                     *   specific capability of the device.
+					                                     */
 					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
-											   *   specific capability. This field may be zero bytes in length.
-											   */
+					                           *   specific capability. This field may be zero bytes in length.
+					                           */
 				} ATTR_PACKED USB_StdDescriptor_DeviceCapability_Platform_t;
 
 			/** \brief Standard USB Device Capability Descriptor (LUFA naming conventions).
