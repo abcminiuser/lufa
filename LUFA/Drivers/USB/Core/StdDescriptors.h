@@ -208,8 +208,28 @@
 				DTYPE_Other                     = 0x07, /**< Indicates that the descriptor is of other type. */
 				DTYPE_InterfacePower            = 0x08, /**< Indicates that the descriptor is an interface power descriptor. */
 				DTYPE_InterfaceAssociation      = 0x0B, /**< Indicates that the descriptor is an interface association descriptor. */
+				DTYPE_BOS                       = 0x0F, /**< Indicates that the descriptor is a Binary Object Store (BOS) descriptor. */
+				DTYPE_DeviceCapability          = 0x10, /**< Indicates that the descriptor is a Device Capability descriptor. */
 				DTYPE_CSInterface               = 0x24, /**< Indicates that the descriptor is a class specific interface descriptor. */
 				DTYPE_CSEndpoint                = 0x25, /**< Indicates that the descriptor is a class specific endpoint descriptor. */
+			};
+
+			/** Enum for the possible types of Device Capability Descriptors included in a Binary Object Store (BOS). */
+			enum USB_DeviceCapabilityTypes_t
+			{
+				/* Commented out types are not implemented. */
+				/* DCTYPE_WirelessUSB              = 0x01, */ /**< Defines the set of Wireless USB-specific device level capabilities. */
+				/* DCTYPE_USB_2_0_Extension        = 0x02, */ /**< USB 2.0 Extension Descriptor. */
+				/* DCTYPE_SuperSpeedUSB            = 0x03, */ /**< Defines the set of SuperSpeed USB specific device level capabilities. */
+				/* DCTYPE_ContainerID              = 0x04, */ /**< Defines the instance unique ID used to identify the instance across all operating modes. */
+				DCTYPE_Platform                 = 0x05, /**< Defines a device capability specific to a particular platform/operating system. */
+				/* DCTYPE_PowerDelivery            = 0x06, */ /**< Defines the various PD Capabilities of this device. */
+				/* DCTYPE_BatteryInfo              = 0x07, */ /**< Provides information on each battery supported by the device. */
+				/* DCTYPE_PD_ConsumerPort          = 0x08, */ /**< The consumer characteristics of a port on the device. */
+				/* DCTYPE_PD_ProviderPort          = 0x09, */ /**< The provider characteristics of a port on the device. */
+				/* DCTYPE_SuperSpeedPlus           = 0x0A, */ /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
+				/* DCTYPE_PrecisionTimeMeasurement = 0x0B, */ /**< Precision Time Measurement (PTM) Capability Descriptor. */
+				/* DCTYPE_WirelessUSBExt           = 0x0C, */ /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
 			};
 
 			/** Enum for possible Class, Subclass and Protocol values of device and interface descriptors. */
@@ -348,8 +368,8 @@
 			{
 				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
 				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
-				                              *   given by the specific class.
-				                              */
+				                           *   given by the specific class.
+				                           */
 				uint16_t bcdUSB; /**< BCD of the supported USB specification.
 				                  *
 				                  *   \see \ref VERSION_BCD() utility macro.
@@ -443,6 +463,142 @@
 				                              */
 				uint8_t  bReserved; /**< Reserved for future use, must be 0. */
 			} ATTR_PACKED USB_StdDescriptor_DeviceQualifier_t;
+
+			/** \brief Standard USB Binary Object Store (BOS) Descriptor (LUFA naming conventions).
+			 *
+			 *  Type define for a standard BOS Descriptor. This structure uses LUFA-specific element names
+			 *  to make each element's purpose clearer.
+			 *
+			 *  \see \ref USB_StdDescriptor_BOS_t for the version of this type with standard element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
+
+				uint16_t TotalLength; /**< Length of this descriptor and all of its sub descriptors. */
+				uint8_t NumberOfDeviceCapabilityDescriptors; /**< The number of separate device capability descriptors in the BOS. */
+			} ATTR_PACKED USB_Descriptor_BOS_Header_t;
+
+			/** \brief Standard USB Binary Object Store (BOS) Descriptor (USB-IF naming conventions).
+			 *
+			 *  Type define for a standard BOS Descriptor. This structure uses the relevant standard's given element names
+			 *  to ensure compatibility with the standard.
+			 *
+			 *  \see \ref USB_Descriptor_BOS_t for the version of this type with non-standard LUFA specific element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
+				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
+				                           *   given by the specific class.
+				                           */
+				uint16_t wTotalLength; /**< Length of this descriptor and all of its sub descriptors. */
+				uint8_t  bNumDeviceCaps; /**< The number of separate device capability descriptors in the BOS. */
+			} ATTR_PACKED USB_StdDescriptor_BOS_Header_t;
+
+			/* BOS Device Capability Types */
+
+				/** \brief Standard USB Device Capability Platform Descriptor (LUFA naming conventions).
+				 *
+				 *  Type define for a standard Device Capability Platform Descriptor. This structure uses LUFA-specific element names
+				 *  to make each element's purpose clearer.
+				 *
+				 *  \see \ref USB_StdDescriptor_DeviceCapability_Platform_t for the version of this type with standard element names.
+				 *
+				 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+				 */
+				typedef struct
+				{
+					USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
+
+					uint8_t DeviceCapability; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
+					uint8_t Reserved; /**< This field is reserved and shall be set to zero. */
+					uint8_t PlatformUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
+					                           *   specific capability of the device.
+					                           */
+					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
+					                           *   specific capability. This field may be zero bytes in length.
+					                           */
+				} ATTR_PACKED USB_Descriptor_DeviceCapability_Platform_t;
+
+				/** \brief Standard USB Device Capability Platform Descriptor (USB-IF naming conventions).
+				 *
+				 *  Type define for a standard Device Capability Platform Descriptor. This structure uses the relevant standard's given element names
+				 *  to ensure compatibility with the standard.
+				 *
+				 *  \see \ref USB_Descriptor_DeviceCapability_Platform_t for the version of this type with non-standard LUFA specific element names.
+				 *
+				 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+				 */
+				typedef struct
+				{
+					uint8_t bLength; /**< Size of the descriptor, in bytes. */
+					uint8_t bDescriptorType; /**< Type of the descriptor: \ref USB_DescriptorTypes_t DTYPE_DeviceCapability */
+					uint8_t bDevCapabilityType; /**< Type of the capability: \ref USB_DeviceCapabilityTypes_t DCTYPE_Platform */
+					uint8_t bReserved; /**< This field is reserved and shall be set to zero. */
+					uint8_t PlatformCapabilityUUID[16]; /**< This is a 128-bit number that uniquely identifies a platform
+					                                     *   specific capability of the device.
+					                                     */
+					uint8_t CapabilityData[]; /**< This is a variable-length field containing data associated with the platform
+					                           *   specific capability. This field may be zero bytes in length.
+					                           */
+				} ATTR_PACKED USB_StdDescriptor_DeviceCapability_Platform_t;
+
+			/** \brief Standard USB Device Capability Descriptor (LUFA naming conventions).
+			 *
+			 *  Type define for a standard Device Capability Descriptor. This structure uses LUFA-specific element names
+			 *  to make each element's purpose clearer.
+			 *
+			 *  \see \ref USB_StdDescriptor_DeviceCapability_t for the version of this type with standard element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef union
+			{
+				/* Commented out types are not implemented. */
+				/* USB_Descriptor_DeviceCapability_WirelessUSB_t              WirelessUSB; */ /**< Defines the set of Wireless USB-specific device level capabilities. */
+				/* USB_Descriptor_DeviceCapability_USB_2_0_Extension_t        USB_2_0_Extension; */ /**< USB 2.0 Extension Descriptor. */
+				/* USB_Descriptor_DeviceCapability_SuperSpeedUSB_t            SuperSpeedUSB; */ /**< Defines the set of SuperSpeed USB specific device level capabilities. */
+				/* USB_Descriptor_DeviceCapability_ContainerID_t              ContainerID; */ /**< Defines the instance unique ID used to identify the instance across all operating modes. */
+				USB_Descriptor_DeviceCapability_Platform_t                  Platform; /**< Defines a device capability specific to a particular platform/operating system. */
+				/* USB_Descriptor_DeviceCapability_PowerDelivery_t            PowerDelivery; */ /**< Defines the various PD Capabilities of this device. */
+				/* USB_Descriptor_DeviceCapability_BatteryInfo_t              BatteryInfo; */ /**< Provides information on each battery supported by the device. */
+				/* USB_Descriptor_DeviceCapability_PD_ConsumerPort_t          PD_ConsumerPort; */ /**< The consumer characteristics of a port on the device. */
+				/* USB_Descriptor_DeviceCapability_PD_ProviderPort_t          PD_ProviderPort; */ /**< The provider characteristics of a port on the device. */
+				/* USB_Descriptor_DeviceCapability_SuperSpeedPlus_t           SuperSpeedPlus; */ /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
+				/* USB_Descriptor_DeviceCapability_PrecisionTimeMeasurement_t PrecisionTimeMeasurement; */ /**< Precision Time Measurement (PTM) Capability Descriptor. */
+				/* USB_Descriptor_DeviceCapability_WirelessUSBExt_t           WirelessUSBExt; */ /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
+			} ATTR_PACKED USB_Descriptor_DeviceCapability_t;
+
+			/** \brief Standard USB Device Capability Descriptor (USB-IF naming conventions).
+			 *
+			 *  Type define for a standard Device Capability Descriptor. This structure uses the relevant standard's given element names
+			 *  to ensure compatibility with the standard.
+			 *
+			 *  \see \ref USB_Descriptor_DeviceCapability_t for the version of this type with non-standard LUFA specific element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef union
+			{
+				/* Commented out types are not implemented. */
+				/* USB_StdDescriptor_DeviceCapability_WirelessUSB_t              WirelessUSB; */ /**< Defines the set of Wireless USB-specific device level capabilities. */
+				/* USB_StdDescriptor_DeviceCapability_USB_2_0_Extension_t        USB_2_0_Extension; */ /**< USB 2.0 Extension Descriptor. */
+				/* USB_StdDescriptor_DeviceCapability_SuperSpeedUSB_t            SuperSpeedUSB; */ /**< Defines the set of SuperSpeed USB specific device level capabilities. */
+				/* USB_StdDescriptor_DeviceCapability_ContainerID_t              ContainerID; */ /**< Defines the instance unique ID used to identify the instance across all operating modes. */
+				USB_StdDescriptor_DeviceCapability_Platform_t                  Platform; /**< Defines a device capability specific to a particular platform/operating system. */
+				/* USB_StdDescriptor_DeviceCapability_PowerDelivery_t            PowerDelivery; */ /**< Defines the various PD Capabilities of this device. */
+				/* USB_StdDescriptor_DeviceCapability_BatteryInfo_t              BatteryInfo; */ /**< Provides information on each battery supported by the device. */
+				/* USB_StdDescriptor_DeviceCapability_PD_ConsumerPort_t          PD_ConsumerPort; */ /**< The consumer characteristics of a port on the device. */
+				/* USB_StdDescriptor_DeviceCapability_PD_ProviderPort_t          PD_ProviderPort; */ /**< The provider characteristics of a port on the device. */
+				/* USB_StdDescriptor_DeviceCapability_SuperSpeedPlus_t           SuperSpeedPlus; */ /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
+				/* USB_StdDescriptor_DeviceCapability_PrecisionTimeMeasurement_t PrecisionTimeMeasurement; */ /**< Precision Time Measurement (PTM) Capability Descriptor. */
+				/* USB_StdDescriptor_DeviceCapability_WirelessUSBExt_t           WirelessUSBExt; */ /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
+			} ATTR_PACKED USB_StdDescriptor_DeviceCapability_t;
 
 			/** \brief Standard USB Configuration Descriptor (LUFA naming conventions).
 			 *
