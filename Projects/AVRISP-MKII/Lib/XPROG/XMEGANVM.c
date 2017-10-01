@@ -461,6 +461,10 @@ bool XMEGANVM_EraseMemory(const uint8_t EraseCommand,
 	if (!(XMEGANVM_WaitWhileNVMBusBusy()))
 	  return false;
 
+	/* Wait until the NVM controller is no longer busy */
+	if (!(XMEGANVM_WaitWhileNVMControllerBusy()))
+	  return false;
+
 	return true;
 }
 
