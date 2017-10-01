@@ -37,16 +37,22 @@
 
 void BootloaderAPI_ErasePage(const uint32_t Address)
 {
-	boot_page_erase_safe(Address);
-	boot_spm_busy_wait();
-	boot_rww_enable();
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	{
+		boot_page_erase_safe(Address);
+		boot_spm_busy_wait();
+		boot_rww_enable();
+	}
 }
 
 void BootloaderAPI_WritePage(const uint32_t Address)
 {
-	boot_page_write_safe(Address);
-	boot_spm_busy_wait();
-	boot_rww_enable();
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	{
+		boot_page_write_safe(Address);
+		boot_spm_busy_wait();
+		boot_rww_enable();
+	}
 }
 
 void BootloaderAPI_FillWord(const uint32_t Address, const uint16_t Word)
@@ -71,5 +77,8 @@ uint8_t BootloaderAPI_ReadLock(void)
 
 void BootloaderAPI_WriteLock(const uint8_t LockBits)
 {
-	boot_lock_bits_set_safe(LockBits);
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+	{
+		boot_lock_bits_set_safe(LockBits);
+	}
 }

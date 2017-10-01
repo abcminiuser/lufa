@@ -97,7 +97,7 @@ void Application_Jump_Check(void)
 		JTAG_ENABLE();
 	#else
 		/* Check if the device's BOOTRST fuse is set */
-		if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
+		if (BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
 		{
 			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
 			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
@@ -297,9 +297,6 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 	/* Check if command is to read a memory block */
 	if (Command == AVR109_COMMAND_BlockRead)
 	{
-		/* Re-enable RWW section */
-		boot_rww_enable();
-
 		while (BlockSize--)
 		{
 			if (MemoryType == MEMORY_TYPE_FLASH)
@@ -332,10 +329,7 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 		uint32_t PageStartAddress = CurrAddress;
 
 		if (MemoryType == MEMORY_TYPE_FLASH)
-		{
-			boot_page_erase(PageStartAddress);
-			boot_spm_busy_wait();
-		}
+		  BootloaderAPI_ErasePage(PageStartAddress);
 
 		while (BlockSize--)
 		{
@@ -345,7 +339,7 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 				if (HighByte)
 				{
 					/* Write the next FLASH word to the current FLASH page */
-					boot_page_fill(CurrAddress, ((FetchNextCommandByte() << 8) | LowByte));
+					BootloaderAPI_FillWord(CurrAddress, ((FetchNextCommandByte() << 8) | LowByte));
 
 					/* Increment the address counter after use */
 					CurrAddress += 2;
@@ -371,10 +365,7 @@ static void ReadWriteMemoryBlock(const uint8_t Command)
 		if (MemoryType == MEMORY_TYPE_FLASH)
 		{
 			/* Commit the flash page to memory */
-			boot_page_write(PageStartAddress);
-
-			/* Wait until write operation has completed */
-			boot_spm_busy_wait();
+			BootloaderAPI_WritePage(PageStartAddress);
 		}
 
 		/* Send response byte back to the host */
@@ -516,12 +507,7 @@ static void CDC_Task(void)
 	{
 		/* Clear the application section of flash */
 		for (uint32_t CurrFlashAddress = 0; CurrFlashAddress < (uint32_t)BOOT_START_ADDR; CurrFlashAddress += SPM_PAGESIZE)
-		{
-			boot_page_erase(CurrFlashAddress);
-			boot_spm_busy_wait();
-			boot_page_write(CurrFlashAddress);
-			boot_spm_busy_wait();
-		}
+			BootloaderAPI_ErasePage(CurrFlashAddress);
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
@@ -530,7 +516,7 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_WriteLockbits)
 	{
 		/* Set the lock bits to those given by the host */
-		boot_lock_bits_set(FetchNextCommandByte());
+		BootloaderAPI_WriteLock(FetchNextCommandByte());
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
@@ -538,19 +524,19 @@ static void CDC_Task(void)
 	#endif
 	else if (Command == AVR109_COMMAND_ReadLockbits)
 	{
-		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_LOCK_BITS));
+		WriteNextResponseByte(BootloaderAPI_ReadLock());
 	}
 	else if (Command == AVR109_COMMAND_ReadLowFuses)
 	{
-		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_LOW_FUSE_BITS));
+		WriteNextResponseByte(BootloaderAPI_ReadFuse(GET_LOW_FUSE_BITS));
 	}
 	else if (Command == AVR109_COMMAND_ReadHighFuses)
 	{
-		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS));
+		WriteNextResponseByte(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS));
 	}
 	else if (Command == AVR109_COMMAND_ReadExtendedFuses)
 	{
-		WriteNextResponseByte(boot_lock_fuse_bits_get(GET_EXTENDED_FUSE_BITS));
+		WriteNextResponseByte(BootloaderAPI_ReadFuse(GET_EXTENDED_FUSE_BITS));
 	}
 	#if !defined(NO_BLOCK_SUPPORT)
 	else if (Command == AVR109_COMMAND_GetBlockWriteSupport)
@@ -571,7 +557,7 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_FillFlashPageWordHigh)
 	{
 		/* Write the high byte to the current flash page */
-		boot_page_fill(CurrAddress, FetchNextCommandByte());
+		BootloaderAPI_FillWord(CurrAddress, FetchNextCommandByte());
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
@@ -579,7 +565,7 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_FillFlashPageWordLow)
 	{
 		/* Write the low byte to the current flash page */
-		boot_page_fill(CurrAddress | 0x01, FetchNextCommandByte());
+		BootloaderAPI_FillWord(CurrAddress | 0x01, FetchNextCommandByte());
 
 		/* Increment the address */
 		CurrAddress += 2;
@@ -590,10 +576,7 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_WriteFlashPage)
 	{
 		/* Commit the flash page to memory */
-		boot_page_write(CurrAddress);
-
-		/* Wait until write operation has completed */
-		boot_spm_busy_wait();
+		BootloaderAPI_WritePage(CurrAddress);
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');

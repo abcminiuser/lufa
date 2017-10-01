@@ -10,6 +10,8 @@
   *  <b>Fixed:</b>
   *  - Core:
   *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)
+  *  - Library Applications:
+  *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
   *
   *  \section Sec_ChangeLog170418 Version 170418
   *  <b>New:</b>

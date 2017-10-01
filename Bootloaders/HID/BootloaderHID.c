@@ -164,8 +164,11 @@ void EVENT_USB_Device_ControlRequest(void)
 			else if (PageAddress < BOOT_START_ADDR)
 			{
 				/* Erase the given FLASH page, ready to be programmed */
-				boot_page_erase(PageAddress);
-				boot_spm_busy_wait();
+				ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+				{
+					boot_page_erase(PageAddress);
+					boot_spm_busy_wait();
+				}
 
 				/* Write each of the FLASH page's bytes in sequence */
 				for (uint8_t PageWord = 0; PageWord < (SPM_PAGESIZE / 2); PageWord++)
@@ -182,8 +185,11 @@ void EVENT_USB_Device_ControlRequest(void)
 				}
 
 				/* Write the filled FLASH page to memory */
-				boot_page_write(PageAddress);
-				boot_spm_busy_wait();
+				ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
+				{
+					boot_page_write(PageAddress);
+					boot_spm_busy_wait();
+				}
 
 				/* Re-enable RWW section */
 				boot_rww_enable();

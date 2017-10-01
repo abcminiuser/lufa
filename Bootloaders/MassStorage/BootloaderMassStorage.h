@@ -44,6 +44,7 @@
 		#include <string.h>
 
 		#include "Descriptors.h"
+		#include "BootloaderAPI.h"
 		#include "Config/AppConfig.h"
 
 		#include "Lib/SCSI.h"

@@ -133,7 +133,7 @@ void Application_Jump_Check(void)
 		JTAG_ENABLE();
 	#else
 		/* Check if the device's BOOTRST fuse is set */
-		if (boot_lock_fuse_bits_get(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
+		if (BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
 		{
 			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
 			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
@@ -351,7 +351,7 @@ void EVENT_USB_Device_ControlRequest(void)
 							}
 
 							/* Write the next word into the current flash page */
-							boot_page_fill(CurrFlashAddress.Long, Endpoint_Read_16_LE());
+							BootloaderAPI_FillWord(CurrFlashAddress.Long, Endpoint_Read_16_LE());
 
 							/* Adjust counters */
 							WordsInFlashPage      += 1;
@@ -361,8 +361,7 @@ void EVENT_USB_Device_ControlRequest(void)
 							if ((WordsInFlashPage == (SPM_PAGESIZE >> 1)) || !(WordsRemaining))
 							{
 								/* Commit the flash page to memory */
-								boot_page_write(CurrFlashPageStartAddress);
-								boot_spm_busy_wait();
+								BootloaderAPI_WritePage(CurrFlashPageStartAddress);
 
 								/* Check if programming incomplete */
 								if (WordsRemaining)
@@ -371,17 +370,13 @@ void EVENT_USB_Device_ControlRequest(void)
 									WordsInFlashPage          = 0;
 
 									/* Erase next page's temp buffer */
-									boot_page_erase(CurrFlashAddress.Long);
-									boot_spm_busy_wait();
+									BootloaderAPI_ErasePage(CurrFlashAddress.Long);
 								}
 							}
 						}
 
 						/* Once programming complete, start address equals the end address */
 						StartAddr = EndAddr;
-
-						/* Re-enable the RWW section of flash */
-						boot_rww_enable();
 					}
 					else                                                   // Write EEPROM
 					{
@@ -691,8 +686,7 @@ static void ProcessMemProgCommand(void)
 			} CurrFlashAddress = {.Words = {StartAddr, Flash64KBPage}};
 
 			/* Erase the current page's temp buffer */
-			boot_page_erase(CurrFlashAddress.Long);
-			boot_spm_busy_wait();
+			BootloaderAPI_ErasePage(CurrFlashAddress.Long);
 		}
 
 		/* Set the state so that the next DNLOAD requests reads in the firmware */
@@ -789,21 +783,9 @@ static void ProcessWriteCommand(void)
 	}
 	else if (IS_TWOBYTE_COMMAND(SentCommand.Data, 0x00, 0xFF))                 // Erase flash
 	{
-		uint32_t CurrFlashAddress = 0;
-
 		/* Clear the application section of flash */
-		while (CurrFlashAddress < (uint32_t)BOOT_START_ADDR)
-		{
-			boot_page_erase(CurrFlashAddress);
-			boot_spm_busy_wait();
-			boot_page_write(CurrFlashAddress);
-			boot_spm_busy_wait();
-
-			CurrFlashAddress += SPM_PAGESIZE;
-		}
-
-		/* Re-enable the RWW section of flash as writing to the flash locks it out */
-		boot_rww_enable();
+		for (uint32_t CurrFlashAddress = 0; CurrFlashAddress < (uint32_t)BOOT_START_ADDR; CurrFlashAddress += SPM_PAGESIZE)
+			BootloaderAPI_ErasePage(CurrFlashAddress);
 
 		/* Memory has been erased, reset the security bit so that programming/reading is allowed */
 		IsSecure = false;

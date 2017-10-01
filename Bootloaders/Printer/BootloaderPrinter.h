@@ -43,6 +43,7 @@
 		#include <avr/interrupt.h>
 
 		#include "Descriptors.h"
+		#include "BootloaderAPI.h"
 
 		#include <LUFA/Drivers/Board/LEDs.h>
 		#include <LUFA/Drivers/USB/USB.h>
