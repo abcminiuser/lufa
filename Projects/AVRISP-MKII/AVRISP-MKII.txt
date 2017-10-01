@@ -79,13 +79,6 @@
  *  While this application can be compiled for USB AVRs with as little as 8KB of FLASH, for full functionality 16KB or more
  *  of FLASH is required. On 8KB devices, ISP or PDI/TPI protocol programming support can be disabled to reduce program size.
  *
- *  \section Sec_KnownIssues Known Issues:
- *
- *  \par XMEGA EEPROM programming fails in some cases.
- *  Several users have reported that XMEGA EEPROM programming fails unless the chip is erased first. If a non-blank EEPROM
- *  is present, writing further EEPROM data causes corruption.
- *  <a href="https://github.com/abcminiuser/lufa/issues/25">LUFA issue tracker entry</a>.
- *
  *  \section Sec_Installation Installation
  *  The programmer supports multiple platforms, both Windows and Linux.
  *
