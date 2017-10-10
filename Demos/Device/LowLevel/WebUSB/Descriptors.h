@@ -44,7 +44,6 @@
 
 		#include "Config/AppConfig.h"
 		#include "WebUSBDevice.h"
-		#include "BOSDescriptors.h"
 
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the

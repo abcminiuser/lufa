@@ -64,23 +64,6 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
 
-/** WebUSB Platform Device Capability Descriptor. This descriptor, located in memory, describes the
- *  device as a WebUSB capable, allowing Chrome to communicate with it. The descriptor is included as part of the
- *  device's BOS, and provides the WebUSB UUID, along with a landing page that the browser may direct users to when
- *  it first detects the device.
- */
-const USB_Descriptor_DeviceCapability_Platform_t WebUSBDescriptor =
-		{
-				.Header = {.Size = WEBUSB_PLATFORM_DESCRIPTOR_SIZE, .Type = DTYPE_DeviceCapability},
-				.DeviceCapability = DCTYPE_Platform,
-				.Reserved = 0,
-				.PlatformUUID = WEBUSB_PLATFORM_UUID,
-				.CapabilityData = WEBUSB_PLATFORM_CAPABILITY(WEBUSB_VENDOR_CODE, WEBUSB_LANDING_PAGE_INDEX),
-		};
-
-#define ASSERT(e) enum {FAIL = 1/(!!(e))};
-ASSERT(sizeof(WebUSBDescriptor) == WEBUSB_PLATFORM_DESCRIPTOR_SIZE - 4) /* The perils of incomplete types in your struct. */
-
 /** Binary device Object Store (BOS) descriptor structure. This descriptor, located in memory, describes a
  *  flexible and extensible framework for describing and adding device-level capabilities to the set of USB standard
  *  specifications. The BOS descriptor defines a root descriptor that is similar to the configuration descriptor,
@@ -88,22 +71,9 @@ ASSERT(sizeof(WebUSBDescriptor) == WEBUSB_PLATFORM_DESCRIPTOR_SIZE - 4) /* The p
  *  Capability Descriptors and the total length of itself and the sub-descriptors.
  */
 
-#define TOTAL_BOS_LENGTH (sizeof(USB_Descriptor_BOS_Header_t) + WEBUSB_PLATFORM_DESCRIPTOR_SIZE)
-
-const USB_Descriptor_BOS_t BOSDescriptor =
-		{
-				.BOS_Header = {
-						.Header = {.Size = sizeof(USB_Descriptor_BOS_Header_t), .Type = DTYPE_BOS},
-
-						.NumberOfDeviceCapabilityDescriptors = 1, /* WebUSBDescriptor */
-						.TotalLength = TOTAL_BOS_LENGTH
-				},
-				.CapabilityDescriptors = {&WebUSBDescriptor}
-		};
-
-uint8_t BOS_bytes[TOTAL_BOS_LENGTH];   /* Allocate memory to hold the generated total BOS descriptor */
-uint16_t BOS_size = 0;
-
+const USB_Descriptor_BOS_t PROGMEM BOSDescriptor = BOS_DESCRIPTOR(
+		(WEBUSB_DESCRIPTOR(WEBUSB_VENDOR_CODE, WEBUSB_LANDING_PAGE_INDEX))
+);
 /** Configuration descriptor structure. This descriptor, located in FLASH memory, describes the usage
  *  of the device in one of its supported configurations, including information about any device interfaces
  *  and endpoints. The descriptor is read out by the USB host during the enumeration process when selecting
@@ -204,27 +174,8 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 			Size    = sizeof(USB_Descriptor_Device_t);
 			break;
 		case DTYPE_BOS:
-			if (BOS_size == 0) {
-				/* The stuff inside this scope should probably be abstracted to a USB_Device_BuildBOSReturnBytes
-				 * function.*/
-				for (uint8_t i = 0; i < BOSDescriptor.BOS_Header.TotalLength; i++) {
-					BOS_bytes[i] = 0;
-				}
-
-				memcpy(BOS_bytes, &BOSDescriptor, BOSDescriptor.BOS_Header.Header.Size);
-
-				uint8_t offset = BOSDescriptor.BOS_Header.Header.Size;
-
-				for (uint8_t i = 0; i < BOSDescriptor.BOS_Header.NumberOfDeviceCapabilityDescriptors; i++) {
-					memcpy(BOS_bytes + offset, BOSDescriptor.CapabilityDescriptors[i],
-					       (size_t) BOSDescriptor.CapabilityDescriptors[i]->Header.Size);
-					offset += BOSDescriptor.CapabilityDescriptors[i]->Header.Size;
-				}
-
-				BOS_size = sizeof(BOS_bytes);
-			}
-			Address = &BOS_bytes;
-			Size = BOS_size;
+			Address = &BOSDescriptor;
+			Size = pgm_read_byte(&BOSDescriptor.TotalLength);
 			break;
 		case DTYPE_Configuration:
 			Address = &ConfigurationDescriptor;
