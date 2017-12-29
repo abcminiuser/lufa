@@ -150,6 +150,10 @@ void Endpoint_ClearStatusStage(void)
 	}
 }
 
+#if defined(USB_CAN_BE_DEVICE) && !defined(NO_SOF_EVENTS)
+uint8_t EndpointInTimeout;
+#endif
+
 #if !defined(CONTROL_ONLY_DEVICE)
 uint8_t Endpoint_WaitUntilReady(void)
 {
@@ -159,14 +163,25 @@ uint8_t Endpoint_WaitUntilReady(void)
 	uint16_t TimeoutMSRem = USB_STREAM_TIMEOUT_MS;
 	#endif
 
+	uint8_t ep = Endpoint_GetCurrentEndpoint();
+#if defined(USB_CAN_BE_DEVICE) && !defined(NO_SOF_EVENTS)
+	uint8_t ep_mask = (1 << (ep & ENDPOINT_EPNUM_MASK));
+#endif
+
 	uint16_t PreviousFrameNumber = USB_Device_GetFrameNumber();
 
 	for (;;)
 	{
-		if (Endpoint_GetEndpointDirection() == ENDPOINT_DIR_IN)
+		if (ep & ENDPOINT_DIR_IN)
 		{
 			if (Endpoint_IsINReady())
 			  return ENDPOINT_READYWAIT_NoError;
+
+#if defined(USB_CAN_BE_DEVICE) && !defined(NO_SOF_EVENTS)
+			if (EndpointInTimeout & ep_mask) {
+			  return ENDPOINT_READYWAIT_Timeout;
+			}
+#endif
 		}
 		else
 		{
@@ -189,8 +204,15 @@ uint8_t Endpoint_WaitUntilReady(void)
 		{
 			PreviousFrameNumber = CurrentFrameNumber;
 
-			if (!(TimeoutMSRem--))
-			  return ENDPOINT_READYWAIT_Timeout;
+			if (!(TimeoutMSRem--)){
+#if defined(USB_CAN_BE_DEVICE) && !defined(NO_SOF_EVENTS)
+				if (ep & ENDPOINT_DIR_IN) {
+					EndpointInTimeout |= ep_mask;
+				}
+#endif
+				return ENDPOINT_READYWAIT_Timeout;
+			}
+
 		}
 	}
 }
