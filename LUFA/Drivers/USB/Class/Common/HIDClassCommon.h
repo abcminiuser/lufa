@@ -112,6 +112,7 @@
 
 		/** \name Keyboard Standard Report Key Scan-codes */
 		//@{
+		#define HID_KEYBOARD_SC_RESERVED                          0x00
 		#define HID_KEYBOARD_SC_ERROR_ROLLOVER                    0x01
 		#define HID_KEYBOARD_SC_POST_FAIL                         0x02
 		#define HID_KEYBOARD_SC_ERROR_UNDEFINED                   0x03
