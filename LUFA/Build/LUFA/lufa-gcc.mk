@@ -6,6 +6,9 @@
 #           www.lufa-lib.org
 #
 
+# Include Guard
+ifeq ($(filter LUFA_GCC, $(DMBS_BUILD_MODULES)),)
+
 DMBS_BUILD_MODULES         += LUFA_GCC
 DMBS_BUILD_TARGETS         +=
 DMBS_BUILD_MANDATORY_VARS  += LUFA_PATH ARCH F_USB
@@ -41,3 +44,5 @@ LUFA_CXX_DEFINES  = -DARCH=ARCH_$(ARCH) -DBOARD=BOARD_$(BOARD) -DF_USB=$(F_USB)U
 # LUFA specific standard build options
 C_FLAGS   += $(LUFA_CXX_INCLUDES) $(LUFA_CXX_DEFINES) $(LUFA_CXX_FLAGS)
 CPP_FLAGS += $(LUFA_CXX_INCLUDES) $(LUFA_CXX_DEFINES) $(LUFA_CXX_FLAGS)
+
+endif

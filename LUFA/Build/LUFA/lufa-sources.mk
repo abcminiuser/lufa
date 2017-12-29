@@ -6,6 +6,9 @@
 #           www.lufa-lib.org
 #
 
+# Include Guard
+ifeq ($(filter LUFA_SOURCES, $(DMBS_BUILD_MODULES)),)
+
 DMBS_BUILD_MODULES         += LUFA_SOURCES
 DMBS_BUILD_TARGETS         +=
 DMBS_BUILD_MANDATORY_VARS  += LUFA_PATH ARCH
@@ -93,3 +96,5 @@ LUFA_SRC_ALL_FILES   := $(LUFA_SRC_USB)            \
                         $(LUFA_SRC_SERIAL)         \
                         $(LUFA_SRC_TWI)            \
                         $(LUFA_SRC_PLATFORM)
+
+endif
