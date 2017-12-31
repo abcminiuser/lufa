@@ -1,3 +1,6 @@
+# Include Guard
+ifeq ($(filter CORE, $(DMBS_BUILD_MODULES)),)
+
 #
 #            DMBS Build System
 #     Released into the public domain.
@@ -16,7 +19,7 @@ DMBS_BUILD_PROVIDED_MACROS += DMBS_CHECK_VERSION ERROR_IF_UNSET ERROR_IF_EMPTY E
 SHELL = /bin/sh
 
 # Current DMBS release version
-DMBS_VERSION       := 20170426
+DMBS_VERSION       := 20171231
 
 # Macro to check the DMBS version, aborts if the given DMBS version is below the current version
 DMBS_CHECK_VERSION ?= $(if $(filter-out 0, $(shell test $(DMBS_VERSION) -lt $(1); echo $$?)), , $(error DMBS version $(1) or newer required, current version is $(DMBS_VERSION)))
@@ -145,3 +148,5 @@ endif
 
 # Phony build targets for this module
 .PHONY: $(DMBS_BUILD_TARGETS)
+
+endif

@@ -13,11 +13,9 @@ DMBS_BUILD_OPTIONAL_VARS   +=
 DMBS_BUILD_PROVIDED_VARS   +=
 DMBS_BUILD_PROVIDED_MACROS +=
 
-# Conditionally import the CORE module of DMBS if it is not already imported
+# Import the CORE module of DMBS
 DMBS_MODULE_PATH := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
-ifeq ($(findstring CORE, $(DMBS_BUILD_MODULES)),)
-  include $(DMBS_MODULE_PATH)/core.mk
-endif
+include $(DMBS_MODULE_PATH)/core.mk
 
 # Sanity-check values of mandatory user-supplied variables
 $(foreach MANDATORY_VAR, $(DMBS_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
@@ -28,6 +26,9 @@ $(call ERROR_IF_EMPTY, TARGET)
 MSG_HID_BOOTLOADER_CMD := ' [HID]     :'
 MSG_OBJCPY_CMD         := ' [OBJCPY]  :'
 MSG_MAKE_CMD           := ' [MAKE]    :'
+
+# Set MAKE variable if the environment does not already define it
+MAKE ?= make
 
 # Programs in the target FLASH memory using the HID_BOOTLOADER_CLI tool
 hid: $(TARGET).hex $(MAKEFILE_LIST)

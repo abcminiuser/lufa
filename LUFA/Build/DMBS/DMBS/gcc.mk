@@ -9,15 +9,15 @@
 DMBS_BUILD_MODULES         += GCC
 DMBS_BUILD_TARGETS         += size symbol-sizes all lib elf bin hex lss clean mostlyclean
 DMBS_BUILD_MANDATORY_VARS  += TARGET ARCH MCU SRC
-DMBS_BUILD_OPTIONAL_VARS   += COMPILER_PATH OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR OBJECT_FILES DEBUG_TYPE DEBUG_LEVEL LINKER_RELAXATIONS JUMP_TABLES
+DMBS_BUILD_OPTIONAL_VARS   += COMPILER_PATH OPTIMIZATION C_STANDARD CPP_STANDARD F_CPU C_FLAGS
+DMBS_BUILD_OPTIONAL_VARS   += CPP_FLAGS ASM_FLAGS CC_FLAGS LD_FLAGS OBJDIR OBJECT_FILES DEBUG_TYPE
+DMBS_BUILD_OPTIONAL_VARS   += DEBUG_LEVEL LINKER_RELAXATIONS JUMP_TABLES LTO
 DMBS_BUILD_PROVIDED_VARS   +=
 DMBS_BUILD_PROVIDED_MACROS +=
 
-# Conditionally import the CORE module of DMBS if it is not already imported
+# Import the CORE module of DMBS
 DMBS_MODULE_PATH := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
-ifeq ($(findstring CORE, $(DMBS_BUILD_MODULES)),)
-  include $(DMBS_MODULE_PATH)/core.mk
-endif
+include $(DMBS_MODULE_PATH)/core.mk
 
 # Default values of optionally user-supplied variables
 COMPILER_PATH      ?=
@@ -35,6 +35,7 @@ DEBUG_FORMAT       ?= dwarf-2
 DEBUG_LEVEL        ?= 2
 LINKER_RELAXATIONS ?= Y
 JUMP_TABLES        ?= N
+LTO                ?= N
 
 # Sanity check user supplied values
 $(foreach MANDATORY_VAR, $(DMBS_BUILD_MANDATORY_VARS), $(call ERROR_IF_UNSET, $(MANDATORY_VAR)))
@@ -49,6 +50,7 @@ $(call ERROR_IF_EMPTY, DEBUG_FORMAT)
 $(call ERROR_IF_EMPTY, DEBUG_LEVEL)
 $(call ERROR_IF_NONBOOL, LINKER_RELAXATIONS)
 $(call ERROR_IF_NONBOOL, JUMP_TABLES)
+$(call ERROR_IF_NONBOOL, LTO)
 
 # Determine the utility prefix to use for the selected architecture
 ifeq ($(ARCH), AVR8)
@@ -108,7 +110,8 @@ DEPENDENCY_FILES := $(OBJECT_FILES:%.o=%.d)
 # Create a list of common flags to pass to the compiler/linker/assembler
 BASE_CC_FLAGS    := -pipe -g$(DEBUG_FORMAT) -g$(DEBUG_LEVEL)
 ifneq ($(findstring $(ARCH), AVR8 XMEGA),)
-   BASE_CC_FLAGS += -mmcu=$(MCU) -fshort-enums -fno-inline-small-functions -fpack-struct
+   BASE_C_FLAGS += -fpack-struct
+   BASE_CC_FLAGS += -mmcu=$(MCU) -fshort-enums -fno-inline-small-functions
 else ifneq ($(findstring $(ARCH), UC3),)
    BASE_CC_FLAGS += -mpart=$(MCU:at32%=%) -masm-addr-pseudos
 endif
@@ -128,10 +131,15 @@ ifeq ($(JUMP_TABLES), N)
    # in a pseudo-random jump target.
    BASE_CC_FLAGS += -fno-jump-tables
 endif
+ifeq ($(LTO), Y)
+   # Enable link time optimization to reduce overall flash size.
+   BASE_CC_FLAGS += -flto -fuse-linker-plugin
+   BASE_LD_FLAGS += -flto -fuse-linker-plugin
+endif
 
 # Additional language specific compiler flags
 BASE_C_FLAGS   := -x c -O$(OPTIMIZATION) -std=$(C_STANDARD) -Wstrict-prototypes
-BASE_CPP_FLAGS := -x c++ -O$(OPTIMIZATION) -std=$(CPP_STANDARD)
+BASE_CPP_FLAGS := -x c++ -O$(OPTIMIZATION) -std=$(CPP_STANDARD) -fno-exceptions -fno-threadsafe-statics
 BASE_ASM_FLAGS := -x assembler-with-cpp
 
 # Create a list of flags to pass to the linker
@@ -204,27 +212,27 @@ $(SRC):
 # Compiles an input C source file and generates an assembly listing for it
 %.s: %.c $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Generating assembly from C file \"$(notdir $<)\"
-	$(CROSS)-gcc -S $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) $< -o $@
+	$(CROSS)-gcc -S $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) $($(notdir $<)_FLAGS) $< -o $@
 
 # Compiles an input C++ source file and generates an assembly listing for it
 %.s: %.cpp $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Generating assembly from C++ file \"$(notdir $<)\"
-	$(CROSS)-gcc -S $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) $< -o $@
+	$(CROSS)-gcc -S $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) $($(notdir $<)_FLAGS) $< -o $@
 
 # Compiles an input C source file and generates a linkable object file for it
 $(OBJDIR)/%.o: %.c $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Compiling C file \"$(notdir $<)\"
-	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
+	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_C_FLAGS) $(CC_FLAGS) $(C_FLAGS) $($(notdir $<)_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
 
 # Compiles an input C++ source file and generates a linkable object file for it
 $(OBJDIR)/%.o: %.cpp $(MAKEFILE_LIST)
 	@echo $(MSG_COMPILE_CMD) Compiling C++ file \"$(notdir $<)\"
-	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
+	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_CPP_FLAGS) $(CC_FLAGS) $(CPP_FLAGS) $($(notdir $<)_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
 
 # Assembles an input ASM source file and generates a linkable object file for it
 $(OBJDIR)/%.o: %.S $(MAKEFILE_LIST)
 	@echo $(MSG_ASSEMBLE_CMD) Assembling \"$(notdir $<)\"
-	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_ASM_FLAGS) $(CC_FLAGS) $(ASM_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
+	$(CROSS)-gcc -c $(BASE_CC_FLAGS) $(BASE_ASM_FLAGS) $(CC_FLAGS) $(ASM_FLAGS) $($(notdir $<)_FLAGS) -MMD -MP -MF $(@:%.o=%.d) $< -o $@
 
 # Generates a library archive file from the user application, which can be linked into other applications
 .PRECIOUS  : $(OBJECT_FILES)

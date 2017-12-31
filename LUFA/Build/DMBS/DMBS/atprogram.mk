@@ -13,11 +13,9 @@ DMBS_BUILD_OPTIONAL_VARS   += ATPROGRAM_PROGRAMMER ATPROGRAM_INTERFACE ATPROGRAM
 DMBS_BUILD_PROVIDED_VARS   +=
 DMBS_BUILD_PROVIDED_MACROS +=
 
-# Conditionally import the CORE module of DMBS if it is not already imported
+# Import the CORE module of DMBS
 DMBS_MODULE_PATH := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
-ifeq ($(findstring CORE, $(DMBS_BUILD_MODULES)),)
-  include $(DMBS_MODULE_PATH)/core.mk
-endif
+include $(DMBS_MODULE_PATH)/core.mk
 
 # Default values of optionally user-supplied variables
 ATPROGRAM_PROGRAMMER ?= atmelice

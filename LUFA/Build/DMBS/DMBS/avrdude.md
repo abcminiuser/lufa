@@ -31,12 +31,40 @@ The following targets are supported by this module:
 <table>
  <tbody>
    <tr>
+    <td>avrdude-lfuse</td>
+    <td>Program the device low fuse. Requires AVRDUDE_LFUSE variable set.</td>
+   </tr>
+   <tr>
+    <td>avrdude-hfuse</td>
+    <td>Program the device high fuse. Requires AVRDUDE_HFUSE variable set.</td>
+   </tr>
+   <tr>
+    <td>avrdude-efuse</td>
+    <td>Program the device extended fuse. Requires AVRDUDE_EFUSE variable set.</td>
+   </tr>
+   <tr>
+    <td>avrdude-lock</td>
+    <td>Program the device lock bits. Requires AVRDUDE_LOCK variable set.</td>
+   </tr>
+   <tr>
+    <td>avrdude-fuses</td>
+    <td>Program the device fuses (lfuse, hfuse, efuse, lock bits).</td>
+   </tr>
+   <tr>
     <td>avrdude</td>
     <td>Program the device FLASH memory with the application's executable data.</td>
    </tr>
    <tr>
     <td>avrdude-ee</td>
     <td>Program the device EEPROM memory with the application's EEPROM data.</td>
+   </tr>
+   <tr>
+    <td>avrdude-all</td>
+    <td>Same as avrdude + avrdude-fuses.</td>
+   </tr>
+   <tr>
+    <td>avrdude-all-ee</td>
+    <td>Same as avrdude + avrdude-ee + avrdude-fuses.</td>
    </tr>
  </tbody>
 </table>
@@ -83,6 +111,25 @@ be assumed.
     <td>AVRDUDE_MEMORY</td>
     <td>Memory space to program when executing the `avrdude` target (e.g. 'application` for an XMEGA device). Default is `flash`.</td>
    </tr>
+   <td>AVRDUDE_BAUD</td>
+   <td>Baud rate to use when executing the `avrdude` target (e.g. '115200` for an Optiboot device). Default is empty.</td>
+  </tr>
+  </tr>
+   <td>AVRDUDE_HFUSE</td>
+   <td>Fuse setting to use when executing the `avrdude-hfuse` target (format: 0x??). Default is empty.</td>
+  </tr>
+  </tr>
+   <td>AVRDUDE_EFUSE</td>
+   <td>Fuse setting to use when executing the `avrdude-efuse` target (format: 0x??). Default is empty.</td>
+  </tr>
+  </tr>
+   <td>AVRDUDE_LFUSE</td>
+   <td>Fuse setting to use when executing the `avrdude-lfuse` target (format: 0x??). Default is empty.</td>
+  </tr>
+  </tr>
+  <td>AVRDUDE_LOCK</td>
+  <td>Bit bits setting to use when executing the `avrdude-lock` target (format: 0x??). Default is empty.</td>
+ </tr>
  </tbody>
 </table>
 

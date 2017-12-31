@@ -34,11 +34,9 @@ the dependencies of another module's targets.
 Next, your module should always import the DMBS `CORE` module, via the
 following:
 
-    # Conditionally import the CORE module of DMBS if it is not already imported
+    # Import the CORE module of DMBS
     DMBS_MODULE_PATH := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
-    ifeq ($(findstring CORE, $(DMBS_BUILD_MODULES)),)
-      include $(DMBS_MODULE_PATH)/core.mk
-    endif
+    include $(DMBS_MODULE_PATH)/core.mk
 
 This ensures that the `make help` target is always available. In addition, the
 `CORE` module exposes some [commonly used macros and variables](core.md) to

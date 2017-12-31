@@ -152,6 +152,10 @@ be assumed.
     <td>Boolean, if `Y` jump tables will be enabled to slightly reduce the resulting binary's size - note that this can cause incorrect jumps if the binary is relocated after compilation, such as for a bootloader. Default is `N`.</td>
    </tr>
    <tr>
+    <td>LTO</td>
+    <td>Boolean, if `Y` link time optimization will be enabled to reduce the resulting binary's size. For larger projects you might also want to add `-mcall-prologues` to the `CC_FLAGS`. Default is `N`.</td>
+   </tr>
+   <tr>
     <td>OBJDIR</td>
     <td>Directory to store the intermediate object files, as they are generated from the source files. Default is `obj`.</td>
    </tr>
