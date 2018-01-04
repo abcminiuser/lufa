@@ -121,14 +121,17 @@
 
 			/** \name USB Configuration Descriptor Attribute Masks */
 			//@{
-			/** Mask for the reserved bit in the Configuration Descriptor's \c ConfigAttributes field, which must be set on all
-			 *  devices for historical purposes.
+			/** Mask for the reserved bit in the Configuration Descriptor's \c ConfigAttributes field, which must be always
+			 *  set on all USB devices for historical purposes.
 			 */
 			#define USB_CONFIG_ATTR_RESERVED          0x80
 
 			/** Can be masked with other configuration descriptor attributes for a \ref USB_Descriptor_Configuration_Header_t
 			 *  descriptor's \c ConfigAttributes value to indicate that the specified configuration can draw its power
-			 *  from the device's own power source.
+			 *  from the device's own power source, instead of drawing it from the USB host.
+			 *
+			 *  Note that the host will probe this dynamically - the device should report its current power state via the
+			 *  \ref USB_Device_CurrentlySelfPowered global variable.
 			 */
 			#define USB_CONFIG_ATTR_SELFPOWERED       0x40
 
@@ -136,6 +139,10 @@
 			 *  descriptor's \c ConfigAttributes value to indicate that the specified configuration supports the
 			 *  remote wakeup feature of the USB standard, allowing a suspended USB device to wake up the host upon
 			 *  request.
+			 *
+			 *  If set, the host will dynamically enable and disable remote wakeup support, indicated via the
+			 *  \ref USB_Device_RemoteWakeupEnabled global variable. To initiate a remote wakeup of the host (when allowed)
+			 *  see \ref USB_Device_RemoteWakeupEnabled().
 			 */
 			#define USB_CONFIG_ATTR_REMOTEWAKEUP      0x20
 			//@}
