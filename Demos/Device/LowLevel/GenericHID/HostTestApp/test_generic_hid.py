@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
              LUFA Library
      Copyright (C) Dean Camera, 2018.
@@ -17,37 +19,34 @@
 
 import sys
 from time import sleep
-import pywinusb.hid as hid
-
-# Generic HID device VID, PID and report payload length (length is increased
-# by one to account for the Report ID byte that must be pre-pended)
-device_vid = 0x03EB
-device_pid = 0x204F
-report_length = 1 + 8
+import hid
 
 
 def get_hid_device_handle():
-    hid_device_filter = hid.HidDeviceFilter(vendor_id=device_vid,
-                                            product_id=device_pid)
+    all_hid_devices = hid.enumerate()
 
-    valid_hid_devices = hid_device_filter.get_devices()
+    lufa_hid_devices = [d for d in all_hid_devices if d['vendor_id'] == 0x03EB and d['product_id'] == 0x204F]
 
-    if len(valid_hid_devices) is 0:
+    if len(lufa_hid_devices) is 0:
         return None
-    else:
-        return valid_hid_devices[0]
+
+    device_handle = hid.device()
+    device_handle.open_path(lufa_hid_devices[0]['path'])
+    return device_handle
 
 
 def send_led_pattern(device, led1, led2, led3, led4):
     # Report data for the demo is the report ID (always zero) followed by the
     # LED on/off data
-    report_data = [0, led1, led2, led3, led4]
-
-    # Zero-extend the array to the length the report should be
-    report_data.extend([0] * (report_length - len(report_data)))
+    report_data = bytearray(9)
+    report_data[0] = 0
+    report_data[1] = led1
+    report_data[2] = led2
+    report_data[3] = led3
+    report_data[4] = led4
 
     # Send the generated report to the device
-    device.send_output_report(report_data)
+    device.write(report_data)
 
     print("Sent LED Pattern: {0}".format(report_data[1:5]))
 
@@ -64,11 +63,7 @@ def main():
         sys.exit(1)
 
     try:
-        hid_device.open()
-
-        print("Connected to device 0x%04X/0x%04X - %s [%s]" %
-              (hid_device.vendor_id, hid_device.product_id,
-               hid_device.product_name, hid_device.vendor_name))
+        print("Connected to device.", flush=True)
 
         # Set up the HID input report handler to receive reports
         hid_device.set_raw_data_handler(received_led_pattern)

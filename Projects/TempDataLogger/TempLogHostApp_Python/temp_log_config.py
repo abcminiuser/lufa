@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
              LUFA Library
      Copyright (C) Dean Camera, 2018.
@@ -25,44 +27,41 @@
 
 import sys
 from datetime import datetime
-import pywinusb.hid as hid
-
-# Generic HID device VID, PID and report payload length (length is increased
-# by one to account for the Report ID byte that must be pre-pended)
-device_vid = 0x03EB
-device_pid = 0x2063
-report_length = 1 + 7
+import hid
 
 
 def get_hid_device_handle():
-    hid_device_filter = hid.HidDeviceFilter(vendor_id=device_vid,
-                                            product_id=device_pid)
+    all_hid_devices = hid.enumerate()
 
-    valid_hid_devices = hid_device_filter.get_devices()
+    lufa_hid_devices = [d for d in all_hid_devices if d['vendor_id'] == 0x03EB and d['product_id'] == 0x2063]
 
-    if len(valid_hid_devices) is 0:
+    if len(lufa_hid_devices) is 0:
         return None
-    else:
-        return valid_hid_devices[0]
+
+    device_handle = hid.device()
+    device_handle.open_path(lufa_hid_devices[0]['path'])
+    return device_handle
 
 
 def configure_temp_log_device(device, time_date, log_interval_500ms):
+    report_data = bytearray(8)
+
     # Report data for the demo is the report ID (always zero)
-    report_data = [0]
+    report_data[0] = 0
 
     # Followed by the time/date data
-    report_data.extend([time_date.hour, time_date.minute,
-                        time_date.second, time_date.day,
-                        time_date.month, time_date.year - 2000])
+    report_data[1] = time_date.hour
+    report_data[2] = time_date.minute,
+    report_data[3] = time_date.second
+    report_data[4] = time_date.day,
+    report_data[5] = time_date.month
+    report_data[6] = time_date.year - 2000
 
     # Lastly the log interval in 500ms units of time
-    report_data.extend([log_interval_500ms])
-
-    # Zero-extend the array to the length the report should be
-    report_data.extend([0] * (report_length - len(report_data)))
+    report_data[7] = log_interval_500ms
 
     # Send the generated report to the device
-    device.send_output_report(report_data)
+    device.write(report_data)
 
 
 def main(time_date, log_interval_500ms):
@@ -73,11 +72,7 @@ def main(time_date, log_interval_500ms):
         sys.exit(1)
 
     try:
-        hid_device.open()
-
-        print("Connected to device 0x%04X/0x%04X - %s [%s]" %
-              (hid_device.vendor_id, hid_device.product_id,
-               hid_device.product_name, hid_device.vendor_name))
+        print("Connected to device.", flush=True)
 
         configure_temp_log_device(hid_device, time_date, log_interval_500ms)
 
