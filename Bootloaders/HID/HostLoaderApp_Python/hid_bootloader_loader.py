@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
              LUFA Library
      Copyright (C) Dean Camera, 2018.
@@ -15,12 +17,12 @@
     Example:
         python hid_bootloader_loader.py at90usb1287 Mouse.hex
 
-    Requires the pywinusb (https://pypi.python.org/pypi/pywinusb/) and
-    IntelHex (https://pypi.python.org/pypi/IntelHex/) libraries.
+    Requires the hidapi (https://pypi.python.org/pypi/hidapi) and
+    IntelHex (https://pypi.python.org/pypi/IntelHex) libraries.
 """
 
 import sys
-from pywinusb import hid
+import hid
 from intelhex import IntelHex
 
 
@@ -40,26 +42,29 @@ device_info_map['at90usb82']   = {'page_size': 128, 'flash_kb': 8}
 
 
 def get_hid_device_handle():
-    hid_device_filter = hid.HidDeviceFilter(vendor_id=0x03EB,
-                                            product_id=0x2067)
+    all_hid_devices = hid.enumerate()
 
-    valid_hid_devices = hid_device_filter.get_devices()
+    lufa_hid_devices = [d for d in all_hid_devices if d['vendor_id'] == 0x03EB and d['product_id'] == 0x2067]
 
-    if len(valid_hid_devices) is 0:
+    if len(lufa_hid_devices) is 0:
         return None
-    else:
-        return valid_hid_devices[0]
+
+    device_handle = hid.device()
+    device_handle.open_path(lufa_hid_devices[0]['path'])
+    return device_handle
 
 
 def send_page_data(hid_device, address, data):
     # Bootloader page data should be the HID Report ID (always zero) followed
     # by the starting address to program, then one device's flash page worth
     # of data
-    output_report_data = [0]
-    output_report_data.extend([address & 0xFF, address >> 8])
-    output_report_data.extend(data)
+    output_report_data = bytearray(65)
+    output_report_data[0] = 0
+    output_report_data[1] = address & 0xFF
+    output_report_data[2] = address >> 8
+    output_report_data[3 : ] = data
 
-    hid_device.send_output_report(output_report_data)
+    hid_device.write(output_report_data)
 
 
 def program_device(hex_data, device_info):
@@ -70,8 +75,7 @@ def program_device(hex_data, device_info):
         sys.exit(1)
 
     try:
-        hid_device.open()
-        print("Connected to bootloader.")
+        print("Connected to bootloader.", flush=True)
 
         # Program in all data from the loaded HEX file, in a number of device
         # page sized chunks
@@ -83,7 +87,7 @@ def program_device(hex_data, device_info):
             # address and convert it to a regular list of bytes
             page_data = [hex_data[i] for i in current_page_range]
 
-            print("Writing address 0x%04X-0x%04X" % (current_page_range[0], current_page_range[-1]))
+            print("Writing address 0x%04X-0x%04X" % (current_page_range[0], current_page_range[-1]), flush=True)
 
             # Devices with more than 64KB of flash should shift down the page
             # address so that it is 16-bit (page size is guaranteed to be
@@ -95,7 +99,7 @@ def program_device(hex_data, device_info):
 
         # Once programming is complete, start the application via a dummy page
         # program to the page address 0xFFFF
-        print("Programming complete, starting application.")
+        print("Programming complete, starting application.", flush=True)
         send_page_data(hid_device, 0xFFFF, [0] * device_info['page_size'])
 
     finally:
@@ -103,6 +107,11 @@ def program_device(hex_data, device_info):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        print("Usage:")
+        print("\t{} device file.hex".format(sys.argv[0]))
+        sys.exit(1)
+
     # Load the specified HEX file
     try:
         hex_data = IntelHex(sys.argv[2])
