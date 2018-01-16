@@ -74,6 +74,11 @@ void USB_INT_ClearAllInterrupts(void)
 	#endif
 }
 
+#if defined(USB_CAN_BE_DEVICE) && !defined(NO_SOF_EVENTS)
+// From Endpoint_AVR8.c
+extern uint8_t EndpointInTimeout;
+#endif
+
 ISR(USB_GEN_vect, ISR_BLOCK)
 {
 	#if defined(USB_CAN_BE_DEVICE)
@@ -81,6 +86,7 @@ ISR(USB_GEN_vect, ISR_BLOCK)
 	if (USB_INT_HasOccurred(USB_INT_SOFI) && USB_INT_IsEnabled(USB_INT_SOFI))
 	{
 		USB_INT_Clear(USB_INT_SOFI);
+		EndpointInTimeout = 0x00;
 
 		EVENT_USB_Device_StartOfFrame();
 	}
