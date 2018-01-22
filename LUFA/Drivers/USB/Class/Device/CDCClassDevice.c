@@ -323,7 +323,7 @@ void CDC_Device_CreateBlockingStream(USB_ClassInfo_CDC_Device_t* const CDCInterf
 static int CDC_Device_putchar(char c,
                               FILE* Stream)
 {
-	return CDC_Device_SendByte((USB_ClassInfo_CDC_Device_t*)fdev_get_udata(Stream), c) ? _FDEV_ERR : 0;
+	return CDC_Device_SendByte((USB_ClassInfo_CDC_Device_t*)fdev_get_udata(Stream), c) ? _FDEV_ERR : c;
 }
 
 static int CDC_Device_getchar(FILE* Stream)

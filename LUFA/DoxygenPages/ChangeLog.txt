@@ -10,6 +10,8 @@
   *  <b>Fixed:</b>
   *  - Core:
   *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)
+  *   - Fixed CDC Device class driver's internal serial stream created by \ref CDC_Device_CreateStream not returning the written
+  *     character after a successful write (thanks to NicoHood)
   *  - Library Applications:
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
   *
