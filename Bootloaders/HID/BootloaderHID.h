@@ -43,6 +43,7 @@
 		#include <avr/power.h>
 		#include <avr/interrupt.h>
 		#include <util/atomic.h>
+		#include <util/delay.h>
 		#include <stdbool.h>
 
 		#include "Descriptors.h"

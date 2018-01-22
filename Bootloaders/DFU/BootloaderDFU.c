@@ -191,6 +191,9 @@ int main(void)
 	while (RunBootloader || WaitForExit)
 	  USB_USBTask();
 
+	/* Wait a short time to end all USB transactions and then disconnect */
+	_delay_us(1000);
+
 	/* Reset configured hardware back to their original states for the user application */
 	ResetHardware();
 
