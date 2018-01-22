@@ -35,8 +35,20 @@
 
 #include "BootloaderAPI.h"
 
+static bool IsPageAddressValid(const uint32_t Address)
+{
+	/* Determine if the given page address is correctly aligned to the
+	   start of a flash page. */
+	bool PageAddressIsAligned = !(Address & (SPM_PAGESIZE - 1));
+
+	return (Address < BOOT_START_ADDR) && PageAddressIsAligned;
+}
+
 void BootloaderAPI_ErasePage(const uint32_t Address)
 {
+	if (! IsPageAddressValid(Address))
+		return;
+
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
 		boot_page_erase_safe(Address);
@@ -47,6 +59,9 @@ void BootloaderAPI_ErasePage(const uint32_t Address)
 
 void BootloaderAPI_WritePage(const uint32_t Address)
 {
+	if (! IsPageAddressValid(Address))
+		return;
+
 	ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
 	{
 		boot_page_write_safe(Address);

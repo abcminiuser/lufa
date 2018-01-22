@@ -14,6 +14,7 @@
   *     character after a successful write (thanks to NicoHood)
   *  - Library Applications:
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
+  *   - Fixed bootloaders accepting flash writes to the bootloader region (thanks to NicoHood)
   *
   *  \section Sec_ChangeLog170418 Version 170418
   *  <b>New:</b>
