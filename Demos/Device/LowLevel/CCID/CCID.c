@@ -33,6 +33,12 @@
  *
  *  Main source file for the CCID demo. This file contains the main tasks of the demo and
  *  is responsible for the initial application hardware configuration.
+
+ *  WARNING: This code is not production ready and should not by any means be considered safe.
+ *  If you plan to integrate it into your application, you should seriously consider strong
+ *  encryption algorithms or a secure microprocessor. Since Atmel AVR microprocessors do not 
+ *  have any security requirement (therefore they don't offer any known protection against
+ *  side channel attacks or fault injection) a secure microprocessor is the best option.
  */
 
 #define  INCLUDE_FROM_CCID_C
