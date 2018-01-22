@@ -113,7 +113,9 @@
 				 *  On unsupported devices, this will evaluate to \ref NO_DESCRIPTOR and so will force the host to create a pseudo-serial
 				 *  number for the device.
 				 */
+				#ifndef USE_INTERNAL_SERIAL
 				#define USE_INTERNAL_SERIAL            0xDC
+				#endif
 
 				/** Length of the device's unique internal serial number, in bits, if present on the selected microcontroller
 				 *  model.
