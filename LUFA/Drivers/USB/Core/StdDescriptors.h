@@ -215,6 +215,7 @@
 				DTYPE_Other                     = 0x07, /**< Indicates that the descriptor is of other type. */
 				DTYPE_InterfacePower            = 0x08, /**< Indicates that the descriptor is an interface power descriptor. */
 				DTYPE_InterfaceAssociation      = 0x0B, /**< Indicates that the descriptor is an interface association descriptor. */
+				DTYPE_FunctionalDescriptor	= 0x21, /**< Indicates that the descriptor is funcional descriptor. */
 				DTYPE_CSInterface               = 0x24, /**< Indicates that the descriptor is a class specific interface descriptor. */
 				DTYPE_CSEndpoint                = 0x25, /**< Indicates that the descriptor is a class specific endpoint descriptor. */
 			};

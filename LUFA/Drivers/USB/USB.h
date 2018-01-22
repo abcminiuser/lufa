@@ -410,6 +410,7 @@
 
 		#include "Class/AndroidAccessoryClass.h"
 		#include "Class/AudioClass.h"
+		#include "Class/CCIDClass.h"
 		#include "Class/CDCClass.h"
 		#include "Class/HIDClass.h"
 		#include "Class/MassStorageClass.h"
