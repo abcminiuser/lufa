@@ -103,7 +103,7 @@
 				 *  number for the device.
 				 */
 				#ifndef USE_INTERNAL_SERIAL
-				#define USE_INTERNAL_SERIAL             0xDC
+					#define USE_INTERNAL_SERIAL         0xDC
 				#endif
 
 				/** Length of the device's unique internal serial number, in bits, if present on the selected microcontroller
@@ -116,6 +116,7 @@
 				 */
 				#define INTERNAL_SERIAL_START_ADDRESS   0x80800204
 			#else
+				#undef	USE_INTERNAL_SERIAL
 				#define USE_INTERNAL_SERIAL             NO_DESCRIPTOR
 
 				#define INTERNAL_SERIAL_LENGTH_BITS     0

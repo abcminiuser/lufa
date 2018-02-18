@@ -7,6 +7,10 @@
  /** \page Page_ChangeLog Project Changelog
   *
   *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  <b>New:</b>
+  *  - Core:
+  *   - The USE_INTERNAL_SERIAL definition can now be overridden by the user to a custom string index (thanks to Nicohood)
+  *
   *  <b>Fixed:</b>
   *  - Core:
   *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)

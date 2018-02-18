@@ -111,23 +111,24 @@
 				 *  number for the device.
 				 */
 				#ifndef USE_INTERNAL_SERIAL
-				#define USE_INTERNAL_SERIAL            0xDC
+					#define USE_INTERNAL_SERIAL         0xDC
 				#endif
 
 				/** Length of the device's unique internal serial number, in bits, if present on the selected microcontroller
 				 *  model.
 				 */
-				#define INTERNAL_SERIAL_LENGTH_BITS    (8 * (1 + (offsetof(NVM_PROD_SIGNATURES_t, COORDY1) - offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0))))
+				#define INTERNAL_SERIAL_LENGTH_BITS     (8 * (1 + (offsetof(NVM_PROD_SIGNATURES_t, COORDY1) - offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0))))
 
 				/** Start address of the internal serial number, in the appropriate address space, if present on the selected microcontroller
 				 *  model.
 				 */
-				#define INTERNAL_SERIAL_START_ADDRESS  offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0)
+				#define INTERNAL_SERIAL_START_ADDRESS   offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0)
 			#else
-				#define USE_INTERNAL_SERIAL            NO_DESCRIPTOR
+				#undef	USE_INTERNAL_SERIAL
+				#define USE_INTERNAL_SERIAL             NO_DESCRIPTOR
 
-				#define INTERNAL_SERIAL_LENGTH_BITS    0
-				#define INTERNAL_SERIAL_START_ADDRESS  0
+				#define INTERNAL_SERIAL_LENGTH_BITS     0
+				#define INTERNAL_SERIAL_START_ADDRESS   0
 			#endif
 
 		/* Function Prototypes: */
