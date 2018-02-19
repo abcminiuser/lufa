@@ -106,17 +106,17 @@
 		/** Enum for possible bulk messages between PC and Reader */
 		enum CCID_BulkOutMessages_t
 		{
-			PC_to_RDR_IccPowerOn  			= 0x62,
-			PC_to_RDR_IccPowerOff 			= 0x63,
-			PC_to_RDR_GetSlotStatus  		= 0x65,
-			PC_to_RDR_XfrBlock			= 0x6f,
-			PC_to_RDR_GetParameters			= 0x6c,
-			PC_to_RDR_ResetParameters		= 0x6d,
-			PC_to_RDR_SetParameters         	= 0x61,
-			PC_to_RDR_Escape			= 0x6b,
+			CCID_PC_to_RDR_IccPowerOn  			= 0x62,
+			CCID_PC_to_RDR_IccPowerOff 			= 0x63,
+			CCID_PC_to_RDR_GetSlotStatus  		= 0x65,
+			CCID_PC_to_RDR_XfrBlock			= 0x6f,
+			CCID_PC_to_RDR_GetParameters			= 0x6c,
+			CCID_PC_to_RDR_ResetParameters		= 0x6d,
+			CCID_PC_to_RDR_SetParameters         	= 0x61,
+			CCID_PC_to_RDR_Escape			= 0x6b,
 			
-			RDR_to_PC_DataBlock   			= 0x80,
-			RDR_to_PC_SlotStatus  			= 0x81
+			CCID_RDR_to_PC_DataBlock   			= 0x80,
+			CCID_RDR_to_PC_SlotStatus  			= 0x81
 
 		};
 

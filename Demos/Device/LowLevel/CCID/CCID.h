@@ -73,5 +73,9 @@
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
 
+	/* Callbacks */
+		uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t *error);
+		uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t *error);
+
 #endif
 
