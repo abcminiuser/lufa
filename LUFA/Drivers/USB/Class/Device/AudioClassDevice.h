@@ -117,7 +117,7 @@
 			 *
 			 *  \param[in,out] AudioInterfaceInfo  Pointer to a structure containing an Audio Class configuration and state.
 			 */
-			void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
+			int Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
 
 			/** Audio class driver callback for the setting and retrieval of streaming endpoint properties. This callback must be implemented
 			 *  in the user application to handle property manipulations on streaming audio endpoints.

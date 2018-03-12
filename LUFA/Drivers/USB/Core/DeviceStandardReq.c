@@ -48,6 +48,8 @@ bool    USB_Device_RemoteWakeupEnabled;
 
 void USB_Device_ProcessControlRequest(void)
 {
+	int request_handled;
+	
 	#if defined(ARCH_BIG_ENDIAN)
 	USB_ControlRequest.bmRequestType = Endpoint_Read_8();
 	USB_ControlRequest.bRequest      = Endpoint_Read_8();
@@ -61,9 +63,14 @@ void USB_Device_ProcessControlRequest(void)
 	  *(RequestHeader++) = Endpoint_Read_8();
 	#endif
 
-	EVENT_USB_Device_ControlRequest();
-
-	if (Endpoint_IsSETUPReceived())
+	if (!Endpoint_IsSETUPReceived())
+	{
+		return;
+	}
+	
+	request_handled = EVENT_USB_Device_ControlRequest();
+	
+	if (!request_handled)
 	{
 		uint8_t bmRequestType = USB_ControlRequest.bmRequestType;
 
@@ -74,6 +81,7 @@ void USB_Device_ProcessControlRequest(void)
 					(bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_STANDARD | REQREC_ENDPOINT)))
 				{
 					USB_Device_GetStatus();
+					request_handled = 1;
 				}
 
 				break;
@@ -83,12 +91,14 @@ void USB_Device_ProcessControlRequest(void)
 					(bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_STANDARD | REQREC_ENDPOINT)))
 				{
 					USB_Device_ClearSetFeature();
+					request_handled = 1;
 				}
 
 				break;
 			case REQ_SetAddress:
 				if (bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_STANDARD | REQREC_DEVICE))
 				  USB_Device_SetAddress();
+				  request_handled = 1;
 
 				break;
 			case REQ_GetDescriptor:
@@ -96,27 +106,30 @@ void USB_Device_ProcessControlRequest(void)
 					(bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_STANDARD | REQREC_INTERFACE)))
 				{
 					USB_Device_GetDescriptor();
+					request_handled = 1;
 				}
 
 				break;
 			case REQ_GetConfiguration:
 				if (bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_STANDARD | REQREC_DEVICE))
 				  USB_Device_GetConfiguration();
+				  request_handled = 1;
 
 				break;
 			case REQ_SetConfiguration:
 				if (bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_STANDARD | REQREC_DEVICE))
 				  USB_Device_SetConfiguration();
+				  request_handled = 1;
 
 				break;
 
 			default:
 				break;
 		}
+	
 	}
-
-	if (Endpoint_IsSETUPReceived())
-	{
+	
+	if (!request_handled)
 		Endpoint_ClearSETUP();
 		Endpoint_StallTransaction();
 	}

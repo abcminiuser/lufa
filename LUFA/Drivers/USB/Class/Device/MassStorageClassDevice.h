@@ -120,7 +120,7 @@
 			 *
 			 *  \param[in,out] MSInterfaceInfo  Pointer to a structure containing a Mass Storage Class configuration and state.
 			 */
-			void MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
+			int MS_Device_ProcessControlRequest(USB_ClassInfo_MS_Device_t* const MSInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
 
 			/** General management task for a given Mass Storage class interface, required for the correct operation of the interface. This should
 			 *  be called frequently in the main program loop, before the master USB management task \ref USB_USBTask().

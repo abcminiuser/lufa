@@ -122,7 +122,7 @@
 			 *
 			 *  \param[in,out] PRNTInterfaceInfo  Pointer to a structure containing a Printer Class configuration and state.
 			 */
-			void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
+			int PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
 
 			/** General management task for a given Printer class interface, required for the correct operation of the interface. This should
 			 *  be called frequently in the main program loop, before the master USB management task \ref USB_USBTask().

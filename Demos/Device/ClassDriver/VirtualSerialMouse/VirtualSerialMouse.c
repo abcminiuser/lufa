@@ -195,10 +195,16 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
-	HID_Device_ProcessControlRequest(&Mouse_HID_Interface);
+	int request_handled;
+	
+	request_handled = CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+	if (!request_handled) {
+		request_handled = HID_Device_ProcessControlRequest(&Mouse_HID_Interface);
+	}
+	
+	return request_handled;
 }
 
 /** Event handler for the USB device Start Of Frame event. */

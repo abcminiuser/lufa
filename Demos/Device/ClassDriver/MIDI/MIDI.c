@@ -204,8 +204,8 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	MIDI_Device_ProcessControlRequest(&Keyboard_MIDI_Interface);
+	return MIDI_Device_ProcessControlRequest(&Keyboard_MIDI_Interface);
 }
 

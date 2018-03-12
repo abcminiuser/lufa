@@ -37,13 +37,13 @@
 #define  __INCLUDE_FROM_CDC_DEVICE_C
 #include "CDCClassDevice.h"
 
-void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
+int CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if (USB_ControlRequest.wIndex != CDCInterfaceInfo->Config.ControlInterfaceNumber)
-	  return;
+	  return 0;
 
 	switch (USB_ControlRequest.bRequest)
 	{
@@ -61,6 +61,7 @@ void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInter
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -72,7 +73,7 @@ void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInter
 				while (!(Endpoint_IsOUTReceived()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0; /* Or should this be considered "handled"? */
 				}
 
 				CDCInterfaceInfo->State.LineEncoding.BaudRateBPS = Endpoint_Read_32_LE();
@@ -84,6 +85,7 @@ void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInter
 				Endpoint_ClearStatusStage();
 
 				EVENT_CDC_Device_LineEncodingChanged(CDCInterfaceInfo);
+				return 1;
 			}
 
 			break;
@@ -96,6 +98,7 @@ void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInter
 				CDCInterfaceInfo->State.ControlLineStates.HostToDevice = USB_ControlRequest.wValue;
 
 				EVENT_CDC_Device_ControLineStateChanged(CDCInterfaceInfo);
+				return 1;
 			}
 
 			break;
@@ -106,10 +109,12 @@ void CDC_Device_ProcessControlRequest(USB_ClassInfo_CDC_Device_t* const CDCInter
 				Endpoint_ClearStatusStage();
 
 				EVENT_CDC_Device_BreakSent(CDCInterfaceInfo, (uint8_t)USB_ControlRequest.wValue);
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool CDC_Device_ConfigureEndpoints(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)

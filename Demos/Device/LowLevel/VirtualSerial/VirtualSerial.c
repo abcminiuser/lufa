@@ -136,7 +136,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Process CDC specific control requests */
 	switch (USB_ControlRequest.bRequest)
@@ -149,6 +149,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the line coding data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
@@ -160,6 +161,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Read the line coding data in from the host into the global struct */
 				Endpoint_Read_Control_Stream_LE(&LineEncoding, sizeof(CDC_LineEncoding_t));
 				Endpoint_ClearIN();
+				return 1;
 			}
 
 			break;
@@ -173,10 +175,12 @@ void EVENT_USB_Device_ControlRequest(void)
 				         lines. The mask is read in from the wValue parameter in USB_ControlRequest, and can be masked against the
 						 CONTROL_LINE_OUT_* masks to determine the RTS and DTR line states using the following code:
 				*/
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Function to manage CDC data transmission and reception to and from the host. */

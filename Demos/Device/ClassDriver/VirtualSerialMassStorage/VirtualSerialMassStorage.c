@@ -218,10 +218,16 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
-	MS_Device_ProcessControlRequest(&Disk_MS_Interface);
+	int request_handled;
+	
+	request_handled = CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
+	if (!request_handled) {
+ 		request_handled = MS_Device_ProcessControlRequest(&Disk_MS_Interface);
+	}
+	
+	return request_handled;
 }
 
 /** CDC class driver callback function the processing of changes to the virtual

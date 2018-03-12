@@ -37,10 +37,10 @@
 #define  __INCLUDE_FROM_AUDIO_DEVICE_C
 #include "AudioClassDevice.h"
 
-void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo)
+int Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo)
 {
 	if (!(Endpoint_IsSETUPReceived()))
-	  return;
+	  return 0;
 
 	if ((USB_ControlRequest.bmRequestType & CONTROL_REQTYPE_RECIPIENT) == REQREC_INTERFACE)
 	{
@@ -49,7 +49,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 		if ((InterfaceIndex != AudioInterfaceInfo->Config.ControlInterfaceNumber) &&
 		    (InterfaceIndex != AudioInterfaceInfo->Config.StreamingInterfaceNumber))
 		{
-			return;
+			return 0;
 		}
 	}
 	else if ((USB_ControlRequest.bmRequestType & CONTROL_REQTYPE_RECIPIENT) == REQREC_ENDPOINT)
@@ -59,7 +59,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 		if ((EndpointAddress != AudioInterfaceInfo->Config.DataINEndpoint.Address) &&
 		    (EndpointAddress != AudioInterfaceInfo->Config.DataOUTEndpoint.Address))
 		{
-			return;
+			return 0;
 		}
 	}
 
@@ -73,6 +73,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 
 				AudioInterfaceInfo->State.InterfaceEnabled = ((USB_ControlRequest.wValue & 0xFF) != 0);
 				EVENT_Audio_Device_StreamStartStop(AudioInterfaceInfo);
+				return 1;
 			}
 
 			break;
@@ -82,6 +83,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 			{
 				Endpoint_ClearSETUP();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -107,6 +109,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 
 					CALLBACK_Audio_Device_GetSetEndpointProperty(AudioInterfaceInfo, EndpointProperty, EndpointAddress,
 					                                             EndpointControl, &ValueLength, Value);
+					return 1;
 				}
 			}
 			else if ((USB_ControlRequest.bmRequestType & CONTROL_REQTYPE_RECIPIENT) == REQREC_INTERFACE)
@@ -127,6 +130,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 
 					CALLBACK_Audio_Device_GetSetInterfaceProperty(AudioInterfaceInfo, Property, Entity,
 				                                                  Parameter, &ValueLength, Value);
+					return 1;
 				}
 			}
 
@@ -149,6 +153,7 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 					Endpoint_ClearSETUP();
 					Endpoint_Write_Control_Stream_LE(Value, ValueLength);
 					Endpoint_ClearOUT();
+					return 1;
 				}
 			}
 			else if ((USB_ControlRequest.bmRequestType & CONTROL_REQTYPE_RECIPIENT) == REQREC_INTERFACE)
@@ -165,11 +170,13 @@ void Audio_Device_ProcessControlRequest(USB_ClassInfo_Audio_Device_t* const Audi
 					Endpoint_ClearSETUP();
 					Endpoint_Write_Control_Stream_LE(Value, ValueLength);
 					Endpoint_ClearOUT();
+					return 1;
 				}
 			}
 
 			break;
 	}
+	return 0;
 }
 
 bool Audio_Device_ConfigureEndpoints(USB_ClassInfo_Audio_Device_t* const AudioInterfaceInfo)

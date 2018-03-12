@@ -140,7 +140,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Process UFI specific control requests */
 	switch (USB_ControlRequest.bRequest)
@@ -153,6 +153,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Indicate that the current transfer should be aborted */
 				IsMassStoreReset = true;
+				return 1;
 			}
 
 			break;
@@ -166,10 +167,12 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Task to manage the Mass Storage interface, reading in Command Block Wrappers from the host, processing the SCSI commands they

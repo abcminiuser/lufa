@@ -59,7 +59,7 @@
 	/* Function Prototypes: */
 		void SetupHardware(void);
 
-		void EVENT_USB_Device_ControlRequest(void);
+		int EVENT_USB_Device_ControlRequest(void);
 
 #endif
 

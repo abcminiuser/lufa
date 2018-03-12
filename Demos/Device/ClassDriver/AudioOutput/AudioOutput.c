@@ -204,9 +204,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
-	Audio_Device_ProcessControlRequest(&Speaker_Audio_Interface);
+	return Audio_Device_ProcessControlRequest(&Speaker_Audio_Interface);
 }
 
 /** Audio class driver callback for the setting and retrieval of streaming endpoint properties. This callback must be implemented

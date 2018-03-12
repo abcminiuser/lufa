@@ -72,7 +72,7 @@ void SetupHardware(void)
 }
 
 /** Event handler for the library USB Control Request reception event. */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
     const uint8_t SerialNumber[5] = { 0, 0, 0, 0, 1 };
 	uint8_t ControlData[2]        = { 0, 0 };
@@ -104,6 +104,7 @@ void EVENT_USB_Device_ControlRequest(void)
 						if (ControlData[1]) PORTC &= ~RELAY4; else PORTC |= RELAY4;
 						break;
 				}
+				return 1;
 			}
 
 			break;
@@ -137,9 +138,11 @@ void EVENT_USB_Device_ControlRequest(void)
 				  Endpoint_Write_Control_Stream_LE(ControlData, sizeof(ControlData));
 
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 

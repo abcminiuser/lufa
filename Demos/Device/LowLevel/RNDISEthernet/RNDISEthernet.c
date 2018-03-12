@@ -128,7 +128,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Process RNDIS class commands */
 	switch (USB_ControlRequest.bRequest)
@@ -144,6 +144,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Process the RNDIS message */
 				ProcessRNDISControlMessage();
+				return 1;
 			}
 
 			break;
@@ -166,10 +167,12 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Reset the message header once again after transmission */
 				MessageHeader->MessageLength = 0;
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Task to manage the sending and receiving of encapsulated RNDIS data and notifications. This removes the RNDIS

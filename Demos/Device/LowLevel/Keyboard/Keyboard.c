@@ -143,7 +143,7 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  *  the device from the USB host before passing along unhandled control requests to the library for processing
  *  internally.
  */
-void EVENT_USB_Device_ControlRequest(void)
+int EVENT_USB_Device_ControlRequest(void)
 {
 	/* Handle HID Class specific requests */
 	switch (USB_ControlRequest.bRequest)
@@ -161,6 +161,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				/* Write the report data to the control endpoint */
 				Endpoint_Write_Control_Stream_LE(&KeyboardReportData, sizeof(KeyboardReportData));
 				Endpoint_ClearOUT();
+				return 1;
 			}
 
 			break;
@@ -173,7 +174,7 @@ void EVENT_USB_Device_ControlRequest(void)
 				while (!(Endpoint_IsOUTReceived()))
 				{
 					if (USB_DeviceState == DEVICE_STATE_Unattached)
-					  return;
+					  return 0;
 				}
 
 				/* Read in the LED report from the host */
@@ -184,6 +185,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Process the incoming LED report */
 				ProcessLEDReport(LEDStatus);
+				return 1;
 			}
 
 			break;
@@ -197,6 +199,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
@@ -208,6 +211,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Set or clear the flag depending on what the host indicates that the current Protocol should be */
 				UsingReportProtocol = (USB_ControlRequest.wValue != 0);
+				return 1;
 			}
 
 			break;
@@ -219,6 +223,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				/* Get idle period in MSB, IdleCount must be multiplied by 4 to get number of milliseconds */
 				IdleCount = ((USB_ControlRequest.wValue & 0xFF00) >> 6);
+				return 1;
 			}
 
 			break;
@@ -232,10 +237,12 @@ void EVENT_USB_Device_ControlRequest(void)
 
 				Endpoint_ClearIN();
 				Endpoint_ClearStatusStage();
+				return 1;
 			}
 
 			break;
 	}
+	return 0;
 }
 
 /** Event handler for the USB device Start Of Frame event. */
