@@ -7,11 +7,21 @@
  /** \page Page_ChangeLog Project Changelog
   *
   *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  <b>New:</b>
+  *  - Core:
+  *   - The USE_INTERNAL_SERIAL definition can now be overridden by the user to a custom string index (thanks to Nicohood)
+  *
   *  <b>Fixed:</b>
   *  - Core:
   *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)
+  *   - Fixed CDC Device class driver's internal serial stream created by \ref CDC_Device_CreateStream not returning the written
+  *     character after a successful write (thanks to NicoHood)
+  *   - Fixed incorrect endpoint bank setup on the UC3 architecture (thanks to Andrus Aaslaid)
+  *   - Fixed CDC_Device_Send*_P() and CDC_Host_Send*_P() variant functions not compiled out for UC3 architecture
   *  - Library Applications:
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
+  *   - Fixed bootloaders accepting flash writes to the bootloader region (thanks to NicoHood)
+  *   - Fixed bootloaders incorrectly checking the BOOTRST fuse on start (thanks to Braden Kell)
   *
   *  \section Sec_ChangeLog170418 Version 170418
   *  <b>New:</b>

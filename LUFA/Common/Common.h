@@ -116,6 +116,7 @@
 			#define pgm_read_byte(x)         *x
 			#define memcmp_P(...)            memcmp(__VA_ARGS__)
 			#define memcpy_P(...)            memcpy(__VA_ARGS__)
+			#define strlen_P(...)            strlen(__VA_ARGS__)
 			// =================================================
 
 			typedef uint32_t uint_reg_t;

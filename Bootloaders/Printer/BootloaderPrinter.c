@@ -146,7 +146,7 @@ void Application_Jump_Check(void)
 		JTAG_ENABLE();
 	#else
 		/* Check if the device's BOOTRST fuse is set */
-		if (BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & FUSE_BOOTRST)
+		if (!(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & ~FUSE_BOOTRST))
 		{
 			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
 			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
@@ -400,6 +400,9 @@ int main(void)
 		PRNT_Device_USBTask(&TextOnly_Printer_Interface);
 		USB_USBTask();
 	}
+
+	/* Wait a short time to end all USB transactions and then disconnect */
+	_delay_us(1000);
 
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
 	USB_Detach();

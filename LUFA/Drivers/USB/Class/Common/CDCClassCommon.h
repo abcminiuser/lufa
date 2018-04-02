@@ -112,21 +112,6 @@
 		#define CDC_CONTROL_LINE_IN_OVERRUNERROR (1 << 6)
 		//@}
 
-		/** Macro to define a CDC class-specific functional descriptor. CDC functional descriptors have a
-		 *  uniform structure but variable sized data payloads, thus cannot be represented accurately by
-		 *  a single \c typedef \c struct. A macro is used instead so that functional descriptors can be created
-		 *  easily by specifying the size of the payload. This allows \c sizeof() to work correctly.
-		 *
-		 *  \param[in] DataSize  Size in bytes of the CDC functional descriptor's data payload.
-		 */
-		#define CDC_FUNCTIONAL_DESCRIPTOR(DataSize)        \
-		     struct                                        \
-		     {                                             \
-		          USB_Descriptor_Header_t Header;          \
-			      uint8_t                 SubType;         \
-		          uint8_t                 Data[DataSize];  \
-		     }
-
 	/* Enums: */
 		/** Enum for possible Class, Subclass and Protocol values of device and interface descriptors relating to the CDC
 		 *  device class.

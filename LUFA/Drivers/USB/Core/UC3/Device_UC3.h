@@ -102,7 +102,9 @@
 				 *  On unsupported devices, this will evaluate to \ref NO_DESCRIPTOR and so will force the host to create a pseudo-serial
 				 *  number for the device.
 				 */
-				#define USE_INTERNAL_SERIAL             0xDC
+				#ifndef USE_INTERNAL_SERIAL
+					#define USE_INTERNAL_SERIAL         0xDC
+				#endif
 
 				/** Length of the device's unique internal serial number, in bits, if present on the selected microcontroller
 				 *  model.
@@ -114,6 +116,7 @@
 				 */
 				#define INTERNAL_SERIAL_START_ADDRESS   0x80800204
 			#else
+				#undef	USE_INTERNAL_SERIAL
 				#define USE_INTERNAL_SERIAL             NO_DESCRIPTOR
 
 				#define INTERNAL_SERIAL_LENGTH_BITS     0

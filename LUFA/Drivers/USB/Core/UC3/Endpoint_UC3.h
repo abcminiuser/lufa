@@ -216,7 +216,7 @@
 				                                      (AVR32_USBB_ALLOC_MASK |
 				                                       ((uint32_t)Type << AVR32_USBB_EPTYPE_OFFSET) |
 				                                       ((Address & ENDPOINT_DIR_IN) ? AVR32_USBB_UECFG0_EPDIR_MASK : 0) |
-				                                       ((Banks > 1) ? AVR32_USBB_UECFG0_EPBK_SINGLE : AVR32_USBB_UECFG0_EPBK_DOUBLE) |
+				                                       (((Banks > 1) ? AVR32_USBB_UECFG0_EPBK_DOUBLE : AVR32_USBB_UECFG0_EPBK_SINGLE) << AVR32_USBB_EPBK_OFFSET) |
 				                                       Endpoint_BytesToEPSizeMask(Size)));
 			}
 
