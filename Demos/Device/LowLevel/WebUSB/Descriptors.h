@@ -44,6 +44,7 @@
 
 		#include "Config/AppConfig.h"
 		#include "WebUSBDevice.h"
+		#include "MS_OS_20_Device.h"
 
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
@@ -58,6 +59,16 @@
 			USB_Descriptor_Endpoint_t             INEndpoint;
 			USB_Descriptor_Endpoint_t             OUTEndpoint;
 		} USB_Descriptor_Configuration_t;
+
+		/** Type define for the Microsoft OS 2.0 Descriptor for the device. This must be defined in the
+		 *  application code as the descriptor may contain sub-descriptors which can vary between devices,
+		 *  and which identify which USB drivers Windows should use.
+		 */
+		typedef struct
+		{
+			MS_OS_20_Descriptor_Set_Header_t    Header;
+			MS_OS_20_CompatibleID_Descriptor    CompatibleID;
+		} MS_OS_20_Descriptor_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
 		 *  should have a unique ID index associated with it, which can be used to refer to the

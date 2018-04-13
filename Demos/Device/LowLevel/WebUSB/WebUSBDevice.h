@@ -32,29 +32,33 @@
 #define _WEBUSB_DEVICE_H
 
 	/* Macros */
-		#define WEBUSB_VERSION VERSION_BCD(1, 0, 0)
+		#ifndef WORD_TO_BYTES_LE
+		#define WORD_TO_BYTES_LE(n) n % 256, (n / 256) % 256
+		#endif
 
-		#define WEBUSB_REQUEST_TYPE (REQDIR_DEVICETOHOST | REQTYPE_VENDOR | REQREC_DEVICE)
+		#define WEBUSB_VERSION VERSION_BCD(1, 0, 0)
 
 		#define WEBUSB_PLATFORM_DESCRIPTOR_SIZE 24
 
 		/* $ python -c "import uuid;print(', '.join(map(hex, uuid.UUID('3408b638-09a9-47a0-8bfd-a0768815b665').bytes_le)))" */
 		#define WEBUSB_PLATFORM_UUID 0x38, 0xb6, 0x8, 0x34, 0xa9, 0x9, 0xa0, 0x47, 0x8b, 0xfd, 0xa0, 0x76, 0x88, 0x15, 0xb6, 0x65
 
-		/** \brief Convenience macro to easily create device capability platform descriptors for the WebUSB platform. This
-		 *  macro is designed to be wrapped in parenthese and included in a sequece to the \ref BOS_DESCRIPTOR macro.
+		/** \brief Convenience macro to easily create device capability platform descriptors for the WebUSB platform.
+		 *
+		 *  \note This macro is designed to be wrapped in parentheses and included in a sequence to the \ref BOS_DESCRIPTOR macro.
 		 *
 		 * 	\param[in] VendorCode  Vendor Code that all control requests coming from the browser must use.
 		 *
 		 * 	\param[in] LandingPageIndex  Index of the URL Descriptor to use as the Landing Page for the device.
 		 *
 		 */
-		#define WEBUSB_DESCRIPTOR(VendorCode, LandingPageIndex) \
-			WEBUSB_PLATFORM_DESCRIPTOR_SIZE, DTYPE_DeviceCapability,\
+		#define WEBUSB_PLATFORM_DESCRIPTOR(VendorCode, LandingPageIndex) \
+			WEBUSB_PLATFORM_DESCRIPTOR_SIZE, \
+			DTYPE_DeviceCapability, \
 			DCTYPE_Platform, \
 			/* Reserved */ 0, \
 			WEBUSB_PLATFORM_UUID, \
-			(uint8_t)(WEBUSB_VERSION % 256), (uint8_t)(WEBUSB_VERSION / 256), \
+			WORD_TO_BYTES_LE(WEBUSB_VERSION), \
 			VendorCode, \
 			LandingPageIndex
 
