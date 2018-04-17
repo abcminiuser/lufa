@@ -47,7 +47,10 @@
 
 	#define WEBUSB_VENDOR_CODE 0x42
 	#define WEBUSB_LANDING_PAGE_INDEX 0
+
 	#define MS_OS_20_VENDOR_CODE 0x41     // Must be different than WEBUSB_VENDOR_CODE
-	#define MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH 30
+	#define MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH 158
+	// python -c "import uuid;print('u\"{' + str(uuid.uuid4()) + '}\"')"
+	#define MS_OS_20_DEVICE_GUID_STRING u"{94e78d93-4cbb-481f-b542-a74740d3a713}"    // FIXME: Generate a unique GUID for your device.
 
 #endif

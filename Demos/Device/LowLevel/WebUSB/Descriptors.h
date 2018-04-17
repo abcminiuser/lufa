@@ -66,8 +66,9 @@
 		 */
 		typedef struct
 		{
-			MS_OS_20_Descriptor_Set_Header_t    Header;
-			MS_OS_20_CompatibleID_Descriptor    CompatibleID;
+			MS_OS_20_Descriptor_Set_Header_t        Header;
+			MS_OS_20_CompatibleID_Descriptor        CompatibleID;
+			MS_OS_20_Registry_Property_Descriptor   RegistryData;
 		} MS_OS_20_Descriptor_t;
 
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor

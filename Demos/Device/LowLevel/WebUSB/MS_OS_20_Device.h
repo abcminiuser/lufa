@@ -32,6 +32,9 @@
 #define _MS_OS_20_WEBUSB_DEVICE_H
 
 	/* Macros */
+		#ifndef WORD_TO_BYTES_LE
+		#define WORD_TO_BYTES_LE(n) n % 256, (n / 256) % 256
+		#endif
 		#ifndef LONG_TO_BYTES_LE
 		#define LONG_TO_BYTES_LE(n) n % 256, (n / 256) % 256, (n / 65536) % 256, (n / 16777216) % 256
 		#endif
@@ -50,13 +53,13 @@
 		 * 	\param[in] VendorCode  Vendor Code that all control requests coming from Windows must use.
 		 */
 		#define MS_OS_20_PLATFORM_DESCRIPTOR(VendorCode, TotalLength) \
-			MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH, \
+			/* Total size of this descriptor */ 28, \
 			DTYPE_DeviceCapability,\
 			DCTYPE_Platform, \
 			/* Reserved */ 0, \
 			MS_OS_20_PLATFORM_UUID, \
 			LONG_TO_BYTES_LE(MS_OS_20_WINDOWS_VERSION), \
-			TotalLength , \
+			WORD_TO_BYTES_LE(TotalLength), \
 			VendorCode, \
 			MS_OS_20_ALTERNATE_ENUMERATION_CODE
 
@@ -73,7 +76,7 @@
 //			MS_OS_20_SUBSET_HEADER_CONFIGURATION = 0x01,
 //			MS_OS_20_SUBSET_HEADER_FUNCTION = 0x02,
 			MS_OS_20_FEATURE_COMPATBLE_ID = 0x03,
-//			MS_OS_20_FEATURE_REG_PROPERTY = 0x04,
+			MS_OS_20_FEATURE_REG_PROPERTY = 0x04,
 //			MS_OS_20_FEATURE_MIN_RESUME_TIME = 0x05,
 //			MS_OS_20_FEATURE_MODEL_ID = 0x06,
 //			MS_OS_20_FEATURE_CCGP_DEVICE =0x07,
@@ -83,7 +86,8 @@
 		 *
 		 *  \note Regardless of CPU architecture, these values should be stored as little endian.
 		 */
-		typedef struct {
+		typedef struct
+		{
 			uint16_t Length; /**< The length, in bytes, of this header. Shall be set to 10. */
 			uint16_t DescriptorType; /**< Shall be set to MS_OS_20_SET_HEADER_DESCRIPTOR */
 			uint32_t WindowsVersion;
@@ -98,11 +102,48 @@
 		 *
 		 *  \note ID values must be 8 bytes long and contain only the ASCII values for uppercase letters, numbers, underscores, and the NULL character. No other characters are allowed, and the last byte in the ID must be the NULL 0x00.
 		 */
-		typedef struct {
+		typedef struct
+		{
 			uint16_t Length; /**< The length, bytes, of the compatible ID descriptor including value descriptors. Shall be set to 20. */
 			uint16_t DescriptorType; /**< MS_OS_20_FEATURE_COMPATIBLE_ID */
 			uint8_t CompatibleID[8]; /**< Compatible ID ASCII String */
 			uint8_t SubCompatibleID[8]; /**< Sub-compatible ID ASCII String */
 		} ATTR_PACKED MS_OS_20_CompatibleID_Descriptor;
+
+		/** \brief Property Data Type values for the Microsoft OS 2.0 Registry Property Descriptor.
+		 *
+		 */
+		enum MS_OS_20_Property_Data_Types
+		{
+			MS_OS_20_REG_SZ = 1, /**< A NULL-terminated Unicode String */
+			MS_OS_20_REG_EXPAND_SZ = 2, /**< A NULL-terminated Unicode String that includes environment variables */
+			MS_OS_20_REG_BINARY = 3, /**< Free-form binary */
+			MS_OS_20_REG_DWORD_LITTLE_ENDIAN = 4, /**< A little-endian 32-bit integer */
+			MS_OS_20_REG_DWORD_BIG_ENDIAN = 5, /**< A big-endian 32-bit integer */
+			MS_OS_20_REG_LINK = 6, /**< A NULL-terminated Unicode string that contains a symbolic link */
+			MS_OS_20_REG_MULTI_SZ = 7 /**< Multiple NULL-terminated Unicode strings */
+		};
+
+		#define MS_OS_20_REGISTRY_KEY L"DeviceInterfaceGUID" // 40 bytes
+
+		/** \brief Microsoft OS 2.0 Registry Property Descriptor.
+		 *
+		 *  This descriptor is used to add per-device or per-function registry values that is read by the Windows USB driver stack or the device’s function driver.
+		 *
+		 *  For WebUSB in Chrome, for a single interface, we need to create a registry key DeviceInterfaceGUID of type REG_SZ
+		 *  and a value of a GUID. For more information, see:
+		 *  https://github.com/pbatard/libwdi/wiki/WCID-Devices#defining-a-device-interface-guid-or-other-device-specific-properties
+		 */
+		typedef struct {
+			uint16_t Length; /**< The length in bytes of is descriptor. */
+			uint16_t DescriptorType; /**< MS_OS_20_FEATURE_REG_PROPERTY */
+			uint16_t PropertyDataType; /**< MS_OS_20_Property_Data_types, MS_OS_20_REG_SZ for single interface. */
+			uint16_t PropertyNameLength; /**< The length of the property name. */
+			// FIXME: Only works for 16-bit architectures.
+			wchar_t PropertyName[sizeof(MS_OS_20_REGISTRY_KEY) / sizeof(wchar_t)]; /**< The name of registry property as NULL-terminated UTF-16 LE string. */
+			uint16_t PropertyDataLength; /**< The length of property data. */
+			// FIXME: Only handles REG_SZ & REG_MULTI_SZ types (strings)
+			wchar_t PropertyData[]; /**< Property Data. */
+		} ATTR_PACKED MS_OS_20_Registry_Property_Descriptor;
 
 #endif //_MS_OS_20_WEBUSB_DEVICE_H

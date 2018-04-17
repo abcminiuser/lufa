@@ -133,6 +133,17 @@ const MS_OS_20_Descriptor_t PROGMEM MS_OS_20_Descriptor =
 			.DescriptorType = CPU_TO_LE16(MS_OS_20_FEATURE_COMPATBLE_ID),
 			.CompatibleID = u8"WINUSB\x00", // Automatically null-terminated to 8 bytes
 			.SubCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0}
+		},
+
+	.RegistryData = // 10 + 40 + 78 = 128
+		{
+			.Length = CPU_TO_LE16(128),
+			.DescriptorType = CPU_TO_LE16(MS_OS_20_FEATURE_REG_PROPERTY),
+			.PropertyDataType = CPU_TO_LE16(MS_OS_20_REG_SZ),
+			.PropertyNameLength = CPU_TO_LE16(sizeof(MS_OS_20_REGISTRY_KEY)),
+			.PropertyName = MS_OS_20_REGISTRY_KEY, // 40 bytes
+			.PropertyDataLength = CPU_TO_LE16(sizeof(MS_OS_20_DEVICE_GUID_STRING)),
+			.PropertyData = MS_OS_20_DEVICE_GUID_STRING // 78 bytes
 		}
 };
 
@@ -176,7 +187,7 @@ void EVENT_USB_Device_ControlRequest(void) {
 					switch (USB_ControlRequest.wIndex) {
 						case MS_OS_20_DESCRIPTOR_INDEX:
 							/* Write the descriptor data to the control endpoint */
-							Endpoint_Write_Control_PStream_LE(&MS_OS_20_Descriptor, MIN(USB_ControlRequest.wLength, MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH));
+							Endpoint_Write_Control_PStream_LE(&MS_OS_20_Descriptor, MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH);
 							/* Release the endpoint after transaction. */
 							Endpoint_ClearOUT();
 							break;
