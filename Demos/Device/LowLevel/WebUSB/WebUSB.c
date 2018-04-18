@@ -115,7 +115,10 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 
 /** Microsoft OS 2.0 Descriptor. This is used by Windows to select the USB driver for the device.
  *
- *  For WebUSB in Chrome, the correct device is WINUSB.
+ *  For WebUSB in Chrome, the correct driver is WinUSB, which is selected via CompatibleID.
+ *
+ *  Additionally, while Chrome is built using libusb, a magic registry key needs to be set containing a GUID for
+ *  the device.
  */
 const MS_OS_20_Descriptor_t PROGMEM MS_OS_20_Descriptor =
 {
@@ -135,15 +138,15 @@ const MS_OS_20_Descriptor_t PROGMEM MS_OS_20_Descriptor =
 			.SubCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0}
 		},
 
-	.RegistryData = // 10 + 40 + 78 = 128
+	.RegistryData =
 		{
-			.Length = CPU_TO_LE16(128),
+			.Length = CPU_TO_LE16(10 + 42 + 80),
 			.DescriptorType = CPU_TO_LE16(MS_OS_20_FEATURE_REG_PROPERTY),
-			.PropertyDataType = CPU_TO_LE16(MS_OS_20_REG_SZ),
+			.PropertyDataType = CPU_TO_LE16(MS_OS_20_REG_MULTI_SZ),
 			.PropertyNameLength = CPU_TO_LE16(sizeof(MS_OS_20_REGISTRY_KEY)),
-			.PropertyName = MS_OS_20_REGISTRY_KEY, // 40 bytes
-			.PropertyDataLength = CPU_TO_LE16(sizeof(MS_OS_20_DEVICE_GUID_STRING)),
-			.PropertyData = MS_OS_20_DEVICE_GUID_STRING // 78 bytes
+			.PropertyName = MS_OS_20_REGISTRY_KEY, // 42 bytes
+			.PropertyDataLength = CPU_TO_LE16(sizeof(MS_OS_20_DEVICE_GUID_STRING_OF_STRING)),
+			.PropertyData = MS_OS_20_DEVICE_GUID_STRING_OF_STRING // 80 bytes
 		}
 };
 
@@ -187,7 +190,7 @@ void EVENT_USB_Device_ControlRequest(void) {
 					switch (USB_ControlRequest.wIndex) {
 						case MS_OS_20_DESCRIPTOR_INDEX:
 							/* Write the descriptor data to the control endpoint */
-							Endpoint_Write_Control_PStream_LE(&MS_OS_20_Descriptor, MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH);
+							Endpoint_Write_Control_PStream_LE(&MS_OS_20_Descriptor, MS_OS_20_Descriptor.Header.TotalLength);
 							/* Release the endpoint after transaction. */
 							Endpoint_ClearOUT();
 							break;

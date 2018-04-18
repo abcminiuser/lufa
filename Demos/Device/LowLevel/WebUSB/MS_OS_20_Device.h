@@ -73,8 +73,8 @@
 		enum MS_OS_20_Descriptor_Types
 		{
 			MS_OS_20_SET_HEADER_DESCRIPTOR = 0x00,
-//			MS_OS_20_SUBSET_HEADER_CONFIGURATION = 0x01,
-//			MS_OS_20_SUBSET_HEADER_FUNCTION = 0x02,
+			MS_OS_20_SUBSET_HEADER_CONFIGURATION = 0x01,
+			MS_OS_20_SUBSET_HEADER_FUNCTION = 0x02,
 			MS_OS_20_FEATURE_COMPATBLE_ID = 0x03,
 			MS_OS_20_FEATURE_REG_PROPERTY = 0x04,
 //			MS_OS_20_FEATURE_MIN_RESUME_TIME = 0x05,
@@ -93,6 +93,30 @@
 			uint32_t WindowsVersion;
 			uint16_t TotalLength; /**< The size of entire MS OS 2.0 descriptor set. The value shall match the value in the descriptor set information structure. */
 		} ATTR_PACKED MS_OS_20_Descriptor_Set_Header_t;
+
+		/** \brief Microsoft OS 2.0 configuration subset header.
+		 *
+		 */
+		typedef struct
+		{
+			uint16_t Length; /**< The length, in bytes, of this subset header. Shall be set to 8. */
+			uint16_t DescriptorType; /**< MS_OS_20_SUBSET_HEADER_CONFIGURATION */
+			uint8_t ConfigurationValue; /**< The configuration value for the USB configuration to which this subset applies. */
+			uint8_t Reserved; /**< Shall be set to 0. */
+			uint16_t TotalLength; /**< The size of entire configuration subset including this header. */
+		} ATTR_PACKED MS_OS_20_Configuration_Subset_Header;
+
+		/** \brief Microsoft OS 2.0 Function subset header.
+		 *
+		 */
+		typedef struct
+		{
+			uint16_t Length; /**< The length, in bytes, of this subset header. Shall be set to 8. */
+			uint16_t DescriptorType; /**< MS_OS_20_SUBSET_HEADER_FUNCTION */
+			uint8_t FirstInterface; /**< The interface number for the first interface of the function to which this subset applies. */
+			uint8_t Reserved; /**< Shall be set to 0. */
+			uint16_t SubsetLength; /**< The size of entire function subset including this header. */
+		} ATTR_PACKED MS_OS_20_Function_Subset_Header;
 
 		/** \brief Microsoft OS 2.0 Feature Descriptor for CompatibleID.
 		 *
@@ -124,20 +148,20 @@
 			MS_OS_20_REG_MULTI_SZ = 7 /**< Multiple NULL-terminated Unicode strings */
 		};
 
-		#define MS_OS_20_REGISTRY_KEY L"DeviceInterfaceGUID" // 40 bytes
+		#define MS_OS_20_REGISTRY_KEY L"DeviceInterfaceGUIDs" //  20 characters + null, times 2 = 42 bytes
 
 		/** \brief Microsoft OS 2.0 Registry Property Descriptor.
 		 *
 		 *  This descriptor is used to add per-device or per-function registry values that is read by the Windows USB driver stack or the device’s function driver.
 		 *
-		 *  For WebUSB in Chrome, for a single interface, we need to create a registry key DeviceInterfaceGUID of type REG_SZ
+		 *  For WebUSB in Chrome, for a single interface, we need to create a registry key DeviceInterfaceGUIDs of type REG_MULTI_SZ
 		 *  and a value of a GUID. For more information, see:
 		 *  https://github.com/pbatard/libwdi/wiki/WCID-Devices#defining-a-device-interface-guid-or-other-device-specific-properties
 		 */
 		typedef struct {
 			uint16_t Length; /**< The length in bytes of is descriptor. */
 			uint16_t DescriptorType; /**< MS_OS_20_FEATURE_REG_PROPERTY */
-			uint16_t PropertyDataType; /**< MS_OS_20_Property_Data_types, MS_OS_20_REG_SZ for single interface. */
+			uint16_t PropertyDataType; /**< MS_OS_20_Property_Data_types, MS_OS_20_REG_MULTI_SZ even for single interface because libusb. */
 			uint16_t PropertyNameLength; /**< The length of the property name. */
 			// FIXME: Only works for 16-bit architectures.
 			wchar_t PropertyName[sizeof(MS_OS_20_REGISTRY_KEY) / sizeof(wchar_t)]; /**< The name of registry property as NULL-terminated UTF-16 LE string. */
