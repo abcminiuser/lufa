@@ -136,17 +136,6 @@ const MS_OS_20_Descriptor_t PROGMEM MS_OS_20_Descriptor =
 			.DescriptorType = CPU_TO_LE16(MS_OS_20_FEATURE_COMPATBLE_ID),
 			.CompatibleID = u8"WINUSB\x00", // Automatically null-terminated to 8 bytes
 			.SubCompatibleID = {0, 0, 0, 0, 0, 0, 0, 0}
-		},
-
-	.RegistryData =
-		{
-			.Length = CPU_TO_LE16(10 + 42 + 80),
-			.DescriptorType = CPU_TO_LE16(MS_OS_20_FEATURE_REG_PROPERTY),
-			.PropertyDataType = CPU_TO_LE16(MS_OS_20_REG_MULTI_SZ),
-			.PropertyNameLength = CPU_TO_LE16(sizeof(MS_OS_20_REGISTRY_KEY)),
-			.PropertyName = MS_OS_20_REGISTRY_KEY, // 42 bytes
-			.PropertyDataLength = CPU_TO_LE16(sizeof(MS_OS_20_DEVICE_GUID_STRING_OF_STRING)),
-			.PropertyData = MS_OS_20_DEVICE_GUID_STRING_OF_STRING // 80 bytes
 		}
 };
 

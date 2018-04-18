@@ -42,7 +42,7 @@
 		/* $ python -c "import uuid;print(', '.join(map(hex, uuid.UUID('D8DD60DF-4589-4CC7-9CD2-659D9E648A9F').bytes_le)))" */
 		#define MS_OS_20_PLATFORM_UUID 0xdf, 0x60, 0xdd, 0xd8, 0x89, 0x45, 0xc7, 0x4c, 0x9c, 0xd2, 0x65, 0x9d, 0x9e, 0x64, 0x8a, 0x9f
 
-		#define MS_OS_20_WINDOWS_VERSION CPU_TO_LE32(0x06030000) // Windows version (8.1)
+		#define MS_OS_20_WINDOWS_VERSION 0x06030000 // Windows version (8.1)
 
 		#define MS_OS_20_ALTERNATE_ENUMERATION_CODE 0 /**< Set to non-zero to enable Windows to allow device to return alternate USB descriptors. */
 
@@ -153,10 +153,6 @@
 		/** \brief Microsoft OS 2.0 Registry Property Descriptor.
 		 *
 		 *  This descriptor is used to add per-device or per-function registry values that is read by the Windows USB driver stack or the device’s function driver.
-		 *
-		 *  For WebUSB in Chrome, for a single interface, we need to create a registry key DeviceInterfaceGUIDs of type REG_MULTI_SZ
-		 *  and a value of a GUID. For more information, see:
-		 *  https://github.com/pbatard/libwdi/wiki/WCID-Devices#defining-a-device-interface-guid-or-other-device-specific-properties
 		 */
 		typedef struct {
 			uint16_t Length; /**< The length in bytes of is descriptor. */
