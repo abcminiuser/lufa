@@ -97,7 +97,7 @@
 			 *
 			 *  \param[in] ...  Characters to initialize a USB String Descriptor structure with.
 			 */
-			#define USB_STRING_DESCRIPTOR_ARRAY(...)  { .Header = {.Size = sizeof(USB_Descriptor_Header_t) + sizeof((uint16_t){__VA_ARGS__}), .Type = DTYPE_String}, .UnicodeString = {__VA_ARGS__} }
+			#define USB_STRING_DESCRIPTOR_ARRAY(...)  { .Header = {.Size = sizeof(USB_Descriptor_Header_t) + sizeof((uint16_t[]){__VA_ARGS__}), .Type = DTYPE_String}, .UnicodeString = {__VA_ARGS__} }
 
 			/** Macro to encode a given major/minor/revision version number into Binary Coded Decimal format for descriptor
 			 *  fields requiring BCD encoding, such as the USB version number in the standard device descriptor.
