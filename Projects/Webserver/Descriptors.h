@@ -68,6 +68,10 @@
 		/** Size in bytes of the CDC data IN and OUT endpoints. */
 		#define CDC_TXRX_EPSIZE                64
 
+		/** Vendor request (0-255) the host should issue to retrieve the
+		 *  Microsoft OS Compatibility Descriptors. */
+		#define VENDOR_REQUEST_ID_MS_COMPAT    0x01
+
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
 		 *  application code, as the configuration descriptor contains several sub-descriptors which
@@ -96,6 +100,21 @@
 			USB_Descriptor_Endpoint_t              MS_DataOutEndpoint;
 		} USB_Descriptor_Configuration_t;
 
+		/** Type define for a Microsoft OS Compatibility 1.0 descriptor. */
+		typedef struct
+		{
+			uint32_t dwLength;
+			uint16_t bcdVersion;
+			uint16_t wIndex;
+			uint8_t  bCount;
+			uint8_t  bReserved[7];
+			uint8_t  bFirstInterfaceNumber;
+			uint8_t  bReserved2;
+			char     compatibleID[8];
+			char     subCompatibleID[8];
+			uint8_t  bReserved3[6];
+		} USB_Descriptor_MSCompatibility_t;
+
 		/** Enum for the device interface descriptor IDs within the device. Each interface descriptor
 		 *  should have a unique ID index associated with it, which can be used to refer to the
 		 *  interface from other descriptors.
@@ -116,6 +135,7 @@
 			STRING_ID_Language     = 0, /**< Supported Languages string descriptor ID (must be zero) */
 			STRING_ID_Manufacturer = 1, /**< Manufacturer string ID */
 			STRING_ID_Product      = 2, /**< Product string ID */
+			STRING_ID_MS_Compat    = 0xEE, /**< MS OS Compatibility string descriptor ID (magic value set by Microsoft) */
 		};
 
 	/* Function Prototypes: */
@@ -123,6 +143,8 @@
 		                                    const uint16_t wIndex,
 		                                    const void** const DescriptorAddress)
 		                                    ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(3);
+
+		void     CheckIfMSCompatibilityDescriptorRequest(void);
 
 #endif
 

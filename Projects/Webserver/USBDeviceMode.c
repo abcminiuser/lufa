@@ -141,6 +141,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 /** Event handler for the library USB Control Request reception event. */
 void EVENT_USB_Device_ControlRequest(void)
 {
+	/* Send MS OS Compatibility descriptor if requested by the host. */
+	CheckIfMSCompatibilityDescriptorRequest();
+
 	RNDIS_Device_ProcessControlRequest(&Ethernet_RNDIS_Interface_Device);
 	MS_Device_ProcessControlRequest(&Disk_MS_Interface);
 }

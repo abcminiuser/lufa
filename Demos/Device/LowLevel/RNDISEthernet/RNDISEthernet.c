@@ -130,6 +130,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
  */
 void EVENT_USB_Device_ControlRequest(void)
 {
+	/* Send MS OS Compatibility descriptor if requested by the host. */
+	CheckIfMSCompatibilityDescriptorRequest();
+
 	/* Process RNDIS class commands */
 	switch (USB_ControlRequest.bRequest)
 	{

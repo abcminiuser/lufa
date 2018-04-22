@@ -46,7 +46,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 {
 	.Header                 = {.Size = sizeof(USB_Descriptor_Device_t), .Type = DTYPE_Device},
 
-	.USBSpecification       = VERSION_BCD(1,1,0),
+	.USBSpecification       = VERSION_BCD(2,0,0),
 	.Class                  = CDC_CSCP_CDCClass,
 	.SubClass               = CDC_CSCP_NoSpecificSubclass,
 	.Protocol               = CDC_CSCP_NoSpecificProtocol,
@@ -55,7 +55,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.VendorID               = 0x03EB,
 	.ProductID              = 0x204C,
-	.ReleaseNumber          = VERSION_BCD(0,0,1),
+	.ReleaseNumber          = VERSION_BCD(0,0,2),
 
 	.ManufacturerStrIndex   = STRING_ID_Manufacturer,
 	.ProductStrIndex        = STRING_ID_Product,
@@ -192,6 +192,32 @@ const USB_Descriptor_String_t PROGMEM ManufacturerString = USB_STRING_DESCRIPTOR
  */
 const USB_Descriptor_String_t PROGMEM ProductString = USB_STRING_DESCRIPTOR(L"LUFA RNDIS CDC Demo");
 
+/** Microsoft OS Compatibility string descriptor. This is a special string descriptor that Microsoft based OS hosts
+ *  will query at string descriptor ID 0xEE on initial enumeration, to test if the device supports the Microsoft OS
+ *  Compatibility descriptor extensions (used to give the host additional information on the device's general class
+ *  compatibility for driver-less installation).
+ */
+const USB_Descriptor_String_t PROGMEM MSConpatibilityString = USB_STRING_DESCRIPTOR_ARRAY('M','S','F','T','1','0','0', VENDOR_REQUEST_ID_MS_COMPAT);
+
+/** Microsoft OS Compatibility 1.0 descriptor. This is a special descriptor returned by the device on vendor request
+ *  from the host, giving the OS additional compatibility information. This allows the host to automatically install
+ *  the appropriate driver for various devices which share a common USB class (in this case RNDIS, which uses the
+ *  CDC-ACM class usually used by virtual to serial adapters).
+ */
+const USB_Descriptor_MSCompatibility_t PROGMEM MSCompatibilityDescriptor =
+	{
+		.dwLength                   = sizeof(USB_Descriptor_MSCompatibility_t),
+		.bcdVersion                 = VERSION_BCD(1,0,0),
+		.wIndex                     = 4,
+		.bCount                     = 1,
+		.bReserved                  = { 0 },
+		.bFirstInterfaceNumber      = INTERFACE_ID_CDC_CCI,
+		.bReserved2                 = 1, // Must always be 1 according to spec
+		.compatibleID               = "RNDIS",
+		.subCompatibleID            = "5162001",
+		.bReserved3                 = { 0 },
+	};
+
 /** This function is called by the library when in device mode, and must be overridden (see library "USB Descriptors"
  *  documentation) by the application code so that the address and size of a requested descriptor can be given
  *  to the USB library. When the device receives a Get Descriptor request on the control endpoint, this function
@@ -233,6 +259,10 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 					Address = &ProductString;
 					Size    = pgm_read_byte(&ProductString.Header.Size);
 					break;
+				case STRING_ID_MS_Compat:
+					Address = &MSConpatibilityString;
+					Size    = pgm_read_byte(&MSConpatibilityString.Header.Size);
+					break;
 			}
 
 			break;
@@ -242,3 +272,20 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	return Size;
 }
 
+/** Sends the special Microsoft OS Compatibility Descriptor to the host PC, if
+ *  the host is requesting it.
+ */
+void CheckIfMSCompatibilityDescriptorRequest(void)
+{
+	if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_VENDOR | REQREC_DEVICE))
+	{
+		if (USB_ControlRequest.bRequest == VENDOR_REQUEST_ID_MS_COMPAT)
+		{
+			Endpoint_ClearSETUP();
+
+			/* Write the OS compatibility descriptor to the control endpoint */
+			Endpoint_Write_Control_PStream_LE(&MSCompatibilityDescriptor, sizeof(MSCompatibilityDescriptor));
+			Endpoint_ClearOUT();
+		}
+	}
+}
