@@ -133,4 +133,5 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 void EVENT_USB_Device_ControlRequest(void)
 {
 	// Process vendor specific control requests here
+	USB_Process_BOS();
 }

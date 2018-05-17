@@ -37,6 +37,37 @@
 
 #include "Descriptors.h"
 
+#define WEBUSB_ID 0x01
+#define MS_OS_ID 0x02
+
+const uint8_t PROGMEM MS_OS_Descriptor[] =
+{
+	MS_OS_DESCRIPTOR_SET(
+		MS_OS_CONFIG_SUBSET_HEADER(0x00, // Config 0
+			MS_OS_FUNCTION_SUBSET_HEADER(INTERFACE_ID_Vendor, // Interface ID
+				MS_OS_COMPAT_ID_WINUSB
+			)
+		)
+	)
+};
+
+const uint8_t PROGMEM WebUSBAllowedOrigins[] = {
+	WEBUSB_ALLOWED_ORIGINS_HEADER(1, // 1 config header present
+		WEBUSB_CONFIG_SUBSET_HEADER(0x00, 1, // Config 0, 1 function header
+			// Config interface accessible from the web, 2 valid URLs
+			WEBUSB_FUNCTION_SUBSET_HEADER(INTERFACE_ID_Vendor, URL_ID_Config, URL_ID_Localhost)
+		)
+	)
+};
+
+const uint8_t PROGMEM BOSDescriptor[] =
+{
+	BOS_DESCRIPTOR(2, // 2 capability descriptors in use
+		WEBUSB_CAPABILITY_DESCRIPTOR(WEBUSB_ID, URL_ID_Config), // Vendor request ID, URL ID to take the user to
+		// Required to force WinUSB driver for driverless WebUSB compatibility
+		MS_OS_20_CAPABILITY_DESCRIPTOR(MS_OS_ID, sizeof(MS_OS_Descriptor)) // Vendor request ID, Descriptor set length
+	)
+};
 
 /** Device descriptor structure. This descriptor, located in FLASH memory, describes the overall
  *  device characteristics, including the supported USB version, control endpoint size and the
@@ -64,6 +95,57 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor =
 
 	.NumberOfConfigurations = FIXED_NUM_CONFIGURATIONS
 };
+
+const USB_Descriptor_URL_t PROGMEM ConfigURL = URL_STRING_DESCRIPTOR(URL_HTTP, "www.fourwalledcubicle.com/LUFA.php");
+const USB_Descriptor_URL_t PROGMEM LocalhostURL = URL_STRING_DESCRIPTOR(URL_HTTP, "localhost");
+
+void USB_Process_BOS(void) {
+	const void* Address = NULL;
+	uint16_t    Size    = 0;
+	
+	if(!(Endpoint_IsSETUPReceived()) ||
+		USB_ControlRequest.bmRequestType != (REQDIR_DEVICETOHOST | REQTYPE_VENDOR | REQREC_DEVICE)) {
+		return;
+	}
+	switch(USB_ControlRequest.bRequest) {
+		case WEBUSB_ID:
+			switch(USB_ControlRequest.wIndex) {
+				case WEBUSB_REQUEST_GET_ALLOWED_ORIGINS:
+					Address = &WebUSBAllowedOrigins;
+					Size = sizeof(WebUSBAllowedOrigins);
+					break;
+				case WEBUSB_REQUEST_GET_URL:
+					switch(USB_ControlRequest.wValue) {
+						case URL_ID_Localhost:
+							Address = &LocalhostURL;
+							Size = pgm_read_byte(&LocalhostURL.Header.Size);
+							break;
+						case URL_ID_Config:
+							Address = &ConfigURL;
+							Size = pgm_read_byte(&ConfigURL.Header.Size);
+							break;
+					}
+					break;
+			}
+			break;
+		case MS_OS_ID:
+			if(USB_ControlRequest.wIndex == MS_OS_20_DESCRIPTOR_INDEX) {
+				Address = &MS_OS_Descriptor;
+				Size    = sizeof(MS_OS_Descriptor);
+			}
+			break;
+		default:
+			return;
+	}
+	if(Address != NULL) {
+		Endpoint_SelectEndpoint(ENDPOINT_CONTROLEP);
+
+		Endpoint_ClearSETUP();
+
+		Endpoint_Write_Control_PStream_LE(Address, Size);
+		Endpoint_ClearOUT();
+	}
+}
 
 /** Configuration descriptor structure. This descriptor, located in FLASH memory, describes the usage
  *  of the device in one of its supported configurations, including information about any device interfaces
@@ -167,6 +249,10 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 		case DTYPE_Configuration:
 			Address = &ConfigurationDescriptor;
 			Size    = sizeof(USB_Descriptor_Configuration_t);
+			break;
+		case DTYPE_BOS:
+			Address = &BOSDescriptor;
+			Size    = sizeof(BOSDescriptor);
 			break;
 		case DTYPE_String:
 			switch (DescriptorNumber)

@@ -201,6 +201,127 @@
 			 */
 			#define ENDPOINT_USAGE_IMPLICIT_FEEDBACK  (2 << 4)
 			//@}
+			
+		/* Binary Object Store (BOS) macros: */
+			
+			#define UUID(...) __VA_ARGS__
+			
+			#define _BOS_ENCODE_16(Data) ((Data) & 0xFF), (((Data) >> 8) & 0xFF)
+			
+			#define BOS_DESCRIPTOR(NumberOfCapabilityDescriptors, ...) \
+				5,  /* Size of the BOS header */                     \
+				DTYPE_BOS,                                           \
+				_BOS_ENCODE_16(sizeof((uint8_t[]){__VA_ARGS__}) + 5),\
+				NumberOfCapabilityDescriptors,                       \
+				__VA_ARGS__
+			
+			#define BOS_CAPABILITY_DESCRIPTOR(CapabilityType, ...)   \
+				sizeof((uint8_t[]){__VA_ARGS__}) + 3, /* Descriptor size */     \
+				DTYPE_DeviceCapability,    /* Descriptor type */     \
+				(CapabilityType),          /* Capability type */     \
+				__VA_ARGS__                /* Capability dependant */
+			
+			#define BOS_CAPABILITY_PLATFORM_DESCRIPTOR(CapabilityUUID, ...) \
+				BOS_CAPABILITY_DESCRIPTOR(                                  \
+					USB_Capability_Platform, /* Capability type */          \
+					0,                       /* Reserved */                 \
+					CapabilityUUID,          /* Platform specific UUID */   \
+					__VA_ARGS__              /* Capability data */          \
+				)
+
+		/* MS OS 2.0 macros: */
+		
+			#define MS_OS_20_DESCRIPTOR_INDEX 0x07
+			#define MS_OS_20_SET_ALT_ENUMERATION 0x08
+			
+			/* Windows version (8.1), minimum allowed for MS OS 2.0 */
+			#define WINVER_81 0x00, 0x00, 0x03, 0x06
+			
+			#define _COMPAT_ID(...) __VA_ARGS__
+		
+			#define MS_OS_20_CAPABILITY_DESCRIPTOR(MSRequestCode, DescriptorSetLength) \
+				BOS_CAPABILITY_PLATFORM_DESCRIPTOR(               \
+					/* MS OS 2.0 UUID */                          \
+					UUID(0xDF, 0x60, 0xDD, 0xD8, 0x89, 0x45, 0xC7, 0x4C, 0x9C, 0xD2, 0x65, 0x9D, 0x9E, 0x64, 0x8A, 0x9F), \
+					/* These 4 values can be repeated for different versions */ \
+					WINVER_81, /* version */                      \
+					_BOS_ENCODE_16(DescriptorSetLength),          \
+					MSRequestCode,                                \
+					0x00 /* Alternate enumeration code - not supported */ \
+				)
+				
+			#define MS_OS_DESCRIPTOR_SET(...) \
+				_BOS_ENCODE_16(10), /* header size */ \
+				_BOS_ENCODE_16(MS_OS_20_SET_HEADER_DESCRIPTOR), /* type */ \
+				WINVER_81, /* version */ \
+				_BOS_ENCODE_16(sizeof((uint8_t[]){__VA_ARGS__}) + 10), /* Total length */ \
+				__VA_ARGS__
+			
+			#define MS_OS_CONFIG_SUBSET_HEADER(ConfigValue, ...) \
+				_BOS_ENCODE_16(8), /* header size */ \
+				_BOS_ENCODE_16(MS_OS_20_SUBSET_HEADER_CONFIGURATION ), /* type */ \
+				ConfigValue, /* Configuration value to which this subset applies */ \
+				0x00, /* Reserved */ \
+				_BOS_ENCODE_16(sizeof((uint8_t[]){__VA_ARGS__}) + 8), /* Total length */ \
+				__VA_ARGS__
+			
+			#define MS_OS_FUNCTION_SUBSET_HEADER(InterfaceNum, ...) \
+				_BOS_ENCODE_16(8), /* header size */ \
+				_BOS_ENCODE_16(MS_OS_20_SUBSET_HEADER_FUNCTION), /* type */ \
+				InterfaceNum, /* first interface to which this subset applies */ \
+				0x00, /* Reserved */ \
+				_BOS_ENCODE_16(sizeof((uint8_t[]){__VA_ARGS__}) + 8), /* Total length */ \
+				__VA_ARGS__
+			
+			#define MS_OS_COMPATIBLE_ID_DESCRIPTOR(CompatibleID, SubCompatibleID) \
+				_BOS_ENCODE_16(20), /* descriptor size */               \
+				_BOS_ENCODE_16(MS_OS_20_FEATURE_COMPATIBLE_ID), /* type */ \
+				CompatibleID,                                           \
+				SubCompatibleID
+			
+			#define MS_OS_COMPAT_ID_WINUSB \
+				MS_OS_COMPATIBLE_ID_DESCRIPTOR( \
+					_COMPAT_ID('W', 'I', 'N', 'U', 'S', 'B', 0x00, 0x00),      \
+					_COMPAT_ID(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) \
+				)
+
+		/* WebUSB Macros: */
+
+			#define WEBUSB_REQUEST_GET_ALLOWED_ORIGINS 0x01
+			#define WEBUSB_REQUEST_GET_URL             0x02
+		
+			#define WEBUSB_CAPABILITY_DESCRIPTOR(WebUSBRequestCode, LandingPageURLIndex) \
+				BOS_CAPABILITY_PLATFORM_DESCRIPTOR(                    \
+					/* WebUSB UUID */                                  \
+					UUID(0x38, 0xB6, 0x08, 0x34, 0xA9, 0x09, 0xA0, 0x47, 0x8B, 0xFD, 0xA0, 0x76, 0x88, 0x15, 0xB6, 0x65), \
+					0x00, 0x01, /* Protocol version. Must be 0x0100 */ \
+					WebUSBRequestCode, LandingPageURLIndex \
+				)
+			
+			
+			#define WEBUSB_ALLOWED_ORIGINS_HEADER(NumberOfConfigurationHeaders, ...) \
+				5, /* Size */                                    \
+				WebUSB_Descriptor_Set_Header, /* Type */         \
+				_BOS_ENCODE_16(sizeof((uint8_t[]){__VA_ARGS__}) + 5), /* Total size */ \
+				NumberOfConfigurationHeaders,                    \
+				/* TODO: Could have origins here too, useful? */ \
+				__VA_ARGS__
+				
+			#define WEBUSB_CONFIG_SUBSET_HEADER(ConfigValue, NumberOfFunctionHeaders, ...) \
+				4, /* Size */                                    \
+				WebUSB_Configuration_Subset_Header, /* Type */   \
+				ConfigValue,                                     \
+				NumberOfFunctionHeaders,                         \
+				/* TODO: Could have origins here too, useful? */ \
+				__VA_ARGS__
+			
+			#define WEBUSB_FUNCTION_SUBSET_HEADER(InterfaceNum, ...)     \
+				sizeof((uint8_t[]){__VA_ARGS__}) + 3, /* size */         \
+				WebUSB_Function_Subset_Header, /* Type */                \
+				InterfaceNum,                                            \
+				__VA_ARGS__ /* URL Descriptor Indices which are valid */
+			
+			#define URL_STRING_DESCRIPTOR(URLScheme, String)     { .Header = {.Size = sizeof(USB_Descriptor_URL_t) + (sizeof(String) - 1), .Type = WebUSB_URL}, .Scheme = URLScheme, .URL = String }
 
 		/* Enums: */
 			/** Enum for the possible standard descriptor types, as given in each descriptor's header. */
@@ -215,6 +336,8 @@
 				DTYPE_Other                     = 0x07, /**< Indicates that the descriptor is of other type. */
 				DTYPE_InterfacePower            = 0x08, /**< Indicates that the descriptor is an interface power descriptor. */
 				DTYPE_InterfaceAssociation      = 0x0B, /**< Indicates that the descriptor is an interface association descriptor. */
+				DTYPE_BOS                       = 0x0F, /**< Indicates that the descriptor is a Binary Device Object Store descriptor. */
+				DTYPE_DeviceCapability          = 0x10, /**< Indicates that the descriptor is a device capability descriptor. */
 				DTYPE_CSInterface               = 0x24, /**< Indicates that the descriptor is a class specific interface descriptor. */
 				DTYPE_CSEndpoint                = 0x25, /**< Indicates that the descriptor is a class specific endpoint descriptor. */
 			};
@@ -249,6 +372,48 @@
 				USB_CSCP_IADDeviceProtocol      = 0x01, /**< Descriptor Protocol value indicating that the device belongs to the
 				                                         *   Interface Association Descriptor protocol.
 				                                         */
+			};
+			
+			enum USB_Descriptor_DeviceCapabilityCode_t
+			{
+				USB_Capability_Wireless_USB             = 0x01,
+				USB_Capability_USB2_Extension           = 0x02,
+				USB_Capability_SuperSpeed               = 0x03,
+				USB_Capability_ContainerId              = 0x04,
+				USB_Capability_Platform                 = 0x05,
+				USB_Capability_PowerDelivery            = 0x06,
+				USB_Capability_BatteryInfo              = 0x07,
+				USB_Capability_ConsumerPort             = 0x08,
+				USB_Capability_ProviderPort             = 0x09,
+				USB_Capability_SuperSpeedPlus           = 0x0A,
+				USB_Capability_PrecisionTimeMeasurement = 0x0B,
+				USB_Capability_WirelessUSBExt           = 0x0C
+			};
+			
+			enum MS_OS_20_Descriptor_Types_t
+			{
+				MS_OS_20_SET_HEADER_DESCRIPTOR       = 0x00,
+				MS_OS_20_SUBSET_HEADER_CONFIGURATION = 0x01,
+				MS_OS_20_SUBSET_HEADER_FUNCTION      = 0x02,
+				MS_OS_20_FEATURE_COMPATIBLE_ID       = 0x03,
+				MS_OS_20_FEATURE_REG_PROPERTY        = 0x04,
+				MS_OS_20_FEATURE_MIN_RESUME_TIME     = 0x05,
+				MS_OS_20_FEATURE_MODEL_ID            = 0x06,
+				MS_OS_20_FEATURE_CCGP_DEVICE         = 0x07
+			};
+			
+			enum WebUSB_URL_Schemes_t
+			{
+				URL_HTTP  = 0,
+				URL_HTTPS = 1
+			};
+			
+			enum WebUSB_Descriptor_Types_t
+			{
+				WebUSB_Descriptor_Set_Header       = 0,
+				WebUSB_Configuration_Subset_Header = 1,
+				WebUSB_Function_Subset_Header      = 2,
+				WebUSB_URL                         = 3
 			};
 
 		/* Type Defines: */
@@ -632,6 +797,15 @@
 				                    *   interface association.
 				                    */
 			} ATTR_PACKED USB_StdDescriptor_Interface_Association_t;
+			
+			typedef struct
+			{
+				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
+
+				uint8_t Scheme; /**< URL Scheme. */
+				
+				uint8_t URL[];
+			} ATTR_PACKED USB_Descriptor_URL_t;
 
 			/** \brief Standard USB Endpoint Descriptor (LUFA naming conventions).
 			 *
