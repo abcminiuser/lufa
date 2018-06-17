@@ -355,9 +355,14 @@ void CDC_Device_SendControlLineStateChange(USB_ClassInfo_CDC_Device_t* const CDC
 	}
 #endif
 
-void CDC_Device_Event_Stub(void)
+void CDC_Device_Event_Stub(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 {
 
+}
+
+void CDC_Device_Event_Stub_2(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo, const uint8_t _1)
+{
+	CDC_Device_Event_Stub(CDCInterfaceInfo);
 }
 
 #endif
