@@ -10,6 +10,7 @@
   *  <b>New:</b>
   *  - Core:
   *   - The USE_INTERNAL_SERIAL definition can now be overridden by the user to a custom string index (thanks to Nicohood)
+  *   - New CCID class driver and associated demos (thanks to Filipe Rodrigues)
   *  - Library Applications:
   *   - Added Microsoft OS Compatibility descriptors to the RNDIS demos for driverless install on Windows 7 and newer
   *

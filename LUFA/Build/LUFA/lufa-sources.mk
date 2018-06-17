@@ -55,6 +55,7 @@ LUFA_SRC_USB_DEVICE      := $(LUFA_ROOT_PATH)/Drivers/USB/Core/$(ARCH)/Device_$(
                             $(LUFA_SRC_USB_COMMON)
 
 LUFA_SRC_USBCLASS_DEVICE := $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/AudioClassDevice.c        \
+                            $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/CCIDClassDevice.c         \
                             $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/CDCClassDevice.c          \
                             $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/HIDClassDevice.c          \
                             $(LUFA_ROOT_PATH)/Drivers/USB/Class/Device/MassStorageClassDevice.c  \

@@ -181,7 +181,7 @@
  *   <tr>
  *    <td>0x03EB</td>
  *    <td>0x206E</td>
- *    <td><i>Currently Unallocated</i></td>
+ *    <td>CCID Class Demo Application</td>
  *   </tr>
  *   <tr>
  *    <td>0x03EB</td>
