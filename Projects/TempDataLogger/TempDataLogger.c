@@ -125,7 +125,7 @@ ISR(TIMER1_COMPA_vect, ISR_BLOCK)
 		char     LineBuffer[100];
 		uint16_t BytesWritten;
 
-		BytesWritten = sprintf(LineBuffer, "%02d/%02d/20%02d, %02d:%02d:%02d, %d Degrees\r\n",
+		BytesWritten = snprintf(LineBuffer, sizeof(LineBuffer), "%02d/%02d/20%02d, %02d:%02d:%02d, %d Degrees\r\n",
 		                       CurrentTimeDate.Day, CurrentTimeDate.Month, CurrentTimeDate.Year,
 		                       CurrentTimeDate.Hour, CurrentTimeDate.Minute, CurrentTimeDate.Second,
 		                       Temperature_GetTemperature());
@@ -168,12 +168,12 @@ int main(void)
 /** Opens the log file on the Dataflash's FAT formatted partition according to the current date */
 void OpenLogFile(void)
 {
-	char LogFileName[12];
+	char LogFileName[16];
 
 	/* Get the current date for the filename as "DDMMYY.csv" */
 	TimeDate_t CurrentTimeDate;
 	RTC_GetTimeDate(&CurrentTimeDate);
-	sprintf(LogFileName, "%02d%02d%02d.csv", CurrentTimeDate.Day, CurrentTimeDate.Month, CurrentTimeDate.Year);
+	snprintf(LogFileName, sizeof(LogFileName), "%02d%02d%02d.csv", CurrentTimeDate.Day, CurrentTimeDate.Month, CurrentTimeDate.Year);
 
 	/* Mount the storage device, open the file */
 	f_mount(0, &DiskFATState);
