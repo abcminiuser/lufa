@@ -134,7 +134,7 @@ int main(void)
 		if (Channel & (1 << 7))
 		  SoftPWM_Channel3_Duty = Duty;
 
-		fputc(&USBSerialStream, ColourUpdate);
+		fputc(ColourUpdate, &USBSerialStream);
 
 		CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 		USB_USBTask();
