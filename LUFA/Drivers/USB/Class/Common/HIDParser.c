@@ -92,7 +92,7 @@ uint8_t USB_ProcessHIDReport(const uint8_t* ReportData,
 
 				memcpy((CurrStateTable + 1),
 				       CurrStateTable,
-				       sizeof(HID_ReportItem_t));
+				       sizeof(HID_StateTable_t));
 
 				CurrStateTable++;
 				break;

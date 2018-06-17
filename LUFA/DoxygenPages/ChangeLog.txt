@@ -25,6 +25,7 @@
   *   - Fixed incorrect endpoint bank setup on the UC3 architecture (thanks to Andrus Aaslaid)
   *   - Fixed CDC_Device_Send*_P() and CDC_Host_Send*_P() variant functions not compiled out for UC3 architecture
   *   - Fixed USB_STRING_DESCRIPTOR_ARRAY() not accepting more than two byte long arrays
+  *   - Fixed HID report parser corruption when parsing PUSH and POP report item elements
   *  - Library Applications:
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
   *   - Fixed bootloaders accepting flash writes to the bootloader region (thanks to NicoHood)
