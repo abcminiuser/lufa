@@ -40,6 +40,6 @@
 		#include <stdlib.h>
 
 	/* Function Prototypes: */
-		void Iso7816_CreateSimpleAttr(uint8_t* attr, uint8_t* attrLength);
+		void Iso7816_CreateSimpleAtr(uint8_t* atr, uint8_t* atrLength);
 
 #endif

@@ -111,14 +111,49 @@
 			 */
 			void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
 
+			/** CCID class driver callback for PC_TO_RDR_IccPowerOn CCID message
+			 *  When the ICC is inserted into a slot of a CCID, the CCID can activate the ICC, and the ICC will respond with an ATR
+			 *  (answer to reset)
+			 *
+			 *  \param[in]		slot 	The slot currently being powered on
+			 *  \param[in, out]	atr		Pointer to an array where the ATR being sent to the device when the Icc is powered on is. 
+			 *  \param[out]		atrSize	The size of the ATR being sent. Maximum size is 15
+			 *  \param[out]		error	The result of the operation, or error
+			 *
+			 *  \return			uint8_t	The command result 
+			 */
 			uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot, uint8_t*  atr, uint8_t*  atrSize, uint8_t* error);
 
+			/** CCID class driver callback for PC_TO_RDR_IccPowerOff CCID message
+			 *  Turns off the ICC
+			 * 
+			 *  \param[in]		slot 	The slot currently being powered off
+			 *  \param[out]		error	The result of the operation, or error
+			 * 
+			 *  \return			uint8_t	The command result 
+			 */
 			uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error);
 
+			/** CCID class driver callback for PC_TO_RDR_GetSlotStatus CCID message
+			 *  Retrieves the current status of a given slot
+			 * 
+			 *  \param[in]		slot 	The slot from which we want to retrieve the status
+			 *  \param[out]		error	The result of the operation, or error
+			 * 
+			 *  \return			uint8_t	The command result 
+			 */
 			uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error);
 
-			uint8_t CALLBACK_CCID_XfrBlock(uint8_t slot, uint8_t* error, uint8_t* receivedBuffer, uint8_t receivedBufferSize, uint8_t* sendBuffer, uint8_t* sentBufferSize);
-
+			/** CCID class driver callback for CCID_PC_to_RDR_Abort CCID message
+			 *  Aborts a BULK out message previously sent to a slot
+			 * 
+			 *  \param[in]		slot 	The slot to where the message being aborted was sent to
+			 *  \param[in]		seq 	The current sequence number for this message. Must be checked against to the current
+			 *							abort massage being sent at the control pipe
+			 *  \param[out]		error	The result of the operation, or error
+			 * 
+			 *  \return			uint8_t	The command result 
+			 */
 			uint8_t CALLBACK_CCID_Abort(uint8_t slot, uint8_t seq, uint8_t* error);
 
 

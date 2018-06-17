@@ -197,13 +197,13 @@ void EVENT_USB_Device_ControlRequest(void)
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
 uint8_t CCID_IccPowerOn(uint8_t slot,
-						uint8_t* attr,
-						uint8_t* attrLength,
+						uint8_t* atr,
+						uint8_t* atrLength,
                         uint8_t* error)
 {
 	if (slot == 0)
 	{
-		Iso7816_CreateSimpleAttr(attr, attrLength);
+		Iso7816_CreateSimpleAtr(atr, atrLength);
 
 		*error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
@@ -390,57 +390,6 @@ void CCID_Task(void)
 
 				Endpoint_SelectEndpoint(CCID_IN_EPADDR);
 				Endpoint_Write_Stream_LE(ResponseSlotStatus, sizeof(USB_CCID_RDR_to_PC_SlotStatus_t), NULL);
-				Endpoint_ClearIN();
-				break;
-			}
-
-			case CCID_PC_to_RDR_XfrBlock:
-			{
-				uint8_t  Bwi            = Endpoint_Read_8();
-				uint16_t LevelParameter = Endpoint_Read_16_LE();
-				uint8_t  ReceivedBuffer[0x4];
-
-				(void)Bwi;
-				(void)LevelParameter;
-
-				Endpoint_Read_Stream_LE(ReceivedBuffer, sizeof(ReceivedBuffer), NULL);
-
-				uint8_t  SendBuffer[0x2] = {0x90, 0x00};
-				uint8_t  SendLength      = sizeof(SendBuffer);
-
-				USB_CCID_RDR_to_PC_DataBlock_t* ResponseBlock = (USB_CCID_RDR_to_PC_DataBlock_t*)&BlockBuffer;
-				ResponseBlock->CCIDHeader.MessageType = CCID_RDR_to_PC_DataBlock;
-				ResponseBlock->CCIDHeader.Slot        = CCIDHeader.Slot;
-				ResponseBlock->CCIDHeader.Seq         = CCIDHeader.Seq;
-
-				ResponseBlock->ChainParam = 0;
-
-				// TODO: Callback
-				Status = CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
-
-				if (CCID_CheckStatusNoError(Status) && !Aborted)
-				{
-					ResponseBlock->CCIDHeader.Length = SendLength;
-					memcpy(&ResponseBlock->Data, SendBuffer, SendLength);
-				}
-				else if (Aborted)
-				{
-					Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
-					Error =  CCID_ERROR_CMD_ABORTED;
-					SendLength = 0;
-				}
-				else
-				{
-					SendLength = 0;
-				}
-
-				ResponseBlock->Status = Status;
-				ResponseBlock->Error  = Error;
-
-				Endpoint_ClearOUT();
-
-				Endpoint_SelectEndpoint(CCID_IN_EPADDR);
-				Endpoint_Write_Stream_LE(ResponseBlock, sizeof(USB_CCID_RDR_to_PC_DataBlock_t) + SendLength, NULL);
 				Endpoint_ClearIN();
 				break;
 			}

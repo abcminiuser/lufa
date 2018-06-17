@@ -140,12 +140,6 @@ function startTest()
         },
         function(callback) {
             read(ccidInterface, 10, callback);
-        },
-        function(callback) {
-            write(ccidInterface, new Buffer(XfrBlockMessage(0, 4)), callback);
-        },
-        function(callback) {
-            read(ccidInterface, 10 + 2, callback);
         }
         ]);
 }
