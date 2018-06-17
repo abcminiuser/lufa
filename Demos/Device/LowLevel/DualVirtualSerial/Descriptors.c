@@ -119,7 +119,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC1_Functional_Header =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_Header,
 
 			.CDCSpecification       = VERSION_BCD(1,1,0),
@@ -127,7 +127,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC1_Functional_ACM =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_ACM,
 
 			.Capabilities           = 0x06,
@@ -135,7 +135,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC1_Functional_Union =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_Union,
 
 			.MasterInterfaceNumber  = INTERFACE_ID_CDC1_CCI,
@@ -220,7 +220,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC2_Functional_Header =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_Header,
 
 			.CDCSpecification       = VERSION_BCD(1,1,0),
@@ -228,7 +228,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC2_Functional_ACM =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_ACM,
 
 			.Capabilities           = 0x06,
@@ -236,7 +236,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.CDC2_Functional_Union =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = CDC_DSUBTYPE_CSInterface_Union,
 
 			.MasterInterfaceNumber  = INTERFACE_ID_CDC2_CCI,

@@ -104,7 +104,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.Audio_ControlInterface_SPC =
 		{
-			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_Interface_AC_t), .Type = DTYPE_CSInterface},
+			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_Interface_AC_t), .Type = AUDIO_DTYPE_CSInterface},
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_Header,
 
 			.ACSpecification          = VERSION_BCD(1,0,0),
@@ -118,7 +118,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.Audio_InputTerminal =
 		{
-			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_InputTerminal_t), .Type = DTYPE_CSInterface},
+			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_InputTerminal_t), .Type = AUDIO_DTYPE_CSInterface},
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_InputTerminal,
 
 			.TerminalID               = 0x01,
@@ -134,7 +134,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.Audio_OutputTerminal =
 		{
-			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_OutputTerminal_t), .Type = DTYPE_CSInterface},
+			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_OutputTerminal_t), .Type = AUDIO_DTYPE_CSInterface},
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_OutputTerminal,
 
 			.TerminalID               = 0x02,
@@ -180,7 +180,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.Audio_StreamInterface_SPC =
 		{
-			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_Interface_AS_t), .Type = DTYPE_CSInterface},
+			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_Interface_AS_t), .Type = AUDIO_DTYPE_CSInterface},
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_General,
 
 			.TerminalLink             = 0x02,
@@ -193,7 +193,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 		{
 			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_Format_t) +
 			                                     sizeof(ConfigurationDescriptor.Audio_AudioFormatSampleRates),
-			                             .Type = DTYPE_CSInterface},
+			                             .Type = AUDIO_DTYPE_CSInterface},
 			.Subtype                  = AUDIO_DSUBTYPE_CSInterface_FormatType,
 
 			.FormatType               = 0x01,
@@ -232,7 +232,7 @@ const USB_Descriptor_Configuration_t PROGMEM ConfigurationDescriptor =
 
 	.Audio_StreamEndpoint_SPC =
 		{
-			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_StreamEndpoint_Spc_t), .Type = DTYPE_CSEndpoint},
+			.Header                   = {.Size = sizeof(USB_Audio_Descriptor_StreamEndpoint_Spc_t), .Type = AUDIO_DTYPE_CSEndpoint},
 			.Subtype                  = AUDIO_DSUBTYPE_CSEndpoint_General,
 
 			.Attributes               = (AUDIO_EP_ACCEPTS_SMALL_PACKETS | AUDIO_EP_SAMPLE_FREQ_CONTROL),

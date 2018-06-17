@@ -104,7 +104,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 
 	.CDC_Functional_Header =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalHeader_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = 0x00,
 
 			.CDCSpecification       = VERSION_BCD(1,1,0),
@@ -112,7 +112,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 
 	.CDC_Functional_ACM =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalACM_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = 0x02,
 
 			.Capabilities           = 0x02,
@@ -120,7 +120,7 @@ const USB_Descriptor_Configuration_t ConfigurationDescriptor =
 
 	.CDC_Functional_Union =
 		{
-			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = DTYPE_CSInterface},
+			.Header                 = {.Size = sizeof(USB_CDC_Descriptor_FunctionalUnion_t), .Type = CDC_DTYPE_CSInterface},
 			.Subtype                = 0x06,
 
 			.MasterInterfaceNumber  = INTERFACE_ID_CDC_CCI,

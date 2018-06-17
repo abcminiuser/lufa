@@ -245,6 +245,13 @@
 			                                                   */
 		};
 
+		/** Enum for the Audio class specific descriptor types. */
+		enum AUDIO_DescriptorTypes_t
+		{
+			AUDIO_DTYPE_CSInterface                     = 0x24, /**< Audio class specific Interface functional descriptor. */
+			AUDIO_DTYPE_CSEndpoint                      = 0x25, /**< Audio class specific Endpoint functional descriptor. */
+		};
+
 		/** Audio class specific interface description subtypes, for the Audio Control interface. */
 		enum Audio_CSInterface_AC_SubTypes_t
 		{

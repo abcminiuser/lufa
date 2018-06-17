@@ -13,6 +13,10 @@
   *  - Library Applications:
   *   - Added Microsoft OS Compatibility descriptors to the RNDIS demos for driverless install on Windows 7 and newer
   *
+  *  <b>Changed:</b>
+  *   - Moved the functional descriptor types DTYPE_CSInterface and DTYPE_CSEndpoint to their respective CDC and Audio class
+  *     drivers, as they are class-defined rather than general descriptor types.
+  *
   *  <b>Fixed:</b>
   *  - Core:
   *   - Fixed DeviceUsesOUTPipe flag not being set correctly in the HID host class driver (thanks to Wolfgang Schnerring)
