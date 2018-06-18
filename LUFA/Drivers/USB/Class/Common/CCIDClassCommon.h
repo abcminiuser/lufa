@@ -153,6 +153,26 @@
 			CCID_DTYPE_Functional                       = 0x21, /**< CCID class specific Interface functional descriptor. */
 		};
 
+		enum CCID_Features_Auto_t
+		{
+			CCID_Features_Auto_None 					= 0x0,
+			CCID_Features_Auto_ParameterConfiguration	= 0x2,
+			CCID_Features_Auto_ICCActivation			= 0x4,
+			CCID_Features_Auto_VoltageSelection			= 0x8,
+
+			CCID_Features_Auto_ICCClockFrequencyChange	= 0x10,
+			CCID_Features_Auto_ICCBaudRateChange		= 0x20,
+			CCID_Features_Auto_ParameterNegotiation		= 0x40,
+			CCID_Features_Auto_PPS						= 0x80,
+		};
+
+		enum CCID_Features_ExchangeLevel_t
+		{
+			CCID_Features_ExchangeLevel_TPDU  				= 0x00010000,
+			CCID_Features_ExchangeLevel_ShortAPDU 			= 0x00020000,
+			CCID_Features_ExchangeLevel_ShortExtendedAPDU	= 0x00040000
+		};
+
 	/* Type Defines: */
 		typedef struct
 		{
