@@ -170,7 +170,7 @@ uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot,
 	}
 
 	*error = CCID_ERROR_SLOT_NOT_FOUND;
-    return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+	return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 }
 
 /** Event handler for the CCID_PC_to_RDR_IccPowerOff message. This message is sent to the device
@@ -186,7 +186,7 @@ uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error)
 	else
 	{
 		*error = CCID_ERROR_SLOT_NOT_FOUND;
-        return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
 
@@ -204,13 +204,13 @@ uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error)
 	else
 	{
 		 *error = CCID_ERROR_SLOT_NOT_FOUND;
-         return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
 
 uint8_t CALLBACK_CCID_Abort(uint8_t slot,
-                            uint8_t seq,
-                            uint8_t* error)
+							uint8_t seq,
+							uint8_t* error)
 {
 	if (CCID_Interface.State.Aborted && slot == 0 && CCID_Interface.State.AbortedSeq == seq)
 	{
