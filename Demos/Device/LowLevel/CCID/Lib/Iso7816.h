@@ -38,8 +38,10 @@
 		#include <avr/power.h>
 		#include <avr/interrupt.h>
 		#include <stdlib.h>
+		#include <string.h>
 
 	/* Function Prototypes: */
-		void Iso7816_CreateSimpleAtr(uint8_t* atr, uint8_t* atrLength);
+		void Iso7816_CreateSimpleAtr(uint8_t* const atr,
+		                             uint8_t* const atrLength);
 
 #endif

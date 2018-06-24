@@ -157,10 +157,11 @@ void EVENT_USB_Device_ControlRequest(void)
  *  whenever an application at the host wants to send a power off signal to a slot.
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
-uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot,
-								 uint8_t* atr,
-								 uint8_t* attrSize,
-								 uint8_t* error)
+uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+                                 uint8_t slot,
+								 uint8_t* const atr,
+								 uint8_t* const attrSize,
+								 uint8_t* const error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
 	{
@@ -176,7 +177,9 @@ uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot,
 /** Event handler for the CCID_PC_to_RDR_IccPowerOff message. This message is sent to the device
  *  whenever an application at the host wants to send a power off signal to a slot.
  */
-uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error)
+uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+                                  uint8_t slot,
+                                  uint8_t* const error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
 	{
@@ -194,7 +197,9 @@ uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error)
  *  whenever an application at the host wants to the get the current slot status
  *
  */
-uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error)
+uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+                                    uint8_t slot,
+                                    uint8_t* const error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
 	{
@@ -208,9 +213,10 @@ uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error)
 	}
 }
 
-uint8_t CALLBACK_CCID_Abort(uint8_t slot,
+uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+                            uint8_t slot,
 							uint8_t seq,
-							uint8_t* error)
+							uint8_t* const error)
 {
 	if (CCID_Interface.State.Aborted && slot == 0 && CCID_Interface.State.AbortedSeq == seq)
 	{

@@ -39,7 +39,7 @@
 #include "CCIDClassDevice.h"
 
 
-bool CCID_CheckStatusNoError(int status)
+bool CCID_CheckStatusNoError(uint8_t status)
 {
 	return (status & 0xC0) == 0x0;
 }
@@ -84,6 +84,7 @@ void CCID_Device_ProcessControlRequest(USB_ClassInfo_CCID_Device_t* const CCIDIn
 
 			break;
 		}
+
 		case CCID_GET_CLOCK_FREQUENCIES:
 		{
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
@@ -95,6 +96,7 @@ void CCID_Device_ProcessControlRequest(USB_ClassInfo_CCID_Device_t* const CCIDIn
 			}
 			break;
 		}
+
 		case CCID_GET_DATA_RATES:
 		{
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
@@ -154,7 +156,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				ResponseATR->CCIDHeader.Seq         = CCIDHeader.Seq;
 				ResponseATR->ChainParam             = 0;
 
-				Status = CALLBACK_CCID_IccPowerOn(ResponseATR->CCIDHeader.Slot, (uint8_t*)ResponseATR->Data, &AtrLength, &Error);
+				Status = CALLBACK_CCID_IccPowerOn(CCIDInterfaceInfo, ResponseATR->CCIDHeader.Slot, (uint8_t*)ResponseATR->Data, &AtrLength, &Error);
 
 				if (CCID_CheckStatusNoError(Status) && !CCIDInterfaceInfo->State.Aborted)
 				{
@@ -192,7 +194,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 				ResponsePowerOff->ClockStatus = 0;
 
-				Status = CALLBACK_CCID_IccPowerOff(CCIDHeader.Slot, &Error);
+				Status = CALLBACK_CCID_IccPowerOff(CCIDInterfaceInfo, CCIDHeader.Slot, &Error);
 
 				ResponsePowerOff->Status = Status;
 				ResponsePowerOff->Error  = Error;
@@ -215,7 +217,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 				ResponseSlotStatus->ClockStatus = 0;
 
-				Status = CALLBACK_CCID_GetSlotStatus(CCIDHeader.Slot, &Error);
+				Status = CALLBACK_CCID_GetSlotStatus(CCIDInterfaceInfo, CCIDHeader.Slot, &Error);
 
 				ResponseSlotStatus->Status = Status;
 				ResponseSlotStatus->Error  = Error;
@@ -238,7 +240,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 				ResponseAbort->ClockStatus = 0;
 
-				Status = CALLBACK_CCID_Abort(CCIDHeader.Slot, CCIDHeader.Seq, &Error);
+				Status = CALLBACK_CCID_Abort(CCIDInterfaceInfo, CCIDHeader.Slot, CCIDHeader.Seq, &Error);
 
 				ResponseAbort->Status = Status;
 				ResponseAbort->Error  = Error;
@@ -250,6 +252,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				Endpoint_ClearIN();
 				break;
 			}
+
 			default:
 			{
 				memset(BlockBuffer, 0x00, sizeof(BlockBuffer));

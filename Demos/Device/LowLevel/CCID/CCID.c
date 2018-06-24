@@ -197,9 +197,9 @@ void EVENT_USB_Device_ControlRequest(void)
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
 uint8_t CCID_IccPowerOn(uint8_t slot,
-						uint8_t* atr,
-						uint8_t* atrLength,
-                        uint8_t* error)
+						uint8_t* const atr,
+						uint8_t* const atrLength,
+                        uint8_t* const error)
 {
 	if (slot == 0)
 	{
@@ -219,7 +219,7 @@ uint8_t CCID_IccPowerOn(uint8_t slot,
  *  whenever an application at the host wants to send a power off signal to a slot.
  */
 uint8_t CCID_IccPowerOff(uint8_t slot,
-                         uint8_t* error)
+                         uint8_t* const error)
 {
 	if (slot == 0)
 	{
@@ -238,7 +238,7 @@ uint8_t CCID_IccPowerOff(uint8_t slot,
  *  slot status.
  */
 uint8_t CCID_GetSlotStatus(uint8_t slot,
-                           uint8_t* error)
+                           uint8_t* const error)
 {
 	if (slot == 0)
 	{
@@ -258,7 +258,7 @@ uint8_t CCID_GetSlotStatus(uint8_t slot,
  */
 uint8_t CCID_Abort(uint8_t slot,
                    uint8_t seq,
-                   uint8_t* error)
+                   uint8_t* const error)
 {
 	if (Aborted && slot == 0 && AbortedSeq == seq)
 	{
@@ -283,7 +283,7 @@ uint8_t CCID_Abort(uint8_t slot,
 }
 
 /** Gets and status and verifies whether an error occurred. */
-bool CCID_CheckStatusNoError(int status)
+bool CCID_CheckStatusNoError(uint8_t status)
 {
 	return (status & 0xC0) == 0x0;
 }

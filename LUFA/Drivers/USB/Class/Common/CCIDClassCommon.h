@@ -233,7 +233,8 @@
 			uint8_t Status;
 			uint8_t Error;
 			uint8_t ProtocolNum;
-			union {
+			union
+			{
 				USB_CCID_ProtocolData_T0_t T0;
 				USB_CCID_ProtocolData_T1_t T1;
 			} ProtocolData;

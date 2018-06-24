@@ -75,16 +75,21 @@
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
 
-		uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot,
-										 uint8_t* atr,
-										 uint8_t* atrSize,
-										 uint8_t* error);
-		uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error);
-		uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error);
-		uint8_t CALLBACK_CCID_Abort(uint8_t slot,
-                            uint8_t seq,
-                            uint8_t *error);
-
+		uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+		                                 uint8_t slot,
+										 uint8_t* const atr,
+										 uint8_t* const atrSize,
+										 uint8_t* const error);
+		uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+		                                  uint8_t slot,
+		                                  uint8_t* const error);
+		uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+		                                    uint8_t slot,
+		                                    uint8_t* const error);
+		uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+		                            uint8_t slot,
+		                            uint8_t seq,
+		                            uint8_t* const error);
 
 #endif
 

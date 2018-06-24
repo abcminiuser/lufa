@@ -72,11 +72,18 @@
 		void	SetupHardware(void);
 		void	CCID_Task(void);
 
-		uint8_t CCID_IccPowerOn(uint8_t slot, uint8_t* attr, uint8_t* attrLength, uint8_t* error);
-		uint8_t CCID_IccPowerOff(uint8_t slot, uint8_t* error);
-		uint8_t	CCID_GetSlotStatus(uint8_t slot, uint8_t* error);
-		uint8_t CCID_Abort(uint8_t slot, uint8_t seq, uint8_t* error);
-		bool	CCID_CheckStatusNoError(int status);
+		uint8_t CCID_IccPowerOn(uint8_t slot,
+		                        uint8_t* const attr,
+		                        uint8_t* const attrLength,
+		                        uint8_t* const error);
+		uint8_t CCID_IccPowerOff(uint8_t slot,
+		                         uint8_t* const error);
+		uint8_t	CCID_GetSlotStatus(uint8_t slot,
+		                           uint8_t* const error);
+		uint8_t CCID_Abort(uint8_t slot,
+		                   uint8_t seq,
+		                   uint8_t* const error);
+		bool	CCID_CheckStatusNoError(uint8_t status);
 
 		void	EVENT_USB_Device_Connect(void);
 		void	EVENT_USB_Device_Disconnect(void);

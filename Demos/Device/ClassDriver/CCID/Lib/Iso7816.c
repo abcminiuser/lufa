@@ -31,7 +31,9 @@
 
 #include "Iso7816.h"
 
-void Iso7816_CreateSimpleAtr(uint8_t* attr, uint8_t* attrLength)
+
+void Iso7816_CreateSimpleAtr(uint8_t* const attr,
+                             uint8_t* const attrLength)
 {
 	attr[0] = 0x3B; //TS: direct convention
 
