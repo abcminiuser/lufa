@@ -158,19 +158,19 @@ void EVENT_USB_Device_ControlRequest(void)
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
 uint8_t CALLBACK_CCID_IccPowerOn(uint8_t slot,
-								 uint8_t* attr,
+								 uint8_t* atr,
 								 uint8_t* attrSize,
 								 uint8_t* error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
 	{
-		Iso7816_CreateSimpleAtr(attr, attrSize);
+		Iso7816_CreateSimpleAtr(atr, attrSize);
 		*error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 
 	*error = CCID_ERROR_SLOT_NOT_FOUND;
-    return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+	return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 }
 
 /** Event handler for the CCID_PC_to_RDR_IccPowerOff message. This message is sent to the device
@@ -186,7 +186,7 @@ uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error)
 	else
 	{
 		*error = CCID_ERROR_SLOT_NOT_FOUND;
-        return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
 
@@ -204,41 +204,13 @@ uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error)
 	else
 	{
 		 *error = CCID_ERROR_SLOT_NOT_FOUND;
-         return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
-
-/** Event handler for the CCID_PC_to_RDR_XfrBlock. THis message is sent to the device
- *  whenever an application at the host wants to send a block of bytes to the device
- *  THe device reply back with an array of bytes
- */
-uint8_t CALLBACK_CCID_XfrBlock(uint8_t slot,
-							   uint8_t* error,
-							   uint8_t* receivedBuffer,
-							   uint8_t receivedBufferSize,
-							   uint8_t*  sendBuffer,
-							   uint8_t* sentBufferSize)
-{
-	if (slot < CCID_Interface.Config.TotalSlots)
-	{
-		uint8_t okResponse[2] = {0x90, 0x00};
-		memcpy(sendBuffer, okResponse, sizeof(okResponse));
-		*sentBufferSize = sizeof(okResponse);
-
-		*error = CCID_ERROR_NO_ERROR;
-		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_NOICCPRESENT;
-	}
-	else
-	{
-		 *error = CCID_ERROR_SLOT_NOT_FOUND;
-         return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
-	}
-}
-
 
 uint8_t CALLBACK_CCID_Abort(uint8_t slot,
-                            uint8_t seq,
-                            uint8_t* error)
+							uint8_t seq,
+							uint8_t* error)
 {
 	if (CCID_Interface.State.Aborted && slot == 0 && CCID_Interface.State.AbortedSeq == seq)
 	{

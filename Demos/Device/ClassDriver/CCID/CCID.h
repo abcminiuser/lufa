@@ -81,12 +81,6 @@
 										 uint8_t* error);
 		uint8_t CALLBACK_CCID_IccPowerOff(uint8_t slot, uint8_t* error);
 		uint8_t CALLBACK_CCID_GetSlotStatus(uint8_t slot, uint8_t* error);
-		uint8_t CALLBACK_CCID_XfrBlock(uint8_t slot,
-									   uint8_t* error,
-									   uint8_t* receivedBuffer,
-									   uint8_t receivedBufferSize,
-									   uint8_t* sendBuffer,
-									   uint8_t* sentBufferSize);
 		uint8_t CALLBACK_CCID_Abort(uint8_t slot,
                             uint8_t seq,
                             uint8_t *error);

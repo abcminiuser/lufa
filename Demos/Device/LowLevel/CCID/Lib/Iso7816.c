@@ -31,17 +31,17 @@
 
 #include "Iso7816.h"
 
-void Iso7816_CreateSimpleAttr(uint8_t* attr, uint8_t* attrLength)
+void Iso7816_CreateSimpleAtr(uint8_t* atr, uint8_t* atrLength)
 {
-	attr[0] = 0x3B; // TS: direct convention
+	atr[0] = 0x3B; // TS: direct convention
 
 	uint8_t interfaceBytesPresence = 0;
 
 	uint8_t historycalBytes[14]   = "Lufa CCID Demo"; // Must be equal or less than 15
 	uint8_t historicalBytesLength = sizeof(historycalBytes);
 
-	attr[1] = (interfaceBytesPresence << 4) + historicalBytesLength; //TO
-	memcpy(attr + 2, historycalBytes, historicalBytesLength);
+	atr[1] = (interfaceBytesPresence << 4) + historicalBytesLength; //TO
+	memcpy(atr + 2, historycalBytes, historicalBytesLength);
 
-	*attrLength = historicalBytesLength + 2;
+	*atrLength = historicalBytesLength + 2;
 }

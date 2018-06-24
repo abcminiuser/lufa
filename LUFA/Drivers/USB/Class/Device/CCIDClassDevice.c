@@ -228,57 +228,6 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				break;
 			}
 
-			case CCID_PC_to_RDR_XfrBlock:
-			{
-				uint8_t  Bwi            = Endpoint_Read_8();
-				uint16_t LevelParameter = Endpoint_Read_16_LE();
-				uint8_t  ReceivedBuffer[0x4];
-
-				(void)Bwi;
-				(void)LevelParameter;
-
-				Endpoint_Read_Stream_LE(ReceivedBuffer, sizeof(ReceivedBuffer), NULL);
-
-				uint8_t	SendBuffer[0x2] = {0x90, 0x00};
-				uint8_t	SendLength      = sizeof(SendBuffer);
-
-				USB_CCID_RDR_to_PC_DataBlock_t* ResponseBlock = (USB_CCID_RDR_to_PC_DataBlock_t*)&BlockBuffer;
-				ResponseBlock->CCIDHeader.MessageType = CCID_RDR_to_PC_DataBlock;
-				ResponseBlock->CCIDHeader.Slot        = CCIDHeader.Slot;
-				ResponseBlock->CCIDHeader.Seq         = CCIDHeader.Seq;
-
-				ResponseBlock->ChainParam = 0;
-
-				//TODO: Callback
-				Status = CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
-
-				if (CCID_CheckStatusNoError(Status) && !CCIDInterfaceInfo->State.Aborted)
-				{
-					ResponseBlock->CCIDHeader.Length = SendLength;
-					memcpy(&ResponseBlock->Data, SendBuffer, SendLength);
-				}
-				else if(CCIDInterfaceInfo->State.Aborted)
-				{
-					Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
-					Error  = CCID_ERROR_CMD_ABORTED;
-					SendLength = 0;
-				}
-				else
-				{
-					SendLength = 0;
-				}
-
-				ResponseBlock->Status = Status;
-				ResponseBlock->Error  = Error;
-
-				Endpoint_ClearOUT();
-
-				Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataINEndpoint.Address);
-				Endpoint_Write_Stream_LE(ResponseBlock, sizeof(USB_CCID_RDR_to_PC_DataBlock_t) + SendLength, NULL);
-				Endpoint_ClearIN();
-				break;
-			}
-
 			case CCID_PC_to_RDR_Abort:
 			{
 				USB_CCID_RDR_to_PC_SlotStatus_t* ResponseAbort = (USB_CCID_RDR_to_PC_SlotStatus_t*)&BlockBuffer;
