@@ -155,6 +155,28 @@
 			                                    uint8_t slot,
 			                                    uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
 
+			/** CCID class driver callback for PC_TO_RDR_XfrBlock CCID message
+			 *  Send a block of bytes from the host to a slot in the device 
+			 *  and also received a block of bytes as a response
+			 * 
+			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
+			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[in]     receivedBuffer 		Pointer to an array holding the received block of bytes
+			 *  \param[in]     receivedBufferSize 	The size of the received block of bytes
+			 *  \param[out]    sendBuffer 			Pointer to a buffer which will hold the bytes being sent back to the host
+			 *  \param[out]     sentBufferSize 		The size of the block of bytes being sent back to the host
+			 *  \param[out]    error				The result of the operation, or error.
+			 *
+			 *  \return	The command result code.
+			 */
+			uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+										   uint8_t slot, 
+										   uint8_t* const receivedBuffer, 
+										   uint8_t receivedBufferSize, 
+										   uint8_t* const sendBuffer, 
+										   uint8_t* const sentBufferSize, 
+										   uint8_t* const error);
+
 			/** CCID class driver callback for CCID_PC_to_RDR_Abort CCID message
 			 *  Aborts a BULK out message previously sent to a slot
 			 *

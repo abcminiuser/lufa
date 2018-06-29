@@ -213,6 +213,34 @@ uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInter
 	}
 }
 
+/** Event handler for the CCID_PC_to_RDR_XfrBlock. This message is sent to the device
+ *  whenever an application at the host wants to send a block of bytes to the device
+ *  THe device reply back with an array of bytes
+ */
+uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+							   uint8_t slot,
+							   uint8_t* const receivedBuffer,
+							   uint8_t receivedBufferSize,
+							   uint8_t* const sendBuffer,
+							   uint8_t* const sentBufferSize,
+							   uint8_t* const error)
+{
+	if (slot < CCID_Interface.Config.TotalSlots)
+	{
+		uint8_t okResponse[2] = {0x90, 0x00};
+		memcpy(sendBuffer, okResponse, sizeof(okResponse));
+		*sentBufferSize = sizeof(okResponse);
+
+		*error = CCID_ERROR_NO_ERROR;
+		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_NOICCPRESENT;
+	}
+	else
+	{
+		 *error = CCID_ERROR_SLOT_NOT_FOUND;
+         return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+	}
+}
+
 uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
                             uint8_t slot,
 							uint8_t seq,

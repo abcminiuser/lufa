@@ -86,6 +86,13 @@
 		uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
 		                                    uint8_t slot,
 		                                    uint8_t* const error);
+		uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+									   uint8_t slot,
+									   uint8_t* const receivedBuffer,
+									   uint8_t receivedBufferSize,
+									   uint8_t* const sendBuffer,
+									   uint8_t* const sentBufferSize,
+									   uint8_t* const error);
 		uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
 		                            uint8_t slot,
 		                            uint8_t seq,

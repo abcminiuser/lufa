@@ -129,7 +129,9 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 {
 	Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataOUTEndpoint.Address);
 
-	uint8_t BlockBuffer[0x20];
+	uint8_t RequestBuffer[0x40 - sizeof(USB_CCID_BulkMessage_Header_t)];
+	uint8_t ResponseBuffer[0x40];
+
 	CCIDInterfaceInfo->State.Aborted    = false;
 	CCIDInterfaceInfo->State.AbortedSeq = -1;
 
@@ -149,7 +151,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 			case CCID_PC_to_RDR_IccPowerOn:
 			{
 				uint8_t AtrLength;
-				USB_CCID_RDR_to_PC_DataBlock_t* ResponseATR = (USB_CCID_RDR_to_PC_DataBlock_t*)&BlockBuffer;
+				USB_CCID_RDR_to_PC_DataBlock_t* ResponseATR = (USB_CCID_RDR_to_PC_DataBlock_t*)&ResponseBuffer;
 
 				ResponseATR->CCIDHeader.MessageType = CCID_RDR_to_PC_DataBlock;
 				ResponseATR->CCIDHeader.Slot        = CCIDHeader.Slot;
@@ -186,7 +188,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 			case CCID_PC_to_RDR_IccPowerOff:
 			{
-				USB_CCID_RDR_to_PC_SlotStatus_t* ResponsePowerOff = (USB_CCID_RDR_to_PC_SlotStatus_t*)&BlockBuffer;
+				USB_CCID_RDR_to_PC_SlotStatus_t* ResponsePowerOff = (USB_CCID_RDR_to_PC_SlotStatus_t*)&ResponseBuffer;
 				ResponsePowerOff->CCIDHeader.MessageType = CCID_RDR_to_PC_SlotStatus;
 				ResponsePowerOff->CCIDHeader.Length      = 0;
 				ResponsePowerOff->CCIDHeader.Slot        = CCIDHeader.Slot;
@@ -209,7 +211,7 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 			case CCID_PC_to_RDR_GetSlotStatus:
 			{
-				USB_CCID_RDR_to_PC_SlotStatus_t* ResponseSlotStatus = (USB_CCID_RDR_to_PC_SlotStatus_t*)&BlockBuffer;
+				USB_CCID_RDR_to_PC_SlotStatus_t* ResponseSlotStatus = (USB_CCID_RDR_to_PC_SlotStatus_t*)&ResponseBuffer;
 				ResponseSlotStatus->CCIDHeader.MessageType = CCID_RDR_to_PC_SlotStatus;
 				ResponseSlotStatus->CCIDHeader.Length      = 0;
 				ResponseSlotStatus->CCIDHeader.Slot        = CCIDHeader.Slot;
@@ -230,9 +232,57 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				break;
 			}
 
+			case CCID_PC_to_RDR_XfrBlock:
+			{
+				uint8_t  Bwi            = Endpoint_Read_8();
+				uint16_t LevelParameter = Endpoint_Read_16_LE();
+				uint8_t  ReceivedBuffer[0x4];
+
+				(void)Bwi;
+				(void)LevelParameter;
+
+				Endpoint_Read_Stream_LE(ReceivedBuffer, sizeof(ReceivedBuffer), NULL);
+
+				uint8_t	ResponseDataLength      = 0;
+
+				USB_CCID_RDR_to_PC_DataBlock_t* ResponseBlock = (USB_CCID_RDR_to_PC_DataBlock_t*)&ResponseBuffer;
+				ResponseBlock->CCIDHeader.MessageType = CCID_RDR_to_PC_DataBlock;
+				ResponseBlock->CCIDHeader.Slot        = CCIDHeader.Slot;
+				ResponseBlock->CCIDHeader.Seq         = CCIDHeader.Seq;
+
+				ResponseBlock->ChainParam = 0;
+
+				Status = CALLBACK_CCID_XfrBlock(CCIDInterfaceInfo, CCIDHeader.Slot, RequestBuffer, CCIDHeader.Length, (uint8_t*) &ResponseBlock->Data, &ResponseDataLength, &Error);
+
+				if (CCID_CheckStatusNoError(Status) && !CCIDInterfaceInfo->State.Aborted)
+				{
+					ResponseBlock->CCIDHeader.Length = ResponseDataLength;
+				}
+				else if(CCIDInterfaceInfo->State.Aborted)
+				{
+					Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
+					Error  = CCID_ERROR_CMD_ABORTED;
+					ResponseDataLength = 0;
+				}
+				else
+				{
+					ResponseDataLength = 0;
+				}
+
+				ResponseBlock->Status = Status;
+				ResponseBlock->Error  = Error;
+
+				Endpoint_ClearOUT();
+
+				Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataINEndpoint.Address);
+				Endpoint_Write_Stream_LE(ResponseBlock, sizeof(USB_CCID_RDR_to_PC_DataBlock_t) + ResponseDataLength, NULL);
+				Endpoint_ClearIN();
+				break;
+			}
+
 			case CCID_PC_to_RDR_Abort:
 			{
-				USB_CCID_RDR_to_PC_SlotStatus_t* ResponseAbort = (USB_CCID_RDR_to_PC_SlotStatus_t*)&BlockBuffer;
+				USB_CCID_RDR_to_PC_SlotStatus_t* ResponseAbort = (USB_CCID_RDR_to_PC_SlotStatus_t*)&ResponseBuffer;
 				ResponseAbort->CCIDHeader.MessageType = CCID_RDR_to_PC_SlotStatus;
 				ResponseAbort->CCIDHeader.Length      = 0;
 				ResponseAbort->CCIDHeader.Slot        = CCIDHeader.Slot;
@@ -255,10 +305,10 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 
 			default:
 			{
-				memset(BlockBuffer, 0x00, sizeof(BlockBuffer));
+				memset(ResponseBuffer, 0x00, sizeof(ResponseBuffer));
 
 				Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataINEndpoint.Address);
-				Endpoint_Write_Stream_LE(BlockBuffer, sizeof(BlockBuffer), NULL);
+				Endpoint_Write_Stream_LE(ResponseBuffer, sizeof(ResponseBuffer), NULL);
 				Endpoint_ClearIN();
 			}
 		}

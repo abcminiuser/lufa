@@ -106,17 +106,16 @@ function GetSlotStatusMessage(slot, seq)
     ];
 }
 
-function XfrBlockMessage(slot, seq)
+function XfrBlockMessage(slot, seq, apdu)
 {
     return [
         CCID_PC_to_RDR_XfrBlock, //message type
-        5, 0, 0, 0, //length (05)
+        apdu.length, 0, 0, 0, //length: only for < 0xFF
         slot,
         seq,
         0, //BWI 
-        0, 0, //level parameter
-        0, 0xfd, 0, 0, 0 //message
-    ];
+        0, 0 //level parameter
+    ].concat(apdu);
 
 }
 
@@ -140,6 +139,12 @@ function startTest()
         },
         function(callback) {
             read(ccidInterface, 10, callback);
+        },
+        function(callback) {
+            write(ccidInterface, new Buffer(XfrBlockMessage(0, 4, [0x0, 0xFD, 0x0, 0x0, 0x0])), callback);
+        },
+        function(callback) {
+            read(ccidInterface, 10 + 2, callback);
         }
         ]);
 }
