@@ -11,7 +11,7 @@
     receive a continuous stream of packets to/from to the device, to show
     bidirectional communications.
 
-    Requires the pyUSB library (http://sourceforge.net/projects/pyusb/).
+    Requires PyUSB >= 1.0.0 (https://github.com/pyusb/pyusb).
 """
 
 import sys
@@ -53,8 +53,8 @@ def main():
 
     print("Connected to device 0x%04X/0x%04X - %s [%s]" %
           (vendor_device.idVendor, vendor_device.idProduct,
-           usb.util.get_string(vendor_device, 255, vendor_device.iProduct),
-           usb.util.get_string(vendor_device, 255, vendor_device.iManufacturer)))
+           usb.util.get_string(vendor_device, vendor_device.iProduct),
+           usb.util.get_string(vendor_device, vendor_device.iManufacturer)))
 
     x = 0
     while 1:
