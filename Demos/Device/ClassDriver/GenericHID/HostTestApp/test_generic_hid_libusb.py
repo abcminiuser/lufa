@@ -14,7 +14,7 @@
     pattern on the target board. Send and received report data is printed to
     the terminal.
 
-    Requires the PyUSB library (http://sourceforge.net/apps/trac/pyusb/).
+    Requires PyUSB >= 1.0.0 (https://github.com/pyusb/pyusb).
 """
 
 import sys
@@ -71,8 +71,8 @@ def main():
 
     print("Connected to device 0x%04X/0x%04X - %s [%s]" %
           (hid_device.idVendor, hid_device.idProduct,
-           usb.util.get_string(hid_device, 256, hid_device.iProduct),
-           usb.util.get_string(hid_device, 256, hid_device.iManufacturer)))
+           usb.util.get_string(hid_device, hid_device.iProduct),
+           usb.util.get_string(hid_device, hid_device.iManufacturer)))
 
     p = 0
     while (True):
