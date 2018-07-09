@@ -231,7 +231,76 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				Endpoint_ClearIN();
 				break;
 			}
+			case CCID_PC_to_RDR_SetParameters:
+			{
+				uint8_t ProtocolNum = Endpoint_Read_8();
+				uint8_t RFU = Endpoint_Read_16_LE();
 
+				(void)RFU;
+
+				USB_CCID_RDR_to_PC_Parameters_t* ResponseParametersStatus = (USB_CCID_RDR_to_PC_Parameters_t*)&ResponseBuffer;
+				ResponseParametersStatus->CCIDHeader.MessageType = CCID_RDR_to_PC_Parameters;
+				ResponseParametersStatus->CCIDHeader.Length      = 0;
+				ResponseParametersStatus->CCIDHeader.Slot        = CCIDHeader.Slot;
+				ResponseParametersStatus->CCIDHeader.Seq         = CCIDHeader.Seq;
+
+				if(ProtocolNum == CCID_PROTOCOLNUM_T0)
+				{
+					if(CCIDHeader.Length * sizeof(uint8_t) == sizeof(USB_CCID_ProtocolData_T0_t))
+					{
+						
+						Endpoint_Read_Stream_LE(RequestBuffer, CCIDHeader.Length * sizeof(uint8_t), NULL);
+						Status = CALLBACK_CCID_SetParameters_T0(CCIDInterfaceInfo, CCIDHeader.Slot, &Error, (USB_CCID_ProtocolData_T0_t*) RequestBuffer);
+						if(CCID_CheckStatusNoError(Status))
+						{
+							ResponseParametersStatus->CCIDHeader.Length = CCIDHeader.Length;
+							Status = CALLBACK_CCID_GetParameters_T0(CCIDInterfaceInfo, CCIDHeader.Slot, &Error, &ResponseParametersStatus->ProtocolNum, (USB_CCID_ProtocolData_T0_t*) &ResponseParametersStatus->ProtocolData);
+						}
+					}
+					else
+					{
+						//unexpected length
+						Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
+					}
+				}
+				else
+				{
+					ResponseParametersStatus->ProtocolNum = CCID_PROTOCOLNUM_T0;
+					//for now, we don't support T=1 protocol
+					Error = CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED; 
+					Status = CCID_COMMANDSTATUS_ERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
+				}
+
+				ResponseParametersStatus->Status = Status;
+				ResponseParametersStatus->Error  = Error;
+
+				Endpoint_ClearOUT();
+
+				Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataINEndpoint.Address);
+				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length , NULL);
+				Endpoint_ClearIN();
+				break;
+			}
+			case CCID_PC_to_RDR_GetParameters:
+			{
+				USB_CCID_RDR_to_PC_Parameters_t* ResponseParametersStatus = (USB_CCID_RDR_to_PC_Parameters_t*)&ResponseBuffer;
+				ResponseParametersStatus->CCIDHeader.MessageType = CCID_RDR_to_PC_Parameters;
+				ResponseParametersStatus->CCIDHeader.Length      = sizeof(USB_CCID_ProtocolData_T0_t);
+				ResponseParametersStatus->CCIDHeader.Slot        = CCIDHeader.Slot;
+				ResponseParametersStatus->CCIDHeader.Seq         = CCIDHeader.Seq;
+
+				Status = CALLBACK_CCID_GetParameters_T0(CCIDInterfaceInfo, CCIDHeader.Slot, &Error, &ResponseParametersStatus->ProtocolNum, (USB_CCID_ProtocolData_T0_t*) &ResponseParametersStatus->ProtocolData);
+
+				ResponseParametersStatus->Status = Status;
+				ResponseParametersStatus->Error  = Error;
+
+				Endpoint_ClearOUT();
+
+				Endpoint_SelectEndpoint(CCIDInterfaceInfo->Config.DataINEndpoint.Address);
+				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length , NULL);
+				Endpoint_ClearIN();
+				break;
+			}
 			case CCID_PC_to_RDR_XfrBlock:
 			{
 				uint8_t  Bwi            = Endpoint_Read_8();

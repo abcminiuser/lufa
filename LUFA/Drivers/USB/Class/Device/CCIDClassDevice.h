@@ -84,6 +84,7 @@
 				} State; /**< State data for the USB class interface within the device. All elements in this section
 				          *   are reset to their defaults when the interface is enumerated.
 				          */
+				USB_CCID_ProtocolData_T0_t ProtocolData;
 			} USB_ClassInfo_CCID_Device_t;
 
 	/* Function Prototypes: */
@@ -154,6 +155,38 @@
 			uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
 			                                    uint8_t slot,
 			                                    uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
+
+
+			/** CCID class driver callback for PC_TO_RDR_SetParameters CCID message for T=0
+			 *  Sets the current parameters of a given slot
+			 *
+			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration, state and protocol data.
+			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[out]    t0 					Pointer to a buffer containing the new parameters
+			 *
+			 *  \return	The command result code.
+			 */
+			uint8_t CALLBACK_CCID_SetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+												   uint8_t slot,
+												   uint8_t* const error,
+												   USB_CCID_ProtocolData_T0_t* const t0);
+
+			/** CCID class driver callback for PC_TO_RDR_SetParameters CCID message for T=0
+			 *  Retrieves the current parameters of a given slot
+			 *
+			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration, state and protocol data.
+			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[out]    t0 					Pointer to a buffer where the parameters will be returned
+			 *
+			 *  \return	The command result code.
+			 */
+			uint8_t CALLBACK_CCID_GetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+												   uint8_t slot,
+												   uint8_t* const error,
+												   uint8_t* const ProtocolNum,
+												   USB_CCID_ProtocolData_T0_t* const t0);
 
 			/** CCID class driver callback for PC_TO_RDR_XfrBlock CCID message
 			 *  Send a block of bytes from the host to a slot in the device 
