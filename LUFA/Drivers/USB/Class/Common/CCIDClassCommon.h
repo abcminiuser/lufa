@@ -81,6 +81,7 @@
 		#define CCID_ICCSTATUS_NOICCPRESENT                 (1 << 1)
 
 		#define CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR    0
+		#define CCID_COMMANDSTATUS_ERROR    				1
 		#define CCID_COMMANDSTATUS_FAILED                   (1 << 6)
 		#define CCID_COMMANDSTATUS_TIMEEXTENSIONREQUESTED   (2 << 6)
 		#define CCID_COMMANDSTATUS_RFU                      (3 << 6)
@@ -90,6 +91,8 @@
 		#define CCID_ERROR_NOT_SUPPORTED                    0
 		#define CCID_ERROR_CMD_ABORTED                      0xFF
 		#define CCID_ERROR_CMD_NOT_ABORTED                  0xFF
+
+		#define CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED	0x7
 
 		#define CCID_ERROR_SLOT_NOT_FOUND                   5
 

@@ -193,7 +193,7 @@ uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfa
 	}
 }
 
-/** Event handler for the CCID_PC_to_RDR_GetSlotStatus. THis message is sent to the device
+/** Event handler for the CCID_PC_to_RDR_GetSlotStatus. This message is sent to the device
  *  whenever an application at the host wants to the get the current slot status
  *
  */
@@ -209,6 +209,58 @@ uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInter
 	else
 	{
 		 *error = CCID_ERROR_SLOT_NOT_FOUND;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+	}
+}
+
+/** Event handler for the CCID_PC_to_RDR_SetParameters when T=0. This message is sent to
+ *  the device whenever an application at the host wants to set the
+ *  parameters for a given slot.
+ */
+uint8_t CALLBACK_CCID_SetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+									   uint8_t slot,
+									   uint8_t* const error,
+									   USB_CCID_ProtocolData_T0_t* const t0)
+{
+	if (slot == 0)
+	{
+		//set parameters
+		memcpy(&CCIDInterfaceInfo->ProtocolData, t0, sizeof(USB_CCID_ProtocolData_T0_t));
+		
+		*error = CCID_ERROR_NO_ERROR;
+		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
+	}
+	else
+	{
+		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
+	}
+}
+
+/** Event handler for the CCID_PC_to_RDR_GetParameters when T=0. This message is sent to
+ *  the device whenever an application at the host wants to get the current
+ *  parameters for a given slot.
+ */
+uint8_t CALLBACK_CCID_GetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
+									   uint8_t slot,
+									   uint8_t* const error,
+									   uint8_t* const ProtocolNum,
+									   USB_CCID_ProtocolData_T0_t* const t0)
+{
+	if (slot == 0)
+	{
+
+		*ProtocolNum = CCID_PROTOCOLNUM_T0;
+		memcpy(t0, &CCIDInterfaceInfo->ProtocolData, sizeof(USB_CCID_ProtocolData_T0_t));
+		
+		*ProtocolNum = CCID_PROTOCOLNUM_T0;
+
+		*error = CCID_ERROR_NO_ERROR;
+		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
+	}
+	else
+	{
+		*error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }

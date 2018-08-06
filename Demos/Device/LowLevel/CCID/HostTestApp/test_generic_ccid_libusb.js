@@ -23,10 +23,12 @@ var sprintf = require('sprintf');
 var deviceVid = 0x03EB;
 var devicePid = 0x206E;
 
+var CCID_PC_to_RDR_SetParameters        = 0x61;
+var CCID_PC_to_RDR_GetParameters        = 0x6C;
 var CCID_PC_to_RDR_IccPowerOn           = 0x62;
 var CCID_PC_to_RDR_IccPowerOff          = 0x63;
 var CCID_PC_to_RDR_GetSlotStatus        = 0x65;
-var CCID_PC_to_RDR_XfrBlock         = 0x6f;
+var CCID_PC_to_RDR_XfrBlock             = 0x6f;
 
 function getAndInitCcidDeviceAndInterface()
 {
@@ -71,6 +73,30 @@ function write(ccidInterface, message, callback)
 }
 
 //CCID functions
+
+function GetParametersMessage(slot, seq, protocolNum, t0Params)
+{
+    return [
+        CCID_PC_to_RDR_GetParameters, //message type
+        0, 0, 0, 0, //length
+        slot,
+        seq,
+        0, 0, 0 //RFU
+    ];
+}
+
+function SetParametersMessage(slot, seq, protocolNum, t0Params)
+{
+    return [
+        CCID_PC_to_RDR_SetParameters, //message type
+        t0Params.length, 0, 0, 0, //length
+        slot,
+        seq,
+        protocolNum,
+        0, 0 //RFU
+    ].concat(t0Params);
+}
+
 
 function IccPowerOnMessage(slot, seq)
 {
@@ -119,9 +145,9 @@ function XfrBlockMessage(slot, seq, apdu)
 
 }
 
-function startTest()
+function testCcidMessages()
 {
-    async.series([
+    return [
         function(callback) {
             write(ccidInterface, new Buffer(IccPowerOnMessage(0, 1)), callback);
         },
@@ -141,12 +167,26 @@ function startTest()
             read(ccidInterface, 10, callback);
         },
         function(callback) {
-            write(ccidInterface, new Buffer(XfrBlockMessage(0, 4, [0x0, 0xFD, 0x0, 0x0, 0x0])), callback);
+            write(ccidInterface, new Buffer(SetParametersMessage(0, 4, 0, [0x11, 0x00, 0x00, 0x0a, 0x00])), callback);
         },
         function(callback) {
-            read(ccidInterface, 10 + 2, callback);
-        }
-        ]);
+            //must return 82 05 00 00 00 00 04 00 80 00 11 00 00 0a 00
+            read(ccidInterface, 30, callback);
+        },
+        function(callback) {
+            write(ccidInterface, new Buffer(GetParametersMessage(0, 5, 0)), callback);
+        },
+        function(callback) {
+            //must return 82 05 00 00 00 00 04 00 80 00 11 00 00 0a 00
+            read(ccidInterface, 30, callback);
+        }];
+}
+
+function startTest()
+{
+    async.series([]
+        .concat(testCcidMessages())
+    );
 }
 
 var ccidDeviceAndInterface = getAndInitCcidDeviceAndInterface();
