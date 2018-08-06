@@ -76,26 +76,26 @@
 		void EVENT_USB_Device_ControlRequest(void);
 
 		uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-		                                 uint8_t slot,
-										 uint8_t* const atr,
-										 uint8_t* const atrSize,
-										 uint8_t* const error);
+		                                 const uint8_t Slot,
+										 uint8_t* const Atr,
+										 uint8_t* const AtrSize,
+										 uint8_t* const Error);
 		uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-		                                  uint8_t slot,
-		                                  uint8_t* const error);
+		                                  const uint8_t Slot,
+		                                  uint8_t* const Error);
 		uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-		                                    uint8_t slot,
-		                                    uint8_t* const error);
+		                                    const uint8_t Slot,
+		                                    uint8_t* const Error);
 		uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-									   uint8_t slot,
-									   uint8_t* const receivedBuffer,
-									   uint8_t receivedBufferSize,
-									   uint8_t* const sendBuffer,
-									   uint8_t* const sentBufferSize,
-									   uint8_t* const error);
+									   const uint8_t Slot,
+									   const uint8_t* ReceivedBuffer,
+									   const uint8_t ReceivedBufferSize,
+									   uint8_t* const SendBuffer,
+									   uint8_t* const SentBufferSize,
+									   uint8_t* const Error);
 		uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-		                            uint8_t slot,
-		                            uint8_t seq,
+		                            const uint8_t Slot,
+		                            const uint8_t Seq,
 		                            uint8_t* const error);
 
 #endif

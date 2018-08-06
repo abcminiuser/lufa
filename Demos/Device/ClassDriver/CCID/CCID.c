@@ -158,7 +158,7 @@ void EVENT_USB_Device_ControlRequest(void)
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
 uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-                                 uint8_t slot,
+                                 const uint8_t slot,
 								 uint8_t* const atr,
 								 uint8_t* const attrSize,
 								 uint8_t* const error)
@@ -180,7 +180,7 @@ uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfac
  *  whenever an application at the host wants to send a power off signal to a slot.
  */
 uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-                                  uint8_t slot,
+                                  const uint8_t slot,
                                   uint8_t* const error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
@@ -200,7 +200,7 @@ uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfa
  *
  */
 uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-                                    uint8_t slot,
+                                    const uint8_t slot,
                                     uint8_t* const error)
 {
 	if (slot < CCID_Interface.Config.TotalSlots)
@@ -220,7 +220,7 @@ uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInter
  *  given slot.
  */
 uint8_t CALLBACK_CCID_SetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-									   uint8_t Slot,
+									   const uint8_t Slot,
 									   uint8_t* const Error,
 									   USB_CCID_ProtocolData_T0_t* const T0)
 {
@@ -244,7 +244,7 @@ uint8_t CALLBACK_CCID_SetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDIn
  *  a given slot.
  */
 uint8_t CALLBACK_CCID_GetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-									   uint8_t Slot,
+									   const uint8_t Slot,
 									   uint8_t* const Error,
 									   uint8_t* const ProtocolNum,
 									   USB_CCID_ProtocolData_T0_t* const T0)
@@ -269,9 +269,9 @@ uint8_t CALLBACK_CCID_GetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDIn
  *  THe device reply back with an array of bytes
  */
 uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-							   uint8_t Slot,
-							   uint8_t* const ReceivedBuffer,
-							   uint8_t ReceivedBufferSize,
+							   const uint8_t Slot,
+							   const uint8_t* ReceivedBuffer,
+							   const uint8_t ReceivedBufferSize,
 							   uint8_t* const SendBuffer,
 							   uint8_t* const SentBufferSize,
 							   uint8_t* const Error)
@@ -294,8 +294,8 @@ uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceI
 }
 
 uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-                            uint8_t Slot,
-							uint8_t Seq,
+                            const uint8_t Slot,
+							const uint8_t Seq,
 							uint8_t* const Error)
 {
 	if (CCID_Interface.State.Aborted && Slot == 0 && CCID_Interface.State.AbortedSeq == Seq)
