@@ -117,31 +117,31 @@
 			 *  (answer to reset)
 			 *
 			 *	\param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
-			 *  \param[in]     slot 				The slot ID currently being powered on.
-			 *  \param[in,out] atr					Pointer to an array containing the Power On ATR being sent to the device.
-			 *  \param[out]    atrSize				The size of the ATR being sent (up to 15 bytes maximum).
-			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[in]     Slot 				The slot ID currently being powered on.
+			 *  \param[in,out] Atr					Pointer to an array containing the Power On ATR being sent to the device.
+			 *  \param[out]    AtrSize				The size of the ATR being sent (up to 15 bytes maximum).
+			 *  \param[out]    Error				The result of the operation, or error.
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_IccPowerOn(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-			                                 uint8_t slot,
-			                                 uint8_t* const atr,
-			                                 uint8_t* const atrSize,
-			                                 uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
+			                                 uint8_t Slot,
+			                                 uint8_t* const Atr,
+			                                 uint8_t* const AtrSize,
+			                                 uint8_t* const Error) ATTR_NON_NULL_PTR_ARG(1);
 
 			/** CCID class driver callback for PC_TO_RDR_IccPowerOff CCID message
 			 *  Turns off the ICC
 			 *
 			 *	\param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
-			 *  \param[in]     slot 				The slot ID currently being powered off.
-			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[in]     Slot 				The slot ID currently being powered off.
+			 *  \param[out]    Error				The result of the operation, or error.
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_IccPowerOff(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-			                                  uint8_t slot,
-			                                  uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
+			                                  uint8_t Slot,
+			                                  uint8_t* const Error) ATTR_NON_NULL_PTR_ARG(1);
 
 			/** CCID class driver callback for PC_TO_RDR_GetSlotStatus CCID message
 			 *  Retrieves the current status of a given slot
@@ -153,78 +153,78 @@
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_GetSlotStatus(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-			                                    uint8_t slot,
-			                                    uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
+			                                    uint8_t Slot,
+			                                    uint8_t* const Error) ATTR_NON_NULL_PTR_ARG(1);
 
 
 			/** CCID class driver callback for PC_TO_RDR_SetParameters CCID message for T=0
 			 *  Sets the current parameters of a given slot
 			 *
 			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration, state and protocol data.
-			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
-			 *  \param[out]    error				The result of the operation, or error.
-			 *  \param[out]    t0 					Pointer to a buffer containing the new parameters
+			 *  \param[in]     Slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[out]    Error				The result of the operation, or error.
+			 *  \param[out]    T0 					Pointer to a buffer containing the new parameters
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_SetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-												   uint8_t slot,
-												   uint8_t* const error,
-												   USB_CCID_ProtocolData_T0_t* const t0);
+												   uint8_t Slot,
+												   uint8_t* const Error,
+												   USB_CCID_ProtocolData_T0_t* const T0);
 
 			/** CCID class driver callback for PC_TO_RDR_SetParameters CCID message for T=0
 			 *  Retrieves the current parameters of a given slot
 			 *
 			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration, state and protocol data.
-			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
-			 *  \param[out]    error				The result of the operation, or error.
-			 *  \param[out]    t0 					Pointer to a buffer where the parameters will be returned
+			 *  \param[in]     Slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[out]    Error				The result of the operation, or error.
+			 *  \param[out]    T0 					Pointer to a buffer where the parameters will be returned
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_GetParameters_T0(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-												   uint8_t slot,
-												   uint8_t* const error,
+												   uint8_t Slot,
+												   uint8_t* const Error,
 												   uint8_t* const ProtocolNum,
-												   USB_CCID_ProtocolData_T0_t* const t0);
+												   USB_CCID_ProtocolData_T0_t* const T0);
 
 			/** CCID class driver callback for PC_TO_RDR_XfrBlock CCID message
-			 *  Send a block of bytes from the host to a slot in the device 
+			 *  Send a block of bytes from the host to a slot in the device
 			 *  and also received a block of bytes as a response
-			 * 
+			 *
 			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
-			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
-			 *  \param[in]     receivedBuffer 		Pointer to an array holding the received block of bytes
-			 *  \param[in]     receivedBufferSize 	The size of the received block of bytes
-			 *  \param[out]    sendBuffer 			Pointer to a buffer which will hold the bytes being sent back to the host
-			 *  \param[out]     sentBufferSize 		The size of the block of bytes being sent back to the host
-			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[in]     Slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[in]     ReceivedBuffer 		Pointer to an array holding the received block of bytes
+			 *  \param[in]     ReceivedBufferSize 	The size of the received block of bytes
+			 *  \param[out]    SendBuffer 			Pointer to a buffer which will hold the bytes being sent back to the host
+			 *  \param[out]    SentBufferSize 		The size of the block of bytes being sent back to the host
+			 *  \param[out]    Error				The result of the operation, or error.
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_XfrBlock(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-										   uint8_t slot, 
-										   uint8_t* const receivedBuffer, 
-										   uint8_t receivedBufferSize, 
-										   uint8_t* const sendBuffer, 
-										   uint8_t* const sentBufferSize, 
-										   uint8_t* const error);
+										   uint8_t Slot,
+										   uint8_t* const ReceivedBuffer,
+										   uint8_t ReceivedBufferSize,
+										   uint8_t* const SendBuffer,
+										   uint8_t* const SentBufferSize,
+										   uint8_t* const Error);
 
 			/** CCID class driver callback for CCID_PC_to_RDR_Abort CCID message
 			 *  Aborts a BULK out message previously sent to a slot
 			 *
 			 *	\param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
-			 *  \param[in]     slot 				The slot ID to where the message being aborted was sent to.
-			 *  \param[in]     seq 					The current sequence number for this message. Must be checked against
+			 *  \param[in]     Slot 				The slot ID to where the message being aborted was sent to.
+			 *  \param[in]     Seq 					The current sequence number for this message. Must be checked against
 			 *	               						the current abort message being sent at the control pipe.
-			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[out]    Error				The result of the operation, or error.
 			 *
 			 *  \return	The command result code.
 			 */
 			uint8_t CALLBACK_CCID_Abort(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo,
-			                            uint8_t slot,
-			                            uint8_t seq,
-			                            uint8_t* const error) ATTR_NON_NULL_PTR_ARG(1);
+			                            uint8_t Slot,
+			                            uint8_t Seq,
+			                            uint8_t* const Error) ATTR_NON_NULL_PTR_ARG(1);
 
 
 #endif

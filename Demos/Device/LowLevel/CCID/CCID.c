@@ -52,21 +52,21 @@
 
 static bool    Aborted;
 static uint8_t AbortedSeq;
-static USB_CCID_ProtocolData_T0_t ProtocolData;
 
-
+static USB_CCID_ProtocolData_T0_t ProtocolData =
+	{
+		.FindexDindex     = 0x11,
+		.TCCKST0          = 0x00,
+		.GuardTimeT0      = 0x00,
+		.WaitingIntegerT0 = 0x0A,
+		.ClockStop        = 0x00,
+	};
 
 /** Main program entry point. This routine configures the hardware required by the application, then
  *  enters a loop to run the application tasks in sequence.
  */
 int main(void)
 {
-	ProtocolData.FindexDindex = 0x11;
-	ProtocolData.TCCKST0 = 0x00;
-	ProtocolData.GuardTimeT0 = 0x00;
-	ProtocolData.WaitingIntegerT0 = 0x0A;
-	ProtocolData.ClockStop = 0x00;
-
 	SetupHardware();
 
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
@@ -175,6 +175,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 			break;
 		}
+
 		case CCID_GET_CLOCK_FREQUENCIES:
 		{
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
@@ -186,6 +187,7 @@ void EVENT_USB_Device_ControlRequest(void)
 
 			break;
 		}
+
 		case CCID_GET_DATA_RATES:
 		{
 			if (USB_ControlRequest.bmRequestType == (REQDIR_DEVICETOHOST | REQTYPE_CLASS | REQREC_INTERFACE))
@@ -204,21 +206,21 @@ void EVENT_USB_Device_ControlRequest(void)
  *  whenever an application at the host wants to send a power off signal to a slot.
  *  THe slot must reply back with a recognizable ATR (answer to reset)
  */
-uint8_t CCID_IccPowerOn(uint8_t slot,
-						uint8_t* const atr,
-						uint8_t* const atrLength,
-                        uint8_t* const error)
+uint8_t CCID_IccPowerOn(uint8_t Slot,
+						uint8_t* const Atr,
+						uint8_t* const AtrLength,
+                        uint8_t* const Error)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
-		Iso7816_CreateSimpleAtr(atr, atrLength);
+		Iso7816_CreateSimpleAtr(Atr, AtrLength);
 
-		*error = CCID_ERROR_NO_ERROR;
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 	else
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
@@ -226,17 +228,17 @@ uint8_t CCID_IccPowerOn(uint8_t slot,
 /** Event handler for the CCID_PC_to_RDR_IccPowerOff message. This message is sent to the device
  *  whenever an application at the host wants to send a power off signal to a slot.
  */
-uint8_t CCID_IccPowerOff(uint8_t slot,
-                         uint8_t* const error)
+uint8_t CCID_IccPowerOff(uint8_t Slot,
+                         uint8_t* const Error)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
-		*error = CCID_ERROR_NO_ERROR;
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 	else
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
@@ -245,65 +247,65 @@ uint8_t CCID_IccPowerOff(uint8_t slot,
  *  the device whenever an application at the host wants to get the current
  *  slot status.
  */
-uint8_t CCID_GetSlotStatus(uint8_t slot,
-                           uint8_t* const error)
+uint8_t CCID_GetSlotStatus(uint8_t Slot,
+                           uint8_t* const Error)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
-		*error = CCID_ERROR_NO_ERROR;
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 	else
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
+
 /** Event handler for the CCID_PC_to_RDR_SetParameters when T=0. This message is sent to
  *  the device whenever an application at the host wants to set the
  *  parameters for a given slot.
  */
-uint8_t CCID_SetParameters_T0(uint8_t slot,
-                           uint8_t* const error,
-                           USB_CCID_ProtocolData_T0_t* const t0)
+uint8_t CCID_SetParameters_T0(uint8_t Slot,
+                              uint8_t* const Error,
+                              USB_CCID_ProtocolData_T0_t* const T0)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
-		//set parameters
-		memcpy(&ProtocolData, t0, sizeof(USB_CCID_ProtocolData_T0_t));
-		
-		*error = CCID_ERROR_NO_ERROR;
+		// Set parameters
+		memcpy(&ProtocolData, T0, sizeof(USB_CCID_ProtocolData_T0_t));
+
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 	else
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
+
 /** Event handler for the CCID_PC_to_RDR_GetParameters when T=0. This message is sent to
  *  the device whenever an application at the host wants to get the current
  *  parameters for a given slot.
  */
-uint8_t CCID_GetParameters_T0(uint8_t slot,
-                           uint8_t* const error,
-                           uint8_t* ProtocolNum,
-                           USB_CCID_ProtocolData_T0_t* const t0)
+uint8_t CCID_GetParameters_T0(uint8_t Slot,
+                              uint8_t* const Error,
+                              uint8_t* ProtocolNum,
+                              USB_CCID_ProtocolData_T0_t* const T0)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
 
 		*ProtocolNum = CCID_PROTOCOLNUM_T0;
-		memcpy(t0, &ProtocolData, sizeof(USB_CCID_ProtocolData_T0_t));
-		
-		*ProtocolNum = CCID_PROTOCOLNUM_T0;
+		memcpy(T0, &ProtocolData, sizeof(USB_CCID_ProtocolData_T0_t));
 
-		*error = CCID_ERROR_NO_ERROR;
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 	else
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
@@ -312,25 +314,26 @@ uint8_t CCID_GetParameters_T0(uint8_t slot,
  *  whenever an application at the host wants to send a block of bytes to the device
  *  THe device reply back with an array of bytes
  */
-uint8_t CCID_XfrBlock(uint8_t slot,
-					  uint8_t* const receivedBuffer,
-					  uint8_t receivedBufferSize,
-					  uint8_t* const sendBuffer,
-					  uint8_t* const sentBufferSize,
-					  uint8_t* const error)
+uint8_t CCID_XfrBlock(uint8_t Slot,
+					  uint8_t* const ReceivedBuffer,
+					  uint8_t ReceivedBufferSize,
+					  uint8_t* const SendBuffer,
+					  uint8_t* const SentBufferSize,
+					  uint8_t* const Error)
 {
-	if (slot == 0)
+	if (Slot == 0)
 	{
-		uint8_t okResponse[2] = {0x90, 0x00};
-		memcpy(sendBuffer, okResponse, sizeof(okResponse));
-		*sentBufferSize = sizeof(okResponse);
+		uint8_t OkResponse[2] = {0x90, 0x00};
 
-		*error = CCID_ERROR_NO_ERROR;
+		memcpy(SendBuffer, OkResponse, sizeof(OkResponse));
+		*SentBufferSize = sizeof(OkResponse);
+
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 	else
 	{
-		 *error = CCID_ERROR_SLOT_NOT_FOUND;
+		 *Error = CCID_ERROR_SLOT_NOT_FOUND;
          return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 }
@@ -339,36 +342,37 @@ uint8_t CCID_XfrBlock(uint8_t slot,
  *  whenever an application wants to abort the current operation. A previous CCID_ABORT
  *  control message has to be sent before this one in order to start the abort operation.
  */
-uint8_t CCID_Abort(uint8_t slot,
-                   uint8_t seq,
-                   uint8_t* const error)
+uint8_t CCID_Abort(uint8_t Slot,
+                   uint8_t Seq,
+                   uint8_t* const Error)
 {
-	if (Aborted && slot == 0 && AbortedSeq == seq)
+	if (Aborted && Slot == 0 && AbortedSeq == Seq)
 	{
-		Aborted = false;
+		Aborted    = false;
 		AbortedSeq = -1;
-		*error = CCID_ERROR_NO_ERROR;
+
+		*Error = CCID_ERROR_NO_ERROR;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
 	else if (!Aborted)
 	{
-		*error = CCID_ERROR_CMD_NOT_ABORTED;
+		*Error = CCID_ERROR_CMD_NOT_ABORTED;
 		return CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 	}
-	else if (slot != 0)
+	else if (Slot != 0)
 	{
-		*error = CCID_ERROR_SLOT_NOT_FOUND;
+		*Error = CCID_ERROR_SLOT_NOT_FOUND;
 		return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 	}
 
-	*error = CCID_ERROR_NOT_SUPPORTED;
+	*Error = CCID_ERROR_NOT_SUPPORTED;
 	return CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_NOICCPRESENT;
 }
 
 /** Gets and status and verifies whether an error occurred. */
-bool CCID_CheckStatusNoError(uint8_t status)
+bool CCID_CheckStatusNoError(uint8_t Status)
 {
-	return (status & 0xC0) == 0x0;
+	return (Status & 0xC0) == 0x0;
 }
 
 /** Function to manage CCID request parsing and responses back to the host. */
@@ -477,6 +481,7 @@ void CCID_Task(void)
 				Endpoint_ClearIN();
 				break;
 			}
+
 			case CCID_PC_to_RDR_SetParameters:
 			{
 				uint8_t ProtocolNum = Endpoint_Read_8();
@@ -490,14 +495,14 @@ void CCID_Task(void)
 				ResponseParametersStatus->CCIDHeader.Slot        = CCIDHeader.Slot;
 				ResponseParametersStatus->CCIDHeader.Seq         = CCIDHeader.Seq;
 
-				if(ProtocolNum == CCID_PROTOCOLNUM_T0)
+				if (ProtocolNum == CCID_PROTOCOLNUM_T0)
 				{
-					if(CCIDHeader.Length * sizeof(uint8_t) == sizeof(USB_CCID_ProtocolData_T0_t))
+					if ((CCIDHeader.Length * sizeof(uint8_t)) == sizeof(USB_CCID_ProtocolData_T0_t))
 					{
-						
 						Endpoint_Read_Stream_LE(RequestBuffer, CCIDHeader.Length * sizeof(uint8_t), NULL);
-						Status = CCID_SetParameters_T0(CCIDHeader.Slot, &Error, (USB_CCID_ProtocolData_T0_t*) RequestBuffer);
-						if(CCID_CheckStatusNoError(Status))
+
+						Status = CCID_SetParameters_T0(CCIDHeader.Slot, &Error, (USB_CCID_ProtocolData_T0_t*)RequestBuffer);
+						if (CCID_CheckStatusNoError(Status))
 						{
 							ResponseParametersStatus->CCIDHeader.Length = CCIDHeader.Length;
 							Status = CCID_GetParameters_T0(CCIDHeader.Slot, &Error, &ResponseParametersStatus->ProtocolNum, (USB_CCID_ProtocolData_T0_t*) &ResponseParametersStatus->ProtocolData);
@@ -505,15 +510,16 @@ void CCID_Task(void)
 					}
 					else
 					{
-						//unexpected length
+						// Unexpected length
 						Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
 					}
 				}
 				else
 				{
 					ResponseParametersStatus->ProtocolNum = CCID_PROTOCOLNUM_T0;
-					//for now, we don't support T=1 protocol
-					Error = CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED; 
+
+					// For now, we don't support T=1 protocol
+					Error  = CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED;
 					Status = CCID_COMMANDSTATUS_ERROR | CCID_ICCSTATUS_PRESENTANDACTIVE;
 				}
 
@@ -523,10 +529,11 @@ void CCID_Task(void)
 				Endpoint_ClearOUT();
 
 				Endpoint_SelectEndpoint(CCID_IN_EPADDR);
-				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length , NULL);
+				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length, NULL);
 				Endpoint_ClearIN();
 				break;
 			}
+
 			case CCID_PC_to_RDR_GetParameters:
 			{
 				USB_CCID_RDR_to_PC_Parameters_t* ResponseParametersStatus = (USB_CCID_RDR_to_PC_Parameters_t*)&ResponseBuffer;
@@ -543,10 +550,11 @@ void CCID_Task(void)
 				Endpoint_ClearOUT();
 
 				Endpoint_SelectEndpoint(CCID_IN_EPADDR);
-				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length , NULL);
+				Endpoint_Write_Stream_LE(ResponseParametersStatus, sizeof(USB_CCID_BulkMessage_Header_t) + 3 + ResponseParametersStatus->CCIDHeader.Length, NULL);
 				Endpoint_ClearIN();
 				break;
 			}
+
 			case CCID_PC_to_RDR_XfrBlock:
 			{
 				uint8_t  Bwi            = Endpoint_Read_8();
@@ -575,7 +583,7 @@ void CCID_Task(void)
 				else if (Aborted)
 				{
 					Status = CCID_COMMANDSTATUS_FAILED | CCID_ICCSTATUS_PRESENTANDACTIVE;
-					Error =  CCID_ERROR_CMD_ABORTED;
+					Error  = CCID_ERROR_CMD_ABORTED;
 					ResponseDataLength = 0;
 				}
 				else
@@ -616,6 +624,7 @@ void CCID_Task(void)
 				Endpoint_ClearIN();
 				break;
 			}
+
 			default:
 			{
 				memset(ResponseBuffer, 0x00, sizeof(ResponseBuffer));

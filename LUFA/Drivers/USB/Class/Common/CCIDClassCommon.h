@@ -65,39 +65,39 @@
 		#endif
 
 	/* Macros: */
-		#define CCID_CURRENT_SPEC_RELEASE_NUMBER            0x0110
-		#define CCID_VOLTAGESUPPORT_5V                      0
-		#define CCID_VOLTAGESUPPORT_3V                      (1 << 0)
-		#define CCID_VOLTAGESUPPORT_1V8                     (1 << 1)
+		#define CCID_CURRENT_SPEC_RELEASE_NUMBER              0x0110
+		#define CCID_VOLTAGESUPPORT_5V                        0
+		#define CCID_VOLTAGESUPPORT_3V                        (1 << 0)
+		#define CCID_VOLTAGESUPPORT_1V8                       (1 << 1)
 
-		#define CCID_PROTOCOLS_T0                           (1 << 0)
-		#define CCID_PROTOCOLS_T1                           (1 << 1)
+		#define CCID_PROTOCOLS_T0                             (1 << 0)
+		#define CCID_PROTOCOLS_T1                             (1 << 1)
 
-		#define CCID_PROTOCOLNUM_T0                         0
-		#define CCID_PROTOCOLNUM_T1                         (1 << 0)
+		#define CCID_PROTOCOLNUM_T0                           0
+		#define CCID_PROTOCOLNUM_T1                           (1 << 0)
 
-		#define CCID_ICCSTATUS_PRESENTANDACTIVE             0
-		#define CCID_ICCSTATUS_PRESENTANDINACTIVE           (1 << 0)
-		#define CCID_ICCSTATUS_NOICCPRESENT                 (1 << 1)
+		#define CCID_ICCSTATUS_PRESENTANDACTIVE               0
+		#define CCID_ICCSTATUS_PRESENTANDINACTIVE             (1 << 0)
+		#define CCID_ICCSTATUS_NOICCPRESENT                   (1 << 1)
 
-		#define CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR    0
-		#define CCID_COMMANDSTATUS_ERROR    				1
-		#define CCID_COMMANDSTATUS_FAILED                   (1 << 6)
-		#define CCID_COMMANDSTATUS_TIMEEXTENSIONREQUESTED   (2 << 6)
-		#define CCID_COMMANDSTATUS_RFU                      (3 << 6)
+		#define CCID_COMMANDSTATUS_PROCESSEDWITHOUTERROR      0
+		#define CCID_COMMANDSTATUS_ERROR                      1
+		#define CCID_COMMANDSTATUS_FAILED                     (1 << 6)
+		#define CCID_COMMANDSTATUS_TIMEEXTENSIONREQUESTED     (2 << 6)
+		#define CCID_COMMANDSTATUS_RFU                        (3 << 6)
 
-		#define CCID_ERROR_RFU_START                        0x80
-		#define CCID_ERROR_NO_ERROR                         0x80
-		#define CCID_ERROR_NOT_SUPPORTED                    0
-		#define CCID_ERROR_CMD_ABORTED                      0xFF
-		#define CCID_ERROR_CMD_NOT_ABORTED                  0xFF
+		#define CCID_ERROR_RFU_START                          0x80
+		#define CCID_ERROR_NO_ERROR                           0x80
+		#define CCID_ERROR_NOT_SUPPORTED                      0
+		#define CCID_ERROR_CMD_ABORTED                        0xFF
+		#define CCID_ERROR_CMD_NOT_ABORTED                    0xFF
 
-		#define CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED	0x7
+		#define CCID_ERROR_PARAMETERS_PROTOCOL_NOT_SUPPORTED  0x7
 
-		#define CCID_ERROR_SLOT_NOT_FOUND                   5
+		#define CCID_ERROR_SLOT_NOT_FOUND                     5
 
-		#define CCID_DESCRIPTOR_CLOCK_KHZ(khz)              (khz)
-		#define CCID_DESCRIPTOR_CLOCK_MHZ(mhz)              ((mhz) * 1000)
+		#define CCID_DESCRIPTOR_CLOCK_KHZ(khz)                (khz)
+		#define CCID_DESCRIPTOR_CLOCK_MHZ(mhz)                ((mhz) * 1000)
 
 
 	/* Enums: */
