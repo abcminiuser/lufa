@@ -1,15 +1,15 @@
 /*
-			 LUFA Library
-	 Copyright (C) Dean Camera, 2018.
+             LUFA Library
+     Copyright (C) Dean Camera, 2018.
 
   dean [at] fourwalledcubicle [dot] com
-		   www.lufa-lib.org
+           www.lufa-lib.org
 */
 
 /*
   Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
-
-  Function ISProtocol_Calibrate() copyright 2018 Jacob September
+  
+  Function ISPProtocol_Calibrate() copyright 2018 Jacob September
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -147,10 +147,10 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 		uint8_t  PollValue1;
 		uint8_t  PollValue2;
 		uint8_t  ProgData[256]; // Note, the Jungo driver has a very short ACK timeout period, need to buffer the
-	} Write_Memory_Params;	  // whole page and ACK the packet as fast as possible to prevent it from aborting
+	} Write_Memory_Params;      // whole page and ACK the packet as fast as possible to prevent it from aborting
 
 	Endpoint_Read_Stream_LE(&Write_Memory_Params, (sizeof(Write_Memory_Params) -
-												   sizeof(Write_Memory_Params.ProgData)), NULL);
+	                                               sizeof(Write_Memory_Params.ProgData)), NULL);
 	Write_Memory_Params.BytesToWrite = SwapEndian_16(Write_Memory_Params.BytesToWrite);
 
 	if (Write_Memory_Params.BytesToWrite > sizeof(Write_Memory_Params.ProgData))
@@ -170,7 +170,7 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 	// The driver will terminate transfers that are a round multiple of the endpoint bank in size with a ZLP, need
 	// to catch this and discard it before continuing on with packet processing to prevent communication issues
 	if (((sizeof(uint8_t) + sizeof(Write_Memory_Params) - sizeof(Write_Memory_Params.ProgData)) +
-		Write_Memory_Params.BytesToWrite) % AVRISP_DATA_EPSIZE == 0)
+	    Write_Memory_Params.BytesToWrite) % AVRISP_DATA_EPSIZE == 0)
 	{
 		Endpoint_ClearOUT();
 		Endpoint_WaitUntilReady();
@@ -181,15 +181,15 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 	Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
 
 	uint8_t  ProgrammingStatus = STATUS_CMD_OK;
-	uint8_t  PollValue		 = (V2Command == CMD_PROGRAM_FLASH_ISP) ? Write_Memory_Params.PollValue1 :
-																		Write_Memory_Params.PollValue2;
-	uint16_t PollAddress	   = 0;
-	uint8_t* NextWriteByte	 = Write_Memory_Params.ProgData;
+	uint8_t  PollValue         = (V2Command == CMD_PROGRAM_FLASH_ISP) ? Write_Memory_Params.PollValue1 :
+	                                                                    Write_Memory_Params.PollValue2;
+	uint16_t PollAddress       = 0;
+	uint8_t* NextWriteByte     = Write_Memory_Params.ProgData;
 	uint16_t PageStartAddress  = (CurrentAddress & 0xFFFF);
 
 	for (uint16_t CurrentByte = 0; CurrentByte < Write_Memory_Params.BytesToWrite; CurrentByte++)
 	{
-		uint8_t ByteToWrite	 = *(NextWriteByte++);
+		uint8_t ByteToWrite     = *(NextWriteByte++);
 		uint8_t ProgrammingMode = Write_Memory_Params.ProgrammingMode;
 
 		/* Check to see if we need to send a LOAD EXTENDED ADDRESS command to the target */
@@ -228,8 +228,8 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 			  ProgrammingMode = (ProgrammingMode & ~PROG_MODE_WORD_VALUE_MASK) | PROG_MODE_WORD_TIMEDELAY_MASK;
 
 			ProgrammingStatus = ISPTarget_WaitForProgComplete(ProgrammingMode, PollAddress, PollValue,
-															  Write_Memory_Params.DelayMS,
-															  Write_Memory_Params.ProgrammingCommands[2]);
+			                                                  Write_Memory_Params.DelayMS,
+			                                                  Write_Memory_Params.ProgrammingCommands[2]);
 
 			/* Abort the programming loop early if the byte/word programming failed */
 			if (ProgrammingStatus != STATUS_CMD_OK)
@@ -267,8 +267,8 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 		}
 
 		ProgrammingStatus = ISPTarget_WaitForProgComplete(Write_Memory_Params.ProgrammingMode, PollAddress, PollValue,
-														  Write_Memory_Params.DelayMS,
-														  Write_Memory_Params.ProgrammingCommands[2]);
+		                                                  Write_Memory_Params.DelayMS,
+		                                                  Write_Memory_Params.ProgrammingCommands[2]);
 
 		/* Check to see if the FLASH address has crossed the extended address boundary */
 		if ((V2Command == CMD_PROGRAM_FLASH_ISP) && !(CurrentAddress & 0xFFFF))
@@ -612,6 +612,4 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
 	  Delay_MS(1);
 }
 
-
 #endif
-
