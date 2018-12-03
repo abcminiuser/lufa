@@ -1,13 +1,15 @@
 /*
-             LUFA Library
-     Copyright (C) Dean Camera, 2018.
+			 LUFA Library
+	 Copyright (C) Dean Camera, 2018.
 
   dean [at] fourwalledcubicle [dot] com
-           www.lufa-lib.org
+		   www.lufa-lib.org
 */
 
 /*
   Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+
+  Function ISProtocol_Calibrate() copyright 2018 Jacob September
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -145,10 +147,10 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 		uint8_t  PollValue1;
 		uint8_t  PollValue2;
 		uint8_t  ProgData[256]; // Note, the Jungo driver has a very short ACK timeout period, need to buffer the
-	} Write_Memory_Params;      // whole page and ACK the packet as fast as possible to prevent it from aborting
+	} Write_Memory_Params;	  // whole page and ACK the packet as fast as possible to prevent it from aborting
 
 	Endpoint_Read_Stream_LE(&Write_Memory_Params, (sizeof(Write_Memory_Params) -
-	                                               sizeof(Write_Memory_Params.ProgData)), NULL);
+												   sizeof(Write_Memory_Params.ProgData)), NULL);
 	Write_Memory_Params.BytesToWrite = SwapEndian_16(Write_Memory_Params.BytesToWrite);
 
 	if (Write_Memory_Params.BytesToWrite > sizeof(Write_Memory_Params.ProgData))
@@ -168,7 +170,7 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 	// The driver will terminate transfers that are a round multiple of the endpoint bank in size with a ZLP, need
 	// to catch this and discard it before continuing on with packet processing to prevent communication issues
 	if (((sizeof(uint8_t) + sizeof(Write_Memory_Params) - sizeof(Write_Memory_Params.ProgData)) +
-	    Write_Memory_Params.BytesToWrite) % AVRISP_DATA_EPSIZE == 0)
+		Write_Memory_Params.BytesToWrite) % AVRISP_DATA_EPSIZE == 0)
 	{
 		Endpoint_ClearOUT();
 		Endpoint_WaitUntilReady();
@@ -179,15 +181,15 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 	Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
 
 	uint8_t  ProgrammingStatus = STATUS_CMD_OK;
-	uint8_t  PollValue         = (V2Command == CMD_PROGRAM_FLASH_ISP) ? Write_Memory_Params.PollValue1 :
-	                                                                    Write_Memory_Params.PollValue2;
-	uint16_t PollAddress       = 0;
-	uint8_t* NextWriteByte     = Write_Memory_Params.ProgData;
+	uint8_t  PollValue		 = (V2Command == CMD_PROGRAM_FLASH_ISP) ? Write_Memory_Params.PollValue1 :
+																		Write_Memory_Params.PollValue2;
+	uint16_t PollAddress	   = 0;
+	uint8_t* NextWriteByte	 = Write_Memory_Params.ProgData;
 	uint16_t PageStartAddress  = (CurrentAddress & 0xFFFF);
 
 	for (uint16_t CurrentByte = 0; CurrentByte < Write_Memory_Params.BytesToWrite; CurrentByte++)
 	{
-		uint8_t ByteToWrite     = *(NextWriteByte++);
+		uint8_t ByteToWrite	 = *(NextWriteByte++);
 		uint8_t ProgrammingMode = Write_Memory_Params.ProgrammingMode;
 
 		/* Check to see if we need to send a LOAD EXTENDED ADDRESS command to the target */
@@ -226,8 +228,8 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 			  ProgrammingMode = (ProgrammingMode & ~PROG_MODE_WORD_VALUE_MASK) | PROG_MODE_WORD_TIMEDELAY_MASK;
 
 			ProgrammingStatus = ISPTarget_WaitForProgComplete(ProgrammingMode, PollAddress, PollValue,
-			                                                  Write_Memory_Params.DelayMS,
-			                                                  Write_Memory_Params.ProgrammingCommands[2]);
+															  Write_Memory_Params.DelayMS,
+															  Write_Memory_Params.ProgrammingCommands[2]);
 
 			/* Abort the programming loop early if the byte/word programming failed */
 			if (ProgrammingStatus != STATUS_CMD_OK)
@@ -265,8 +267,8 @@ void ISPProtocol_ProgramMemory(uint8_t V2Command)
 		}
 
 		ProgrammingStatus = ISPTarget_WaitForProgComplete(Write_Memory_Params.ProgrammingMode, PollAddress, PollValue,
-		                                                  Write_Memory_Params.DelayMS,
-		                                                  Write_Memory_Params.ProgrammingCommands[2]);
+														  Write_Memory_Params.DelayMS,
+														  Write_Memory_Params.ProgrammingCommands[2]);
 
 		/* Check to see if the FLASH address has crossed the extended address boundary */
 		if ((V2Command == CMD_PROGRAM_FLASH_ISP) && !(CurrentAddress & 0xFFFF))
@@ -387,6 +389,89 @@ void ISPProtocol_ChipErase(void)
 	Endpoint_Write_8(ResponseStatus);
 	Endpoint_ClearIN();
 }
+
+/** Global volatile variables used in ISRs relating to ISPProtocol_Calibrate() */
+volatile uint16_t HalfCyclesRemaining;
+volatile uint8_t  ResponseTogglesRemaining;
+
+/** ISR to toggle MOSI pin when TIMER1 overflows */
+ISR(TIMER1_OVF_vect)
+{
+	PINB |= (1 << PB2);	// toggle PB2 (MOSI) by writing 1 to its bit in PINB
+	HalfCyclesRemaining--;
+}
+
+/** ISR to listen for toggles on MISO pin */
+ISR(PCINT0_vect)
+{
+	ResponseTogglesRemaining--;
+}
+
+/** Handler for the CMD_OSCCAL command, entering RC-calibration mode as specified in AVR053 */
+void ISPProtocol_Calibrate(void)
+{
+	#define CALIB_CLOCK			32768
+		// CALIB_TICKS uses 2x frequency because we toggle twice per cycle
+		//  and adds 1/2 denom. to nom. to ensure rounding instead of flooring of integer division
+	#define CALIB_TICKS			( (F_CPU+CALIB_CLOCK) / (2*CALIB_CLOCK) )
+		// Per AVR053, calibration guaranteed to take 1024 cycles (2048 half-cycles) or fewer;
+		//  add some cycles for response delay (5-10 after success) and response itself
+	#define HALF_CYCLE_LIMIT	(2*1024 + 50)
+	#define SUCCESS_TOGGLE_NUM	8
+	
+	uint8_t ResponseStatus = STATUS_CMD_OK;
+	
+	/* Don't entirely know why this is needed, something to do with the USB communication back to PC */
+	Endpoint_ClearOUT();
+	Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
+	Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
+	
+	/* Enable pullup on MISO and release ~RESET */
+	DDRB	=  ~(1 << PB3);					// explicitly set all PORTB to outputs except PB3 (MISO)
+	PORTB  |= ( (1 << PB4) | (1 << PB3) );	// set PB4 (TARG_RST) high (i.e. not reset) and enable pullup on PB3 (MISO)
+	
+	/* Set up MISO pin (PCINT3) to listen for toggles */
+	PCMSK0	= (1 << PCINT3);	// set mask to enable PCINT on only Pin 3 (MISO)
+	
+	/* Set up timer that fires at a rate of 65536 Hz - this will drive the MOSI toggle */
+	OCR1A	= CALIB_TICKS - 1;		// zero-indexed counter; for 16MHz system clock, this becomes 243
+	TCCR1A	= ( (1 << WGM11) | (1 << WGM10) );					// set for fast PWM, TOP = OCR1A
+	TCCR1B	= ( (1 << WGM13) | (1 << WGM12) | (1 << CS10) );	//  ... and no clock prescaling
+	TCNT1	= 0;												// reset counter
+
+	/* Initialize counter variables */
+	HalfCyclesRemaining			= HALF_CYCLE_LIMIT;
+	ResponseTogglesRemaining	= SUCCESS_TOGGLE_NUM;
+
+	/* Turn on interrupts */
+	uint8_t OldSREG = SREG;	// save current global interrupt state
+	PCICR  |= (1 << PCIE0);	// enable interrupts for PCINT7:0 (don't touch setting for PCINT12:8)
+	TIMSK1	= (1 << TOIE1);	// enable T1 OVF interrupt (and no other T1 interrupts)
+	sei();					// enable global interrupts
+
+	/* Let device do its calibration, wait for reponse on MISO */
+	while ( HalfCyclesRemaining && ResponseTogglesRemaining )
+	{
+		// do nothing...
+	}
+	
+	/* Disable interrupts, restore SREG */
+	PCICR  &= ~(1 << PCIE0);
+	TIMSK1	= 0;
+	SREG	= OldSREG;
+	
+	/* Check if device responded with a success message or if we timed out */
+	if (ResponseTogglesRemaining)
+	{
+		ResponseStatus = STATUS_CMD_TOUT;
+	}
+
+	/* Report back to PC via USB */
+	Endpoint_Write_8(CMD_OSCCAL);
+	Endpoint_Write_8(ResponseStatus);
+	Endpoint_ClearIN();
+	
+} // void ISPProtocol_Calibrate(void)
 
 /** Handler for the CMD_READ_FUSE_ISP, CMD_READ_LOCK_ISP, CMD_READ_SIGNATURE_ISP and CMD_READ_OSCCAL commands,
  *  reading the requested configuration byte from the device.
@@ -526,6 +611,7 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
 	while (DelayMS-- && TimeoutTicksRemaining)
 	  Delay_MS(1);
 }
+
 
 #endif
 
