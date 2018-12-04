@@ -2,10 +2,10 @@ kind: pipeline
 name: default
 
 steps:
-- name: Build
+- name: Projects
   image: abcminiuser/docker-avr8-toolchain
   commands:
-  - make --quiet all
+  - make -j --quiet all
 
 - name: Bootloaders
   image: abcminiuser/docker-avr8-toolchain

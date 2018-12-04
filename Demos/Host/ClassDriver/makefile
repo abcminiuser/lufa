@@ -22,20 +22,9 @@ ifeq ($(MAKELEVEL), 10)
    $(error EMERGENCY ABORT: INFINITE RECURSION DETECTED)
 endif
 
-# Need to special-case building without a per-project object directory
-ifeq ($(OBJDIR),)
-   # If no target specified, force "clean all" and disallow parallel build
-   ifeq ($(MAKECMDGOALS),)
-      MAKECMDGOALS := clean all
-      .NOTPARALLEL:
-   endif
-
-   # If one of the targets is to build, force "clean" beforehand and disallow parallel build
-   ifneq ($(findstring all, $(MAKECMDGOALS)),)
-      MAKECMDGOALS := clean $(MAKECMDGOALS)
-      .NOTPARALLEL:
-   endif
-endif
+# Build each directory sequentially, even if we are building using multiple
+# cores within each project
+.NOTPARALLEL:
 
 %: $(PROJECT_DIRECTORIES)
 	@echo . > /dev/null

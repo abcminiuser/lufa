@@ -36,7 +36,7 @@ all:
 # identical OBJDIR directory, we need to enforce the use of this project's object file
 # directory as the one where the build object files are to be stored, by giving it a
 # path relative to the current folder.
-OBJDIR      := ./obj
+OBJDIR      := ./xpb-obj
 
 # Include LUFA-specific DMBS extension modules
 DMBS_LUFA_PATH ?= $(LUFA_PATH)/Build/LUFA
