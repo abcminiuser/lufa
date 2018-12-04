@@ -1,0 +1,18 @@
+kind: pipeline
+name: default
+
+steps:
+- name: Build
+  image: abcminiuser/docker-avr8-toolchain
+  commands:
+  - make --quiet all
+
+- name: Bootloaders
+  image: abcminiuser/docker-avr8-toolchain
+  commands:
+  - make --quiet -C Maintenance bootloaders
+
+- name: Tests
+  image: abcminiuser/docker-avr8-toolchain
+  commands:
+  - make --quiet -C BuildTests all
