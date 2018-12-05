@@ -74,6 +74,13 @@
 		/** Magic bootloader key to unlock forced application start mode. */
 		#define MAGIC_BOOT_KEY             0xDC42
 
+	/* Type Defines: */
+		#if (FLASHEND > 0xFFFF)
+			typedef uint32_t flashaddr_t;
+		#else
+			typedef uint16_t flashaddr_t;
+		#endif
+
 	/* Enums: */
 		/** Intel HEX parser state machine states. */
 		enum HEX_Parser_States_t
