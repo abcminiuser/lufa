@@ -3,16 +3,16 @@ name: default
 
 steps:
 - name: Projects
-  image: abcminiuser/docker-avr8-toolchain
+  image: abcminiuser/docker-ci-avr8-toolchain
   commands:
   - make -j --quiet all
 
 - name: Bootloaders
-  image: abcminiuser/docker-avr8-toolchain
+  image: abcminiuser/docker-ci-avr8-toolchain
   commands:
   - make --quiet -C Maintenance bootloaders
 
 - name: Tests
-  image: abcminiuser/docker-avr8-toolchain
+  image: abcminiuser/docker-ci-avr8-toolchain
   commands:
   - make --quiet -C BuildTests all
