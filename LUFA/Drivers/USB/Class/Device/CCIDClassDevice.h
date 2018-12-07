@@ -147,8 +147,8 @@
 			 *  Retrieves the current status of a given slot
 			 *
 			 *	\param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration and state.
-			 *  \param[in]     slot 				The slot ID from which we want to retrieve the status.
-			 *  \param[out]    error				The result of the operation, or error.
+			 *  \param[in]     Slot 				The slot ID from which we want to retrieve the status.
+			 *  \param[out]    Error				The result of the operation, or error.
 			 *
 			 *  \return	The command result code.
 			 */
@@ -178,6 +178,7 @@
 			 *  \param[in,out] CCIDInterfaceInfo	Pointer to a structure containing a CCID Class configuration, state and protocol data.
 			 *  \param[in]     Slot 				The slot ID from which we want to retrieve the status.
 			 *  \param[out]    Error				The result of the operation, or error.
+			 *  \param[out]    ProtocolNum			The CCID protocol ID of the parameter being retrieved.
 			 *  \param[out]    T0 					Pointer to a buffer where the parameters will be returned
 			 *
 			 *  \return	The command result code.

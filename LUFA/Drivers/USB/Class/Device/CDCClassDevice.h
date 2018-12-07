@@ -216,43 +216,43 @@
 			                            const void* const Buffer,
 			                            const uint16_t Length) ATTR_NON_NULL_PTR_ARG(1) ATTR_NON_NULL_PTR_ARG(2);
 
-			/** Sends a given null terminated string from PROGMEM space to the attached USB host, if connected. If a host is not connected
-			 *  when the function is called, the string is discarded. Bytes will be queued for transmission to the host until either
-			 *  the endpoint bank becomes full, or the \ref CDC_Device_Flush() function is called to flush the pending data to
-			 *  the host. This allows for multiple bytes to be packed into a single endpoint packet, increasing data throughput.
-			 *
-			 *  \pre This function must only be called when the Device state machine is in the \ref DEVICE_STATE_Configured state or
-			 *       the call will fail.
-			 *
-			 *  \note This function does not exist on architectures that do not have a separate flash memory space.
-			 *
-			 *  \param[in,out] CDCInterfaceInfo  Pointer to a structure containing a CDC Class configuration and state.
-			 *  \param[in]     String            Pointer to the null terminated string to send to the host.
-			 *
-			 *  \return A value from the \ref Endpoint_Stream_RW_ErrorCodes_t enum.
-			 */
 			#if defined(ARCH_HAS_FLASH_ADDRESS_SPACE)
+				/** Sends a given null terminated string from PROGMEM space to the attached USB host, if connected. If a host is not connected
+				 *  when the function is called, the string is discarded. Bytes will be queued for transmission to the host until either
+				 *  the endpoint bank becomes full, or the \ref CDC_Device_Flush() function is called to flush the pending data to
+				 *  the host. This allows for multiple bytes to be packed into a single endpoint packet, increasing data throughput.
+				 *
+				 *  \pre This function must only be called when the Device state machine is in the \ref DEVICE_STATE_Configured state or
+				 *       the call will fail.
+				 *
+				 *  \note This function does not exist on architectures that do not have a separate flash memory space.
+				 *
+				 *  \param[in,out] CDCInterfaceInfo  Pointer to a structure containing a CDC Class configuration and state.
+				 *  \param[in]     String            Pointer to the null terminated string to send to the host.
+				 *
+				 *  \return A value from the \ref Endpoint_Stream_RW_ErrorCodes_t enum.
+				 */
 				uint8_t CDC_Device_SendString_P(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 				                                const char* const String) ATTR_NON_NULL_PTR_ARG(1) ATTR_NON_NULL_PTR_ARG(2);
 			#endif
 
-			/** Sends a given data buffer from PROGMEM space to the attached USB host, if connected. If a host is not connected when the
-			 *  function is called, the string is discarded. Bytes will be queued for transmission to the host until either the endpoint
-			 *  bank becomes full, or the \ref CDC_Device_Flush() function is called to flush the pending data to the host. This allows
-			 *  for multiple bytes to be packed into a single endpoint packet, increasing data throughput.
-			 *
-			 *  \pre This function must only be called when the Device state machine is in the \ref DEVICE_STATE_Configured state or
-			 *       the call will fail.
-			 *
-			 *  \note This function does not exist on architectures that do not have a separate flash memory space.
-			 *
-			 *  \param[in,out] CDCInterfaceInfo  Pointer to a structure containing a CDC Class configuration and state.
-			 *  \param[in]     Buffer            Pointer to a buffer containing the data to send to the device.
-			 *  \param[in]     Length            Length of the data to send to the host.
-			 *
-			 *  \return A value from the \ref Endpoint_Stream_RW_ErrorCodes_t enum.
-			 */
 			#if defined(ARCH_HAS_FLASH_ADDRESS_SPACE)
+				/** Sends a given data buffer from PROGMEM space to the attached USB host, if connected. If a host is not connected when the
+				 *  function is called, the string is discarded. Bytes will be queued for transmission to the host until either the endpoint
+				 *  bank becomes full, or the \ref CDC_Device_Flush() function is called to flush the pending data to the host. This allows
+				 *  for multiple bytes to be packed into a single endpoint packet, increasing data throughput.
+				 *
+				 *  \pre This function must only be called when the Device state machine is in the \ref DEVICE_STATE_Configured state or
+				 *       the call will fail.
+				 *
+				 *  \note This function does not exist on architectures that do not have a separate flash memory space.
+				 *
+				 *  \param[in,out] CDCInterfaceInfo  Pointer to a structure containing a CDC Class configuration and state.
+				 *  \param[in]     Buffer            Pointer to a buffer containing the data to send to the device.
+				 *  \param[in]     Length            Length of the data to send to the host.
+				 *
+				 *  \return A value from the \ref Endpoint_Stream_RW_ErrorCodes_t enum.
+				 */
 				uint8_t CDC_Device_SendData_P(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 				                              const void* const Buffer,
 				                              const uint16_t Length) ATTR_NON_NULL_PTR_ARG(1) ATTR_NON_NULL_PTR_ARG(2);
