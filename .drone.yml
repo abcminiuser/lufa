@@ -2,6 +2,12 @@ kind: pipeline
 name: default
 
 steps:
+- name: Documentation
+  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
+  commands:
+  - make --quiet -C Maintenance upgrade-doxygen
+  - make --quiet doxygen
+
 - name: Projects
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
@@ -12,7 +18,7 @@ steps:
   commands:
   - make --quiet -C Maintenance bootloaders
 
-- name: Tests
+- name: Build Tests
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
   - make --quiet -C BuildTests all
