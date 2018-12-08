@@ -39,10 +39,13 @@ void USB_Event_Stub(void)
 
 void USB_Event_Stub_2(const uint8_t _1)
 {
+	(void)_1;
 	USB_Event_Stub();
 }
 
 void USB_Event_Stub_3(const uint8_t _1, const uint8_t _2)
 {
+	(void)_1;
+	(void)_2;
 	USB_Event_Stub();
 }
