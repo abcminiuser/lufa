@@ -1,5 +1,5 @@
 kind: pipeline
-name: default
+name: Arch
 
 steps:
 - name: Documentation
@@ -13,10 +13,21 @@ steps:
   commands:
   - make -j --quiet all
 
-- name: Bootloaders
+- name: Build Tests
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
-  - make --quiet -C Maintenance bootloaders
+  - make --quiet -C BuildTests all
+
+# ----
+
+kind: pipeline
+name: Ubuntu
+
+steps:
+- name: Projects
+  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
+  commands:
+  - make -j --quiet all
 
 - name: Build Tests
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch

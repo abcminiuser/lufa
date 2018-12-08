@@ -9,7 +9,6 @@
 # Makefile to build the LUFA library, projects and demos.
 
 # Call with "make all" to rebuild everything, "make clean" to clean everything,
-# "make mostlyclean" to remove all intermediary files but preserve any binaries,
 # "make doxygen" to document everything with Doxygen (if installed). Call
 # "make help" for additional target build information within a specific project.
 
