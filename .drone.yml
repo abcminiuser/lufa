@@ -6,7 +6,7 @@ platform:
   arch: amd64
 
 steps:
-- name: Documentation
+- name: Build Documentation
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
   - make --quiet -C Maintenance upgrade-doxygen
@@ -15,7 +15,7 @@ steps:
 ---
 
 kind: pipeline
-name: Arch
+name: Build (Arch)
 
 platform:
   os: linux
@@ -36,7 +36,7 @@ steps:
 ---
 
 kind: pipeline
-name: Ubuntu
+name: Build (Ubuntu)
 
 platform:
   os: linux
