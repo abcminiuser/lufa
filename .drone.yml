@@ -1,5 +1,9 @@
 kind: pipeline
-name: Arch
+name: Documentation
+
+platform:
+  os: linux
+  arch: amd64
 
 steps:
 - name: Documentation
@@ -8,28 +12,44 @@ steps:
   - make --quiet -C Maintenance upgrade-doxygen
   - make --quiet doxygen
 
+---
+
+kind: pipeline
+name: Arch
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: Build Tests
+  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
+  commands:
+  - ln -s /bin/true /sbin/avr32-gcc
+  - make --quiet -C BuildTests all
+
 - name: Projects
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
   - make -j --quiet all
 
-- name: Build Tests
-  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
-  commands:
-  - make --quiet -C BuildTests all
-
-# ----
+---
 
 kind: pipeline
 name: Ubuntu
 
+platform:
+  os: linux
+  arch: amd64
+
 steps:
+- name: Build Tests
+  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
+  commands:
+  - ln -s /bin/true /sbin/avr32-gcc
+  - make --quiet -C BuildTests all
+
 - name: Projects
   image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
   commands:
   - make -j --quiet all
-
-- name: Build Tests
-  image: abcminiuser/docker-ci-avr8-toolchain:latest-arch
-  commands:
-  - make --quiet -C BuildTests all
