@@ -43,15 +43,12 @@ uint8_t Endpoint_Discard_Stream(uint16_t Length,
                                 uint16_t* const BytesProcessed)
 {
 	uint8_t  ErrorCode;
-	uint16_t BytesInTransfer = 0;
+	uint16_t BytesInTransfer = BytesProcessed ? *BytesProcessed : 0;
 
 	if ((ErrorCode = Endpoint_WaitUntilReady()))
 	  return ErrorCode;
 
-	if (BytesProcessed != NULL)
-	  Length -= *BytesProcessed;
-
-	while (Length)
+	while (BytesInTransfer < Length)
 	{
 		if (!(Endpoint_IsReadWriteAllowed()))
 		{
@@ -59,7 +56,7 @@ uint8_t Endpoint_Discard_Stream(uint16_t Length,
 
 			if (BytesProcessed != NULL)
 			{
-				*BytesProcessed += BytesInTransfer;
+				*BytesProcessed = BytesInTransfer;
 				return ENDPOINT_RWSTREAM_IncompleteTransfer;
 			}
 
@@ -69,8 +66,6 @@ uint8_t Endpoint_Discard_Stream(uint16_t Length,
 		else
 		{
 			Endpoint_Discard_8();
-
-			Length--;
 			BytesInTransfer++;
 		}
 	}
@@ -82,15 +77,12 @@ uint8_t Endpoint_Null_Stream(uint16_t Length,
                              uint16_t* const BytesProcessed)
 {
 	uint8_t  ErrorCode;
-	uint16_t BytesInTransfer = 0;
+	uint16_t BytesInTransfer = BytesProcessed ? *BytesProcessed : 0;
 
 	if ((ErrorCode = Endpoint_WaitUntilReady()))
 	  return ErrorCode;
 
-	if (BytesProcessed != NULL)
-	  Length -= *BytesProcessed;
-
-	while (Length)
+	while (BytesInTransfer < Length)
 	{
 		if (!(Endpoint_IsReadWriteAllowed()))
 		{
@@ -98,7 +90,7 @@ uint8_t Endpoint_Null_Stream(uint16_t Length,
 
 			if (BytesProcessed != NULL)
 			{
-				*BytesProcessed += BytesInTransfer;
+				*BytesProcessed = BytesInTransfer;
 				return ENDPOINT_RWSTREAM_IncompleteTransfer;
 			}
 
@@ -108,8 +100,6 @@ uint8_t Endpoint_Null_Stream(uint16_t Length,
 		else
 		{
 			Endpoint_Write_8(0);
-
-			Length--;
 			BytesInTransfer++;
 		}
 	}
