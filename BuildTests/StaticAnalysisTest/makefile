@@ -13,7 +13,7 @@ LUFA_PATH := ../../LUFA/
 
 CPPCHECK_EXCLUDES := FATFs/            \
                      PetiteFATFs/      \
-                     uip/				\
+                     uip/              \
                      HID/HostLoaderApp/
 
 CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               \
@@ -21,7 +21,7 @@ CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               
 
 CPPCHECK_FLAGS    := -U TEMPLATE_FUNC_NAME -U __GNUC__ -U __DOXYGEN__
 
-CPPCHECK_SUPPRESS := variableScope missingInclude unusedFunction
+CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction knownConditionTrueFalse
 
 SRC               := $(patsubst %/,%,$(LUFA_PATH))/..
 
