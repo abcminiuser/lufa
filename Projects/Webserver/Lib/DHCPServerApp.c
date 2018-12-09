@@ -50,7 +50,7 @@ void DHCPServerApp_Init(void)
 	uip_listen(HTONS(DHCP_SERVER_PORT));
 
 	/* Create a new UDP connection to the DHCP server port for the DHCP solicitation */
-	struct uip_udp_conn* BroadcastConnection = uip_udp_new(&uip_broadcast_addr, HTONS(DHCP_CLIENT_PORT));
+	BroadcastConnection = uip_udp_new(&uip_broadcast_addr, HTONS(DHCP_CLIENT_PORT));
 
 	/* If the connection was successfully created, bind it to the local DHCP client port */
 	if (BroadcastConnection != NULL)
