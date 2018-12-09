@@ -115,7 +115,7 @@ ifneq ($(findstring $(ARCH), AVR8 XMEGA),)
 else ifneq ($(findstring $(ARCH), UC3),)
    BASE_CC_FLAGS += -mpart=$(MCU:at32%=%) -masm-addr-pseudos
 endif
-BASE_CC_FLAGS += -Wall -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections -fdiagnostics-color
+BASE_CC_FLAGS += -Wall -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections
 BASE_CC_FLAGS += -I.
 BASE_CC_FLAGS += -DARCH=ARCH_$(ARCH)
 ifneq ($(F_CPU),)
