@@ -21,7 +21,7 @@ CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               
 
 CPPCHECK_FLAGS    := -U TEMPLATE_FUNC_NAME -U __GNUC__ -U __DOXYGEN__
 
-CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction knownConditionTrueFalse
+CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction
 
 SRC               := $(patsubst %/,%,$(LUFA_PATH))/..
 
