@@ -15,8 +15,12 @@
   *   - Added Microsoft OS Compatibility descriptors to the RNDIS demos for driverless install on Windows 7 and newer
   *
   *  <b>Changed:</b>
+  *  - Core:
   *   - Moved the functional descriptor types DTYPE_CSInterface and DTYPE_CSEndpoint to their respective CDC and Audio class
   *     drivers, as they are class-defined rather than general descriptor types.
+  *   - Reduced compiled size of the Endpoint_Discard_Stream() and Endpoint_Null_Stream() functions.
+  *  - Library Applications:
+  *   - Updated Printer class bootloader to not store 32-bit HEX parser flash offsets on small flash devices.
   *
   *  <b>Fixed:</b>
   *  - Core:
@@ -31,6 +35,7 @@
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
   *   - Fixed bootloaders accepting flash writes to the bootloader region (thanks to NicoHood)
   *   - Fixed bootloaders incorrectly checking the BOOTRST fuse on start (thanks to Braden Kell)
+  *   - Fixed void pointer arithmetic in the low level RNDIS demo protocol decoders
   *
   *  \section Sec_ChangeLog170418 Version 170418
   *  <b>New:</b>
@@ -46,19 +51,22 @@
   *     in a user application (thanks to Matlo)
   *   - Fixed missing \c va_end() calls in the HID bootloader CLI app which could cause portability issues
   *   - Fixed void pointer arithmetic in the \c Serial_SendData() functions for AVR8 and XMEGA architectures
-  *   - Fixed void pointer arithmetic in the low level and class driver RNDIS demo protocol decoders
-  *   - Fixed low level RNDIS demo incorrectly setting the RNDIS state when a null packet filter was requested
-  *   - Fixed missing entries in several project's Atmel Studio integration files, such as driver INF files
   *   - Fixed invalid endpoint indexes causing memory corruption in device Clear/Set Feature standard requests (thanks to Peter Popovec)
   *   - Fixed incorrect serialization in USB_SetHIDReportItemInfo() function (thanks to e-chip)
+  *  - Library Applications:
+  *   - Fixed low level RNDIS demo incorrectly setting the RNDIS state when a null packet filter was requested
+  *   - Fixed void pointer arithmetic in the low level and class driver RNDIS demo protocol decoders
+  *   - Fixed missing entries in several project's Atmel Studio integration files, such as driver INF files
   *
   *  <b>Changed:</b>
-  *   - Added signed alternative libUSB driver for the AVRISP-MKII clone project, to support Atmel Studio 7 (thanks to Atmel)
-  *   - Removed no longer required LIBUSB_DRIVER_COMPAT and RESET_TOGGLES_LIBUSB_COMPAT configuration options from the AVRISP-MKII
-  *     clone project, as the new libUSB driver works for AVRDUDE and Atmel Studio 7 under Windows
+  *  - Core:
   *   - Replaced the LUFA build system with its (compatible) successor, DMBS (Dean's Makefile Build System)
   *   - Removed obsolete library TAR export and associated documentation
   *   - Fixed incorrect HID_DESCRIPTOR_KEYBOARD() macro definition (thanks to Eric Tang)
+  *  - Library Applications:
+  *   - Added signed alternative libUSB driver for the AVRISP-MKII clone project, to support Atmel Studio 7 (thanks to Atmel)
+  *   - Removed no longer required LIBUSB_DRIVER_COMPAT and RESET_TOGGLES_LIBUSB_COMPAT configuration options from the AVRISP-MKII
+  *     clone project, as the new libUSB driver works for AVRDUDE and Atmel Studio 7 under Windows
   *
   *  \section Sec_ChangeLog151115 Version 151115
   *  <b>New:</b>

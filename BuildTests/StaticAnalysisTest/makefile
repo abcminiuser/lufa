@@ -13,7 +13,8 @@ LUFA_PATH := ../../LUFA/
 
 CPPCHECK_EXCLUDES := FATFs/            \
                      PetiteFATFs/      \
-                     uip/
+                     uip/				\
+                     HID/HostLoaderApp/
 
 CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               \
                      $(patsubst %/,%,$(LUFA_PATH))/../Projects/AVRISP-MKII/
