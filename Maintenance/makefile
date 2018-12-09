@@ -14,10 +14,6 @@ LUFA_ROOT := ../
 
 all:
 
-# Print a list of all filenames and line numbers that exceed an allowed threshold
-line-lengths:
-	awk '{ if (length > 120) { print FILENAME, ":", FNR, "[", length, "]" } }' `find $(LUFA_ROOT) -name *.[ch]`
-
 # Generate a header containing all library functions
 function-list:
 	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT))/LUFA doxygen DOXYGEN_OVERRIDE_PARAMS="GENERATE_HTML=no GENERATE_XML=yes"
@@ -69,7 +65,7 @@ bootloaders:
 	 rm -f BuildMakefile
 
 # Check the working branch documentation, ensure no placeholder values
-check-documentation-placeholders:
+check-release:
 	@echo Checking for release suitability...
 	@if ( grep " LUFA_VERSION_RELEASE_TYPE " $(patsubst %/,%,$(LUFA_ROOT))/LUFA/Version.h | grep "LUFA_VERSION_RELEASE_TYPE_DEVELOPMENT" > /dev/null ;); then          \
 	  echo "  ERROR: Version header has not been updated for release!";           \
@@ -79,16 +75,7 @@ check-documentation-placeholders:
 	  echo "  ERROR: Doxygen documentation has not been updated for release!";    \
 	  exit 1;                                                                     \
 	fi;
+
 	@echo Done.
 
-# Validate the working branch - compile all documentation, demos/projects/examples and run build tests
-validate-branch:
-	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT)) doxygen
-	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT)) all DEBUG_LEVEL=0
-	$(MAKE) -C $(patsubst %/,%,$(LUFA_ROOT))/BuildTests all
-
-# Validate the working branch for general release, check for placeholder documentation then build and test everything
-validate-release: check-documentation-placeholders validate-branch
-
-
-.PHONY: all upgrade-doxygen bootloaders check-documentation-placeholders validate-branch
+.PHONY: all function-list upgrade-doxygen bootloaders check-release
