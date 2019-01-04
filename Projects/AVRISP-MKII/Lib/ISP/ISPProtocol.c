@@ -36,6 +36,7 @@
  */
 
 #include "ISPProtocol.h"
+#include <util/atomic.h>
 
 #if defined(ENABLE_ISP_PROTOCOL) || defined(__DOXYGEN__)
 
@@ -395,14 +396,14 @@ volatile uint16_t HalfCyclesRemaining;
 volatile uint8_t  ResponseTogglesRemaining;
 
 /** ISR to toggle MOSI pin when TIMER1 overflows */
-ISR(TIMER1_OVF_vect)
+ISR(TIMER1_OVF_vect, ISR_BLOCK)
 {
 	PINB |= (1 << PB2);	// toggle PB2 (MOSI) by writing 1 to its bit in PINB
 	HalfCyclesRemaining--;
 }
 
 /** ISR to listen for toggles on MISO pin */
-ISR(PCINT0_vect)
+ISR(PCINT0_vect, ISR_BLOCK)
 {
 	ResponseTogglesRemaining--;
 }
@@ -444,21 +445,22 @@ void ISPProtocol_Calibrate(void)
 	ResponseTogglesRemaining	= SUCCESS_TOGGLE_NUM;
 
 	/* Turn on interrupts */
-	uint8_t OldSREG = SREG;	// save current global interrupt state
 	PCICR  |= (1 << PCIE0);	// enable interrupts for PCINT7:0 (don't touch setting for PCINT12:8)
 	TIMSK1	= (1 << TOIE1);	// enable T1 OVF interrupt (and no other T1 interrupts)
-	sei();					// enable global interrupts
-
-	/* Let device do its calibration, wait for reponse on MISO */
-	while ( HalfCyclesRemaining && ResponseTogglesRemaining )
-	{
-		// do nothing...
-	}
 	
-	/* Disable interrupts, restore SREG */
-	PCICR  &= ~(1 << PCIE0);
-	TIMSK1	= 0;
-	SREG	= OldSREG;
+	/* Turn on global interrupts for the following block, restoring current state at end */
+	NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE)
+	{
+		/* Let device do its calibration, wait for reponse on MISO */
+		while ( HalfCyclesRemaining && ResponseTogglesRemaining )
+		{
+			// do nothing...
+		}
+		
+		/* Disable interrupts */
+		PCICR  &= ~(1 << PCIE0);
+		TIMSK1	= 0;
+	}
 	
 	/* Check if device responded with a success message or if we timed out */
 	if (ResponseTogglesRemaining)
