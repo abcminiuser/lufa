@@ -9,7 +9,7 @@
 /*
   Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
   
-  Function ISPProtocol_Calibrate() copyright 2018 Jacob September
+  Copyright 2019 Jacob September (jacobseptember [at] gmail [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
