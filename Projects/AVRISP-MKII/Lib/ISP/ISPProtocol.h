@@ -38,12 +38,29 @@
 
 	/* Includes: */
 		#include <avr/io.h>
+		#include <util/atomic.h>
 		#include <util/delay.h>
 
 		#include <LUFA/Drivers/USB/USB.h>
 
 		#include "../V2Protocol.h"
 		#include "Config/AppConfig.h"
+
+	/* Macros: */
+		/** Calibration clock frequency for target OSCCAL calibration, see AVR053 application note. */
+	    #define ISPPROTOCOL_CALIB_CLOCK_HZ            32768
+
+		/** Internal timer ticks per calibration clock cycle, see AVR053 application note. */
+	    #define ISPPROTOCOL_CALIB_TICKS               ( (F_CPU + ISPPROTOCOL_CALIB_CLOCK_HZ) / (2 * ISPPROTOCOL_CALIB_CLOCK_HZ) )
+
+	    /** Per AVR053, calibration guaranteed to take 1024 cycles (2048 half-cycles) or fewer;
+	     *  add some cycles for response delay (5-10 after success) and response itself.
+		 */
+	    #define ISPPROTOCOL_CALIB_HALF_CYCLE_LIMIT    (2*1024 + 50)
+
+	    /** Per AVR053, target will toggle I/O pin 8 times to indicate a successful clock calibration.
+		 */
+	    #define ISPPROTOCOL_CALIB_SUCCESS_TOGGLE_NUM  8
 
 	/* Preprocessor Checks: */
 		#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))

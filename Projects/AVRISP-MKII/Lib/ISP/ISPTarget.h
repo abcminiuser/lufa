@@ -62,13 +62,13 @@
 		#define LOAD_EXTENDED_ADDRESS_CMD     0x4D
 
 		/** Macro to convert an ISP frequency to a number of timer clock cycles for the software SPI driver. */
-		#define TIMER_COMP(freq)              (((F_CPU / 8) / 2 / freq) - 1)
+		#define ISP_TIMER_COMP(freq)          (((F_CPU / 8) / 2 / freq) - 1)
 
 		/** ISP rescue clock speed in Hz, for clocking targets with incorrectly set fuses. */
 		#define ISP_RESCUE_CLOCK_SPEED        4000000
 
 	/* External Variables: */
-		extern bool HardwareSPIMode;
+		extern bool ISPTarget_HardwareSPIMode;
 
 	/* Function Prototypes: */
 		void    ISPTarget_EnableTargetISP(void);
@@ -93,7 +93,7 @@
 		 */
 		static inline void ISPTarget_SendByte(const uint8_t Byte)
 		{
-			if (HardwareSPIMode)
+			if (ISPTarget_HardwareSPIMode)
 			  SPI_SendByte(Byte);
 			else
 			  ISPTarget_TransferSoftSPIByte(Byte);
@@ -108,7 +108,7 @@
 		{
 			uint8_t ReceivedByte;
 
-			if (HardwareSPIMode)
+			if (ISPTarget_HardwareSPIMode)
 			  ReceivedByte = SPI_ReceiveByte();
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(0x00);
@@ -131,7 +131,7 @@
 		{
 			uint8_t ReceivedByte;
 
-			if (HardwareSPIMode)
+			if (ISPTarget_HardwareSPIMode)
 			  ReceivedByte = SPI_TransferByte(Byte);
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(Byte);
