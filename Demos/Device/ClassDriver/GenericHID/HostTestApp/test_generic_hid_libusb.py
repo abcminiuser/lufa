@@ -2,7 +2,7 @@
 
 """
              LUFA Library
-     Copyright (C) Dean Camera, 2018.
+     Copyright (C) Dean Camera, 2019.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org

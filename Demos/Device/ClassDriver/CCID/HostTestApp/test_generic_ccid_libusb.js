@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 //             LUFA Library
-//     Copyright (C) Dean Camera, 2018.
+//     Copyright (C) Dean Camera, 2019.
 //
 //  dean [at] fourwalledcubicle [dot] com
 //
 //           www.lufa-lib.org
 
-// Copyright 2018  Filipe Rodrigues (filipepazrodrigues [at] gmail [dot] com)
+// Copyright 2019  Filipe Rodrigues (filipepazrodrigues [at] gmail [dot] com)
 //
 // LUFA Generic CCID device demo host test script. This script test multiple
 // kinds of CCID messages and shows the result to the console
@@ -139,7 +139,7 @@ function XfrBlockMessage(slot, seq, apdu)
         apdu.length, 0, 0, 0, //length: only for < 0xFF
         slot,
         seq,
-        0, //BWI 
+        0, //BWI
         0, 0 //level parameter
     ].concat(apdu);
 
