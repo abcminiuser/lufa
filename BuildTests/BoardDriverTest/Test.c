@@ -53,7 +53,7 @@
 
 int main(void)
 {
-	uint_reg_t Dummy;
+	uint_reg_t Dummy = 0;
 
 	/* =============================
 	 *     Buttons Compile Check

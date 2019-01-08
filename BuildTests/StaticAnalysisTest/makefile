@@ -6,7 +6,7 @@
 #           www.lufa-lib.org
 #
 
-# Static anlysis of the entire LUFA source tree, using the free cross-platform "cppcheck" tool.
+# Static analysis of the entire LUFA source tree, using the free cross-platform "cppcheck" tool.
 
 # Path to the LUFA library core
 LUFA_PATH := ../../LUFA/
@@ -21,7 +21,7 @@ CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               
 
 CPPCHECK_FLAGS    := -U TEMPLATE_FUNC_NAME -U __GNUC__ -U __DOXYGEN__
 
-CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction redundantAssignment
+CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction knownConditionTrueFalse ConfigurationNotChecked
 
 SRC               := $(patsubst %/,%,$(LUFA_PATH))/..
 
