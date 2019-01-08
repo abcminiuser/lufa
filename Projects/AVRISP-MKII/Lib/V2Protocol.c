@@ -119,6 +119,9 @@ void V2Protocol_ProcessCommand(void)
 		case CMD_CHIP_ERASE_ISP:
 			ISPProtocol_ChipErase();
 			break;
+		case CMD_OSCCAL:
+			ISPProtocol_Calibrate();
+			break;
 		case CMD_READ_FUSE_ISP:
 		case CMD_READ_LOCK_ISP:
 		case CMD_READ_SIGNATURE_ISP:

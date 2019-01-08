@@ -8,6 +8,8 @@
 
 /*
   Copyright 2018  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  
+  Copyright 2019 Jacob September (jacobseptember [at] gmail [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
   software and its documentation for any purpose is hereby granted
@@ -34,6 +36,7 @@
  */
 
 #include "ISPProtocol.h"
+#include <util/atomic.h>
 
 #if defined(ENABLE_ISP_PROTOCOL) || defined(__DOXYGEN__)
 
@@ -388,6 +391,90 @@ void ISPProtocol_ChipErase(void)
 	Endpoint_ClearIN();
 }
 
+/** Global volatile variables used in ISRs relating to ISPProtocol_Calibrate() */
+volatile uint16_t HalfCyclesRemaining;
+volatile uint8_t  ResponseTogglesRemaining;
+
+/** ISR to toggle MOSI pin when TIMER1 overflows */
+ISR(TIMER1_OVF_vect, ISR_BLOCK)
+{
+	PINB |= (1 << PB2);	// toggle PB2 (MOSI) by writing 1 to its bit in PINB
+	HalfCyclesRemaining--;
+}
+
+/** ISR to listen for toggles on MISO pin */
+ISR(PCINT0_vect, ISR_BLOCK)
+{
+	ResponseTogglesRemaining--;
+}
+
+/** Handler for the CMD_OSCCAL command, entering RC-calibration mode as specified in AVR053 */
+void ISPProtocol_Calibrate(void)
+{
+	#define CALIB_CLOCK			32768
+		// CALIB_TICKS uses 2x frequency because we toggle twice per cycle
+		//  and adds 1/2 denom. to nom. to ensure rounding instead of flooring of integer division
+	#define CALIB_TICKS			( (F_CPU+CALIB_CLOCK) / (2*CALIB_CLOCK) )
+		// Per AVR053, calibration guaranteed to take 1024 cycles (2048 half-cycles) or fewer;
+		//  add some cycles for response delay (5-10 after success) and response itself
+	#define HALF_CYCLE_LIMIT	(2*1024 + 50)
+	#define SUCCESS_TOGGLE_NUM	8
+	
+	uint8_t ResponseStatus = STATUS_CMD_OK;
+	
+	/* Don't entirely know why this is needed, something to do with the USB communication back to PC */
+	Endpoint_ClearOUT();
+	Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
+	Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
+	
+	/* Enable pullup on MISO and release ~RESET */
+	DDRB	=  ~(1 << PB3);					// explicitly set all PORTB to outputs except PB3 (MISO)
+	PORTB  |= ( (1 << PB4) | (1 << PB3) );	// set PB4 (TARG_RST) high (i.e. not reset) and enable pullup on PB3 (MISO)
+	
+	/* Set up MISO pin (PCINT3) to listen for toggles */
+	PCMSK0	= (1 << PCINT3);	// set mask to enable PCINT on only Pin 3 (MISO)
+	
+	/* Set up timer that fires at a rate of 65536 Hz - this will drive the MOSI toggle */
+	OCR1A	= CALIB_TICKS - 1;		// zero-indexed counter; for 16MHz system clock, this becomes 243
+	TCCR1A	= ( (1 << WGM11) | (1 << WGM10) );					// set for fast PWM, TOP = OCR1A
+	TCCR1B	= ( (1 << WGM13) | (1 << WGM12) | (1 << CS10) );	//  ... and no clock prescaling
+	TCNT1	= 0;												// reset counter
+
+	/* Initialize counter variables */
+	HalfCyclesRemaining			= HALF_CYCLE_LIMIT;
+	ResponseTogglesRemaining	= SUCCESS_TOGGLE_NUM;
+
+	/* Turn on interrupts */
+	PCICR  |= (1 << PCIE0);	// enable interrupts for PCINT7:0 (don't touch setting for PCINT12:8)
+	TIMSK1	= (1 << TOIE1);	// enable T1 OVF interrupt (and no other T1 interrupts)
+	
+	/* Turn on global interrupts for the following block, restoring current state at end */
+	NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE)
+	{
+		/* Let device do its calibration, wait for reponse on MISO */
+		while ( HalfCyclesRemaining && ResponseTogglesRemaining )
+		{
+			// do nothing...
+		}
+		
+		/* Disable interrupts */
+		PCICR  &= ~(1 << PCIE0);
+		TIMSK1	= 0;
+	}
+	
+	/* Check if device responded with a success message or if we timed out */
+	if (ResponseTogglesRemaining)
+	{
+		ResponseStatus = STATUS_CMD_TOUT;
+	}
+
+	/* Report back to PC via USB */
+	Endpoint_Write_8(CMD_OSCCAL);
+	Endpoint_Write_8(ResponseStatus);
+	Endpoint_ClearIN();
+	
+} // void ISPProtocol_Calibrate(void)
+
 /** Handler for the CMD_READ_FUSE_ISP, CMD_READ_LOCK_ISP, CMD_READ_SIGNATURE_ISP and CMD_READ_OSCCAL commands,
  *  reading the requested configuration byte from the device.
  *
@@ -528,4 +615,3 @@ void ISPProtocol_DelayMS(uint8_t DelayMS)
 }
 
 #endif
-
