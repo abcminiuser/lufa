@@ -54,7 +54,7 @@
  *  to and from a USB Host, and transmits the last sent report back to the host.
  *
  *  On start-up the system will automatically enumerate and function as a WebUSB device.
- *  When the latest Chrome browser, reports can be sent and received by
+ *  With the latest Chrome browser, reports can be sent and received by
  *  both the standard data endpoint and control request methods defined.
  *
  *  \section Sec_Options Project Options
