@@ -164,7 +164,7 @@ const WebUSB_URL_Descriptor_t PROGMEM WebUSB_LandingPage = WEBUSB_URL_DESCRIPTOR
  *  internally.
  */
 void EVENT_USB_Device_ControlRequest(void) {
-	switch (USB_ControlRequest.bRequest) {
+	switch (USB_ControlRequest.bmRequestType) {
 		/* Handle Vendor Requests for WebUSB & MS OS Descriptors */
 		case (REQDIR_DEVICETOHOST | REQTYPE_VENDOR | REQREC_DEVICE):
 			/* Free the endpoint for the next Request */
