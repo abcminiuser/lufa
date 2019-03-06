@@ -41,8 +41,6 @@
 		#include <avr/wdt.h>
 		#include <avr/power.h>
 		#include <avr/interrupt.h>
-		#include <stdbool.h>
-		#include <string.h>
 
 		#include "Descriptors.h"
 		#include "Config/AppConfig.h"
@@ -64,6 +62,9 @@
 		/** LED mask for the library LED driver, to indicate that an error has occurred in the USB interface. */
 		#define LEDMASK_USB_ERROR        (LEDS_LED1 | LEDS_LED3)
 
+        /** LED mask for the library LED driver, to indicate that the USB interface is busy. */
+        #define LEDMASK_USB_BUSY           LEDS_LED2
+
 	/* Function Prototypes: */
 		void SetupHardware(void);
 
@@ -71,6 +72,5 @@
 		void EVENT_USB_Device_Disconnect(void);
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
-		void EVENT_USB_Device_StartOfFrame(void);
 
 #endif //_WEBUSB_H

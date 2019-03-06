@@ -34,6 +34,7 @@
  *  is responsible for the initial application hardware configuration.
  */
 
+#define INCLUDE_FROM_WEBUSB_C
 #include "WebUSB.h"
 
 
@@ -50,6 +51,20 @@ int main(void)
 	for (;;)
 	{
 		USB_USBTask();
+
+		uint8_t ReceivedData[WEBUSB_IO_EPSIZE];
+		memset(ReceivedData, 0x00, sizeof(ReceivedData));
+
+		Endpoint_SelectEndpoint(WEBUSB_OUT_EPADDR);
+		if (Endpoint_IsOUTReceived())
+		{
+			Endpoint_Read_Stream_LE(ReceivedData, WEBUSB_IO_EPSIZE, NULL);
+			Endpoint_ClearOUT();
+
+			Endpoint_SelectEndpoint(WEBUSB_IN_EPADDR);
+			Endpoint_Write_Stream_LE(ReceivedData, WEBUSB_IO_EPSIZE, NULL);
+			Endpoint_ClearIN();
+		}
 	}
 }
 
@@ -106,8 +121,8 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	bool ConfigSuccess = true;
 
 	/* Setup WebUSB Endpoints */
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_IN_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
-	ConfigSuccess &= Endpoint_ConfigureEndpoint(GENERIC_OUT_EPADDR, EP_TYPE_INTERRUPT, GENERIC_EPSIZE, 1);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(WEBUSB_IN_EPADDR, EP_TYPE_INTERRUPT, WEBUSB_IO_EPSIZE, 1);
+	ConfigSuccess &= Endpoint_ConfigureEndpoint(WEBUSB_OUT_EPADDR, EP_TYPE_INTERRUPT, WEBUSB_IO_EPSIZE, 1);
 
 	/* Indicate endpoint configuration success or failure */
 	LEDs_SetAllLEDs(ConfigSuccess ? LEDMASK_USB_READY : LEDMASK_USB_ERROR);

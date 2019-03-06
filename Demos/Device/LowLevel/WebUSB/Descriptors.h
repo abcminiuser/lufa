@@ -46,6 +46,16 @@
 		#include "WebUSBDevice.h"
 		#include "MS_OS_20_Device.h"
 
+    /* Macros: */
+        /** Endpoint address of the IN endpoint. */
+        #define WEBUSB_IN_EPADDR         (ENDPOINT_DIR_IN  | 1)
+
+        /** Endpoint address of the OUT endpoint. */
+        #define WEBUSB_OUT_EPADDR        (ENDPOINT_DIR_OUT | 2)
+
+        /** Size in bytes of the endpoint. */
+        #define WEBUSB_IO_EPSIZE            8
+
 	/* Type Defines: */
 		/** Type define for the device configuration descriptor structure. This must be defined in the
 		 *  application code, as the configuration descriptor contains several sub-descriptors which
@@ -55,9 +65,9 @@
 		{
 			USB_Descriptor_Configuration_Header_t Config;
 
-			USB_Descriptor_Interface_t            Interface;
-			USB_Descriptor_Endpoint_t             INEndpoint;
-			USB_Descriptor_Endpoint_t             OUTEndpoint;
+			USB_Descriptor_Interface_t            WebUSB_Interface;
+			USB_Descriptor_Endpoint_t             WebUSB_DataInEndpoint;
+			USB_Descriptor_Endpoint_t             WebUSB_DataOutEndpoint;
 		} USB_Descriptor_Configuration_t;
 
 		/** Type define for the Microsoft OS 2.0 Descriptor for the device. This must be defined in the
@@ -76,7 +86,7 @@
 		 */
 		enum InterfaceDescriptors_t
 		{
-			INTERFACE_ID = 0, /**< Interface descriptor ID */
+			INTERFACE_ID_WebUSB = 0, /**< Interface descriptor ID */
 		};
 
 		/** Enum for the device string descriptor IDs within the device. Each string descriptor should
@@ -89,16 +99,6 @@
 			STRING_ID_Manufacturer = 1, /**< Manufacturer string ID */
 			STRING_ID_Product      = 2, /**< Product string ID */
 		};
-
-	/* Macros: */
-		/** Endpoint address of the IN endpoint. */
-		#define GENERIC_IN_EPADDR         (ENDPOINT_DIR_IN  | 1)
-
-		/** Endpoint address of the OUT endpoint. */
-		#define GENERIC_OUT_EPADDR        (ENDPOINT_DIR_OUT | 2)
-
-		/** Size in bytes of the endpoint. */
-		#define GENERIC_EPSIZE            8
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
