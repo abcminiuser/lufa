@@ -23,7 +23,7 @@ async function receive(device) {
 
     const result = await device.transferIn(endpoint_id, WEBUSB_IO_EPSIZE);
     if ( result.status !== "ok" ) {
-        throw new Error("Transfer in failed", result.status);
+        throw new Error(`Transfer in failed with status "${result.status}"`);
     }
     const data_view = result.data;
     return Array.from(new Uint8Array(data_view.buffer))
@@ -46,7 +46,7 @@ async function send(...data) {
     const buffer = Uint8Array.from(data.slice(0, WEBUSB_IO_EPSIZE)).buffer;
     const result = await device.transferOut(endpoint_id, buffer);
     if ( result.status !== "ok" ) {
-        throw new Error("Transfer out failed", result.status);
+        throw new Error(`Transfer out failed with status "${result.status}"`);
     }
     return result.bytesWritten;
 }
