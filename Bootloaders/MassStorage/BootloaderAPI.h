@@ -52,6 +52,8 @@
 		#endif
 
 	/* Function Prototypes: */
+		bool	IsPageAddressValid(const uint32_t Address) AUX_BOOT_SECTION ATTR_NO_INLINE;
+
 		void    BootloaderAPI_ErasePage(const uint32_t Address);
 		void    BootloaderAPI_WritePage(const uint32_t Address);
 		void    BootloaderAPI_FillWord(const uint32_t Address, const uint16_t Word);

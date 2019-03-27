@@ -35,10 +35,15 @@
 
 #include "BootloaderAPI.h"
 
-static bool IsPageAddressValid(const uint32_t Address)
+bool IsPageAddressValid(const uint32_t Address)
 {
 	/* Determine if the given page address is correctly aligned to the
-	   start of a flash page. */
+	   start of a flash page.
+
+	   Note that this is not static, as we need to force it into the
+	   AUX_BOOT_SECTION on small flash devices to save space.
+	*/
+
 	bool PageAddressIsAligned = !(Address & (SPM_PAGESIZE - 1));
 
 	return (Address < BOOT_START_ADDR) && PageAddressIsAligned;
