@@ -43,8 +43,6 @@
 #ifndef _APP_CONFIG_H_
 #define _APP_CONFIG_H_
 
-	#define GENERIC_REPORT_SIZE       8
-
 	#define WEBUSB_VENDOR_CODE 0x42
 	#define WEBUSB_LANDING_PAGE_INDEX 0
 
