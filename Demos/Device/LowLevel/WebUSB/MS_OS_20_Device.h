@@ -51,6 +51,8 @@
 		 *  \note This macro is designed to be wrapped in parentheses and included in a sequence to the \ref BOS_DESCRIPTOR macro.
 		 *
 		 * 	\param[in] VendorCode  Vendor Code that all control requests coming from Windows must use.
+		 *
+		 * 	\param[in] TotalLength  The length, in bytes, of the MS OS 2.0 descriptor set to be retrieved by Windows.
 		 */
 		#define MS_OS_20_PLATFORM_DESCRIPTOR(VendorCode, TotalLength) \
 			/* Total size of this descriptor */ 28, \
