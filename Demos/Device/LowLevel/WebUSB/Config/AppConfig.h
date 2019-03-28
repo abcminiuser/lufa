@@ -47,6 +47,6 @@
 	#define WEBUSB_LANDING_PAGE_INDEX 0
 
 	#define MS_OS_20_VENDOR_CODE 0x45     // Must be different than WEBUSB_VENDOR_CODE
-	#define MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH (10 + 20)
+	#define MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH (10 + 20)	// Sum of `.Length`s in MS_OS_20_Descriptor in WebUSB.c
 
 #endif
