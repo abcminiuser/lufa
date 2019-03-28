@@ -65,6 +65,17 @@
         /** LED mask for the library LED driver, to indicate that the USB interface is busy. */
         #define LEDMASK_USB_BUSY           LEDS_LED2
 
+    /* Type Defines: */
+        /** Type define for the Microsoft OS 2.0 Descriptor for the device. This must be defined in the
+         *  application code as the descriptor may contain sub-descriptors which can vary between devices,
+         *  and which identify which USB drivers Windows should use.
+         */
+        typedef struct
+        {
+            MS_OS_20_Descriptor_Set_Header_t        Header;
+            MS_OS_20_CompatibleID_Descriptor        CompatibleID;
+        } MS_OS_20_Descriptor_t;
+
 	/* Function Prototypes: */
 		void SetupHardware(void);
 
