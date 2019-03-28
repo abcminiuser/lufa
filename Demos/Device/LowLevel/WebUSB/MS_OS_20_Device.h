@@ -81,7 +81,7 @@
 			MS_OS_20_FEATURE_REG_PROPERTY = 0x04,
 //			MS_OS_20_FEATURE_MIN_RESUME_TIME = 0x05,
 //			MS_OS_20_FEATURE_MODEL_ID = 0x06,
-//			MS_OS_20_FEATURE_CCGP_DEVICE =0x07,
+			MS_OS_20_FEATURE_CCGP_DEVICE =0x07,
 		};
 
 		/** \brief Microsoft OS 2.0 Descriptor Set Header (LUFA naming convention).
@@ -167,5 +167,18 @@
 			// FIXME: Only handles REG_SZ & REG_MULTI_SZ types (strings)
 			wchar_t PropertyData[]; /**< Property Data. */
 		} ATTR_PACKED MS_OS_20_Registry_Property_Descriptor;
+
+        /** \brief Microsoft OS 2.0 Feature Descriptor for CCGP Devices.
+         *
+         *  This descriptor indicates that the device should be treated as a composite device by Windows regardless of
+         *  the number of interfaces, configuration, or class, subclass, and protocol codes, the device reports.
+         *
+         *  \note The CCGP device descriptor must be applied to the entire device.
+         */
+        typedef struct
+        {
+            uint16_t Length; /**< The length, bytes, of the compatible ID descriptor including value descriptors. Shall be set to 4. */
+            uint16_t DescriptorType; /**< MS_OS_20_FEATURE_CCGP_DEVICE */
+        } ATTR_PACKED MS_OS_20_CCGP_Device_Descriptor;
 
 #endif //_MS_OS_20_WEBUSB_DEVICE_H
