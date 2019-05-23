@@ -141,7 +141,7 @@ const MS_OS_20_Descriptor_t PROGMEM MS_OS_20_Descriptor =
 		{
 			.Length = CPU_TO_LE16(10),
 			.DescriptorType = CPU_TO_LE16(MS_OS_20_SET_HEADER_DESCRIPTOR),
-			.WindowsVersion = MS_OS_20_WINDOWS_VERSION,
+			.WindowsVersion = MS_OS_20_WINDOWS_VERSION_8_1,
 			.TotalLength = CPU_TO_LE16(MS_OS_20_DESCRIPTOR_SET_TOTAL_LENGTH)
 		},
 
@@ -168,17 +168,17 @@ void EVENT_USB_Device_ControlRequest(void) {
 		/* Handle Vendor Requests for WebUSB & MS OS Descriptors */
 		case (REQDIR_DEVICETOHOST | REQTYPE_VENDOR | REQREC_DEVICE):
 			/* Free the endpoint for the next Request */
-			Endpoint_ClearSETUP();
 			switch (USB_ControlRequest.bRequest) {
 				case WEBUSB_VENDOR_CODE:
 					switch (USB_ControlRequest.wIndex) {
 						case WebUSB_RTYPE_GetURL:
 							switch (USB_ControlRequest.wValue) {
 								case WEBUSB_LANDING_PAGE_INDEX:
+                                    Endpoint_ClearSETUP();
 									/* Write the descriptor data to the control endpoint */
 									Endpoint_Write_Control_PStream_LE(&WebUSB_LandingPage, WebUSB_LandingPage.Header.Size);
 									/* Release the endpoint after transaction. */
-									Endpoint_ClearOUT();
+                                    Endpoint_ClearStatusStage();
 									break;
 								default:    /* Stall transfer on invalid index. */
 									Endpoint_StallTransaction();
@@ -193,10 +193,11 @@ void EVENT_USB_Device_ControlRequest(void) {
 				case MS_OS_20_VENDOR_CODE:
 					switch (USB_ControlRequest.wIndex) {
 						case MS_OS_20_DESCRIPTOR_INDEX:
+                            Endpoint_ClearSETUP();
 							/* Write the descriptor data to the control endpoint */
 							Endpoint_Write_Control_PStream_LE(&MS_OS_20_Descriptor, MS_OS_20_Descriptor.Header.TotalLength);
 							/* Release the endpoint after transaction. */
-							Endpoint_ClearOUT();
+							Endpoint_ClearStatusStage();
 							break;
 						default:    /* Stall on unknown MS OS 2.0 request */
 							Endpoint_StallTransaction();

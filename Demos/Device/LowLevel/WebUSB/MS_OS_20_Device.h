@@ -42,9 +42,11 @@
 		/* $ python -c "import uuid;print(', '.join(map(hex, uuid.UUID('D8DD60DF-4589-4CC7-9CD2-659D9E648A9F').bytes_le)))" */
 		#define MS_OS_20_PLATFORM_UUID 0xdf, 0x60, 0xdd, 0xd8, 0x89, 0x45, 0xc7, 0x4c, 0x9c, 0xd2, 0x65, 0x9d, 0x9e, 0x64, 0x8a, 0x9f
 
-		#define MS_OS_20_WINDOWS_VERSION 0x06030000 // Windows version (8.1)
+		#define MS_OS_20_WINDOWS_VERSION_8_1 0x06030000 // Windows version (8.1)
 
+        #ifndef MS_OS_20_ALTERNATE_ENUMERATION_CODE
 		#define MS_OS_20_ALTERNATE_ENUMERATION_CODE 0 /**< Set to non-zero to enable Windows to allow device to return alternate USB descriptors. */
+        #endif
 
 		/** \brief Convenience macro to easily create device capability platform descriptors for the MS OS 2.0 platform.
 		 *
@@ -60,7 +62,7 @@
 			DCTYPE_Platform, \
 			/* Reserved */ 0, \
 			MS_OS_20_PLATFORM_UUID, \
-			LONG_TO_BYTES_LE(MS_OS_20_WINDOWS_VERSION), \
+			LONG_TO_BYTES_LE(MS_OS_20_WINDOWS_VERSION_8_1), \
 			WORD_TO_BYTES_LE(TotalLength), \
 			VendorCode, \
 			MS_OS_20_ALTERNATE_ENUMERATION_CODE
@@ -149,8 +151,6 @@
 			MS_OS_20_REG_LINK = 6, /**< A NULL-terminated Unicode string that contains a symbolic link */
 			MS_OS_20_REG_MULTI_SZ = 7 /**< Multiple NULL-terminated Unicode strings */
 		};
-
-		#define MS_OS_20_REGISTRY_KEY L"DeviceInterfaceGUIDs" //  20 characters + null, times 2 = 42 bytes
 
 		/** \brief Microsoft OS 2.0 Registry Property Descriptor.
 		 *
