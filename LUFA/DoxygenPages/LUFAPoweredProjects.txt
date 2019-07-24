@@ -113,6 +113,7 @@
  *  \li Password keyring: http://owlsan.blogspot.no/2014/06/keyring-project-version-10.html
  *  \li Picade alternative firmware, a retro Arcade controller/cabinet: https://github.com/rktrlng/picade_lufa
  *  \li PPM signal generator over USB: https://github.com/G33KatWork/USBPPM
+ *  \li ProdikeysDM, a converter for old Creative Labs Prodikeys DM keyboards for modern systems: https://github.com/hotkeymuc/ProdikeysDM_Adaptor
  *  \li Programmable keyboard controller: http://41j.com/blog/2011/10/a-programmable-keyboard-controller/
  *  \li Programmable XBOX controller: http://richard-burke.dyndns.org/wordpress/pan-galactic-gargantuan-gargle-brain-aka-xbox-360-usb-controller/
  *  \li Project Surface, a touch interface controller for Windows 8: https://code.google.com/p/project-surface/
