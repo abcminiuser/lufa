@@ -22,6 +22,7 @@ SRC          = $(TARGET).c Descriptors.c $(LUFA_SRC_USB)
 LUFA_PATH    = ../../LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -DBOOT_START_ADDR=$(BOOT_START_OFFSET) -IConfig/
 LD_FLAGS     = -Wl,--section-start=.text=$(BOOT_START_OFFSET)
+LTO          = Y
 
 # Flash size and bootloader section sizes of the target, in KB. These must
 # match the target's total FLASH size and the bootloader size set in the

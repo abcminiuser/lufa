@@ -22,6 +22,7 @@
   *   - Reduced compiled size of the Endpoint_Discard_Stream() and Endpoint_Null_Stream() functions.
   *  - Library Applications:
   *   - Updated Printer class bootloader to not store 32-bit HEX parser flash offsets on small flash devices.
+  *   - Enabled Link Time Optimizations (LTO) on bootloaders to reduce compiled size on newer versions of GCC.
   *
   *  <b>Fixed:</b>
   *  - Core:
