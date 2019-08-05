@@ -405,6 +405,63 @@
 				HID_RI_INPUT(8, HID_IOF_CONSTANT),          \
 			HID_RI_END_COLLECTION(0)
 
+			/** \name Common HID Device Report Descriptors */
+			//@{
+			/** \hideinitializer
+			 *  A list of HID report item array elements that describe a typical HID USB Joystick with physical designators.
+			 *  The resulting report descriptor is structured according to the following layout:
+			 *
+			 *  \code
+			 *  struct
+			 *  {
+			 *      intA_t X; // Signed X axis value
+			 *      intA_t Y; // Signed Y axis value
+			 *      intA_t Z; // Signed Z axis value
+			 *      uintB_t Buttons; // Pressed buttons bitmask
+			 *  } Joystick_Report;
+			 *  \endcode
+			 *
+			 *  Where \c uintA_t is a type large enough to hold the ranges of the signed \c MinAxisVal and \c MaxAxisVal values,
+			 *  and \c intB_t is a type large enough to hold one bit per button.
+			 *
+			 *  \param[in] MinAxisVal      Minimum logical axis value (16-bit).
+			 *  \param[in] MaxAxisVal      Maximum logical axis value (16-bit).
+			 *  \param[in] MinPhysicalVal  Minimum physical axis value, for movement resolution calculations (16-bit).
+			 *  \param[in] MaxPhysicalVal  Maximum physical axis value, for movement resolution calculations (16-bit).
+			 *  \param[in] Buttons         Total number of buttons in the device (8-bit).
+			 */
+			#define HID_DESCRIPTOR_JOYSTICK_WITH_PHYSICAL(MinAxisVal, MaxAxisVal, MinPhysicalVal, MaxPhysicalVal, Buttons) \
+			HID_RI_USAGE_PAGE(8, 0x01),                     \
+			HID_RI_USAGE(8, 0x04),                          \
+			HID_RI_COLLECTION(8, 0x01),                     \
+				HID_RI_USAGE(8, 0x01),                      \
+				HID_RI_COLLECTION(8, 0x00),                 \
+					HID_RI_USAGE(8, 0x30),                  \
+					HID_RI_USAGE(8, 0x31),                  \
+					HID_RI_USAGE(8, 0x32),                  \
+					HID_RI_LOGICAL_MINIMUM(16, MinAxisVal), \
+					HID_RI_LOGICAL_MAXIMUM(16, MaxAxisVal), \
+					HID_RI_PHYSICAL_MINIMUM(16, MinPhysicalVal), \
+					HID_RI_PHYSICAL_MAXIMUM(16, MaxPhysicalVal), \
+					HID_RI_REPORT_COUNT(8, 3),              \
+					HID_RI_REPORT_SIZE(8, (((MinAxisVal >= -128) && (MaxAxisVal <= 127)) ? 8 : 16)), \
+					HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+				HID_RI_END_COLLECTION(0),                   \
+				HID_RI_USAGE_PAGE(8, 0x09),                 \
+				HID_RI_USAGE_MINIMUM(8, 0x01),              \
+				HID_RI_USAGE_MAXIMUM(8, Buttons),           \
+				HID_RI_LOGICAL_MINIMUM(8, 0x00),            \
+				HID_RI_LOGICAL_MAXIMUM(8, 0x01),            \
+				HID_RI_DESIGNATOR_MINIMUM(8, 0x01),         \
+				HID_RI_DESIGNATOR_MAXIMUM(8, Buttons),      \
+				HID_RI_REPORT_SIZE(8, 0x01),                \
+				HID_RI_REPORT_COUNT(8, Buttons),            \
+				HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE), \
+				HID_RI_REPORT_SIZE(8, (Buttons % 8) ? (8 - (Buttons % 8)) : 0), \
+				HID_RI_REPORT_COUNT(8, 0x01),               \
+				HID_RI_INPUT(8, HID_IOF_CONSTANT),          \
+			HID_RI_END_COLLECTION(0)
+
 		/** \hideinitializer
 		 *  A list of HID report item array elements that describe a typical HID USB keyboard. The resulting report descriptor
 		 *  is compatible with \ref USB_KeyboardReport_Data_t when \c MaxKeys is equal to 6. For other values, the report will
@@ -581,6 +638,7 @@
 		{
 			HID_DTYPE_HID           = 0x21, /**< Descriptor header type value, to indicate a HID class HID descriptor. */
 			HID_DTYPE_Report        = 0x22, /**< Descriptor header type value, to indicate a HID class HID report descriptor. */
+			HID_DTYPE_Physical      = 0x23, /**< Descriptor header type value, to indicate a HID class HID physical descriptor. */
 		};
 
 		/** Enum for the different types of HID reports. */
@@ -589,6 +647,74 @@
 			HID_REPORT_ITEM_In      = 0, /**< Indicates that the item is an IN report type. */
 			HID_REPORT_ITEM_Out     = 1, /**< Indicates that the item is an OUT report type. */
 			HID_REPORT_ITEM_Feature = 2, /**< Indicates that the item is a FEATURE report type. */
+		};
+
+		#define HID_PHYSICAL_BIAS_MASK 0xE0
+		#define HID_PHYSICAL_QUALIFIER_MASK 0xE0
+		#define HID_PHYSICAL_PREFERENCE_MASK = 0x1F
+		#define HID_PHYSICAL_EFFORT_MASK = 0x1F
+
+		enum HID_PhysicalBias_t
+		{
+			HID_PHYSICAL_BIAS_NOT_APPLICABLE = 0x00,
+			HID_PHYSICAL_BIAS_RIGHT_HAND     = 0x20,
+			HID_PHYSICAL_BIAS_LEFT_HAND      = 0x40,
+			HID_PHYSICAL_BIAS_BOTH_HANDS     = 0x60,
+			HID_PHYSICAL_BIAS_EITHER_HAND    = 0x80,
+		};
+
+		enum HID_PhysicalQualifier_t
+		{
+			HID_PHYSICAL_QUALIFIER_NOT_APPLICABLE = 0x00,
+			HID_PHYSICAL_QUALIFIER_RIGHT          = 0x20,
+			HID_PHYSICAL_QUALIFIER_LEFT           = 0x40,
+			HID_PHYSICAL_QUALIFIER_BOTH           = 0x60,
+			HID_PHYSICAL_QUALIFIER_EITHER         = 0x80,
+			HID_PHYSICAL_QUALIFIER_CENTER         = 0xA0,
+		};
+
+		enum HID_PhysicalDesignator_t
+		{
+			HID_PHYSICAL_DESIGNATOR_NONE = 0x00,
+			HID_PHYSICAL_DESIGNATOR_HAND = 0x01,
+			HID_PHYSICAL_DESIGNATOR_EYEBALL = 0x02,
+			HID_PHYSICAL_DESIGNATOR_EYEBROW = 0x03,
+			HID_PHYSICAL_DESIGNATOR_EYELID = 0x04,
+			HID_PHYSICAL_DESIGNATOR_EAR = 0x05,
+			HID_PHYSICAL_DESIGNATOR_NOSE = 0x06,
+			HID_PHYSICAL_DESIGNATOR_MOUTH = 0x07,
+			HID_PHYSICAL_DESIGNATOR_UPPER_LIP = 0x08,
+			HID_PHYSICAL_DESIGNATOR_LOWER_LIP = 0x09,
+			HID_PHYSICAL_DESIGNATOR_JAW = 0x0A,
+			HID_PHYSICAL_DESIGNATOR_NECK = 0x0B,
+			HID_PHYSICAL_DESIGNATOR_UPPER_ARM = 0x0C,
+			HID_PHYSICAL_DESIGNATOR_ELBOW = 0x0D,
+			HID_PHYSICAL_DESIGNATOR_FOREARM = 0x0E,
+			HID_PHYSICAL_DESIGNATOR_WRIST = 0x0F,
+			HID_PHYSICAL_DESIGNATOR_PALM = 0x10,
+			HID_PHYSICAL_DESIGNATOR_THUMB = 0x11,
+			HID_PHYSICAL_DESIGNATOR_INDEX_FINGER = 0x12,
+			HID_PHYSICAL_DESIGNATOR_MIDDLE_FINGER = 0x13,
+			HID_PHYSICAL_DESIGNATOR_RING_FINGER = 0x14,
+			HID_PHYSICAL_DESIGNATOR_LITTLE_FINGER = 0x15,
+			HID_PHYSICAL_DESIGNATOR_HEAD = 0x16,
+			HID_PHYSICAL_DESIGNATOR_SHOULDER = 0x17,
+			HID_PHYSICAL_DESIGNATOR_HIP = 0x18,
+			HID_PHYSICAL_DESIGNATOR_WAIST = 0x19,
+			HID_PHYSICAL_DESIGNATOR_THIGH = 0x1A,
+			HID_PHYSICAL_DESIGNATOR_KNEE = 0x1B,
+			HID_PHYSICAL_DESIGNATOR_CALF = 0x1C,
+			HID_PHYSICAL_DESIGNATOR_ANKLE = 0x1D,
+			HID_PHYSICAL_DESIGNATOR_FOOT = 0x1E,
+			HID_PHYSICAL_DESIGNATOR_HEEL = 0x1F,
+			HID_PHYSICAL_DESIGNATOR_BALL_OF_FOOT = 0x20,
+			HID_PHYSICAL_DESIGNATOR_BIG_TOE = 0x21,
+			HID_PHYSICAL_DESIGNATOR_SECOND_TOE = 0x22,
+			HID_PHYSICAL_DESIGNATOR_THIRD_TOE = 0x23,
+			HID_PHYSICAL_DESIGNATOR_FOURTH_TOE = 0x24,
+			HID_PHYSICAL_DESIGNATOR_LITTLE_TOE = 0x25,
+			HID_PHYSICAL_DESIGNATOR_BROW = 0x26,
+			HID_PHYSICAL_DESIGNATOR_CHEEK = 0x27,
 		};
 
 		/** \brief HID class-specific HID Descriptor (LUFA naming conventions).
@@ -644,6 +770,46 @@
 			uint8_t  bDescriptorType2; /**< Type of HID report, set to \ref HID_DTYPE_Report. */
 			uint16_t wDescriptorLength; /**< Length of the associated HID report descriptor, in bytes. */
 		} ATTR_PACKED USB_HID_StdDescriptor_HID_t;
+
+		/** Macro for calculating the size in bytes of the physical descriptor set */
+		#define USB_HID_DESCRIPTOR_PHYSICAL_SET_SIZE(bLength) \
+			(1 + (bLength * 2))
+
+		/** Macro for creating a physical descriptor set. Since the size is unknown by the LUFA */
+		#define USB_HID_DESCRIPTOR_PHYSICAL(bLength) \
+			struct{ \
+				uint8_t bPhysicalInfo; \
+				USB_HID_Physical_Data_t dPhysical[bLength]; \
+			} ATTR_PACKED
+
+		/** \brief HID class-specific Physical Descriptor Header.
+		 * The physical descriptor head declares the number and length of any physical descriptor sets defined
+		 */
+		typedef struct{
+			uint8_t bNumber; /**< Number of Physical Descriptor Sets */
+
+			uint16_t bLength; /**< Number of designators per Physical Descriptor Set */
+		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_Header_t;
+
+		/** \brief HID class-specific Physical Designator. */
+		typedef struct{
+			uint8_t bDesignator; /**< \see \ref HID_PhysicalDesignator_t */
+			uint8_t bFlags; /**< The \see \ref HID_PhysicalQualifier_t for the designator and Effort */
+		} ATTR_PACKED USB_HID_Physical_Data_t;
+
+		/** \brief HID class-specific HID Physical Descriptor Set */
+		typedef struct{
+			uint8_t bPhysicalInfo; /**< The \see \ref HID_PhysicalBias_t and the preference */
+
+			const USB_HID_Physical_Data_t dPhysical[]; /**< An array of \see \ref USB_HID_Physical_Data_t */
+		} ATTR_PACKED USB_HID_Descriptor_Physical_Set_t;
+
+		/** \brief HID class-specific HID Physical Descriptor. */
+		typedef struct{
+			USB_HID_Descriptor_Physical_Set_Header_t Header; /**< The Physical Descriptor Header at Index 0 */
+
+			const USB_HID_Descriptor_Physical_Set_t *Sets; /**< Pointer to all the Physical Descriptor Sets */
+		} ATTR_PACKED USB_HID_Descriptor_Physical_t;
 
 		/** \brief Standard HID Boot Protocol Mouse Report.
 		 *
