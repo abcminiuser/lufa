@@ -215,6 +215,28 @@
 				DTYPE_Other                     = 0x07, /**< Indicates that the descriptor is of other type. */
 				DTYPE_InterfacePower            = 0x08, /**< Indicates that the descriptor is an interface power descriptor. */
 				DTYPE_InterfaceAssociation      = 0x0B, /**< Indicates that the descriptor is an interface association descriptor. */
+				DTYPE_BOS                       = 0x0F, /**< Indicates that the descriptor is a Binary Object Store (BOS) descriptor. */
+				DTYPE_DeviceCapability          = 0x10, /**< Indicates that the descriptor is a Device Capability descriptor. */
+				DTYPE_CSInterface               = 0x24, /**< Indicates that the descriptor is a class specific interface descriptor. */
+				DTYPE_CSEndpoint                = 0x25, /**< Indicates that the descriptor is a class specific endpoint descriptor. */
+			};
+
+			/** Enum for the possible types of Device Capability Descriptors included in a Binary Object Store (BOS). */
+			enum USB_DeviceCapabilityTypes_t
+			{
+				/* Commented out types are not implemented. */
+				/* DCTYPE_WirelessUSB              = 0x01, */ /**< Defines the set of Wireless USB-specific device level capabilities. */
+				/* DCTYPE_USB_2_0_Extension        = 0x02, */ /**< USB 2.0 Extension Descriptor. */
+				/* DCTYPE_SuperSpeedUSB            = 0x03, */ /**< Defines the set of SuperSpeed USB specific device level capabilities. */
+				/* DCTYPE_ContainerID              = 0x04, */ /**< Defines the instance unique ID used to identify the instance across all operating modes. */
+				DCTYPE_Platform                 = 0x05, /**< Defines a device capability specific to a particular platform/operating system. */
+				/* DCTYPE_PowerDelivery            = 0x06, */ /**< Defines the various PD Capabilities of this device. */
+				/* DCTYPE_BatteryInfo              = 0x07, */ /**< Provides information on each battery supported by the device. */
+				/* DCTYPE_PD_ConsumerPort          = 0x08, */ /**< The consumer characteristics of a port on the device. */
+				/* DCTYPE_PD_ProviderPort          = 0x09, */ /**< The provider characteristics of a port on the device. */
+				/* DCTYPE_SuperSpeedPlus           = 0x0A, */ /**< Defines the set of SuperSpeed Plus USB specific device level capabilities. */
+				/* DCTYPE_PrecisionTimeMeasurement = 0x0B, */ /**< Precision Time Measurement (PTM) Capability Descriptor. */
+				/* DCTYPE_WirelessUSBExt           = 0x0C, */ /**< Defines the set of Wireless USB 1.1-specific device level capabilities. */
 			};
 
 			/** Enum for possible Class, Subclass and Protocol values of device and interface descriptors. */
@@ -353,8 +375,8 @@
 			{
 				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
 				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
-				                              *   given by the specific class.
-				                              */
+				                           *   given by the specific class.
+				                           */
 				uint16_t bcdUSB; /**< BCD of the supported USB specification.
 				                  *
 				                  *   \see \ref VERSION_BCD() utility macro.
@@ -448,6 +470,87 @@
 				                              */
 				uint8_t  bReserved; /**< Reserved for future use, must be 0. */
 			} ATTR_PACKED USB_StdDescriptor_DeviceQualifier_t;
+
+			/** \brief Standard USB Binary Object Store (BOS) Descriptor (LUFA naming conventions).
+			 *
+			 *  Type define for a standard BOS Descriptor. This structure uses LUFA-specific element names
+			 *  to make each element's purpose clearer.
+			 *
+			 *  \see \ref USB_StdDescriptor_BOS_t for the version of this type with standard element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				USB_Descriptor_Header_t Header; /**< Descriptor header, including type and size. */
+
+				uint16_t TotalLength; /**< Length of this descriptor and all of its sub descriptors. */
+				uint8_t NumberOfDeviceCapabilityDescriptors; /**< The number of separate device capability descriptors in the BOS. */
+				uint8_t CapabilityDescriptors[]; /**< The combined bytes of the device capability descriptors */
+			} ATTR_PACKED USB_Descriptor_BOS_t;
+
+			/** \brief Standard USB Binary Object Store (BOS) Descriptor (USB-IF naming conventions).
+			 *
+			 *  Type define for a standard BOS Descriptor. This structure uses the relevant standard's given element names
+			 *  to ensure compatibility with the standard.
+			 *
+			 *  \see \ref USB_Descriptor_BOS_t for the version of this type with non-standard LUFA specific element names.
+			 *
+			 *  \note Regardless of CPU architecture, these values should be stored as little endian.
+			 */
+			typedef struct
+			{
+				uint8_t  bLength; /**< Size of the descriptor, in bytes. */
+				uint8_t  bDescriptorType; /**< Type of the descriptor, either a value in \ref USB_DescriptorTypes_t or a value
+				                           *   given by the specific class.
+				                           */
+				uint16_t wTotalLength; /**< Length of this descriptor and all of its sub descriptors. */
+				uint8_t  bNumDeviceCaps; /**< The number of separate device capability descriptors in the BOS. */
+				uint8_t CapabilityDescriptors[]; /**< The combined bytes of the device capability descriptors */
+			} ATTR_PACKED USB_StdDescriptor_BOS_t;
+
+			/** \brief BOS_Descriptor generator macro.
+			 *
+			 *  Because BOS descriptors have variable length, a macro is needed to generate the bytes in order to
+			 *  put them in PROGMEM.
+			 *
+			 *  \param[in]	seq	A 'sequence' of Capability Descriptors, presumably generated by other macros.
+			 *
+			 *  \note Each Capability Descriptor in the sequence should be a comma-separated list of bytes surrounded by parentheses.
+			 *  e.g.
+			 *  const USB_Descriptor_BOS_t PROGMEM BOSDescriptor = BOS_DESCRIPTOR(
+			 *  	(WEBUSB_BYTES)	// #define WEBUSB_BYTES webusb_byte_0, webusb_byte_1, webusb_byte_2, ... , webusb_byte_24
+			 *  	(byte0, byte1, byte2, ... , byteN)	// capability descriptor 2
+			 *  );
+			 */
+			#define BOS_DESCRIPTOR(seq) _BOS_DESCRIPTOR(_BOS_DESCRIPTOR_COUNT(seq), _BOS_CAPABILITY_DESCRIPTORS(seq))
+
+			/* BOS Device Capability Type Helper Macros */
+
+				#define _BOS_L(...) 1 +
+				#define _BOS_L_1(...) _BOS_L(__VA_ARGS__) _BOS_L_2
+				#define _BOS_L_2(...) _BOS_L(__VA_ARGS__) _BOS_L_1
+				#define _BOS_L_1_END 0
+				#define _BOS_L_2_END 0
+				#define _BOS_DESCRIPTOR_COUNT(seq) CONCAT_EXPANDED(_BOS_L_1 seq, _END)
+
+				#define _APPEND(y, ...) __VA_ARGS__ ## y
+				#define _APPEND_EXPANDED(y, x) _APPEND(y, x)
+
+				#define _BOS_D(...) __VA_ARGS__,
+				#define _BOS_D_1(...) _BOS_D(__VA_ARGS__) _BOS_D_2
+				#define _BOS_D_2(...) _BOS_D(__VA_ARGS__) _BOS_D_1
+				#define _BOS_D_1_END
+				#define _BOS_D_2_END
+				#define _BOS_CAPABILITY_DESCRIPTORS(seq) _APPEND_EXPANDED(_END, _BOS_D_1 seq)
+
+				#define _BOS_DESCRIPTOR(COUNT, DESCRIPTORS) \
+				{ \
+					.Header = {.Size = sizeof(USB_Descriptor_BOS_t), .Type = DTYPE_BOS}, \
+					.TotalLength = (sizeof((uint8_t[]){DESCRIPTORS}) + sizeof(USB_Descriptor_BOS_t)), \
+					.NumberOfDeviceCapabilityDescriptors = (COUNT), \
+					.CapabilityDescriptors = {DESCRIPTORS} \
+				}
 
 			/** \brief Standard USB Configuration Descriptor (LUFA naming conventions).
 			 *

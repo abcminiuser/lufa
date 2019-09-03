@@ -118,6 +118,9 @@
 			#define HID_RI_USAGE(DataBits, ...)             _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x00, DataBits, __VA_ARGS__)
 			#define HID_RI_USAGE_MINIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x10, DataBits, __VA_ARGS__)
 			#define HID_RI_USAGE_MAXIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x20, DataBits, __VA_ARGS__)
+			#define HID_RI_STRING(DataBits, ...)             _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x70, DataBits, __VA_ARGS__)
+			#define HID_RI_STRING_MINIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x80, DataBits, __VA_ARGS__)
+			#define HID_RI_STRING_MAXIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x90, DataBits, __VA_ARGS__)
 		//@}
 
 /** @} */
