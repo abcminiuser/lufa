@@ -66,7 +66,7 @@
 
 	/* Macros: */
 		/** \name Keyboard Standard Report Modifier Masks */
-		//@{
+		/**@{*/
 		/** Constant for a keyboard report modifier byte, indicating that the keyboard's left control key is currently pressed. */
 		#define HID_KEYBOARD_MODIFIER_LEFTCTRL                    (1 << 0)
 
@@ -90,10 +90,10 @@
 
 		/** Constant for a keyboard report modifier byte, indicating that the keyboard's right GUI key is currently pressed. */
 		#define HID_KEYBOARD_MODIFIER_RIGHTGUI                    (1 << 7)
-		//@}
+		/**@}*/
 
 		/** \name Keyboard Standard Report LED Masks */
-		//@{
+		/**@{*/
 		/** Constant for a keyboard output report LED byte, indicating that the host's NUM LOCK mode is currently set. */
 		#define HID_KEYBOARD_LED_NUMLOCK                          (1 << 0)
 
@@ -108,10 +108,10 @@
 
 		/** Constant for a keyboard output report LED byte, indicating that the host's KANA mode is currently set. */
 		#define HID_KEYBOARD_LED_KANA                             (1 << 4)
-		//@}
+		/**@}*/
 
 		/** \name Keyboard Standard Report Key Scan-codes */
-		//@{
+		/**@{*/
 		#define HID_KEYBOARD_SC_RESERVED                          0x00
 		#define HID_KEYBOARD_SC_ERROR_ROLLOVER                    0x01
 		#define HID_KEYBOARD_SC_POST_FAIL                         0x02
@@ -348,10 +348,10 @@
 		#define HID_KEYBOARD_SC_MEDIA_LOCK                        0xF9
 		#define HID_KEYBOARD_SC_MEDIA_RELOAD                      0xFA
 		#define HID_KEYBOARD_SC_MEDIA_CALCULATOR                  0xFB
-		//@}
+		/**@}*/
 
 		/** \name Common HID Device Report Descriptors */
-		//@{
+		/**@{*/
 		/** \hideinitializer
 		 *  A list of HID report item array elements that describe a typical HID USB Joystick. The resulting report
 		 *  descriptor is structured according to the following layout:
@@ -537,7 +537,7 @@
 				HID_RI_REPORT_COUNT(8, NumBytes),       \
 				HID_RI_OUTPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE | HID_IOF_NON_VOLATILE), \
 			HID_RI_END_COLLECTION(0)
-		//@}
+		/**@}*/
 
 	/* Type Defines: */
 		/** Enum for possible Class, Subclass and Protocol values of device and interface descriptors relating to the HID

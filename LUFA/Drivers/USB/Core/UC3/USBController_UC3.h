@@ -97,7 +97,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name USB Controller Option Masks */
-			//@{
+			/**@{*/
 			/** Selects one of the system's main clock oscillators as the input clock to the USB Generic Clock source
 			 *  generation module. This indicates that an external oscillator should be used directly instead of an
 			 *  internal PLL clock source.
@@ -115,7 +115,7 @@
 
 			/** Selects PLL or External Oscillator 1 as the USB Generic Clock source module input clock. */
 			#define USB_OPT_GCLK_CHANNEL_1             (0 << 3)
-			//@}
+			/**@}*/
 
 			#if !defined(USB_STREAM_TIMEOUT_MS) || defined(__DOXYGEN__)
 				/** Constant for the maximum software timeout period of the USB data stream transfer functions

@@ -88,7 +88,7 @@
 			#define CONTROL_REQTYPE_RECIPIENT  0x1F
 
 			/** \name Control Request Data Direction Masks */
-			//@{
+			/**@{*/
 			/** Request data direction mask, indicating that the request data will flow from host to device.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_DIRECTION macro.
@@ -100,10 +100,10 @@
 			 *  \see \ref CONTROL_REQTYPE_DIRECTION macro.
 			 */
 			#define REQDIR_DEVICETOHOST        (1 << 7)
-			//@}
+			/**@}*/
 
 			/** \name Control Request Type Masks */
-			//@{
+			/**@{*/
 			/** Request type mask, indicating that the request is a standard request.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_TYPE macro.
@@ -121,10 +121,10 @@
 			 *  \see \ref CONTROL_REQTYPE_TYPE macro.
 			 */
 			#define REQTYPE_VENDOR             (2 << 5)
-			//@}
+			/**@}*/
 
 			/** \name Control Request Recipient Masks */
-			//@{
+			/**@{*/
 			/** Request recipient mask, indicating that the request is to be issued to the device as a whole.
 			 *
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
@@ -151,7 +151,7 @@
 			 *  \see \ref CONTROL_REQTYPE_RECIPIENT macro.
 			 */
 			#define REQREC_OTHER               (3 << 0)
-			//@}
+			/**@}*/
 
 		/* Type Defines: */
 			/** \brief Standard USB Control Request

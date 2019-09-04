@@ -64,7 +64,7 @@
 
 	/* Defines: */
 		/** \name Endpoint Direction Masks */
-		//@{
+		/**@{*/
 		/** Endpoint direction mask, for masking against endpoint addresses to retrieve the endpoint's
 		 *  direction for comparing with the \c ENDPOINT_DIR_* masks.
 		 */
@@ -79,10 +79,10 @@
 		 *  the index of the address within a device to obtain the full endpoint address.
 		 */
 		#define ENDPOINT_DIR_IN                    0x80
-		//@}
+		/**@}*/
 
 		/** \name Pipe Direction Masks */
-		//@{
+		/**@{*/
 		/** Pipe direction mask, for masking against pipe addresses to retrieve the pipe's
 		 *  direction for comparing with the \c PIPE_DIR_* masks.
 		 */
@@ -97,10 +97,10 @@
 		 *  the index of the address within a device to obtain the full endpoint address.
 		 */
 		#define PIPE_DIR_IN                        0x80
-		//@}
+		/**@}*/
 
 		/** \name Endpoint/Pipe Type Masks */
-		//@{
+		/**@{*/
 		/** Mask for determining the type of an endpoint from an endpoint descriptor. This should then be compared
 		 *  with the \c EP_TYPE_* masks to determine the exact type of the endpoint.
 		 */
@@ -129,7 +129,7 @@
 		 *  \note See \ref Group_EndpointManagement and \ref Group_PipeManagement for endpoint/pipe functions.
 		 */
 		#define EP_TYPE_INTERRUPT                  0x03
-		//@}
+		/**@}*/
 
 	/* Enums: */
 		/** Enum for the possible USB controller modes, for initialization via \ref USB_Init() and indication back to the

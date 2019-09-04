@@ -109,7 +109,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name Pipe Error Flag Masks */
-			//@{
+			/**@{*/
 			/** Mask for \ref Pipe_GetErrorFlags(), indicating that an overflow error occurred in the pipe on the received data. */
 			#define PIPE_ERRORFLAG_OVERFLOW         (AVR32_USBB_UPSTA0_OVERFI_MASK << 8)
 
@@ -127,10 +127,10 @@
 
 			/** Mask for \ref Pipe_GetErrorFlags(), indicating that a hardware data toggle error occurred in the pipe. */
 			#define PIPE_ERRORFLAG_DATATGL          AVR32_USBB_UPERR0_DATATGL_MASK
-			//@}
+			/**@}*/
 
 			/** \name Pipe Token Masks */
-			//@{
+			/**@{*/
 			/** Token mask for \ref Pipe_SetPipeToken() and \ref Pipe_GetPipeToken(). This sets the pipe as a SETUP token (for CONTROL type pipes),
 			 *  which will trigger a control request on the attached device when data is written to the pipe.
 			 */
@@ -145,7 +145,7 @@
 			 *  indicating that the pipe data will flow from host to device.
 			 */
 			#define PIPE_TOKEN_OUT                  AVR32_USBB_UPCFG0_PTOKEN_OUT
-			//@}
+			/**@}*/
 
 			/** Default size of the default control pipe's bank, until altered by the Endpoint0Size value
 			 *  in the device descriptor of the attached device.

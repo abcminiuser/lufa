@@ -122,7 +122,7 @@
 				#define CPU_TO_BE32(x)           (x)
 			#elif !defined(le16_to_cpu)
 				/** \name Run-time endianness conversion */
-				//@{
+				/**@{*/
 
 				/** Performs a conversion between a Little Endian encoded 16-bit piece of data and the
 				 *  Endianness of the currently selected CPU architecture.
@@ -252,10 +252,10 @@
 				 */
 				#define cpu_to_be32(x)           SwapEndian_32(x)
 
-				//@}
+				/**@}*/
 
 				/** \name Compile-time endianness conversion */
-				//@{
+				/**@{*/
 
 				/** Performs a conversion between a Little Endian encoded 16-bit piece of data and the
 				 *  Endianness of the currently selected CPU architecture.
@@ -385,7 +385,7 @@
 				 */
 				#define CPU_TO_BE32(x)           SWAPENDIAN_32(x)
 
-				//! @}
+				/**@}*/
 			#endif
 
 		/* Inline Functions: */

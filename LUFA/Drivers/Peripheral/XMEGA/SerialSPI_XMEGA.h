@@ -97,28 +97,28 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name SPI SCK Polarity Configuration Masks */
-			//@{
+			/**@{*/
 			/** SPI clock polarity mask for \ref SerialSPI_Init(). Indicates that the SCK should lead on the rising edge. */
 			#define USART_SPI_SCK_LEAD_RISING      0
-			//@}
+			/**@}*/
 
 			/** \name SPI Sample Edge Configuration Masks */
-			//@{
+			/**@{*/
 			/** SPI data sample mode mask for \ref SerialSPI_Init(). Indicates that the data should sampled on the leading edge. */
 			#define USART_SPI_SAMPLE_LEADING       0
 
 			/** SPI data sample mode mask for \ref SerialSPI_Init(). Indicates that the data should be sampled on the trailing edge. */
 			#define USART_SPI_SAMPLE_TRAILING      (1 << 1)
-			//@}
+			/**@}*/
 
 			/** \name SPI Data Ordering Configuration Masks */
-			//@{
+			/**@{*/
 			/** SPI data order mask for \ref SerialSPI_Init(). Indicates that data should be shifted out MSB first. */
 			#define USART_SPI_ORDER_MSB_FIRST      0
 
 			/** SPI data order mask for \ref SerialSPI_Init(). Indicates that data should be shifted out LSB first. */
 			#define USART_SPI_ORDER_LSB_FIRST      (1 << 2)
-			//@}
+			/**@}*/
 
 		/* Inline Functions: */
 			/** Initialize the USART module in Master SPI mode.

@@ -68,7 +68,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name USB Device Mode Option Masks */
-			//@{
+			/**@{*/
 			/** Mask for the Options parameter of the \ref USB_Init() function. This indicates that the
 			 *  USB interface should be initialized in low speed (1.5Mb/s) mode.
 			 *
@@ -88,7 +88,7 @@
 				 */
 				#define USB_DEVICE_OPT_HIGHSPEED           (1 << 1)
 			#endif
-			//@}
+			/**@}*/
 
 			#if (!defined(NO_INTERNAL_SERIAL) && \
 			     (defined(USB_SERIES_UC3A3_AVR32) || defined(USB_SERIES_UC3A4_AVR32) || \

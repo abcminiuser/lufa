@@ -48,15 +48,15 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name Dataflash Status Values */
-			//@{
+			/**@{*/
 			#define DF_STATUS_READY                         (1 << 7)
 			#define DF_STATUS_COMPMISMATCH                  (1 << 6)
 			#define DF_STATUS_SECTORPROTECTION_ON           (1 << 1)
 			#define DF_STATUS_BINARYPAGESIZE_ON             (1 << 0)
-			//@}
+			/**@}*/
 
 			/** \name Dataflash Commands */
-			//@{
+			/**@{*/
 			#define DF_CMD_GETSTATUS                        0xD7
 			#define DF_CMD_POWERDOWN                        0xB9
 			#define DF_CMD_WAKEUP                           0xAB
@@ -105,7 +105,7 @@
 			#define DF_CMD_BINARYPAGESIZEMODEON_BYTE4       0xA6
 
 			#define DF_CMD_READMANUFACTURERDEVICEINFO       0x9F
-			//@}
+			/**@}*/
 
 			/** Manufacturer code for Atmel Corporation, returned by Atmel Dataflash ICs in response to the \c DF_CMD_READMANUFACTURERDEVICEINFO command. */
 			#define DF_MANUFACTURER_ATMEL                   0x1F

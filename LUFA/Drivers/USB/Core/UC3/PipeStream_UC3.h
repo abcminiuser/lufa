@@ -67,7 +67,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Function Prototypes: */
 			/** \name Stream functions for null data */
-			//@{
+			/**@{*/
 
 			/** Reads and discards the given number of bytes from the pipe, discarding fully read packets from the host
 			 *  as needed. The last packet is not automatically discarded once the remaining bytes has been read; the
@@ -173,10 +173,10 @@
 			uint8_t Pipe_Null_Stream(uint16_t Length,
 			                         uint16_t* const BytesProcessed);
 
-			//@}
+			/**@}*/
 
 			/** \name Stream functions for RAM source/destination data */
-			//@{
+			/**@{*/
 
 			/** Writes the given number of bytes to the pipe from the given buffer in little endian,
 			 *  sending full packets to the device as needed. The last packet filled is not automatically sent;
@@ -339,7 +339,7 @@
 			uint8_t Pipe_Read_Stream_BE(void* const Buffer,
 			                            uint16_t Length,
 			                            uint16_t* const BytesProcessed) ATTR_NON_NULL_PTR_ARG(1);
-			//@}
+			/**@}*/
 
 	/* Disable C linkage for C++ Compilers: */
 		#if defined(__cplusplus)

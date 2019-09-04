@@ -80,7 +80,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name USB Device Mode Option Masks */
-			//@{
+			/**@{*/
 			/** Mask for the Options parameter of the \ref USB_Init() function. This indicates that the
 			 *  USB interface should be initialized in low speed (1.5Mb/s) mode.
 			 *
@@ -98,7 +98,7 @@
 				 */
 				#define USB_DEVICE_OPT_FULLSPEED   (0 << 0)
 			#endif
-			//@}
+			/**@}*/
 
 			#if (!defined(NO_INTERNAL_SERIAL) || defined(__DOXYGEN__))
 				/** String descriptor index for the device's unique serial number string descriptor within the device.

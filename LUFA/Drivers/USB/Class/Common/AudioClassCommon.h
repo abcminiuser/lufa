@@ -65,7 +65,7 @@
 
 	/* Macros: */
 		/** \name Audio Channel Masks */
-		//@{
+		/**@{*/
 		/** Supported channel mask for an Audio class terminal descriptor. See the Audio class specification for more details. */
 		#define AUDIO_CHANNEL_LEFT_FRONT           (1 << 0)
 
@@ -101,10 +101,10 @@
 
 		/** Supported channel mask for an Audio class terminal descriptor. See the Audio class specification for more details. */
 		#define AUDIO_CHANNEL_TOP                  (1 << 11)
-		//@}
+		/**@}*/
 
 		/** \name Audio Feature Masks */
-		//@{
+		/**@{*/
 		/** Supported feature mask for an Audio class feature unit descriptor. See the Audio class specification for more details. */
 		#define AUDIO_FEATURE_MUTE                 (1 << 0)
 
@@ -134,10 +134,10 @@
 
 		/** Supported feature mask for an Audio class feature unit descriptor. See the Audio class specification for more details. */
 		#define AUDIO_FEATURE_BASS_LOUDNESS        (1 << 9)
-		//@}
+		/**@}*/
 
 		/** \name Audio Terminal Types */
-		//@{
+		/**@{*/
 		/** Terminal type constant for an Audio class terminal descriptor. See the Audio class specification for more details. */
 		#define AUDIO_TERMINAL_UNDEFINED           0x0100
 
@@ -191,7 +191,7 @@
 
 		/** Terminal type constant for an Audio class terminal descriptor. See the Audio class specification for more details. */
 		#define AUDIO_TERMINAL_OUT_LOWFREQ         0x0307
-		//@}
+		/**@}*/
 
 		/** Convenience macro to fill a 24-bit \ref USB_Audio_SampleFreq_t structure with the given sample rate as a 24-bit number.
 		 *

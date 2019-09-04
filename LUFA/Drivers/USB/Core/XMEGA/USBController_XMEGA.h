@@ -108,7 +108,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name USB Controller Option Masks */
-			//@{
+			/**@{*/
 			/** Sets the USB bus interrupt priority level to be low priority. The USB bus interrupt is used for Start of Frame events, bus suspend
 			 *  and resume events, bus reset events and other events related to the management of the USB bus.
 			 */
@@ -129,7 +129,7 @@
 
 			/** Sets the USB controller to source its clock from the internal PLL. */
 			#define USB_OPT_PLLCLKSRC                 (1 << 3)
-			//@}
+			/**@}*/
 
 			#if !defined(USB_STREAM_TIMEOUT_MS) || defined(__DOXYGEN__)
 				/** Constant for the maximum software timeout period of the USB data stream transfer functions

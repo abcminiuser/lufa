@@ -100,7 +100,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** \name ADC Reference Configuration Masks */
-			//@{
+			/**@{*/
 			/** Reference mask, for using the voltage present at the AVR's AREF pin for the ADC reference. */
 			#define ADC_REFERENCE_AREF              0
 
@@ -109,10 +109,10 @@
 
 			/** Reference mask, for using the internally generated 2.56V reference voltage as the ADC reference. */
 			#define ADC_REFERENCE_INT2560MV         ((1 << REFS1) | (1 << REFS0))
-			//@}
+			/**@}*/
 
 			/** \name ADC Result Adjustment Configuration Masks */
-			//@{
+			/**@{*/
 			/** Left-adjusts the 10-bit ADC result, so that the upper 8 bits of the value returned by the
 			 *  \ref ADC_GetResult() macro contain the 8 most significant bits of the result.
 			 */
@@ -122,10 +122,10 @@
 			 *  \ref ADC_GetResult() macro contain the 8 least significant bits of the result.
 			 */
 			#define ADC_RIGHT_ADJUSTED              (0 << ADLAR)
-			//@}
+			/**@}*/
 
 			/** \name ADC Mode Configuration Masks */
-			//@{
+			/**@{*/
 			/** Sets the ADC mode to free running, so that conversions take place continuously as fast as the ADC
 			 *  is capable of at the given input clock speed.
 			 */
@@ -135,10 +135,10 @@
 			 *  the ADC returns to idle.
 			 */
 			#define ADC_SINGLE_CONVERSION           (0 << ADATE)
-			//@}
+			/**@}*/
 
 			/** \name ADC Prescaler Configuration Masks */
-			//@{
+			/**@{*/
 			/** Sets the ADC input clock to prescale by a factor of 2 the AVR's system clock. */
 			#define ADC_PRESCALE_2                  (1 << ADPS0)
 
@@ -159,10 +159,10 @@
 
 			/** Sets the ADC input clock to prescale by a factor of 128 the AVR's system clock. */
 			#define ADC_PRESCALE_128                ((1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0))
-			//@}
+			/**@}*/
 
 			/** \name ADC MUX Masks */
-			//@{
+			/**@{*/
 			/** MUX mask define for the ADC0 channel of the ADC. See \ref ADC_StartReading() and \ref ADC_GetChannelReading(). */
 			#define ADC_CHANNEL0                    (0x00 << MUX0)
 
@@ -251,7 +251,7 @@
 			 *  \param[in] Channel  Index of the ADC channel whose MUX mask is to be retrieved.
 			 */
 			#define ADC_GET_CHANNEL_MASK(Channel)   CONCAT_EXPANDED(ADC_CHANNEL, Channel)
-			//@}
+			/**@}*/
 
 		/* Inline Functions: */
 			/** Configures the given ADC channel, ready for ADC conversions. This function sets the

@@ -120,7 +120,7 @@
 			#define LANGUAGE_ID_ENG                   0x0409
 
 			/** \name USB Configuration Descriptor Attribute Masks */
-			//@{
+			/**@{*/
 			/** Mask for the reserved bit in the Configuration Descriptor's \c ConfigAttributes field, which must be always
 			 *  set on all USB devices for historical purposes.
 			 */
@@ -145,10 +145,10 @@
 			 *  see \ref USB_Device_RemoteWakeupEnabled().
 			 */
 			#define USB_CONFIG_ATTR_REMOTEWAKEUP      0x20
-			//@}
+			/**@}*/
 
 			/** \name Endpoint Descriptor Attribute Masks */
-			//@{
+			/**@{*/
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
 			 *  \c Attributes value to indicate that the specified endpoint is not synchronized.
 			 *
@@ -176,10 +176,10 @@
 			 *  \see The USB specification for more details on the possible Endpoint attributes.
 			 */
 			#define ENDPOINT_ATTR_SYNC                (3 << 2)
-			//@}
+			/**@}*/
 
 			/** \name Endpoint Descriptor Usage Masks */
-			//@{
+			/**@{*/
 			/** Can be masked with other endpoint descriptor attributes for a \ref USB_Descriptor_Endpoint_t descriptor's
 			 *  \c Attributes value to indicate that the specified endpoint is used for data transfers.
 			 *
@@ -200,7 +200,7 @@
 			 *  \see The USB specification for more details on the possible Endpoint usage attributes.
 			 */
 			#define ENDPOINT_USAGE_IMPLICIT_FEEDBACK  (2 << 4)
-			//@}
+			/**@}*/
 
 		/* Enums: */
 			/** Enum for the possible standard descriptor types, as given in each descriptor's header. */

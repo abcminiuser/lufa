@@ -75,7 +75,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 		/** \name HID Input, Output and Feature Report Descriptor Item Flags */
-		//@{
+		/**@{*/
 			#define HID_IOF_CONSTANT                        (1 << 0)
 			#define HID_IOF_DATA                            (0 << 0)
 			#define HID_IOF_VARIABLE                        (1 << 1)
@@ -94,10 +94,10 @@
 			#define HID_IOF_NON_VOLATILE                    (0 << 7)
 			#define HID_IOF_BUFFERED_BYTES                  (1 << 8)
 			#define HID_IOF_BITFIELD                        (0 << 8)
-		//@}
+		/**@}*/
 
 		/** \name HID Report Descriptor Item Macros */
-		//@{
+		/**@{*/
 			#define HID_RI_INPUT(DataBits, ...)             _HID_RI_ENTRY(HID_RI_TYPE_MAIN  , 0x80, DataBits, __VA_ARGS__)
 			#define HID_RI_OUTPUT(DataBits, ...)            _HID_RI_ENTRY(HID_RI_TYPE_MAIN  , 0x90, DataBits, __VA_ARGS__)
 			#define HID_RI_COLLECTION(DataBits, ...)        _HID_RI_ENTRY(HID_RI_TYPE_MAIN  , 0xA0, DataBits, __VA_ARGS__)
@@ -118,7 +118,7 @@
 			#define HID_RI_USAGE(DataBits, ...)             _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x00, DataBits, __VA_ARGS__)
 			#define HID_RI_USAGE_MINIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x10, DataBits, __VA_ARGS__)
 			#define HID_RI_USAGE_MAXIMUM(DataBits, ...)     _HID_RI_ENTRY(HID_RI_TYPE_LOCAL , 0x20, DataBits, __VA_ARGS__)
-		//@}
+		/**@}*/
 
 /** @} */
 
