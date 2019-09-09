@@ -135,22 +135,19 @@ void Application_Jump_Check(void)
 		/* Check if the device's BOOTRST fuse is set */
 		if (!(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & ~FUSE_BOOTRST))
 		{
-			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
-			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
+			/* If the reset source was a power on reset or a brown out reset or the key is correct, clear it and jump to the application */
+			if ((MCUSR & (1 << PORF)) || (MCUSR & (1 << BORF)) || (MagicBootKey == MAGIC_BOOT_KEY))
 			  JumpToApplication = true;
 
-			/* Clear reset source */
-			MCUSR &= ~(1 << EXTRF);
+			/* Clear reset sources */
+			MCUSR &= ~((1 << PORF) & (1 << BORF));
 		}
 		else
 		{
-			/* If the reset source was the bootloader and the key is correct, clear it and jump to the application;
+			/* If the reset source was the bootloader the key is correct. Jump to the application;
 			 * this can happen in the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
-			if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
+			if (MagicBootKey == MAGIC_BOOT_KEY)
 				JumpToApplication = true;
-
-			/* Clear reset source */
-			MCUSR &= ~(1 << WDRF);
 		}
 	#endif
 
