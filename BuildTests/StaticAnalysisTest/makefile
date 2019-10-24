@@ -19,11 +19,13 @@ CPPCHECK_EXCLUDES := FATFs/            \
 CPPCHECK_INCLUDES := $(patsubst %/,%,$(LUFA_PATH))/CodeTemplates/               \
                      $(patsubst %/,%,$(LUFA_PATH))/../Projects/AVRISP-MKII/
 
-CPPCHECK_FLAGS    := -U TEMPLATE_FUNC_NAME -U __GNUC__ -U __DOXYGEN__
+CPPCHECK_FLAGS           := -U TEMPLATE_FUNC_NAME -U __GNUC__ -U __DOXYGEN__
 
-CPPCHECK_SUPPRESS := variableScope missingInclude noValidConfiguration unusedFunction knownConditionTrueFalse ConfigurationNotChecked
+CPPCHECK_SUPPRESS        := variableScope missingInclude noValidConfiguration unusedFunction knownConditionTrueFalse ConfigurationNotChecked
 
-SRC               := $(patsubst %/,%,$(LUFA_PATH))/..
+CPPCHECK_FAIL_ON_WARNING := N
+
+SRC                      := $(patsubst %/,%,$(LUFA_PATH))/..
 
 # Build test cannot be run with multiple parallel jobs
 .NOTPARALLEL:
