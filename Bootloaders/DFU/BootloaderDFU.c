@@ -135,19 +135,22 @@ void Application_Jump_Check(void)
 		/* Check if the device's BOOTRST fuse is set */
 		if (!(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & ~FUSE_BOOTRST))
 		{
-			/* If the reset source was a power on reset or a brown out reset or the key is correct, clear it and jump to the application */
-			if (MCUSR & ((1 << PORF) | (1 << BORF)) || (MagicBootKey == MAGIC_BOOT_KEY))
+			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
+			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
 			  JumpToApplication = true;
 
-			/* Clear reset sources */
-			MCUSR &= ~((1 << PORF) | (1 << BORF));
+			/* Clear reset source */
+			MCUSR &= ~(1 << EXTRF);
 		}
 		else
 		{
-			/* If the reset source was the bootloader the key is correct. Jump to the application;
-			 * this can happen if the HWBE fuse is set, and the HWB pin is low during the watchdog reset */
-			if (MagicBootKey == MAGIC_BOOT_KEY)
+			/* If the reset source was the bootloader and the key is correct, clear it and jump to the application;
+			 * this can happen in the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
+			if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 				JumpToApplication = true;
+
+			/* Clear reset source */
+			MCUSR &= ~(1 << WDRF);
 		}
 	#endif
 
@@ -157,7 +160,7 @@ void Application_Jump_Check(void)
 	/* If a request has been made to jump to the user application, honor it */
 	if (JumpToApplication && ApplicationValid)
 	{
-		/* Clear any watchdog reset and turn off the watchdog */
+		/* Turn off the watchdog */
 		MCUSR &= ~(1 << WDRF);
 		wdt_disable();
 
