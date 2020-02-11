@@ -260,7 +260,7 @@ static void UpdateFAT12ClusterEntry(uint8_t* const FATTable,
 	else
 	{
 		FATTable[FATOffset]     = ChainEntry;
-		FATTable[FATOffset + 1] = (FATTable[FATOffset] & 0xF0) | (ChainEntry >> 8);
+		FATTable[FATOffset + 1] = (FATTable[FATOffset + 1] & 0xF0) | (ChainEntry >> 8);
 	}
 }
 
