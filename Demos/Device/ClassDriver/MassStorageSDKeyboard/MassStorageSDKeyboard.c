@@ -201,10 +201,11 @@ void SetupHardware(void)
 	/* Hardware Initialization */
 	ioinit();
 	
-	SDCardManager_Init();
 	Serial_Init(9600, false);
 	Serial_CreateStream(NULL);
 	printf_P(PSTR("\r\nSetup MassStorageSDKeyboard....\r\n"));
+	
+	SDCardManager_Init();
 	
 	#ifdef ENABLE_DEBUG
 	PrintFirstSector();
