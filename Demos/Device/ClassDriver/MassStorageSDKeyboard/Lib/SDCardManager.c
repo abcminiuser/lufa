@@ -83,13 +83,6 @@ uint32_t SDCardManager_GetNbBlocks(void)
 	return CachedTotalBlocks;
 }
 
-/** Writes blocks (OS blocks, not Dataflash pages) to the storage medium, the board dataflash IC(s), from
- *  the pre-selected data OUT endpoint. This routine reads in OS sized blocks from the endpoint and writes
- *  them to the dataflash in Dataflash page sized blocks.
- *
- *  \param[in] BlockAddress  Data block starting address for the write sequence
- *  \param[in] TotalBlocks   Number of blocks of data to write
- */
 uintptr_t SDCardManager_WriteBlockHandler(uint8_t* buff_to_write, void* a, void* p)
 {
 	/* Check if the endpoint is currently empty */
@@ -157,14 +150,6 @@ void SDCardManager_WriteBlocks(USB_ClassInfo_MS_Device_t* MSInterfaceInfo, uint3
 	if (!(Endpoint_IsReadWriteAllowed()))
 	  Endpoint_ClearOUT();
 }
-
-/** Reads blocks (OS blocks, not Dataflash pages) from the storage medium, the board dataflash IC(s), into
- *  the pre-selected data IN endpoint. This routine reads in Dataflash page sized blocks from the Dataflash
- *  and writes them in OS sized blocks to the endpoint.
- *
- *  \param[in] BlockAddress  Data block starting address for the read sequence
- *  \param[in] TotalBlocks   Number of blocks of data to read
- */
 
 static inline uint8_t SDCardManager_ReadBlockHandler(uint8_t* buffer, void* a, void* p)
 {
