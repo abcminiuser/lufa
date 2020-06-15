@@ -77,6 +77,8 @@ void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTIn
 				}
 
 				Endpoint_Write_8(PRNTInterfaceInfo->State.PortStatus);
+				Endpoint_ClearIN();
+
 				Endpoint_ClearStatusStage();
 			}
 

@@ -34,6 +34,7 @@
   *   - Fixed USB_STRING_DESCRIPTOR_ARRAY() not accepting more than two byte long arrays
   *   - Fixed HID report parser corruption when parsing PUSH and POP report item elements
   *   - Fixed HID report parser incorrectly decoding 32-bit USAGE elements
+  *   - Fixed control request hangs in the Printer device class driver (thanks to Juergen Borleis)
   *  - Library Applications:
   *   - Fixed bootloaders not disabling global interrupts during erase and write operations (thanks to Zoltan)
   *   - Fixed bootloaders accepting flash writes to the bootloader region (thanks to NicoHood)
