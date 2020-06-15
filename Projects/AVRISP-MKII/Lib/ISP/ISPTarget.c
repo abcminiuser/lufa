@@ -37,7 +37,7 @@
 
 #if defined(ENABLE_ISP_PROTOCOL) || defined(__DOXYGEN__)
 
-/** List of hardware SPI prescaler masks for possible AVRStudio ISP programming speeds.
+/** List of hardware SPI prescaler masks for possible Atmel Studio ISP programming speeds.
  *
  *  \hideinitializer
  */

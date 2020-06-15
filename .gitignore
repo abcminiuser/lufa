@@ -11,6 +11,3 @@
 *.class
 Documentation/
 node_modules/
-LUFA/StudioIntegration/ProjectGenerator/*
-LUFA/StudioIntegration/DocBook/*
-!LUFA/StudioIntegration/Docbook/mshelp/*

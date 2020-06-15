@@ -47,13 +47,13 @@
  *  \section Sec_Description Project Description:
  *
  *  This project serves a dual purpose. When loaded into the USB AVR on the XPLAIN board, it will act as either a USB to Serial
- *  converter for the XPLAIN's hardware USART (at a speed of 9600 baud), or an AVRStudio compatible PDI programmer for the XMEGA.
+ *  converter for the XPLAIN's hardware USART (at a speed of 9600 baud), or an Atmel Studio compatible PDI programmer for the XMEGA.
  *  This project replaces the firmware preloaded onto the XPLAIN's onboard AT90USB1287 microcontroller.
  *
  *  When power to the board is applied, the TDI pin (pin 9) of the USB AVR's JTAG port is read. If the pin is left high, the device
  *  will enumerate as a regular COM port on the host, which can then be opened and data exchanged between the XMEGA and Host as if
  *  the XMEGA was connected directly to the host's serial port. If the pin is pulled low by shorting it to GND (pin 10), the device
- *  will enumerate as an AVRISP-MKII to the host, so that the XMEGA can be reprogrammed by AVRStudio or other compatible software
+ *  will enumerate as an AVRISP-MKII to the host, so that the XMEGA can be reprogrammed by Atmel Studio or other compatible software
  *  such as avrdude by connecting to the board as if it was an Atmel AVRISP-MKII programmer.
  *
  *  After running this project in serial bridge mode for the first time on a new computer, you will need to supply the .INF file
