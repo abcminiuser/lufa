@@ -59,7 +59,7 @@ void PRNT_Device_ProcessControlRequest(USB_ClassInfo_PRNT_Device_t* const PRNTIn
 				}
 
 				uint16_t IEEEStringLen = strlen(PRNTInterfaceInfo->Config.IEEE1284String);
-				Endpoint_Write_16_BE(IEEEStringLen);
+				Endpoint_Write_16_BE(IEEEStringLen + sizeof(uint16_t));
 				Endpoint_Write_Control_Stream_LE(PRNTInterfaceInfo->Config.IEEE1284String, IEEEStringLen);
 				Endpoint_ClearStatusStage();
 			}
