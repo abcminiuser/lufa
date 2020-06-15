@@ -28,8 +28,8 @@
   this software.
 */
 
-#ifndef _KEYBOARD_MOUSE_H_
-#define _KEYBOARD_MOUSE_H_
+#ifndef _KEYBOARD_MOUSE_MULTIREPORT_H_
+#define _KEYBOARD_MOUSE_MULTIREPORT_H_
 
 	/* Includes: */
 		#include <avr/io.h>
