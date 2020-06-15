@@ -1,13 +1,13 @@
 /*
              LUFA Library
-     Copyright (C) Dean Camera, 2019.
+     Copyright (C) Dean Camera, 2020.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
 */
 
 /*
-  Copyright 2019  Dean Camera (dean [at] fourwalledcubicle [dot] com)
+  Copyright 2020  Dean Camera (dean [at] fourwalledcubicle [dot] com)
   Copyright 2012  Simon Foster (simon.foster [at] inbox [dot] com)
 
   Permission to use, copy, modify, distribute, and sell this
@@ -91,7 +91,7 @@ static void HD44780_PowerUp4Bit(void)
 	_delay_ms(5);
 	HD44780_WriteNibble(0x03);        // FN_SET 8-bit
 
-	/* Wait for more than 100 µs */
+	/* Wait for more than 100 Âµs */
 	_delay_us(100);
 	HD44780_WriteNibble(0x03);        // FN_SET 8-bit
 

@@ -141,7 +141,7 @@
  *  \li Touchscreen Input Device: http://capnstech.blogspot.com/2010/07/touchscreen-update.html
  *  \li UDFS, a BBC Micro USB disk filing system: https://github.com/makestuff/udfs
  *  \li Universal USB AVR Module: http://usbavr.bplaced.net/
- *  \li USB Adapter for an old Teletype Printer: www.savel.org/2019/07/11/avr-usb-printer-device-and-teletype/
+ *  \li USB Adapter for an old Teletype Printer: www.savel.org/2020/07/11/avr-usb-printer-device-and-teletype/
  *  \li USB2AX, a USB to Dynamixel network adapter: http://paranoidstudio.assembla.com/wiki/show/paranoidstudio/USB2AX
  *  \li USBPass, a USB password keeper: http://sroz.net/projects/usbpass/
  *  \li USB Business Card: http://www.limpkin.fr/index.php?post/2012/09/15/My-new-business-card

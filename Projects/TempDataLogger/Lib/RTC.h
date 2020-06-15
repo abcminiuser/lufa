@@ -1,5 +1,5 @@
 /*
-     Copyright (C) Dean Camera, 2019.
+     Copyright (C) Dean Camera, 2020.
 
   dean [at] fourwalledcubicle [dot] com
            www.lufa-lib.org
