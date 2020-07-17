@@ -22,12 +22,12 @@ OBJECT_FILES = InputEEData.o
 all:
 
 # Determine the AVR sub-architecture of the build main application object file
-FIND_AVR_SUBARCH = avr$(shell avr-objdump -f $(TARGET).o | grep architecture | cut -d':' -f3 | cut -d',' -f1)
+FIND_AVR_SUBARCH = avr$(shell avr-objdump -f obj/$(TARGET).o | grep architecture | cut -d':' -f3 | cut -d',' -f1)
 
 # Create a linkable object file with the input binary EEPROM data stored in the FLASH section
-InputEEData.o: InputEEData.bin $(TARGET).o $(MAKEFILE_LIST)
+obj/InputEEData.o: obj/HID_EEPROM_Loader.o
 	@echo $(MSG_OBJCPY_CMD) Converting \"$<\" to a object file \"$@\"
-	avr-objcopy -I binary -O elf32-avr -B $(call FIND_AVR_SUBARCH) --rename-section .data=.progmem.data,contents,alloc,readonly,data $< $@
+	avr-objcopy -I binary -O elf32-avr -B $(call FIND_AVR_SUBARCH) --rename-section .data=.progmem.data,contents,alloc,readonly,data InputEEData.bin $@
 
 # Include LUFA build script makefiles
 include ../core.mk
