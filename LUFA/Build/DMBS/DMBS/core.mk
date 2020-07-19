@@ -19,7 +19,7 @@ DMBS_BUILD_PROVIDED_MACROS += DMBS_CHECK_VERSION ERROR_IF_UNSET ERROR_IF_EMPTY E
 SHELL = /bin/sh
 
 # Current DMBS release version
-DMBS_VERSION       := 20171231
+DMBS_VERSION       := 20200719
 
 # Macro to check the DMBS version, aborts if the given DMBS version is below the current version
 DMBS_CHECK_VERSION ?= $(if $(filter-out 0, $(shell test $(DMBS_VERSION) -lt $(1); echo $$?)), , $(error DMBS version $(1) or newer required, current version is $(DMBS_VERSION)))

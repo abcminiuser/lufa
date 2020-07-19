@@ -24,7 +24,7 @@ COMPILER_PATH      ?=
 OPTIMIZATION       ?= s
 F_CPU              ?=
 C_STANDARD         ?= gnu99
-CPP_STANDARD       ?= gnu++98
+CPP_STANDARD       ?= gnu++11
 C_FLAGS            ?=
 CPP_FLAGS          ?=
 ASM_FLAGS          ?=
@@ -117,10 +117,7 @@ else ifneq ($(findstring $(ARCH), UC3),)
 endif
 BASE_CC_FLAGS += -Wall -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections
 BASE_CC_FLAGS += -I.
-BASE_CC_FLAGS += -DARCH=ARCH_$(ARCH)
-ifneq ($(F_CPU),)
-   BASE_CC_FLAGS += -DF_CPU=$(F_CPU)UL
-endif
+BASE_CC_FLAGS += -DARCH=ARCH_$(ARCH) -DDMBS_ARCH_$(ARCH)
 ifeq ($(LINKER_RELAXATIONS), Y)
    BASE_CC_FLAGS += -mrelax
 endif
@@ -131,17 +128,16 @@ ifeq ($(JUMP_TABLES), N)
    # in a pseudo-random jump target.
    BASE_CC_FLAGS += -fno-jump-tables
 endif
-ifeq ($(LTO), Y)
-   # Enable link time optimization to reduce overall flash size.
-   BASE_CC_FLAGS += -flto -fuse-linker-plugin
-   BASE_LD_FLAGS += -flto -fuse-linker-plugin
-endif
 
 # Additional language specific compiler flags
 BASE_C_FLAGS   := -x c -O$(OPTIMIZATION) -std=$(C_STANDARD) -Wstrict-prototypes
 BASE_CPP_FLAGS := -x c++ -O$(OPTIMIZATION) -std=$(CPP_STANDARD) -fno-exceptions -fno-threadsafe-statics
 BASE_ASM_FLAGS := -x assembler-with-cpp
-
+ifneq ($(F_CPU),)
+   BASE_C_FLAGS += -DF_CPU=$(F_CPU)UL
+   BASE_CPP_FLAGS += -DF_CPU=$(F_CPU)UL
+   BASE_ASM_FLAGS += -DF_CPU=$(F_CPU)
+endif
 # Create a list of flags to pass to the linker
 BASE_LD_FLAGS := -lm -Wl,-Map=$(TARGET).map,--cref -Wl,--gc-sections
 ifeq ($(LINKER_RELAXATIONS), Y)
@@ -151,6 +147,11 @@ ifneq ($(findstring $(ARCH), AVR8 XMEGA),)
    BASE_LD_FLAGS += -mmcu=$(MCU)
 else ifneq ($(findstring $(ARCH), UC3),)
    BASE_LD_FLAGS += -mpart=$(MCU:at32%=%) --rodata-writable --direct-data
+endif
+ifeq ($(LTO), Y)
+   # Enable link time optimization to reduce overall flash size.
+   BASE_CC_FLAGS += -flto -fuse-linker-plugin
+   BASE_LD_FLAGS += -flto -fuse-linker-plugin
 endif
 
 # Determine flags to pass to the size utility based on its reported features (only invoke if size target required)
