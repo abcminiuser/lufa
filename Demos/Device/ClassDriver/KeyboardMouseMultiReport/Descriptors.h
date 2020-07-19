@@ -85,11 +85,11 @@
 
 	/* Enums: */
 		/** Enum for the HID report IDs used in the device. */
-		enum
+		enum HID_ReportID_t
 		{
 			HID_REPORTID_MouseReport    = 0x01, /**< Report ID for the Mouse report within the device. */
 			HID_REPORTID_KeyboardReport = 0x02, /**< Report ID for the Keyboard report within the device. */
-		} HID_Report_IDs;
+		};
 
 	/* Function Prototypes: */
 		uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
