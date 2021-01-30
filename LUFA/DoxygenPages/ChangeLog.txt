@@ -6,7 +6,7 @@
 
  /** \page Page_ChangeLog Project Changelog
   *
-  *  \section Sec_ChangeLogXXXXXX Version XXXXXX
+  *  \section Sec_ChangeLog210130 Version 210130
   *  <b>New:</b>
   *  - Core:
   *   - The USE_INTERNAL_SERIAL definition can now be overridden by the user to a custom string index (thanks to Nicohood)
