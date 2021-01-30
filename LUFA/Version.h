@@ -61,7 +61,7 @@
 			#define LUFA_VERSION_STRING               "210130"
 
 			/** Indicates the release type of the library. */
-			#define LUFA_VERSION_RELEASE_TYPE         LUFA_VERSION_RELEASE_TYPE_FULL
+			#define LUFA_VERSION_RELEASE_TYPE         LUFA_VERSION_RELEASE_TYPE_DEVELOPMENT
 
 #endif
 
