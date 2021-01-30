@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 //             LUFA Library
-//     Copyright (C) Dean Camera, 2020.
+//     Copyright (C) Dean Camera, 2021.
 //
 //  dean [at] fourwalledcubicle [dot] com
 //
 //           www.lufa-lib.org
 
-// Copyright 2020  Filipe Rodrigues (filipepazrodrigues [at] gmail [dot] com)
+// Copyright 2021  Filipe Rodrigues (filipepazrodrigues [at] gmail [dot] com)
 //
 // LUFA Generic CCID device demo host test script. This script test multiple
 // kinds of CCID messages and shows the result to the console

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 //             LUFA Library
-//     Copyright (C) Dean Camera, 2020.
+//     Copyright (C) Dean Camera, 2021.
 //
 //  dean [at] fourwalledcubicle [dot] com
 //           www.lufa-lib.org

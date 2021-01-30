@@ -179,7 +179,7 @@ this module.
 The changes to this module since its initial release are listed below, as of the
 DMBS version where the change was made.
 
-### 20200412
+### 20210412
 Made `AVRDUDE_EFUSE` optional for `avrdude-fuses` because not every AVR has this fuse.
 
 ### 20171231
