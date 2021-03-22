@@ -475,8 +475,8 @@ static void CDC_Task(void)
 	else if (Command == AVR109_COMMAND_SetCurrentAddress)
 	{
 		/* Set the current address to that given by the host (translate 16-bit word address to byte address) */
-		CurrAddress   = (FetchNextCommandByte() << 9);
-		CurrAddress  |= (FetchNextCommandByte() << 1);
+		CurrAddress   = ((uint32_t)FetchNextCommandByte() << 9);
+		CurrAddress  |= ((uint32_t)FetchNextCommandByte() << 1);
 
 		/* Send confirmation byte back to the host */
 		WriteNextResponseByte('\r');
