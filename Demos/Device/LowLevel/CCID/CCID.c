@@ -563,6 +563,9 @@ void CCID_Task(void)
 				(void)Bwi;
 				(void)LevelParameter;
 
+				if (CCIDHeader.Length * sizeof(uint8_t) > sizeof(RequestBuffer))
+					break;
+
 				Endpoint_Read_Stream_LE(RequestBuffer, CCIDHeader.Length * sizeof(uint8_t), NULL);
 
 				uint8_t  ResponseDataLength = 0;

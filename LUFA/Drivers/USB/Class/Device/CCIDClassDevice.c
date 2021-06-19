@@ -249,7 +249,6 @@ void CCID_Device_USBTask(USB_ClassInfo_CCID_Device_t* const CCIDInterfaceInfo)
 				{
 					if (CCIDHeader.Length * sizeof(uint8_t) == sizeof(USB_CCID_ProtocolData_T0_t))
 					{
-
 						Endpoint_Read_Stream_LE(RequestBuffer, CCIDHeader.Length * sizeof(uint8_t), NULL);
 						Status = CALLBACK_CCID_SetParameters_T0(CCIDInterfaceInfo, CCIDHeader.Slot, &Error, (USB_CCID_ProtocolData_T0_t*) RequestBuffer);
 						if (CCID_CheckStatusNoError(Status))
