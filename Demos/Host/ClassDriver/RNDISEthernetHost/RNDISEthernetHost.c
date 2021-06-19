@@ -101,7 +101,7 @@ void RNDISHost_Task(void)
 		LEDs_SetAllLEDs(LEDMASK_USB_BUSY);
 
 		uint16_t PacketLength;
-		RNDIS_Host_ReadPacket(&Ethernet_RNDIS_Interface, &PacketBuffer, &PacketLength);
+		RNDIS_Host_ReadPacket(&Ethernet_RNDIS_Interface, PacketBuffer, sizeof(PacketBuffer), &PacketLength);
 
 		printf_P(PSTR("***PACKET (Size %d)***\r\n"), PacketLength);
 

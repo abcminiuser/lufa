@@ -4,7 +4,7 @@
  *  documentation pages. It is not a project source file.
  */
 
-/** \mainpage RNDIS Class Ethernet Demo (with Webserver/Telnet)
+/** \mainpage RNDIS Class Ethernet Demo
  *
  *  \section Sec_Compat Demo Compatibility:
  *
@@ -49,9 +49,8 @@
  *  This gives a simple reference application for implementing
  *  a CDC RNDIS device acting as a simple network interface for
  *  ethernet packet exchange. RNDIS is a proprietary Microsoft
- *  standard; this demo will only work on Windows 2000 (manually
- *  patched with the Microsoft RNDIS hotfix) and above (with no
- *  manual patches), or on the latest Linux kernels.
+ *  standard; this demo will only work on Windows XP, or on modern
+ *  Linux kernels.
  *
  *  Before running, you will need to install the INF file that
  *  is located in the RNDISEthernet project directory. This will
@@ -64,17 +63,8 @@
  *
  *  When enumerated, this demo will install as a new network
  *  adapter which ethernet packets can be sent to and received
- *  from. Running on top of the adapter is a very simple TCP/IP
- *  stack with a HTTP webserver and TELNET host which can be
- *  accessed through a web browser at IP address 10.0.0.2:80 or
- *  through a TELNET client at 10.0.0.2:25. This device also supports
- *  ping echos via the ICMP protocol.
- *
- *  \note The TCP/IP stack in this demo has a number of limitations
- *  and should serve as an example only - it is not fully featured nor
- *  compliant to the TCP/IP specification. For complete projects, it is
- *  recommended that it be replaced with an external open source TCP/IP
- *  stack that is feature complete, such as the uIP stack.
+ *  from. When packets are received from the host, the on-board LEDs should
+ *  flash.
  *
  *  \section Sec_Options Project Options
  *
@@ -87,59 +77,9 @@
  *    <th><b>Description:</b></th>
  *   </tr>
  *   <tr>
- *    <td>CLIENT_IP_ADDRESS</td>
- *    <td>AppConfig.h</td>
- *    <td>Configures the IP address given to the client (PC) via the DHCP server.</td>
- *   </tr>
- *   <tr>
- *    <td>SERVER_IP_ADDRESS</td>
- *    <td>AppConfig.h</td>
- *    <td>Configures the IP address of the virtual server.</td>
- *   </tr>
- *   <tr>
  *    <td>ADAPTER_MAC_ADDRESS</td>
  *    <td>AppConfig.h</td>
  *    <td>Configures the MAC address of the RNDIS adapter on the host (PC) side.</td>
- *   </tr>
- *   <tr>
- *    <td>SERVER_MAC_ADDRESS</td>
- *    <td>AppConfig.h</td>
- *    <td>Configures the MAC address of the virtual server on the network.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_ETHERNET</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received Ethernet headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_ARP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received ARP headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_IP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received IP headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_ICMP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received ICMP headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_TCP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received TCP headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_UDP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received UDP headers will not be decoded and printed to the device serial port.</td>
- *   </tr>
- *   <tr>
- *    <td>NO_DECODE_DHCP</td>
- *    <td>AppConfig.h</td>
- *    <td>When defined, received DHCP headers will not be decoded and printed to the device serial port.</td>
  *   </tr>
  *  </table>
  */

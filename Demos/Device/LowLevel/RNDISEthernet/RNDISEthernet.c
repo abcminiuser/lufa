@@ -36,6 +36,12 @@
 
 #include "RNDISEthernet.h"
 
+/** Global to store the incoming frame from the host before it is processed by the device. */
+static Ethernet_Frame_Info_t FrameIN;
+
+/** Global to store the outgoing frame created in the device before it is sent to the host. */
+static Ethernet_Frame_Info_t FrameOUT;
+
 /** Main program entry point. This routine configures the hardware required by the application, then
  *  enters a loop to run the application tasks in sequence.
  */
@@ -43,17 +49,12 @@ int main(void)
 {
 	SetupHardware();
 
-	/* Webserver Initialization */
-	TCP_Init();
-	Webserver_Init();
-
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
 	for (;;)
 	{
 		Ethernet_Task();
-		TCP_Task();
 		RNDIS_Task();
 		USB_USBTask();
 	}
@@ -287,8 +288,7 @@ void Ethernet_Task(void)
 		/* Indicate packet processing started */
 		LEDs_SetAllLEDs(LEDMASK_USB_BUSY);
 
-		/* Process the ethernet frame - replace this with your own Ethernet handler code as desired */
-		Ethernet_ProcessPacket();
+		// TODO: Process FrameIN here, and optionally fill FrameOUT.
 
 		/* Indicate packet processing complete */
 		LEDs_SetAllLEDs(LEDMASK_USB_READY);

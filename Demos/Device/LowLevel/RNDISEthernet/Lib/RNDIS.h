@@ -41,7 +41,6 @@
 		#include <stdbool.h>
 
 		#include "../RNDISEthernet.h"
-		#include "Ethernet.h"
 
 	/* External Variables: */
 		extern uint8_t                 RNDISMessageBuffer[];

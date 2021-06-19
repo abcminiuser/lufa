@@ -45,10 +45,6 @@
 
 		#include "Descriptors.h"
 
-		#include "Lib/Ethernet.h"
-		#include "Lib/TCP.h"
-		#include "Lib/ARP.h"
-		#include "Lib/Webserver.h"
 		#include "Config/AppConfig.h"
 
 		#include <LUFA/Drivers/Board/LEDs.h>
@@ -71,6 +67,14 @@
 
 		/** LED mask for the library LED driver, to indicate that the USB interface is busy. */
 		#define LEDMASK_USB_BUSY          LEDS_LED2
+
+	/* Type Defines: */
+		/** Type define for an Ethernet frame buffer data and information structure. */
+		typedef struct
+		{
+			uint8_t  FrameData[ETHERNET_FRAME_SIZE_MAX]; /**< Ethernet frame contents. */
+			uint16_t FrameLength; /**< Length in bytes of the Ethernet frame stored in the buffer. */
+		} Ethernet_Frame_Info_t;
 
 	/* Function Prototypes: */
 		void SetupHardware(void);

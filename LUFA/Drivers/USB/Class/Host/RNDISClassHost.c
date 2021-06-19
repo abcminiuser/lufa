@@ -394,6 +394,7 @@ bool RNDIS_Host_IsPacketReceived(USB_ClassInfo_RNDIS_Host_t* const RNDISInterfac
 
 uint8_t RNDIS_Host_ReadPacket(USB_ClassInfo_RNDIS_Host_t* const RNDISInterfaceInfo,
                               void* Buffer,
+                              const uint16_t BufferSize,
                               uint16_t* const PacketLength)
 {
 	uint8_t ErrorCode;
@@ -422,13 +423,20 @@ uint8_t RNDIS_Host_ReadPacket(USB_ClassInfo_RNDIS_Host_t* const RNDISInterfaceIn
 		return ErrorCode;
 	}
 
-	*PacketLength = (uint16_t)le32_to_cpu(DeviceMessage.DataLength);
-
 	Pipe_Discard_Stream(le32_to_cpu(DeviceMessage.DataOffset) -
 	                    (sizeof(RNDIS_Packet_Message_t) - sizeof(RNDIS_Message_Header_t)),
 	                    NULL);
 
+	const size_t ExpectedLength = (uint16_t)le32_to_cpu(DeviceMessage.DataLength);
+
+	if (ExpectedLength > BufferSize)
+		*PacketLength = BufferSize;
+	else
+		*PacketLength = ExpectedLength;
+
 	Pipe_Read_Stream_LE(Buffer, *PacketLength, NULL);
+	if (ExpectedLength > BufferSize)
+		Pipe_Discard_Stream(ExpectedLength - BufferSize, NULL);
 
 	if (!(Pipe_BytesInPipe()))
 	  Pipe_ClearIN();

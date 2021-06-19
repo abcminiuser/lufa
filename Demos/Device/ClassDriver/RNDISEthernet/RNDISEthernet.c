@@ -87,9 +87,6 @@ int main(void)
 {
 	SetupHardware();
 
-	TCP_Init();
-	Webserver_Init();
-
 	LEDs_SetAllLEDs(LEDMASK_USB_NOTREADY);
 	GlobalInterruptEnable();
 
@@ -99,8 +96,9 @@ int main(void)
 		{
 			LEDs_SetAllLEDs(LEDMASK_USB_BUSY);
 
-			RNDIS_Device_ReadPacket(&Ethernet_RNDIS_Interface, &FrameIN.FrameData, &FrameIN.FrameLength);
-			Ethernet_ProcessPacket(&FrameIN, &FrameOUT);
+			RNDIS_Device_ReadPacket(&Ethernet_RNDIS_Interface, FrameIN.FrameData, sizeof(FrameIN.FrameData), &FrameIN.FrameLength);
+
+			// TODO: Process FrameIN here, and optionally fill FrameOUT.
 
 			if (FrameOUT.FrameLength)
 			{
@@ -110,8 +108,6 @@ int main(void)
 
 			LEDs_SetAllLEDs(LEDMASK_USB_READY);
 		}
-
-		TCP_TCPTask(&Ethernet_RNDIS_Interface, &FrameOUT);
 
 		RNDIS_Device_USBTask(&Ethernet_RNDIS_Interface);
 		USB_USBTask();

@@ -11,7 +11,10 @@
  *  areas relevant to making older projects compatible with the API changes of each new release.
  *
  *  \section Sec_MigrationXXXXXX Version XXXXXX
- *   No migration information.
+ *  <b>Device Mode</b>
+ *   - The \c RNDIS_Device_ReadPacket() function has an additional parameter that should be set to the destination buffer's length.
+ *  <b>Host Mode</b>
+ *   - The \c RNDIS_Host_ReadPacket() function has an additional parameter that should be set to the destination buffer's length.
  *
  *  \section Sec_Migration210130 Version 210130
  *  <b>Device Mode</b>
