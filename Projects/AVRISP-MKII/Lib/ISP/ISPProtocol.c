@@ -536,6 +536,12 @@ void ISPProtocol_SPIMulti(void)
     Endpoint_Read_Stream_LE(&SPI_Multi_Params, (sizeof(SPI_Multi_Params) - sizeof(SPI_Multi_Params.TxData)), NULL);
     Endpoint_Read_Stream_LE(&SPI_Multi_Params.TxData, SPI_Multi_Params.TxBytes, NULL);
 
+    if (SPI_Multi_Params.TxBytes >= sizeof(SPI_Multi_Params.TxData))
+    {
+        Endpoint_StallTransaction();
+        return;
+    }
+
     Endpoint_ClearOUT();
     Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
     Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);

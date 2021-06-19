@@ -250,6 +250,12 @@ static void XPROGProtocol_WriteMemory(void)
 	WriteMemory_XPROG_Params.Length  = SwapEndian_16(WriteMemory_XPROG_Params.Length);
 	Endpoint_Read_Stream_LE(&WriteMemory_XPROG_Params.ProgData, WriteMemory_XPROG_Params.Length, NULL);
 
+	if (WriteMemory_XPROG_Params.Length >= sizeof(WriteMemory_XPROG_Params.ProgData))
+	{
+		Endpoint_StallTransaction();
+		return;
+	}
+
 	// The driver will terminate transfers that are a round multiple of the endpoint bank in size with a ZLP, need
 	// to catch this and discard it before continuing on with packet processing to prevent communication issues
 	if (((sizeof(uint8_t) + sizeof(WriteMemory_XPROG_Params) - sizeof(WriteMemory_XPROG_Params.ProgData)) +
@@ -337,15 +343,21 @@ static void XPROGProtocol_ReadMemory(void)
 		uint16_t Length;
 	} ReadMemory_XPROG_Params;
 
+	uint8_t ReadBuffer[256];
+
 	Endpoint_Read_Stream_LE(&ReadMemory_XPROG_Params, sizeof(ReadMemory_XPROG_Params), NULL);
 	ReadMemory_XPROG_Params.Address = SwapEndian_32(ReadMemory_XPROG_Params.Address);
 	ReadMemory_XPROG_Params.Length  = SwapEndian_16(ReadMemory_XPROG_Params.Length);
 
+	if (ReadMemory_XPROG_Params.Length >= sizeof(ReadBuffer))
+	{
+		Endpoint_StallTransaction();
+		return;
+	}
+
 	Endpoint_ClearOUT();
 	Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
 	Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
-
-	uint8_t ReadBuffer[256];
 
 	if (XPROG_SelectedProtocol == XPROG_PROTOCOL_PDI)
 	{

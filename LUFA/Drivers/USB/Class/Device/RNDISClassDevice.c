@@ -81,6 +81,9 @@ void RNDIS_Device_ProcessControlRequest(USB_ClassInfo_RNDIS_Device_t* const RNDI
 		case RNDIS_REQ_SendEncapsulatedCommand:
 			if (USB_ControlRequest.bmRequestType == (REQDIR_HOSTTODEVICE | REQTYPE_CLASS | REQREC_INTERFACE))
 			{
+				if (USB_ControlRequest.wLength >= sizeof(RNDISInterfaceInfo->Config.MessageBuffer))
+					break;
+
 				Endpoint_ClearSETUP();
 				Endpoint_Read_Control_Stream_LE(RNDISInterfaceInfo->Config.MessageBuffer, USB_ControlRequest.wLength);
 				Endpoint_ClearIN();
