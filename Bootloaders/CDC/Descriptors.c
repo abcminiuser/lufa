@@ -208,37 +208,35 @@ uint16_t CALLBACK_USB_GetDescriptor(const uint16_t wValue,
 	const void* Address = NULL;
 	uint16_t    Size    = NO_DESCRIPTOR;
 
-	switch (DescriptorType)
+	if (DescriptorType == DTYPE_Device)
 	{
-		case DTYPE_Device:
-			Address = &DeviceDescriptor;
-			Size    = sizeof(USB_Descriptor_Device_t);
-			break;
-		case DTYPE_Configuration:
-			Address = &ConfigurationDescriptor;
-			Size    = sizeof(USB_Descriptor_Configuration_t);
-			break;
-		case DTYPE_String:
-			if (DescriptorNumber == STRING_ID_Language)
-			{
-				Address = &LanguageString;
-				Size    = LanguageString.Header.Size;
-			}
-			else if (DescriptorNumber == STRING_ID_Manufacturer)
-			{
-				Address = &ManufacturerString;
-				Size    = ManufacturerString.Header.Size;
-			}
-			else if (DescriptorNumber == STRING_ID_Product)
-			{
-				Address = &ProductString;
-				Size    = ProductString.Header.Size;
-			}
-
-			break;
+		Address = &DeviceDescriptor;
+		Size    = sizeof(USB_Descriptor_Device_t);
+	}
+	else if (DescriptorType == DTYPE_Configuration)
+	{
+		Address = &ConfigurationDescriptor;
+		Size    = sizeof(USB_Descriptor_Configuration_t);
+	}
+	else if (DescriptorType == DTYPE_String)
+	{
+		if (DescriptorNumber == STRING_ID_Language)
+		{
+			Address = &LanguageString;
+			Size    = LanguageString.Header.Size;
+		}
+		else if (DescriptorNumber == STRING_ID_Manufacturer)
+		{
+			Address = &ManufacturerString;
+			Size    = ManufacturerString.Header.Size;
+		}
+		else if (DescriptorNumber == STRING_ID_Product)
+		{
+			Address = &ProductString;
+			Size    = ProductString.Header.Size;
+		}
 	}
 
 	*DescriptorAddress = Address;
 	return Size;
 }
-
