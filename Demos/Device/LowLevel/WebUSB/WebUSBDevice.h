@@ -43,7 +43,7 @@
 
 		/** \brief Convenience macro to easily create device capability platform descriptors for the WebUSB platform.
 		 *
-		 *  \note This macro is designed to be wrapped in parentheses and included in a sequence to the \ref BOS_DESCRIPTOR macro.
+		 *  \note This macro is designed to be wrapped in parentheses and included in a sequence to the BOS_DESCRIPTOR macro.
 		 *
 		 * 	\param[in] VendorCode  Vendor Code that all control requests coming from the browser must use.
 		 *
