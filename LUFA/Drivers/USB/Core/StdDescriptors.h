@@ -518,10 +518,12 @@
 			 *
 			 *  \note Each Capability Descriptor in the sequence should be a comma-separated list of bytes surrounded by parentheses.
 			 *  e.g.
+			 *  \code
 			 *  const USB_Descriptor_BOS_t PROGMEM BOSDescriptor = BOS_DESCRIPTOR(
 			 *  	(WEBUSB_BYTES)	// #define WEBUSB_BYTES webusb_byte_0, webusb_byte_1, webusb_byte_2, ... , webusb_byte_24
 			 *  	(byte0, byte1, byte2, ... , byteN)	// capability descriptor 2
 			 *  );
+			 *  \endcode
 			 */
 			#define BOS_DESCRIPTOR(seq) _BOS_DESCRIPTOR(_BOS_DESCRIPTOR_COUNT(seq), _BOS_CAPABILITY_DESCRIPTORS(seq))
 
