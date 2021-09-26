@@ -42,6 +42,14 @@ static uint8_t EEMEM EEPROM_Reset_Polarity = 0x01;
 /* Non-Volatile Parameter Values for EEPROM storage */
 static uint8_t EEMEM EEPROM_SCK_Duration   = 0x06;
 
+/* Randomly generated magic constant for EEPROM data validation */
+#define EEPROM_MAGIC 0xEB401412UL
+
+/* EEPROM location which should contain EEPROM_MAGIC.  If this value is not correct, all other EEPROM locations are
+ * assumed to contain invalid data, therefore all parameters will be reset to their default values.
+ */
+static uint32_t EEMEM EEPROM_Magic_Value = EEPROM_MAGIC;
+
 /* Volatile Parameter Values for RAM storage */
 static ParameterItem_t ParameterTable[] =
 	{
@@ -87,9 +95,29 @@ static ParameterItem_t ParameterTable[] =
 	};
 
 
+/** Check the non-volatile storage in the EEPROM for the proper magic value, and erase the parameter area if the magic
+ *  value was not correct.
+ */
+static void V2Params_CheckNonVolatileStorage(void)
+{
+	/* Read the magic value from the EEPROM */
+	uint32_t MagicValue = eeprom_read_dword(&EEPROM_Magic_Value);
+	if (MagicValue != EEPROM_MAGIC) {
+		/* If the magic value was not correct, erase the parameter values in the EEPROM */
+		eeprom_update_byte(&EEPROM_Reset_Polarity, 0xFF);
+		eeprom_update_byte(&EEPROM_SCK_Duration, 0xFF);
+
+		/* Write the correct magic value to confirm that the data stored in the EEPROM is now valid */
+		eeprom_update_dword(&EEPROM_Magic_Value, EEPROM_MAGIC);
+	}
+}
+
 /** Loads saved non-volatile parameter values from the EEPROM into the parameter table, as needed. */
 void V2Params_LoadNonVolatileParamValues(void)
 {
+	/* Check that the EEPROM contains valid data */
+	V2Params_CheckNonVolatileStorage();
+
 	/* Read parameter values that are stored in non-volatile EEPROM */
 	uint8_t ResetPolarity = eeprom_read_byte(&EEPROM_Reset_Polarity);
 	uint8_t SCKDuration   = eeprom_read_byte(&EEPROM_SCK_Duration);
