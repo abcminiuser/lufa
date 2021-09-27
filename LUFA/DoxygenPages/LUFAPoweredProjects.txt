@@ -151,6 +151,7 @@
  *  \li USB MIDI to DMX controller: http://github.com/hanshuebner/miDiMX
  *  \li USB Mood Light: https://github.com/hsbp/usb_moodlight
  *  \li USB powered Geiger Counter: http://uhrheber.wordpress.com/2011/04/28/a-usb-powered-geiger-counter-for-the-z2-and-other-computers/
+ *  \li USB Userport, a USB HID GPIO interface: https://github.com/Zapfenkiller/USB-Userport
  *  \li Userial, a USB to Serial converter with SPI, I2C and other protocols: http://www.tty1.net/userial/
  *  \li Wii Classic Controller to USB converter: https://github.com/crazyiop/wii-classic-2-usb
  *  \li Wireless MIDI Guitar system: http://www.ise.pw.edu.pl/~wzab/wireless_guitar_system/
