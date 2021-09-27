@@ -14,6 +14,7 @@
   *  - Library Applications:
   *   - The hand-rolled TCP/IP stack has been removed from the LowLevel and ClassDriver RNDIS examples, as it is incomplete and should be replaced
   *     with a proper network stack anyway.
+  *   - AVRISP MKII Clone now checks the device EEPROM for magic values to determine if the stored settings are valid (thanks to Sergey Vlasov)
   *
   *  \section Sec_ChangeLog210130 Version 210130
   *  <b>New:</b>
