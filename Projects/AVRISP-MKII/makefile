@@ -11,12 +11,12 @@
 
 # Run "make help" for target help.
 
-MCU          = at90usb1287
-ARCH         = AVR8
-BOARD        = USBKEY
-F_CPU        = 8000000
-F_USB        = $(F_CPU)
-OPTIMIZATION = s
+MCU          = atxmega128a4u
+ARCH         = XMEGA
+BOARD        = NONE
+F_CPU        = 32000000
+F_USB        = 48000000
+OPTIMIZATION = 2
 TARGET       = AVRISP-MKII
 SRC          = $(TARGET).c AVRISPDescriptors.c Lib/V2Protocol.c Lib/V2ProtocolParams.c Lib/ISP/ISPProtocol.c Lib/ISP/ISPTarget.c Lib/XPROG/XPROGProtocol.c \
                Lib/XPROG/XPROGTarget.c Lib/XPROG/XMEGANVM.c Lib/XPROG/TINYNVM.c $(LUFA_SRC_USB)

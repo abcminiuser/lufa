@@ -94,7 +94,11 @@
 		static inline void ISPTarget_SendByte(const uint8_t Byte)
 		{
 			if (ISPTarget_HardwareSPIMode)
+			#if (ARCH == ARCH_XMEGA)
+			  SPI_SendByte(&SPI_REG, Byte);
+			#else
 			  SPI_SendByte(Byte);
+			#endif
 			else
 			  ISPTarget_TransferSoftSPIByte(Byte);
 		}
@@ -109,7 +113,11 @@
 			uint8_t ReceivedByte;
 
 			if (ISPTarget_HardwareSPIMode)
+			#if (ARCH == ARCH_XMEGA)
+			  ReceivedByte = SPI_ReceiveByte(&SPI_REG);
+			#else
 			  ReceivedByte = SPI_ReceiveByte();
+			#endif
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(0x00);
 
@@ -132,7 +140,11 @@
 			uint8_t ReceivedByte;
 
 			if (ISPTarget_HardwareSPIMode)
-			  ReceivedByte = SPI_TransferByte(Byte);
+				#if (ARCH == ARCH_XMEGA)
+					ReceivedByte = SPI_ReceiveByte(&SPI_REG);
+				#else
+					ReceivedByte = SPI_ReceiveByte();
+				#endif
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(Byte);
 

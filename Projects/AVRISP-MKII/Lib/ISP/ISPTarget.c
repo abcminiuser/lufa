@@ -59,6 +59,14 @@ static const uint8_t SPIMaskFromSCKDuration[] PROGMEM =
 	SPI_SPEED_FCPU_DIV_32,   // AVRStudio = 500KHz SPI, Actual = 500KHz SPI
 	SPI_SPEED_FCPU_DIV_64,   // AVRStudio = 250KHz SPI, Actual = 250KHz SPI
 	SPI_SPEED_FCPU_DIV_128   // AVRStudio = 125KHz SPI, Actual = 125KHz SPI
+#elif (F_CPU == 32000000)
+	SPI_SPEED_FCPU_DIV_4,    // AVRStudio =   8MHz SPI, Actual =   8MHz SPI
+	SPI_SPEED_FCPU_DIV_8,    // AVRStudio =   4MHz SPI, Actual =   4MHz SPI
+	SPI_SPEED_FCPU_DIV_16,   // AVRStudio =   2MHz SPI, Actual =   2MHz SPI
+	SPI_SPEED_FCPU_DIV_32,   // AVRStudio =   1MHz SPI, Actual =   1MHz SPI
+	SPI_SPEED_FCPU_DIV_64,   // AVRStudio = 500KHz SPI, Actual = 500KHz SPI
+	SPI_SPEED_FCPU_DIV_128,  // AVRStudio = 250KHz SPI, Actual = 250KHz SPI
+	SPI_SPEED_FCPU_DIV_128,  //TODO: Incomplete table
 #else
 	#error No SPI prescaler masks for chosen F_CPU speed.
 #endif
@@ -115,6 +123,7 @@ static volatile uint8_t ISPTarget_SoftSPI_BitsRemaining;
 
 
 /** ISR to handle software SPI transmission and reception */
+#if ARCH == ARCH_AVR8
 ISR(TIMER1_COMPA_vect, ISR_BLOCK)
 {
 	/* Check if rising edge (output next bit) or falling edge (read in next bit) */
@@ -142,6 +151,34 @@ ISR(TIMER1_COMPA_vect, ISR_BLOCK)
 	/* Fast toggle of PORTB.1 via the PIN register (see datasheet) */
 	PINB |= (1 << 1);
 }
+#elif ARCH == ARCH_XMEGA
+ISR(TCC1_CCA_vect, ISR_BLOCK)
+{
+	/* Check if rising edge (output next bit) or falling edge (read in next bit) */
+	if (!(SPI_PORT.IN & SPI_SCK_MASK))
+	{
+		if (ISPTarget_SoftSPI_Data & (1 << 7))
+		  SPI_PORT.OUTSET = SPI_MOSI_MASK;
+		else
+		  SPI_PORT.OUTCLR = SPI_MOSI_MASK;
+	}
+	else
+	{
+		ISPTarget_SoftSPI_Data <<= 1;
+
+		if (!(--ISPTarget_SoftSPI_BitsRemaining))
+		{
+			SW_SPI_TIMER.CTRLA = TC_CLKSEL_OFF_gc;
+			SW_SPI_TIMER.INTCTRLA = TC0_OVFIF_bm;
+		}
+
+		if (SPI_PORT.IN & SPI_MISO_MASK)
+		  ISPTarget_SoftSPI_Data |= (1 << 0);
+	}
+
+	SPI_PORT.OUTTGL = SPI_SCK_MASK;
+}
+#endif
 
 /** Initializes the appropriate SPI driver (hardware or software, depending on the selected ISP speed) ready for
  *  communication with the attached target.
@@ -153,17 +190,26 @@ void ISPTarget_EnableTargetISP(void)
 	if (SCKDuration < sizeof(SPIMaskFromSCKDuration))
 	{
 		ISPTarget_HardwareSPIMode = true;
-
+#if (ARCH == ARCH_AVR8)
 		SPI_Init(pgm_read_byte(&SPIMaskFromSCKDuration[SCKDuration]) | SPI_ORDER_MSB_FIRST |
 		                       SPI_SCK_LEAD_RISING | SPI_SAMPLE_LEADING | SPI_MODE_MASTER);
+#elif (ARCH == XMEGA)
+		SPI_Init(&SPI_REG, pgm_read_byte(&SPI_PORT, &SPIMaskFromSCKDuration[SCKDuration]) | SPI_ORDER_MSB_FIRST |
+		                       SPI_SCK_LEAD_RISING | SPI_SAMPLE_LEADING | SPI_MODE_MASTER);
+#endif
 	}
 	else
 	{
 		ISPTarget_HardwareSPIMode = false;
 
-		DDRB  |= ((1 << 1) | (1 << 2));
-		PORTB |= ((1 << 0) | (1 << 3));
-
+#if ARCH == ARCH_AVR8
+		DDRB  |= ((1 << 1) | (1 << 2)); //MOSI and SCK High
+		PORTB |= ((1 << 0) | (1 << 3)); //Pullup on RST and MISO
+#elif (ARCH == ARCH_XMEGA)
+		SPI_PORT.DIRSET = SPI_SCK_MASK | SPI_MOSI_MASK;
+		SPI_PORT.SPI_RST_CTRL = PORT_OPC_PULLUP_gc;
+		SPI_PORT.SPI_MISO_CTRL = PORT_OPC_PULLUP_gc;
+#endif
 		ISPTarget_ConfigureSoftwareSPI(SCKDuration);
 	}
 }
@@ -173,6 +219,7 @@ void ISPTarget_EnableTargetISP(void)
  */
 void ISPTarget_DisableTargetISP(void)
 {
+#if (ARCH == ARCH_AVR8)
 	if (ISPTarget_HardwareSPIMode)
 	{
 		SPI_Disable();
@@ -186,6 +233,22 @@ void ISPTarget_DisableTargetISP(void)
 		 * re-purposed for software SPI */
 		ISPTarget_ConfigureRescueClock();
 	}
+#elif (ARCH == ARCH_XMEGA)
+	if (ISPTarget_HardwareSPIMode)
+	{
+		SPI_Disable(&SPI_REG);
+	}
+	else
+	{
+		SPI_PORT.DIRCLR = SPI_SCK_MASK | SPI_MOSI_MASK;
+		SPI_PORT.SPI_RST_CTRL &= ~PORT_OPC_PULLUP_gc;
+		SPI_PORT.SPI_MOSI_CTRL &= ~PORT_OPC_PULLUP_gc;
+
+		/* Must re-enable rescue clock once software ISP has exited, as the timer for the rescue clock is
+		 * re-purposed for software SPI */
+		ISPTarget_ConfigureRescueClock();
+	}
+#endif
 }
 
 /** Configures the AVR to produce a 4MHz rescue clock out of the OCR1A pin of the AVR, so
@@ -195,6 +258,7 @@ void ISPTarget_DisableTargetISP(void)
  */
 void ISPTarget_ConfigureRescueClock(void)
 {
+#if (ARCH == ARCH_AVR8)
 	#if defined(XCK_RESCUE_CLOCK_ENABLE)
 		/* Configure XCK as an output for the specified AVR model */
 		DDRD  |= (1 << 5);
@@ -218,6 +282,17 @@ void ISPTarget_ConfigureRescueClock(void)
 		TCCR1A = (1 << COM1A0);
 		TCCR1B = ((1 << WGM12) | (1 << CS10));
 	#endif
+#elif (ARCH == ARCH_XMEGA)
+		#if defined(XCK_RESCUE_CLOCK_ENABLE)
+			#warning "XCK Rescue clock not implemented for xmega falling back to default"
+		#endif
+		RESCUE_PORT.DIRSET = RESCUE_PIN_MASK;
+		RESCUE_PORT.OUTSET = RESCUE_PIN_MASK;
+		RESCUE_TIMER.CTRLA = TC_CLKSEL_DIV1_gc;
+		RESCUE_TIMER.CTRLB = TC_WGMODE_SINGLESLOPE_gc | RESCUE_TIMER_CMP_EN;
+		RESCUE_TIMER.RESCUE_TIMER_CMP_REG = (F_CPU / 2 / ISP_RESCUE_CLOCK_SPEED);
+		RESCUE_TIMER.PER = (F_CPU / ISP_RESCUE_CLOCK_SPEED) - 1;
+#endif
 }
 
 /** Configures the AVR's timer ready to produce software SPI for the slower ISP speeds that
@@ -227,12 +302,20 @@ void ISPTarget_ConfigureRescueClock(void)
  */
 void ISPTarget_ConfigureSoftwareSPI(const uint8_t SCKDuration)
 {
+#if ARCH == ARCH_AVR8
 	/* Configure Timer 1 for software SPI using the specified SCK duration */
 	TIMSK1 = (1 << OCIE1A);
 	TCNT1  = 0;
 	OCR1A  = pgm_read_word(&TimerCompareFromSCKDuration[SCKDuration - sizeof(SPIMaskFromSCKDuration)]);
 	TCCR1A = 0;
 	TCCR1B = 0;
+#elif (ARCH == ARCH_XMEGA)
+	SW_SPI_TIMER.CTRLA = TC_CLKSEL_OFF_gc;
+	SW_SPI_TIMER.INTCTRLA = TC_OVFINTLVL_OFF_gc;
+	SW_SPI_TIMER.CNT = 0;
+	SW_SPI_TIMER.PER  = pgm_read_word(&TimerCompareFromSCKDuration[SCKDuration - sizeof(SPIMaskFromSCKDuration)]);
+	SW_SPI_TIMER.CTRLB = TC_WGMODE_NORMAL_gc;
+#endif
 }
 
 /** Sends and receives a single byte of data to and from the attached target via software SPI.
@@ -246,6 +329,7 @@ uint8_t ISPTarget_TransferSoftSPIByte(const uint8_t Byte)
 	ISPTarget_SoftSPI_Data          = Byte;
 	ISPTarget_SoftSPI_BitsRemaining = 8;
 
+#if ARCH == ARCH_AVR8
 	/* Set initial MOSI pin state according to the byte to be transferred */
 	if (ISPTarget_SoftSPI_Data & (1 << 7))
 	  PORTB |=  (1 << 2);
@@ -256,7 +340,18 @@ uint8_t ISPTarget_TransferSoftSPIByte(const uint8_t Byte)
 	TCCR1B = ((1 << WGM12) | (1 << CS11));
 	while (ISPTarget_SoftSPI_BitsRemaining && TimeoutTicksRemaining);
 	TCCR1B = 0;
+#elif (ARCH == ARCH_XMEGA)
+	if (ISPTarget_SoftSPI_Data & (1 << 7))
+	  SPI_PORT.OUTSET =  SPI_MOSI_MASK;
+	else
+	  SPI_PORT.OUTCLR = SPI_MOSI_MASK;
 
+	SW_SPI_TIMER.CTRLA = TC_CLKSEL_OFF_gc;
+	SW_SPI_TIMER.CNT = 0;
+	SW_SPI_TIMER.CTRLA = TC_CLKSEL_DIV64_gc; //TODO: Wrong?
+	while (ISPTarget_SoftSPI_BitsRemaining && TimeoutTicksRemaining);
+	SW_SPI_TIMER.CTRLA = TC_CLKSEL_OFF_gc;
+#endif
 	return ISPTarget_SoftSPI_Data;
 }
 
@@ -267,6 +362,7 @@ uint8_t ISPTarget_TransferSoftSPIByte(const uint8_t Byte)
  */
 void ISPTarget_ChangeTargetResetLine(const bool ResetTarget)
 {
+#if (ARCH == ARCH_AVR8)
 	if (ResetTarget)
 	{
 		AUX_LINE_DDR |= AUX_LINE_MASK;
@@ -281,6 +377,23 @@ void ISPTarget_ChangeTargetResetLine(const bool ResetTarget)
 		AUX_LINE_DDR  &= ~AUX_LINE_MASK;
 		AUX_LINE_PORT &= ~AUX_LINE_MASK;
 	}
+#elif (ARCH == ARCH_XMEGA)
+	if (ResetTarget)
+	{
+		AUX_LINE_PORT.DIRSET = AUX_LINE_MASK;
+
+		if (!(V2Params_GetParameterValue(PARAM_RESET_POLARITY)))
+		  AUX_LINE_PORT.OUTSET = AUX_LINE_MASK;
+		else
+		  AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
+	}
+	else
+	{
+		AUX_LINE_PORT.DIRCLR = AUX_LINE_MASK;
+		AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
+		AUX_LINE_PORT.AUX_LINE_CTRL &= ~PORT_OPC_PULLUP_gc;
+	}
+#endif
 }
 
 /** Waits until the target has completed the last operation, by continuously polling the device's

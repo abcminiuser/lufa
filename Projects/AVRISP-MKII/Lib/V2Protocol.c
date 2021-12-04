@@ -42,7 +42,7 @@ uint32_t CurrentAddress;
 /** Flag to indicate that the next read/write operation must update the device's current extended FLASH address */
 bool MustLoadExtendedAddress;
 
-
+#if ARCH == ARCH_AVR8
 /** ISR to manage timeouts whilst processing a V2Protocol command */
 ISR(TIMER0_COMPA_vect, ISR_NOBLOCK)
 {
@@ -51,6 +51,15 @@ ISR(TIMER0_COMPA_vect, ISR_NOBLOCK)
 	else
 	  TCCR0B = 0;
 }
+#elif ARCH == ARCH_XMEGA
+ISR(DELAY_TIMER_OVF_vect, ISR_NOBLOCK)
+{
+	if (TimeoutTicksRemaining)
+	  TimeoutTicksRemaining--;
+	else
+		DELAY_TIMER.CTRLA = TC_CLKSEL_OFF_gc; 
+}
+#endif
 
 /** Initializes the hardware and software associated with the V2 protocol command handling. */
 void V2Protocol_Init(void)
@@ -63,9 +72,15 @@ void V2Protocol_Init(void)
 	#endif
 
 	/* Timeout timer initialization (~10ms period) */
+#if ARCH == ARCH_AVR8
 	OCR0A  = (((F_CPU / 1024) / 100) - 1);
 	TCCR0A = (1 << WGM01);
 	TIMSK0 = (1 << OCIE0A);
+#elif ARCH == ARCH_XMEGA
+	DELAY_TIMER.PER = (((F_CPU / 1024) / 100) - 1);
+	DELAY_TIMER.CTRLB = TC_WGMODE_NORMAL_gc;
+	DELAY_TIMER.INTCTRLA = TC_OVFINTLVL_MED_gc;
+#endif
 
 	V2Params_LoadNonVolatileParamValues();
 
@@ -84,8 +99,11 @@ void V2Protocol_ProcessCommand(void)
 
 	/* Reset timeout counter duration and start the timer */
 	TimeoutTicksRemaining = COMMAND_TIMEOUT_TICKS;
+#if ARCH == ARCH_AVR8
 	TCCR0B = ((1 << CS02) | (1 << CS00));
-
+#elif ARCH == ARCH_XMEGA
+	TCD0.CTRLA = TC_CLKSEL_DIV1024_gc; 
+#endif
 	switch (V2Command)
 	{
 		case CMD_SIGN_ON:
@@ -150,8 +168,12 @@ void V2Protocol_ProcessCommand(void)
 	}
 
 	/* Disable the timeout management timer */
+#if ARCH == ARCH_AVR8
 	TCCR0B = 0;
-
+#elif ARCH == ARCH_XMEGA
+	DELAY_TIMER.CTRLA = TC_CLKSEL_OFF_gc; 
+#endif
+	
 	Endpoint_WaitUntilReady();
 	Endpoint_SelectEndpoint(AVRISP_DATA_OUT_EPADDR);
 	Endpoint_SetEndpointDirection(ENDPOINT_DIR_OUT);

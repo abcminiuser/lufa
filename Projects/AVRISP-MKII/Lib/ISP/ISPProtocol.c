@@ -47,14 +47,26 @@ static volatile uint8_t  ISPProtocol_ResponseTogglesRemaining;
 
 
 /** ISR to toggle MOSI pin when TIMER1 overflows */
+#if ARCH == ARCH_AVR8
 ISR(TIMER1_OVF_vect, ISR_BLOCK)
 {
     PINB |= (1 << PB2); // toggle PB2 (MOSI) by writing 1 to its bit in PINB
     ISPProtocol_HalfCyclesRemaining--;
 }
+#elif (ARCH == ARCH_XMEGA)
+ISR(SW_SPI_TIMER_OVF_vect, ISR_BLOCK)
+{
+    SPI_PORT.OUTTGL = SPI_MOSI_MASK;
+    ISPProtocol_HalfCyclesRemaining--;
+}
+#endif
 
 /** ISR to listen for toggles on MISO pin */
+#if ARCH == ARCH_AVR8
 ISR(PCINT0_vect, ISR_BLOCK)
+#elif (ARCH == ARCH_XMEGA)
+ISR(SW_SPI_PIN_IRQ_vect, ISR_BLOCK)
+#endif
 {
     ISPProtocol_ResponseTogglesRemaining--;
 }
@@ -420,6 +432,8 @@ void ISPProtocol_Calibrate(void)
     Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
     Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
 
+		//TODO: Learn it and implement it...
+#if ARCH == ARCH_AVR8
     /* Enable pull-up on MISO and release ~RESET */
     DDRB    =  ~(1 << PB3);
     PORTB  |= ( (1 << PB4) | (1 << PB3) );
@@ -455,7 +469,7 @@ void ISPProtocol_Calibrate(void)
     /* Check if device responded with a success message or if we timed out */
     if (ISPProtocol_ResponseTogglesRemaining)
       ResponseStatus = STATUS_CMD_TOUT;
-
+#endif
     /* Report back to PC via USB */
     Endpoint_Write_8(CMD_OSCCAL);
     Endpoint_Write_8(ResponseStatus);

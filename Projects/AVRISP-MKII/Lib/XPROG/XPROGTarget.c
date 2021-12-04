@@ -45,7 +45,7 @@ static bool IsSending;
 void XPROGTarget_EnableTargetPDI(void)
 {
 	IsSending = false;
-
+#if (ARCH == ARCH_AVR8)
 	/* Set Tx and XCK as outputs, Rx as input */
 	DDRD |=  (1 << 5) | (1 << 3);
 	DDRD &= ~(1 << 2);
@@ -64,6 +64,24 @@ void XPROGTarget_EnableTargetPDI(void)
 	UCSR1B = (1 << TXEN1);
 	UCSR1C = (1 << UMSEL10) | (1 << UPM11) | (1 << USBS1) | (1 << UCSZ11) | (1 << UCSZ10) | (1 << UCPOL1);
 
+
+#elif (ARCH == ARCH_XMEGA)
+	/* Set Tx and XCK as outputs, Rx as input */
+	PDI_PORT.DIRSET = PDI_TX_MASK | PDI_XCK_MASK;
+	PDI_PORT.DIRCLR = PDI_RX_MASK;
+	_delay_us(100);
+
+	/* Set DATA line high for at least 90ns to disable /RESET functionality */
+	PDI_PORT.OUTSET = PDI_TX_MASK;
+	_delay_us(20);
+
+	/* Set up the synchronous USART for XMEGA communications - 8 data bits, even parity, 2 stop bits */
+	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) & 0xFF;
+	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) >> 8;
+	PDI_USART.CTRLA = 0; //USART_RXCINTLVL_MED_gc | USART_TXCINTLVL_MED_gc | USART_DREINTLVL_MED_gc //TODO: Enable interrups
+	PDI_USART.CTRLB = USART_TXEN_bm | USART_CLK2X_bm;
+	PDI_USART.CTRLC = USART_CMODE_SYNCHRONOUS_gc | USART_PMODE_EVEN_gc | USART_SBMODE_bm | USART_CHSIZE_8BIT_gc;
+#endif
 	/* Send two IDLEs of 12 bits each to enable PDI interface (need at least 16 idle bits) */
 	XPROGTarget_SendIdle();
 	XPROGTarget_SendIdle();
@@ -74,6 +92,7 @@ void XPROGTarget_EnableTargetTPI(void)
 {
 	IsSending = false;
 
+#if (ARCH == ARCH_AVR8)
 	/* Set /RESET line low for at least 400ns to enable TPI functionality */
 	AUX_LINE_DDR  |=  AUX_LINE_MASK;
 	AUX_LINE_PORT &= ~AUX_LINE_MASK;
@@ -87,7 +106,23 @@ void XPROGTarget_EnableTargetTPI(void)
 	UBRR1  = ((F_CPU / 2 / XPROG_HARDWARE_SPEED) - 1);
 	UCSR1B = (1 << TXEN1);
 	UCSR1C = (1 << UMSEL10) | (1 << UPM11) | (1 << USBS1) | (1 << UCSZ11) | (1 << UCSZ10) | (1 << UCPOL1);
+#elif (ARCH == ARCH_XMEGA)
+	/* Set /RESET line low for at least 400ns to enable TPI functionality */
+	AUX_LINE_PORT.DIRSET = AUX_LINE_MASK;
+	AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
+	_delay_us(100);
 
+	/* Set Tx and XCK as outputs, Rx as input */
+	PDI_PORT.DIRSET = PDI_TX_MASK | PDI_XCK_MASK;
+	PDI_PORT.DIRCLR = PDI_RX_MASK;
+
+	/* Set up the synchronous USART for TPI communications - 8 data bits, even parity, 2 stop bits */
+	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) & 0xFF;
+	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) >> 8;
+	PDI_USART.CTRLA = 0; //USART_RXCINTLVL_MED_gc | USART_TXCINTLVL_MED_gc | USART_DREINTLVL_MED_gc //TODO: Enable interrups
+	PDI_USART.CTRLB = USART_TXEN_bm | USART_CLK2X_bm;
+	PDI_USART.CTRLC = USART_CMODE_SYNCHRONOUS_gc | USART_PMODE_EVEN_gc | USART_SBMODE_bm | USART_CHSIZE_8BIT_gc;
+#endif
 	/* Send two IDLEs of 12 bits each to enable TPI interface (need at least 16 idle bits) */
 	XPROGTarget_SendIdle();
 	XPROGTarget_SendIdle();
@@ -100,6 +135,7 @@ void XPROGTarget_DisableTargetPDI(void)
 	if (IsSending)
 	  XPROGTarget_SetRxMode();
 
+#if (ARCH == ARCH_AVR8)
 	/* Turn off receiver and transmitter of the USART, clear settings */
 	UCSR1A  = ((1 << TXC1) | (1 << RXC1));
 	UCSR1B  = 0;
@@ -108,6 +144,19 @@ void XPROGTarget_DisableTargetPDI(void)
 	/* Tristate all pins */
 	DDRD  &= ~((1 << 5) | (1 << 3));
 	PORTD &= ~((1 << 5) | (1 << 3) | (1 << 2));
+#elif (ARCH == ARCH_XMEGA)
+	/* Turn off receiver and transmitter of the USART, clear settings */
+	PDI_USART.STATUS = USART_RXCIF_bm | USART_TXCIF_bm;
+	PDI_USART.CTRLA = 0;
+	PDI_USART.CTRLB = 0;
+	PDI_USART.CTRLC = 0;
+
+	/* Tristate all pins */
+	PDI_PORT.DIRCLR = PDI_TX_MASK | PDI_XCK_MASK;
+	PDI_PORT.PDI_XCK_CTRL &= ~PORT_OPC_PULLUP_gc;
+	PDI_PORT.PDI_TX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+	PDI_PORT.PDI_RX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+#endif
 }
 
 /** Disables the target's TPI interface, exits programming mode and starts the target's application. */
@@ -117,6 +166,7 @@ void XPROGTarget_DisableTargetTPI(void)
 	if (IsSending)
 	  XPROGTarget_SetRxMode();
 
+#if (ARCH == ARCH_AVR8)
 	/* Turn off receiver and transmitter of the USART, clear settings */
 	UCSR1A |= (1 << TXC1) | (1 << RXC1);
 	UCSR1B  = 0;
@@ -129,6 +179,23 @@ void XPROGTarget_DisableTargetTPI(void)
 	/* Tristate target /RESET line */
 	AUX_LINE_DDR  &= ~AUX_LINE_MASK;
 	AUX_LINE_PORT &= ~AUX_LINE_MASK;
+#elif (ARCH == ARCH_XMEGA)
+	/* Turn off receiver and transmitter of the USART, clear settings */
+	PDI_USART.STATUS = USART_RXCIF_bm | USART_TXCIF_bm;
+	PDI_USART.CTRLA = 0;
+	PDI_USART.CTRLB = 0;
+	PDI_USART.CTRLC = 0;
+
+	/* Tristate all pins */
+	PDI_PORT.DIRCLR = PDI_TX_MASK | PDI_XCK_MASK;
+	PDI_PORT.PDI_XCK_CTRL &= ~PORT_OPC_PULLUP_gc;
+	PDI_PORT.PDI_TX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+	PDI_PORT.PDI_RX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+	
+	AUX_LINE_PORT.DIRCLR = AUX_LINE_MASK;
+	AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
+	AUX_LINE_PORT.AUX_LINE_CTRL &= ~PORT_OPC_PULLUP_gc;
+#endif
 }
 
 /** Sends a byte via the USART.
@@ -142,9 +209,15 @@ void XPROGTarget_SendByte(const uint8_t Byte)
 	  XPROGTarget_SetTxMode();
 
 	/* Wait until there is space in the hardware Tx buffer before writing */
+#if (ARCH == ARCH_AVR8)
 	while (!(UCSR1A & (1 << UDRE1)));
 	UCSR1A |= (1 << TXC1);
 	UDR1    = Byte;
+#elif (ARCH == ARCH_XMEGA)
+	while(!(PDI_USART.STATUS & USART_DREIF_bm))
+		;
+	PDI_USART.DATA = Byte;
+#endif
 }
 
 /** Receives a byte via the hardware USART, blocking until data is received or timeout expired.
@@ -158,9 +231,15 @@ uint8_t XPROGTarget_ReceiveByte(void)
 	  XPROGTarget_SetRxMode();
 
 	/* Wait until a byte has been received before reading */
-	while (!(UCSR1A & (1 << RXC1)) && TimeoutTicksRemaining);
-
+#if (ARCH == ARCH_AVR8)
+	while (!(UCSR1A & (1 << RXC1)) && TimeoutTicksRemaining)
+		;
 	return UDR1;
+#elif (ARCH == ARCH_XMEGA)
+	while(!(PDI_USART.STATUS & USART_RXCIF_bm))
+		;
+	return PDI_USART.DATA;
+#endif
 }
 
 /** Sends an IDLE via the USART to the attached target, consisting of a full frame of idle bits. */
@@ -173,16 +252,23 @@ void XPROGTarget_SendIdle(void)
 	/* Need to do nothing for a full frame to send an IDLE */
 	for (uint8_t i = 0; i < BITS_IN_USART_FRAME; i++)
 	{
+#if (ARCH == ARCH_AVR8)
 		/* Wait for a full cycle of the clock */
 		while (PIND & (1 << 5));
 		while (!(PIND & (1 << 5)));
 		while (PIND & (1 << 5));
+#elif (ARCH == ARCH_XMEGA)
+		while (PDI_PORT.IN & PDI_XCK_MASK);
+		while (!(PDI_PORT.IN & PDI_XCK_MASK));
+		while (PDI_PORT.IN & PDI_XCK_MASK);
+#endif
 	}
 }
 
 static void XPROGTarget_SetTxMode(void)
 {
 	/* Wait for a full cycle of the clock */
+#if (ARCH == ARCH_AVR8)
 	while (PIND & (1 << 5));
 	while (!(PIND & (1 << 5)));
 	while (PIND & (1 << 5));
@@ -192,12 +278,23 @@ static void XPROGTarget_SetTxMode(void)
 
 	UCSR1B &= ~(1 << RXEN1);
 	UCSR1B |=  (1 << TXEN1);
+#elif (ARCH == ARCH_XMEGA)
+	while (PDI_PORT.IN & PDI_XCK_MASK);
+	while (!(PDI_PORT.IN & PDI_XCK_MASK));
+	while (PDI_PORT.IN & PDI_XCK_MASK);
 
+	PDI_PORT.OUTSET = PDI_TX_MASK;
+	PDI_PORT.DIRSET = PDI_TX_MASK;
+
+	PDI_USART.CTRLB &= ~USART_RXEN_bm;
+	PDI_USART.CTRLB |=  USART_TXEN_bm;
+#endif
 	IsSending = true;
 }
 
 static void XPROGTarget_SetRxMode(void)
 {
+#if (ARCH == ARCH_AVR8)
 	while (!(UCSR1A & (1 << TXC1)));
 	UCSR1A |=  (1 << TXC1);
 
@@ -206,7 +303,18 @@ static void XPROGTarget_SetRxMode(void)
 
 	DDRD   &= ~(1 << 3);
 	PORTD  &= ~(1 << 3);
+#elif (ARCH == ARCH_XMEGA)
+	while(!(PDI_USART.STATUS & USART_TXCIF_bm))
+		;
 
+	PDI_USART.STATUS = USART_RXCIF_bm;
+
+	PDI_USART.CTRLB &= ~USART_TXEN_bm;
+	PDI_USART.CTRLB |=  USART_RXEN_bm;
+
+	PDI_PORT.DIRCLR = PDI_TX_MASK;
+	PDI_PORT.OUTCLR = PDI_TX_MASK;
+#endif
 	IsSending = false;
 }
 
