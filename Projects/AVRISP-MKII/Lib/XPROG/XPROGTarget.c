@@ -269,8 +269,10 @@ void XPROGTarget_SendIdle(void)
 		uint32_t timeout = 100000;
 		while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
 			timeout--;
+		timeout = 100000;
 		while (timeout && (PDI_PORT.IN & PDI_XCK_MASK))
 			timeout--;
+		timeout = 100000;
 		while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
 			timeout--;
 #endif
