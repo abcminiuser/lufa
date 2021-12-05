@@ -451,6 +451,8 @@
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask) ATTR_ALWAYS_INLINE;
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask)
 			{
+				//TODO: Needs to be completed!
+				(void) DirectionMask;
 // 				UECFG0X = ((UECFG0X & ~(1 << EPDIR)) | (DirectionMask ? (1 << EPDIR) : 0));
 				//USB_Endpoint_SelectedEndpoint = (USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN) | DirectionMask;
 			}
