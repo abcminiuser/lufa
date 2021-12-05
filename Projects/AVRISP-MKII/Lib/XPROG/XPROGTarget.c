@@ -266,9 +266,13 @@ void XPROGTarget_SendIdle(void)
 		while (PIND & (1 << 5));
 #elif (ARCH == ARCH_XMEGA)
 		/* As the pin inversion is active we need to wait inverted */
-		while (!(PDI_PORT.IN & PDI_XCK_MASK));
-		while ((PDI_PORT.IN & PDI_XCK_MASK));
-		while (!(PDI_PORT.IN & PDI_XCK_MASK));
+		uint32_t timeout = 100000;
+		while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
+			timeout--;
+		while (timeout && (PDI_PORT.IN & PDI_XCK_MASK))
+			timeout--;
+		while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
+			timeout--;
 #endif
 	}
 }
@@ -288,9 +292,21 @@ static void XPROGTarget_SetTxMode(void)
 	UCSR1B |=  (1 << TXEN1);
 #elif (ARCH == ARCH_XMEGA)
 	/* As the pin is actived, we need to wait inverted */
-	while (!(PDI_PORT.IN & PDI_XCK_MASK));
-	while ((PDI_PORT.IN & PDI_XCK_MASK));
-	while (!(PDI_PORT.IN & PDI_XCK_MASK));
+	uint32_t timeout = 100000;
+	while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
+	{
+		timeout--;
+	}
+	timeout = 100000;
+	while (timeout && (PDI_PORT.IN & PDI_XCK_MASK))
+	{
+		timeout--;
+	}
+	timeout = 100000;
+	while (timeout && !(PDI_PORT.IN & PDI_XCK_MASK))
+	{
+		timeout--;
+	}
 
 	PDI_PORT.OUTSET = PDI_TX_MASK;
 	PDI_PORT.DIRSET = PDI_TX_MASK;
