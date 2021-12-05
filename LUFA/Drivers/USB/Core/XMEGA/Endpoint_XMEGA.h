@@ -452,7 +452,7 @@
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask)
 			{
 // 				UECFG0X = ((UECFG0X & ~(1 << EPDIR)) | (DirectionMask ? (1 << EPDIR) : 0));
-				USB_Endpoint_SelectedEndpoint = (USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN) | DirectionMask;
+				//USB_Endpoint_SelectedEndpoint = (USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN) | DirectionMask;
 			}
 
 			/** Reads one byte from the currently selected endpoint's bank, for OUT direction endpoints.

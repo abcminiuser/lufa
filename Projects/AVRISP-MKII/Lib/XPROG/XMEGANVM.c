@@ -255,8 +255,11 @@ bool XMEGANVM_ReadMemory(const uint32_t ReadAddress,
 	{
 		/* Send a LDS command with the read address to read out the requested byte */
 		XPROGTarget_SendByte(PDI_CMD_LDS(PDI_DATASIZE_4BYTES, PDI_DATASIZE_1BYTE));
+
 		XMEGANVM_SendAddress(ReadAddress);
+
 		*(ReadBuffer++) = XPROGTarget_ReceiveByte();
+
 	}
 
 	return (TimeoutTicksRemaining > 0);

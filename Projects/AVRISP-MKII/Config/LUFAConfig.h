@@ -115,8 +115,8 @@
 		#define FIXED_NUM_CONFIGURATIONS         1
 //		#define CONTROL_ONLY_DEVICE
 		#define MAX_ENDPOINT_INDEX               4
-//		#define NO_DEVICE_REMOTE_WAKEUP
-//		#define NO_DEVICE_SELF_POWER
+		#define NO_DEVICE_REMOTE_WAKEUP
+		#define NO_DEVICE_SELF_POWER
 
 	#else
 

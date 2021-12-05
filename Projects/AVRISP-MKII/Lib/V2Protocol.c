@@ -102,7 +102,7 @@ void V2Protocol_ProcessCommand(void)
 #if ARCH == ARCH_AVR8
 	TCCR0B = ((1 << CS02) | (1 << CS00));
 #elif ARCH == ARCH_XMEGA
-	TCD0.CTRLA = TC_CLKSEL_DIV1024_gc; 
+	DELAY_TIMER.CTRLA = TC_CLKSEL_DIV1024_gc; 
 #endif
 	switch (V2Command)
 	{

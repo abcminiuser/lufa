@@ -80,7 +80,7 @@
 		#define PDI_USART               USARTC0
 		#define PDI_PORT                PORTC
 		#define PDI_RX_MASK            (1 << 2)
-		#define PDI_RX_CTRL             PIN1CTRL
+		#define PDI_RX_CTRL             PIN2CTRL
 		
 		#define PDI_TX_MASK            (1 << 3)
 		#define PDI_TX_CTRL             PIN3CTRL
