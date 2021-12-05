@@ -287,9 +287,10 @@ static void XPROGTarget_SetTxMode(void)
 	UCSR1B &= ~(1 << RXEN1);
 	UCSR1B |=  (1 << TXEN1);
 #elif (ARCH == ARCH_XMEGA)
-	while (PDI_PORT.IN & PDI_XCK_MASK);
+	/* As the pin is actived, we need to wait inverted */
 	while (!(PDI_PORT.IN & PDI_XCK_MASK));
-	while (PDI_PORT.IN & PDI_XCK_MASK);
+	while ((PDI_PORT.IN & PDI_XCK_MASK));
+	while (!(PDI_PORT.IN & PDI_XCK_MASK));
 
 	PDI_PORT.OUTSET = PDI_TX_MASK;
 	PDI_PORT.DIRSET = PDI_TX_MASK;
@@ -314,8 +315,7 @@ static void XPROGTarget_SetRxMode(void)
 #elif (ARCH == ARCH_XMEGA)
 	while(!(PDI_USART.STATUS & USART_TXCIF_bm))
 		;
-
-	PDI_USART.STATUS = USART_RXCIF_bm;
+	PDI_USART.STATUS = USART_TXCIF_bm;
 
 	PDI_USART.CTRLB &= ~USART_TXEN_bm;
 	PDI_USART.CTRLB |=  USART_RXEN_bm;
