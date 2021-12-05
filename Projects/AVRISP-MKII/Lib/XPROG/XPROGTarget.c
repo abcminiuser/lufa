@@ -66,9 +66,13 @@ void XPROGTarget_EnableTargetPDI(void)
 
 
 #elif (ARCH == ARCH_XMEGA)
-	/* Set Tx and XCK as outputs, Rx as input */
+	/* Set Tx and XCK as outputs, Rx as input, Invert the XCK PIN */
 	PDI_PORT.DIRSET = PDI_TX_MASK | PDI_XCK_MASK;
 	PDI_PORT.DIRCLR = PDI_RX_MASK;
+	PDI_PORT.PDI_XCK_CTRL = PORT_INVEN_bm;
+	
+	/* Set Tx (PDI CLOCK) high (Set low because its inverted), DATA line low for at least 90ns to disable /RESET functionality */
+	PDI_PORT.DIRCLR = PDI_RX_MASK | PDI_XCK_MASK;
 	_delay_us(100);
 
 	/* Set DATA line high for at least 90ns to disable /RESET functionality */
@@ -76,9 +80,9 @@ void XPROGTarget_EnableTargetPDI(void)
 	_delay_us(20);
 
 	/* Set up the synchronous USART for XMEGA communications - 8 data bits, even parity, 2 stop bits */
-	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) & 0xFF;
-	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) >> 8;
-	PDI_USART.CTRLA = 0; //USART_RXCINTLVL_MED_gc | USART_TXCINTLVL_MED_gc | USART_DREINTLVL_MED_gc //TODO: Enable interrups
+	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU + XPROG_HARDWARE_SPEED) /(2*XPROG_HARDWARE_SPEED)) - 1) & 0xFF;
+	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU + XPROG_HARDWARE_SPEED) /(2*XPROG_HARDWARE_SPEED)) - 1) >> 8;
+	PDI_USART.CTRLA = 0;
 	PDI_USART.CTRLB = USART_TXEN_bm | USART_CLK2X_bm;
 	PDI_USART.CTRLC = USART_CMODE_SYNCHRONOUS_gc | USART_PMODE_EVEN_gc | USART_SBMODE_bm | USART_CHSIZE_8BIT_gc;
 #endif
@@ -112,14 +116,15 @@ void XPROGTarget_EnableTargetTPI(void)
 	AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
 	_delay_us(100);
 
-	/* Set Tx and XCK as outputs, Rx as input */
+	/* Set Tx and XCK as outputs, Rx as input, Invert XCK */
 	PDI_PORT.DIRSET = PDI_TX_MASK | PDI_XCK_MASK;
 	PDI_PORT.DIRCLR = PDI_RX_MASK;
+	PDI_PORT.PDI_XCK_CTRL = PORT_INVEN_bm;
 
 	/* Set up the synchronous USART for TPI communications - 8 data bits, even parity, 2 stop bits */
-	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) & 0xFF;
-	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU * 2) + XPROG_HARDWARE_SPEED*8)/(XPROG_HARDWARE_SPEED*16) - 1) >> 8;
-	PDI_USART.CTRLA = 0; //USART_RXCINTLVL_MED_gc | USART_TXCINTLVL_MED_gc | USART_DREINTLVL_MED_gc //TODO: Enable interrups
+	PDI_USART.BAUDCTRLA = ((((uint32_t)F_CPU + XPROG_HARDWARE_SPEED) /(2*XPROG_HARDWARE_SPEED)) - 1) & 0xFF;
+	PDI_USART.BAUDCTRLB = ((((uint32_t)F_CPU + XPROG_HARDWARE_SPEED) /(2*XPROG_HARDWARE_SPEED)) - 1) >> 8;
+	PDI_USART.CTRLA = 0;
 	PDI_USART.CTRLB = USART_TXEN_bm | USART_CLK2X_bm;
 	PDI_USART.CTRLC = USART_CMODE_SYNCHRONOUS_gc | USART_PMODE_EVEN_gc | USART_SBMODE_bm | USART_CHSIZE_8BIT_gc;
 #endif
@@ -151,11 +156,12 @@ void XPROGTarget_DisableTargetPDI(void)
 	PDI_USART.CTRLB = 0;
 	PDI_USART.CTRLC = 0;
 
-	/* Tristate all pins */
+	/* Tristate all pins and disable inversion */
 	PDI_PORT.DIRCLR = PDI_TX_MASK | PDI_XCK_MASK;
-	PDI_PORT.PDI_XCK_CTRL &= ~PORT_OPC_PULLUP_gc;
-	PDI_PORT.PDI_TX_CTRL  &= ~PORT_OPC_PULLUP_gc;
-	PDI_PORT.PDI_RX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+	
+	PDI_PORT.PDI_XCK_CTRL &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc | PORT_INVEN_bm);
+	PDI_PORT.PDI_TX_CTRL  &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc);
+	PDI_PORT.PDI_RX_CTRL  &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc);
 #endif
 }
 
@@ -188,13 +194,13 @@ void XPROGTarget_DisableTargetTPI(void)
 
 	/* Tristate all pins */
 	PDI_PORT.DIRCLR = PDI_TX_MASK | PDI_XCK_MASK;
-	PDI_PORT.PDI_XCK_CTRL &= ~PORT_OPC_PULLUP_gc;
-	PDI_PORT.PDI_TX_CTRL  &= ~PORT_OPC_PULLUP_gc;
-	PDI_PORT.PDI_RX_CTRL  &= ~PORT_OPC_PULLUP_gc;
+	PDI_PORT.PDI_XCK_CTRL &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc | PORT_INVEN_bm);
+	PDI_PORT.PDI_TX_CTRL  &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc);
+	PDI_PORT.PDI_RX_CTRL  &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc);
 	
 	AUX_LINE_PORT.DIRCLR = AUX_LINE_MASK;
 	AUX_LINE_PORT.OUTCLR = AUX_LINE_MASK;
-	AUX_LINE_PORT.AUX_LINE_CTRL &= ~PORT_OPC_PULLUP_gc;
+	AUX_LINE_PORT.AUX_LINE_CTRL &= ~(PORT_OPC_PULLUP_gc | PORT_OPC_PULLDOWN_gc);
 #endif
 }
 
@@ -259,9 +265,10 @@ void XPROGTarget_SendIdle(void)
 		while (!(PIND & (1 << 5)));
 		while (PIND & (1 << 5));
 #elif (ARCH == ARCH_XMEGA)
-		while (PDI_PORT.IN & PDI_XCK_MASK);
+		/* As the pin inversion is active we need to wait inverted */
 		while (!(PDI_PORT.IN & PDI_XCK_MASK));
-		while (PDI_PORT.IN & PDI_XCK_MASK);
+		while ((PDI_PORT.IN & PDI_XCK_MASK));
+		while (!(PDI_PORT.IN & PDI_XCK_MASK));
 #endif
 	}
 }
