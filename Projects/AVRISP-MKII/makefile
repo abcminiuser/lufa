@@ -11,7 +11,7 @@
 
 # Run "make help" for target help.
 
-MCU          = atxmega128a4u
+MCU          = atxmega256a3u
 ARCH         = XMEGA
 BOARD        = NONE
 F_CPU        = 32000000

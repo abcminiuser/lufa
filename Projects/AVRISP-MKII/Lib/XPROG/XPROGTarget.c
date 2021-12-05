@@ -216,6 +216,7 @@ void XPROGTarget_SendByte(const uint8_t Byte)
 #elif (ARCH == ARCH_XMEGA)
 	while(!(PDI_USART.STATUS & USART_DREIF_bm))
 		;
+	PDI_USART.STATUS |= USART_TXCIF_bm;
 	PDI_USART.DATA = Byte;
 #endif
 }
@@ -236,7 +237,7 @@ uint8_t XPROGTarget_ReceiveByte(void)
 		;
 	return UDR1;
 #elif (ARCH == ARCH_XMEGA)
-	while(!(PDI_USART.STATUS & USART_RXCIF_bm))
+	while(!(PDI_USART.STATUS & USART_RXCIF_bm) && TimeoutTicksRemaining)
 		;
 	return PDI_USART.DATA;
 #endif
