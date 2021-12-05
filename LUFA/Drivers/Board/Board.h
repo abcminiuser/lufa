@@ -79,7 +79,8 @@
 			#include "AVR8/BUMBLEB/Board.h"
 		#elif (BOARD == BOARD_EVK527)
 			#include "AVR8/EVK527/Board.h"
-		#elif ((BOARD == BOARD_TEENSY) || (BOARD == BOARD_TEENSY2))
+		#elif ((BOARD == BOARD_TEENSY) || (BOARD == BOARD_TEENSYPP)) || \
+		      ((BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP))
 			#include "AVR8/TEENSY/Board.h"
 		#elif (BOARD == BOARD_USBTINYMKII)
 			#include "AVR8/USBTINYMKII/Board.h"
