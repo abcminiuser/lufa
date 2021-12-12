@@ -54,10 +54,10 @@
 				#define LUFA_VERSION_RELEASE_TYPE_FULL          2
 			/**@}*/
 
-			/** Indicates the version number of the library, as an integer. \note This value is only updates in non-development releases. */
+			/** Indicates the version number of the library, as an integer. \note This value is only updated in non-development releases. */
 			#define LUFA_VERSION_INTEGER              0x210130
 
-			/** Indicates the version number of the library, as a string. \note This value is only updates in non-development releases. */
+			/** Indicates the version number of the library, as a string. \note This value is only updated in non-development releases. */
 			#define LUFA_VERSION_STRING               "210130"
 
 			/** Indicates the release type of the library. */

@@ -37,8 +37,8 @@
  */
 
 /** \ingroup Group_BoardInfo
- *  \defgroup Group_BoardInfo_TEENSY2 TEENSY2PP
- *  \brief Board specific information header for the PJRC Teensy 2 ++ boards.
+ *  \defgroup Group_BoardInfo_TEENSY2PP TEENSY2PP
+ *  \brief Board specific information header for the PJRC Teensy 2++ boards.
  *
  *  See \ref Group_BoardInfo_TEENSY for more details.
  */
@@ -51,8 +51,8 @@
  */
 
 /** \ingroup Group_BoardInfo
- *  \defgroup Group_BoardInfo_TEENSY TEENSYPP
- *  \brief Board specific information header for the PJRC Teensy 1 ++ boards.
+ *  \defgroup Group_BoardInfo_TEENSYPP TEENSYPP
+ *  \brief Board specific information header for the PJRC Teensy 1++ boards.
  *
  *  See \ref Group_BoardInfo_TEENSY for more details.
  */
@@ -61,7 +61,7 @@
  *  \defgroup Group_BoardInfo_TEENSY TEENSY
  *  \brief Board specific information header for the PJRC Teensy 1 boards.
  *
- *  Board specific information header for the PJRC Teensy 1, 1++, 2, 2 ++ boards (http://www.pjrc.com/teensy/index.html).
+ *  Board specific information header for the PJRC Teensy 1, 1++, 2, 2++ boards (http://www.pjrc.com/teensy/index.html).
  *
  *  @{
  */
