@@ -37,8 +37,22 @@
  */
 
 /** \ingroup Group_LEDs
+ *  \defgroup Group_LEDs_TEENSY2PP TEENSY2PP
+ *  \brief Board specific LED driver header for the PJRC Teensy 2 ++ boards.
+ *
+ *  See \ref Group_LEDs_TEENSY for more details.
+ */
+
+/** \ingroup Group_LEDs
  *  \defgroup Group_LEDs_TEENSY2 TEENSY2
  *  \brief Board specific LED driver header for the PJRC Teensy 2 boards.
+ *
+ *  See \ref Group_LEDs_TEENSY for more details.
+ */
+
+/** \ingroup Group_LEDs
+ *  \defgroup Group_LEDs_TEENSYPP TEENSYPP
+ *  \brief Board specific LED driver header for the PJRC Teensy 1 ++ boards.
  *
  *  See \ref Group_LEDs_TEENSY for more details.
  */
@@ -47,17 +61,23 @@
  *  \defgroup Group_LEDs_TEENSY TEENSY
  *  \brief Board specific LED driver header for the PJRC Teensy 1.x/2.x boards.
  *
+ *  \note For version 2 ++ Teensy boards, compile with <code>BOARD = TEENSY2PP</code>.
+ *
  *  \note For version 2 Teensy boards, compile with <code>BOARD = TEENSY2</code>.
+ *
+ *  \note For version 1 ++  Teensy boards, compile with <code>BOARD = TEENSYPP</code>.
+ *
+ *  \note For version 1 Teensy boards, compile with <code>BOARD = TEENSY</code>.
  *
  *  Board specific LED driver header for the PJRC Teensy boards (http://www.pjrc.com/teensy/index.html).
  *
- *  <b>TEENSY</b>:
+ *  <b>TEENSY</b>, <b>TEENSYPP</b>:
  *  <table>
  *    <tr><th>Name</th><th>Color</th><th>Info</th><th>Active Level</th><th>Port Pin</th></tr>
  *    <tr><td>LEDS_LED1</td><td>Green</td><td>General Indicator</td><td>High</td><td>PORTD.6</td></tr>
  *  </table>
  *
- *  <b>TEENSY2</b>:
+ *  <b>TEENSY2</b>, <b>TEENSY2PP</b>:
  *  <table>
  *    <tr><th>Name</th><th>Color</th><th>Info</th><th>Active Level</th><th>Port Pin</th></tr>
  *    <tr><td>LEDS_LED1</td><td>Green</td><td>General Indicator</td><td>Low</td><td>PORTD.6</td></tr>
@@ -99,7 +119,7 @@
 			{
 				DDRD  |= LEDS_ALL_LEDS;
 
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				PORTD &= ~LEDS_ALL_LEDS;
 				#else
 				PORTD |=  LEDS_ALL_LEDS;
@@ -114,7 +134,7 @@
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
 			{
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				PORTD |=  LEDMask;
 				#else
 				PORTD &= ~LEDMask;
@@ -123,7 +143,7 @@
 
 			static inline void LEDs_TurnOffLEDs(const uint8_t LEDMask)
 			{
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				PORTD &= ~LEDMask;
 				#else
 				PORTD |=  LEDMask;
@@ -132,7 +152,7 @@
 
 			static inline void LEDs_SetAllLEDs(const uint8_t LEDMask)
 			{
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				PORTD = ((PORTD & ~LEDS_ALL_LEDS) | LEDMask);
 				#else
 				PORTD = ((PORTD | LEDS_ALL_LEDS) & ~LEDMask);
@@ -142,7 +162,7 @@
 			static inline void LEDs_ChangeLEDs(const uint8_t LEDMask,
 			                                   const uint8_t ActiveMask)
 			{
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				PORTD = ((PORTD & ~LEDMask) | ActiveMask);
 				#else
 				PORTD = ((PORTD | LEDMask) & ~ActiveMask);
@@ -157,7 +177,7 @@
 			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
-				#if (BOARD == BOARD_TEENSY2)
+				#if (BOARD == BOARD_TEENSY2) || (BOARD == BOARD_TEENSY2PP)
 				return (PORTD & LEDS_ALL_LEDS);
 				#else
 				return (~PORTD & LEDS_ALL_LEDS);
