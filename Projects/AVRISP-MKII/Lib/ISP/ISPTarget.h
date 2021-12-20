@@ -141,9 +141,9 @@
 
 			if (ISPTarget_HardwareSPIMode)
 				#if (ARCH == ARCH_XMEGA)
-					ReceivedByte = SPI_ReceiveByte(&SPI_REG);
+					ReceivedByte = SPI_TransferByte(&SPI_REG, Byte);
 				#else
-					ReceivedByte = SPI_ReceiveByte();
+					ReceivedByte = SPI_TransferByte(Byte);
 				#endif
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(Byte);

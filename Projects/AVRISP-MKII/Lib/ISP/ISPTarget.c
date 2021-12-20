@@ -193,8 +193,11 @@ void ISPTarget_EnableTargetISP(void)
 #if (ARCH == ARCH_AVR8)
 		SPI_Init(pgm_read_byte(&SPIMaskFromSCKDuration[SCKDuration]) | SPI_ORDER_MSB_FIRST |
 		                       SPI_SCK_LEAD_RISING | SPI_SAMPLE_LEADING | SPI_MODE_MASTER);
-#elif (ARCH == XMEGA)
-		SPI_Init(&SPI_REG, pgm_read_byte(&SPI_PORT, &SPIMaskFromSCKDuration[SCKDuration]) | SPI_ORDER_MSB_FIRST |
+#elif (ARCH == ARCH_XMEGA)
+		SPI_PORT.DIRSET = SPI_SCK_MASK | SPI_MOSI_MASK | PIN4_bm;
+		SPI_PORT.DIRCLR = SPI_MISO_MASK;
+		SPI_PORT.OUTSET = PIN4_bm;
+		SPI_Init(&SPI_REG, pgm_read_byte(&SPIMaskFromSCKDuration[SCKDuration]) | SPI_ORDER_MSB_FIRST |
 		                       SPI_SCK_LEAD_RISING | SPI_SAMPLE_LEADING | SPI_MODE_MASTER);
 #endif
 	}
@@ -207,6 +210,7 @@ void ISPTarget_EnableTargetISP(void)
 		PORTB |= ((1 << 0) | (1 << 3)); //Pullup on RST and MISO
 #elif (ARCH == ARCH_XMEGA)
 		SPI_PORT.DIRSET = SPI_SCK_MASK | SPI_MOSI_MASK;
+		SPI_PORT.DIRCLR = SPI_MISO_MASK;
 		SPI_PORT.SPI_RST_CTRL = PORT_OPC_PULLUP_gc;
 		SPI_PORT.SPI_MISO_CTRL = PORT_OPC_PULLUP_gc;
 #endif
@@ -237,6 +241,7 @@ void ISPTarget_DisableTargetISP(void)
 	if (ISPTarget_HardwareSPIMode)
 	{
 		SPI_Disable(&SPI_REG);
+		SPI_PORT.DIRCLR = SPI_SCK_MASK | SPI_MISO_MASK | SPI_MOSI_MASK | PIN4_bm;
 	}
 	else
 	{
