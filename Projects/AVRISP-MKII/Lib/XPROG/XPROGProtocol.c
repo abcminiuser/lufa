@@ -250,7 +250,7 @@ static void XPROGProtocol_WriteMemory(void)
 	WriteMemory_XPROG_Params.Length  = SwapEndian_16(WriteMemory_XPROG_Params.Length);
 	Endpoint_Read_Stream_LE(&WriteMemory_XPROG_Params.ProgData, WriteMemory_XPROG_Params.Length, NULL);
 
-	if (WriteMemory_XPROG_Params.Length >= sizeof(WriteMemory_XPROG_Params.ProgData))
+	if (WriteMemory_XPROG_Params.Length > sizeof(WriteMemory_XPROG_Params.ProgData))
 	{
 		Endpoint_StallTransaction();
 		return;
@@ -322,6 +322,7 @@ static void XPROGProtocol_WriteMemory(void)
 			ReturnStatus = XPROG_ERR_TIMEOUT;
 		}
 	}
+	
 
 	Endpoint_Write_8(CMD_XPROG);
 	Endpoint_Write_8(XPROG_CMD_WRITE_MEM);
@@ -349,7 +350,7 @@ static void XPROGProtocol_ReadMemory(void)
 	ReadMemory_XPROG_Params.Address = SwapEndian_32(ReadMemory_XPROG_Params.Address);
 	ReadMemory_XPROG_Params.Length  = SwapEndian_16(ReadMemory_XPROG_Params.Length);
 
-	if (ReadMemory_XPROG_Params.Length >= sizeof(ReadBuffer))
+	if (ReadMemory_XPROG_Params.Length > sizeof(ReadBuffer))
 	{
 		Endpoint_StallTransaction();
 		return;
@@ -375,7 +376,7 @@ static void XPROGProtocol_ReadMemory(void)
 	Endpoint_Write_8(CMD_XPROG);
 	Endpoint_Write_8(XPROG_CMD_READ_MEM);
 	Endpoint_Write_8(ReturnStatus);
-
+	
 	if (ReturnStatus == XPROG_ERR_OK)
 	  Endpoint_Write_Stream_LE(ReadBuffer, ReadMemory_XPROG_Params.Length, NULL);
 
