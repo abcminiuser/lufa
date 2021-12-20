@@ -72,7 +72,8 @@ void XPROGTarget_EnableTargetPDI(void)
 	PDI_PORT.PDI_XCK_CTRL = PORT_INVEN_bm;
 	
 	/* Set Tx (PDI CLOCK) high (Set low because its inverted), DATA line low for at least 90ns to disable /RESET functionality */
-	PDI_PORT.OUTCLR = PDI_TX_MASK | PDI_XCK_MASK;
+	PDI_PORT.OUTCLR = PDI_TX_MASK;
+	PDI_PORT.OUTSET = PDI_XCK_MASK;
 	_delay_us(100);
 
 	/* Set DATA line high for at least 90ns to disable /RESET functionality */
@@ -301,8 +302,7 @@ static void XPROGTarget_SetTxMode(void)
 	PDI_PORT.OUTSET = PDI_TX_MASK;
 	PDI_PORT.DIRSET = PDI_TX_MASK;
 
-	PDI_USART.CTRLB &= ~USART_RXEN_bm;
-	PDI_USART.CTRLB |=  USART_TXEN_bm;
+	PDI_USART.CTRLB = (PDI_USART.CTRLB & ~(USART_TXEN_bm | USART_RXEN_bm)) | USART_TXEN_bm;
 #endif
 	IsSending = true;
 }
@@ -323,8 +323,7 @@ static void XPROGTarget_SetRxMode(void)
 		;
 	PDI_USART.STATUS = USART_TXCIF_bm;
 
-	PDI_USART.CTRLB &= ~USART_TXEN_bm;
-	PDI_USART.CTRLB |=  USART_RXEN_bm;
+	PDI_USART.CTRLB = (PDI_USART.CTRLB & ~(USART_TXEN_bm | USART_RXEN_bm)) | USART_RXEN_bm;
 
 	PDI_PORT.DIRCLR = PDI_TX_MASK;
 	PDI_PORT.OUTCLR = PDI_TX_MASK;
