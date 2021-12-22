@@ -68,9 +68,6 @@
 		#define SPI_MOSI_MASK          (1 << 5)
 		#define SPI_MOSI_CTRL           PIN5CTRL
 
-		#define SPI_RST_MASK           (1 << 4)
-		#define SPI_RST_CTRL            PIN4CTRL
-
 		#define RESCUE_PORT             PORTD
 		#define RESCUE_TIMER            TCD0
 		#define RESCUE_PIN_MASK        (1 << 0)
