@@ -211,7 +211,7 @@ void ISPTarget_EnableTargetISP(void)
 #elif (ARCH == ARCH_XMEGA)
 		SPI_PORT.DIRSET = SPI_SCK_MASK | SPI_MOSI_MASK;
 		SPI_PORT.DIRCLR = SPI_MISO_MASK;
-		SPI_PORT.SPI_RST_CTRL = PORT_OPC_PULLUP_gc;
+		SPI_PORT.AUX_LINE_CTRL = PORT_OPC_PULLUP_gc;
 		SPI_PORT.SPI_MISO_CTRL = PORT_OPC_PULLUP_gc;
 #endif
 		ISPTarget_ConfigureSoftwareSPI(SCKDuration);
@@ -246,7 +246,7 @@ void ISPTarget_DisableTargetISP(void)
 	else
 	{
 		SPI_PORT.DIRCLR = SPI_SCK_MASK | SPI_MOSI_MASK;
-		SPI_PORT.SPI_RST_CTRL &= ~PORT_OPC_PULLUP_gc;
+		SPI_PORT.AUX_LINE_CTRL &= ~PORT_OPC_PULLUP_gc;
 		SPI_PORT.SPI_MOSI_CTRL &= ~PORT_OPC_PULLUP_gc;
 
 		/* Must re-enable rescue clock once software ISP has exited, as the timer for the rescue clock is
