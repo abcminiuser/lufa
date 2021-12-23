@@ -91,7 +91,7 @@
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
-			#define SERIAL_SPI_UBBRVAL(Baud)       ((Baud < (F_CPU / 2)) ? ((F_CPU / (2 * Baud)) - 1) : 0)
+			#define SERIAL_SPI_UBBRVAL(Baud)       ((Baud < (F_CPU / 2)) ? ((F_CPU / (2ULL * Baud)) - 1) : 0)
 	#endif
 
 	/* Public Interface - May be used in end-application: */
