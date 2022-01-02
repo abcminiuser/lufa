@@ -143,13 +143,13 @@ void V2Params_UpdateParamValues(void)
 	uint32_t result = 0;
 	for(uint8_t i = 0; i < 64; i++)
 	{
-		while(!(ADCA.CH0.INTFLAGS & AC_AC0IF_bm))
+		while(!(ADCA.CH0.INTFLAGS & ADC_CH0IF_bm))
 			;
 		result += ADCA.CH0.RES;
-		ADCA.CH0.INTFLAGS = AC_AC0IF_bm;
+		ADCA.CH0.INTFLAGS = ADC_CH0IF_bm;
 	}
 	result >>= 6;
-	V2Params_GetParamFromTable(PARAM_VTARGET)->ParamValue = (((uint16_t)(VTARGET_REF_VOLTS * 10 * VTARGET_SCALE_FACTOR) * result) / 1024);
+	V2Params_GetParamFromTable(PARAM_VTARGET)->ParamValue = (((uint16_t)(VTARGET_REF_VOLTS * 10 * VTARGET_SCALE_FACTOR) * result) / 4096);
 	#endif
 }
 

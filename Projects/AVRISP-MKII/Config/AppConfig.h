@@ -151,7 +151,7 @@
 		#define SW_SPI_PIN_IRQ_vect        PORTC_INT0_vect
 		#define VTARGET_ADC_CHANNEL        1 //Hardcoded allways 1 Connected to PA1
 		#define VTARGET_REF_VOLTS          1.00 //Hardcoded allways 1.00
-		#define VTARGET_SCALE_FACTOR       8.43333 //GND<->R1<-ADC->R2<->SIGNAL | SCALE = (R1+R2)/R1
+		#define VTARGET_SCALE_FACTOR       6.8 //GND<->R1<-ADC->R2<->SIGNAL | SCALE = (R1+R2)/R1
 	#endif
 	#define ENABLE_ISP_PROTOCOL
 	#define ENABLE_XPROG_PROTOCOL
