@@ -349,7 +349,7 @@ static void XPROGProtocol_ReadMemory(void)
 	ReadMemory_XPROG_Params.Address = SwapEndian_32(ReadMemory_XPROG_Params.Address);
 	ReadMemory_XPROG_Params.Length  = SwapEndian_16(ReadMemory_XPROG_Params.Length);
 
-	if (ReadMemory_XPROG_Params.Length >= sizeof(ReadBuffer))
+	if (ReadMemory_XPROG_Params.Length > sizeof(ReadBuffer))
 	{
 		Endpoint_StallTransaction();
 		return;
