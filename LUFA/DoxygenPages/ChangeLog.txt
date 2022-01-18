@@ -11,6 +11,7 @@
   *  - Core:
   *   - RNDIS_Device_ReadPacket() now takes in an explicit destination buffer length, rather than assuming it is ETHERNET_MAX_FRAME_SIZE in length.
   *   - RNDIS_Host_ReadPacket() now takes in an explicit destination buffer length, rather than assuming it is ETHERNET_MAX_FRAME_SIZE in length.
+  *   - New board definitions have been added for the Teensy 1.0++ and Teensy 2.0++ board variants (thanks to Osamu Aoki)
   *  - Library Applications:
   *   - The hand-rolled TCP/IP stack has been removed from the LowLevel and ClassDriver RNDIS examples, as it is incomplete and should be replaced
   *     with a proper network stack anyway.
