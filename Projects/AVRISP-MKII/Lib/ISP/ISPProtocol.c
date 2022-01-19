@@ -47,14 +47,26 @@ static volatile uint8_t  ISPProtocol_ResponseTogglesRemaining;
 
 
 /** ISR to toggle MOSI pin when TIMER1 overflows */
+#if ARCH == ARCH_AVR8
 ISR(TIMER1_OVF_vect, ISR_BLOCK)
 {
     PINB |= (1 << PB2); // toggle PB2 (MOSI) by writing 1 to its bit in PINB
     ISPProtocol_HalfCyclesRemaining--;
 }
+#elif (ARCH == ARCH_XMEGA)
+ISR(SW_SPI_TIMER_CCA_vect, ISR_BLOCK)
+{
+    SPI_PORT.OUTTGL = SPI_MOSI_MASK;
+    ISPProtocol_HalfCyclesRemaining--;
+}
+#endif
 
 /** ISR to listen for toggles on MISO pin */
+#if ARCH == ARCH_AVR8
 ISR(PCINT0_vect, ISR_BLOCK)
+#elif (ARCH == ARCH_XMEGA)
+ISR(SW_SPI_PIN_IRQ_vect, ISR_BLOCK)
+#endif
 {
     ISPProtocol_ResponseTogglesRemaining--;
 }
@@ -420,6 +432,8 @@ void ISPProtocol_Calibrate(void)
     Endpoint_SelectEndpoint(AVRISP_DATA_IN_EPADDR);
     Endpoint_SetEndpointDirection(ENDPOINT_DIR_IN);
 
+		//TODO: Learn it and implement it...
+#if (ARCH == ARCH_AVR8)
     /* Enable pull-up on MISO and release ~RESET */
     DDRB    =  ~(1 << PB3);
     PORTB  |= ( (1 << PB4) | (1 << PB3) );
@@ -455,7 +469,46 @@ void ISPProtocol_Calibrate(void)
     /* Check if device responded with a success message or if we timed out */
     if (ISPProtocol_ResponseTogglesRemaining)
       ResponseStatus = STATUS_CMD_TOUT;
+#elif (ARCH == ARCH_XMEGA)
+    //TODO: This needs to be tested
+    /* Enable pull-up on MISO and release ~RESET */
+    SPI_PORT.SPI_MISO_CTRL = PORT_OPC_PULLUP_gc;
+    SPI_PORT.DIRCLR    =  SPI_MISO_MASK;
+    AUX_LINE_PORT.DIRCLR = AUX_LINE_MASK;
 
+    /* Set up MISO pin (PCINT3) to listen for toggles */
+    SPI_PORT.INT0MASK  = SPI_MISO_MASK;
+
+    /* Set up timer that fires at a rate of 65536 Hz - this will drive the MOSI toggle */
+    SW_SPI_TIMER.CCA  = ISPPROTOCOL_CALIB_TICKS - 1;
+    SW_SPI_TIMER.PER  = ISPPROTOCOL_CALIB_TICKS - 1;
+    SW_SPI_TIMER.CTRLB = TC_WGMODE_FRQ_gc;            // set for fast PWM, TOP = OCR1A
+    SW_SPI_TIMER.CTRLA = TC_CLKSEL_DIV1_gc;           //  ... and no clock prescaling
+    SW_SPI_TIMER.CNT = 0;
+
+    /* Initialize counter variables */
+    ISPProtocol_HalfCyclesRemaining      = ISPPROTOCOL_CALIB_HALF_CYCLE_LIMIT;
+    ISPProtocol_ResponseTogglesRemaining = ISPPROTOCOL_CALIB_SUCCESS_TOGGLE_NUM;
+
+    /* Turn on interrupts */
+    SW_SPI_TIMER.INTCTRLB = TC_CCAINTLVL_MED_gc; // enable interrupts for PCINT7:0 (don't touch setting for PCINT12:8)
+    SPI_PORT.INT0MASK |= PORT_INT0LVL_MED_gc; // enable T1 OVF interrupt (and no other T1 interrupts)
+
+    /* Turn on global interrupts for the following block, restoring current state at end */
+    NONATOMIC_BLOCK(NONATOMIC_RESTORESTATE)
+    {
+        /* Let device do its calibration, wait for response on MISO */
+        while (ISPProtocol_HalfCyclesRemaining && ISPProtocol_ResponseTogglesRemaining);
+
+        /* Disable timer and pin change interrupts */
+        SW_SPI_TIMER.INTCTRLB &= ~TC_CCAINTLVL_MED_gc;
+        SPI_PORT.INT0MASK  &= ~PORT_INT0LVL_gm;
+    }
+
+    /* Check if device responded with a success message or if we timed out */
+    if (ISPProtocol_ResponseTogglesRemaining)
+      ResponseStatus = STATUS_CMD_TOUT;
+#endif
     /* Report back to PC via USB */
     Endpoint_Write_8(CMD_OSCCAL);
     Endpoint_Write_8(ResponseStatus);

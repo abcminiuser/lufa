@@ -42,11 +42,16 @@
 		#include <util/delay.h>
 
 		#include <LUFA/Drivers/USB/USB.h>
-		#include <LUFA/Drivers/Peripheral/SPI.h>
+
 
 		#include "../V2Protocol.h"
 		#include "ISPProtocol.h"
 		#include "Config/AppConfig.h"
+		#if defined(USART_SPI_MASTER)
+			#include <LUFA/Drivers/Peripheral/SerialSPI.h>
+		#else
+			#include <LUFA/Drivers/Peripheral/SPI.h>
+		#endif
 
 	/* Preprocessor Checks: */
 		#if ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
@@ -62,8 +67,11 @@
 		#define LOAD_EXTENDED_ADDRESS_CMD     0x4D
 
 		/** Macro to convert an ISP frequency to a number of timer clock cycles for the software SPI driver. */
-		#define ISP_TIMER_COMP(freq)          (((F_CPU / 8) / 2 / freq) - 1)
-
+		#if (ARCH == ARCH_XMEGA)
+			#define ISP_TIMER_COMP(prediv, freq)  (F_CPU / (prediv * 2ULL * freq))
+		#else
+			#define ISP_TIMER_COMP(freq)          (((F_CPU / 8) / 2 / freq) - 1)
+		#endif
 		/** ISP rescue clock speed in Hz, for clocking targets with incorrectly set fuses. */
 		#define ISP_RESCUE_CLOCK_SPEED        4000000
 
@@ -94,7 +102,15 @@
 		static inline void ISPTarget_SendByte(const uint8_t Byte)
 		{
 			if (ISPTarget_HardwareSPIMode)
+			#if (ARCH == ARCH_XMEGA)
+				#ifdef USART_SPI_MASTER
+					SerialSPI_SendByte(&USART_SPI_REG, Byte);
+				#else
+					SPI_SendByte(&SPI_REG, Byte);
+				#endif
+			#else
 			  SPI_SendByte(Byte);
+			#endif
 			else
 			  ISPTarget_TransferSoftSPIByte(Byte);
 		}
@@ -109,7 +125,15 @@
 			uint8_t ReceivedByte;
 
 			if (ISPTarget_HardwareSPIMode)
+			#if (ARCH == ARCH_XMEGA)
+				#ifdef USART_SPI_MASTER
+					ReceivedByte = SerialSPI_ReceiveByte(&USART_SPI_REG);
+				#else
+					ReceivedByte = SPI_ReceiveByte(&SPI_REG);
+				#endif
+			#else
 			  ReceivedByte = SPI_ReceiveByte();
+			#endif
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(0x00);
 
@@ -132,7 +156,15 @@
 			uint8_t ReceivedByte;
 
 			if (ISPTarget_HardwareSPIMode)
-			  ReceivedByte = SPI_TransferByte(Byte);
+				#if (ARCH == ARCH_XMEGA)
+					#ifdef USART_SPI_MASTER
+						ReceivedByte = SerialSPI_TransferByte(&USART_SPI_REG, Byte);
+					#else
+						ReceivedByte = SPI_TransferByte(&SPI_REG, Byte);
+					#endif
+				#else
+					ReceivedByte = SPI_TransferByte(Byte);
+				#endif
 			else
 			  ReceivedByte = ISPTarget_TransferSoftSPIByte(Byte);
 

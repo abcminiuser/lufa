@@ -80,6 +80,15 @@ void SetupHardware(void)
 
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
+#elif (ARCH == ARCH_XMEGA)
+	XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
+	XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
+
+	// Start the 32MHz internal RC oscillator and start the DFLL to increase it to F_USB using the USB SOF as a reference
+	XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
+	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+	sei();
 #endif
 
 	/* Hardware Initialization */
@@ -87,7 +96,7 @@ void SetupHardware(void)
 	#if defined(RESET_TOGGLES_LIBUSB_COMPAT)
 	UpdateCurrentCompatibilityMode();
 	#endif
-
+	
 	/* USB Stack Initialization */
 	USB_Init();
 }
@@ -113,7 +122,9 @@ void EVENT_USB_Device_ConfigurationChanged(void)
 	ConfigSuccess &= Endpoint_ConfigureEndpoint(AVRISP_DATA_OUT_EPADDR, EP_TYPE_BULK, AVRISP_DATA_EPSIZE, 1);
 
 	/* Setup AVRISP Data IN endpoint if it is using a physically different endpoint */
+#if (ARCH != ARCH_XMEGA)
 	if ((AVRISP_DATA_IN_EPADDR & ENDPOINT_EPNUM_MASK) != (AVRISP_DATA_OUT_EPADDR & ENDPOINT_EPNUM_MASK))
+#endif
 	  ConfigSuccess &= Endpoint_ConfigureEndpoint(AVRISP_DATA_IN_EPADDR, EP_TYPE_BULK, AVRISP_DATA_EPSIZE, 1);
 
 	/* Indicate endpoint configuration success or failure */

@@ -42,7 +42,7 @@ uint32_t CurrentAddress;
 /** Flag to indicate that the next read/write operation must update the device's current extended FLASH address */
 bool MustLoadExtendedAddress;
 
-
+#if ARCH == ARCH_AVR8
 /** ISR to manage timeouts whilst processing a V2Protocol command */
 ISR(TIMER0_COMPA_vect, ISR_NOBLOCK)
 {
@@ -51,6 +51,15 @@ ISR(TIMER0_COMPA_vect, ISR_NOBLOCK)
 	else
 	  TCCR0B = 0;
 }
+#elif ARCH == ARCH_XMEGA
+ISR(DELAY_TIMER_OVF_vect, ISR_NOBLOCK)
+{
+	if (TimeoutTicksRemaining)
+	  TimeoutTicksRemaining--;
+	else
+		DELAY_TIMER.CTRLA = TC_CLKSEL_OFF_gc; 
+}
+#endif
 
 /** Initializes the hardware and software associated with the V2 protocol command handling. */
 void V2Protocol_Init(void)
@@ -60,12 +69,36 @@ void V2Protocol_Init(void)
 	ADC_Init(ADC_FREE_RUNNING | ADC_PRESCALE_128);
 	ADC_SetupChannel(VTARGET_ADC_CHANNEL);
 	ADC_StartReading(VTARGET_REF_MASK | ADC_RIGHT_ADJUSTED | VTARGET_ADC_CHANNEL_MASK);
+	#elif !defined(NO_VTARGET_DETECT) && (ARCH == ARCH_XMEGA)
+	//TODO: Write LUFA XMega ADC Driver
+	NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
+	uint8_t cal = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, ADCACAL0));
+	NVM_CMD = NVM_CMD_NO_OPERATION_gc;
+	ADCA.CALL = cal;
+
+	NVM_CMD = NVM_CMD_READ_CALIB_ROW_gc;
+	cal = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, ADCACAL1));
+	NVM_CMD = NVM_CMD_NO_OPERATION_gc;
+	ADCA.CALH = cal;
+	ADCA.CTRLB = ADC_FREERUN_bm | ADC_IMPMODE_bm;
+	PORTA.DIRCLR = PIN0_bm;
+	ADCA.REFCTRL = ADC_REFSEL_INT1V_gc;
+	ADCA.PRESCALER = ADC_PRESCALER_DIV64_gc;
+	ADCA.CH0.CTRL = ADC_CH_GAIN_1X_gc | ADC_CH_INPUTMODE_SINGLEENDED_gc;
+	ADCA.CH0.MUXCTRL = ADC_CH_MUXPOS_PIN0_gc;
+	ADCA.CTRLA = ADC_ENABLE_bm;
 	#endif
 
 	/* Timeout timer initialization (~10ms period) */
+#if ARCH == ARCH_AVR8
 	OCR0A  = (((F_CPU / 1024) / 100) - 1);
 	TCCR0A = (1 << WGM01);
 	TIMSK0 = (1 << OCIE0A);
+#elif ARCH == ARCH_XMEGA
+	DELAY_TIMER.PER = (((F_CPU / 1024) / 100) - 1);
+	DELAY_TIMER.CTRLB = TC_WGMODE_NORMAL_gc;
+	DELAY_TIMER.INTCTRLA = TC_OVFINTLVL_MED_gc;
+#endif
 
 	V2Params_LoadNonVolatileParamValues();
 
@@ -84,8 +117,11 @@ void V2Protocol_ProcessCommand(void)
 
 	/* Reset timeout counter duration and start the timer */
 	TimeoutTicksRemaining = COMMAND_TIMEOUT_TICKS;
+#if ARCH == ARCH_AVR8
 	TCCR0B = ((1 << CS02) | (1 << CS00));
-
+#elif ARCH == ARCH_XMEGA
+	DELAY_TIMER.CTRLA = TC_CLKSEL_DIV1024_gc; 
+#endif
 	switch (V2Command)
 	{
 		case CMD_SIGN_ON:
@@ -150,8 +186,12 @@ void V2Protocol_ProcessCommand(void)
 	}
 
 	/* Disable the timeout management timer */
+#if ARCH == ARCH_AVR8
 	TCCR0B = 0;
-
+#elif ARCH == ARCH_XMEGA
+	DELAY_TIMER.CTRLA = TC_CLKSEL_OFF_gc; 
+#endif
+	
 	Endpoint_WaitUntilReady();
 	Endpoint_SelectEndpoint(AVRISP_DATA_OUT_EPADDR);
 	Endpoint_SetEndpointDirection(ENDPOINT_DIR_OUT);
