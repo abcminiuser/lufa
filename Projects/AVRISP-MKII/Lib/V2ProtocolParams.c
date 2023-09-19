@@ -188,8 +188,6 @@ uint8_t V2Params_GetParameterValue(const uint8_t ParamID)
  *
  *  \param[in] ParamID  Parameter ID whose value is to be set in the table
  *  \param[in] Value    New value to set the parameter to
- *
- *  \return Pointer to the associated parameter information from the parameter table if found, NULL otherwise
  */
 void V2Params_SetParameterValue(const uint8_t ParamID,
                                 const uint8_t Value)

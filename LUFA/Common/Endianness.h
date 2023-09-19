@@ -461,8 +461,6 @@
 			 *
 			 *  \param[in,out] Data    Pointer to a number containing an even number of bytes to be reversed.
 			 *  \param[in]     Length  Length of the data in bytes.
-			 *
-			 *  \return Input data with the individual bytes reversed.
 			 */
 			static inline void SwapEndian_n(void* const Data,
 			                                uint8_t Length) ATTR_NON_NULL_PTR_ARG(1);
