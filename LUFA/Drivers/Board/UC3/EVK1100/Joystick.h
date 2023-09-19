@@ -104,7 +104,7 @@
 				AVR32_GPIO.port[JOY_PORT].gperc = JOY_MASK;
 			};
 
-			static inline uint32_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint32_t Joystick_GetStatus(void)
 			{
 				return (uint32_t)(~(AVR32_GPIO.port[JOY_PORT].pvr & JOY_MASK));

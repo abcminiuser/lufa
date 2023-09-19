@@ -233,7 +233,7 @@
 			 *
 			 *  \param[in,out] RNDISInterfaceInfo  Pointer to a structure containing an RNDIS Class host configuration and state.
 			 */
-			static inline void RNDIS_Host_USBTask(USB_ClassInfo_RNDIS_Host_t* const RNDISInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void RNDIS_Host_USBTask(USB_ClassInfo_RNDIS_Host_t* const RNDISInterfaceInfo)
 			{
 				(void)RNDISInterfaceInfo;

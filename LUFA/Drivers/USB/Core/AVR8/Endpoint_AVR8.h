@@ -218,7 +218,7 @@
 			 *
 			 *  \return Total number of bytes in the currently selected Endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_BytesInEndpoint(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_BytesInEndpoint(void)
 			{
 				#if (defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR))
@@ -234,7 +234,7 @@
 			 *
 			 *  \return The currently selected endpoint's direction, as a \c ENDPOINT_DIR_* mask.
 			 */
-			static inline uint8_t Endpoint_GetEndpointDirection(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_GetEndpointDirection(void)
 			{
 				return (UECFG0X & (1 << EPDIR)) ? ENDPOINT_DIR_IN : ENDPOINT_DIR_OUT;
@@ -246,7 +246,7 @@
 			 *
 			 *  \return Index of the currently selected endpoint.
 			 */
-			static inline uint8_t Endpoint_GetCurrentEndpoint(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_GetCurrentEndpoint(void)
 			{
 				#if !defined(CONTROL_ONLY_DEVICE)
@@ -263,7 +263,7 @@
 			 *
 			 *  \param[in] Address Endpoint address to select.
 			 */
-			static inline void Endpoint_SelectEndpoint(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_SelectEndpoint(const uint8_t Address)
 			{
 				#if !defined(CONTROL_ONLY_DEVICE)
@@ -276,7 +276,7 @@
 			 *
 			 *  \param[in] Address  Endpoint address whose FIFO buffers are to be reset.
 			 */
-			static inline void Endpoint_ResetEndpoint(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetEndpoint(const uint8_t Address)
 			{
 				UERST = (1 << (Address & ENDPOINT_EPNUM_MASK));
@@ -288,7 +288,7 @@
 			 *
 			 *  \note Endpoints must first be configured properly via \ref Endpoint_ConfigureEndpoint().
 			 */
-			static inline void Endpoint_EnableEndpoint(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_EnableEndpoint(void)
 			{
 				UECONX |= (1 << EPEN);
@@ -297,7 +297,7 @@
 			/** Disables the currently selected endpoint so that data cannot be sent and received through it
 			 *  to and from a host.
 			 */
-			static inline void Endpoint_DisableEndpoint(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_DisableEndpoint(void)
 			{
 				UECONX &= ~(1 << EPEN);
@@ -307,7 +307,7 @@
 			 *
 			 * \return Boolean \c true if the currently selected endpoint is enabled, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsEnabled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsEnabled(void)
 			{
 				return ((UECONX & (1 << EPEN)) ? true : false);
@@ -321,7 +321,7 @@
 			 *
 			 *  \return Total number of busy banks in the selected endpoint.
 			 */
-			static inline uint8_t Endpoint_GetBusyBanks(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Endpoint_GetBusyBanks(void)
 			{
 				return (UESTA0X & (0x03 << NBUSYBK0));
@@ -354,7 +354,7 @@
 			 *  \return Boolean \c true if the currently selected endpoint may be read from or written to, depending
 			 *          on its direction.
 			 */
-			static inline bool Endpoint_IsReadWriteAllowed(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsReadWriteAllowed(void)
 			{
 				return ((UEINTX & (1 << RWAL)) ? true : false);
@@ -364,7 +364,7 @@
 			 *
 			 *  \return Boolean \c true if the currently selected endpoint has been configured, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsConfigured(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsConfigured(void)
 			{
 				return ((UESTA0X & (1 << CFGOK)) ? true : false);
@@ -376,7 +376,7 @@
 			 *
 			 *  \return Mask whose bits indicate which endpoints have interrupted.
 			 */
-			static inline uint8_t Endpoint_GetEndpointInterrupts(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_GetEndpointInterrupts(void)
 			{
 				return UEINT;
@@ -389,7 +389,7 @@
 			 *
 			 *  \return Boolean \c true if the specified endpoint has interrupted, \c false otherwise.
 			 */
-			static inline bool Endpoint_HasEndpointInterrupted(const uint8_t Address) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_HasEndpointInterrupted(const uint8_t Address)
 			{
 				return ((Endpoint_GetEndpointInterrupts() & (1 << (Address & ENDPOINT_EPNUM_MASK))) ? true : false);
@@ -401,7 +401,7 @@
 			 *
 			 *  \return Boolean \c true if the current endpoint is ready for an IN packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsINReady(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsINReady(void)
 			{
 				return ((UEINTX & (1 << TXINI)) ? true : false);
@@ -413,7 +413,7 @@
 			 *
 			 *  \return Boolean \c true if current endpoint is has received an OUT packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsOUTReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsOUTReceived(void)
 			{
 				return ((UEINTX & (1 << RXOUTI)) ? true : false);
@@ -425,7 +425,7 @@
 			 *
 			 *  \return Boolean \c true if the selected endpoint has received a SETUP packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsSETUPReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsSETUPReceived(void)
 			{
 				return ((UEINTX & (1 << RXSTPI)) ? true : false);
@@ -438,7 +438,7 @@
 			 *
 			 *  \note This is not applicable for non CONTROL type endpoints.
 			 */
-			static inline void Endpoint_ClearSETUP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearSETUP(void)
 			{
 				UEINTX &= ~(1 << RXSTPI);
@@ -449,7 +449,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_AVR8
 			 */
-			static inline void Endpoint_ClearIN(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearIN(void)
 			{
 				#if !defined(CONTROL_ONLY_DEVICE)
@@ -464,7 +464,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_AVR8
 			 */
-			static inline void Endpoint_ClearOUT(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearOUT(void)
 			{
 				#if !defined(CONTROL_ONLY_DEVICE)
@@ -485,7 +485,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_AVR8
 			 */
-			static inline void Endpoint_StallTransaction(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_StallTransaction(void)
 			{
 				UECONX |= (1 << STALLRQ);
@@ -495,7 +495,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_AVR8
 			 */
-			static inline void Endpoint_ClearStall(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearStall(void)
 			{
 				UECONX |= (1 << STALLRQC);
@@ -507,14 +507,14 @@
 			 *
 			 *  \return Boolean \c true if the currently selected endpoint is stalled, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsStalled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsStalled(void)
 			{
 				return ((UECONX & (1 << STALLRQ)) ? true : false);
 			}
 
 			/** Resets the data toggle of the currently selected endpoint. */
-			static inline void Endpoint_ResetDataToggle(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetDataToggle(void)
 			{
 				UECONX |= (1 << RSTDT);
@@ -524,7 +524,7 @@
 			 *
 			 *  \param[in] DirectionMask  New endpoint direction, as a \c ENDPOINT_DIR_* mask.
 			 */
-			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_SetEndpointDirection(const uint8_t DirectionMask)
 			{
 				UECFG0X = ((UECFG0X & ~(1 << EPDIR)) | (DirectionMask ? (1 << EPDIR) : 0));
@@ -536,7 +536,7 @@
 			 *
 			 *  \return Next byte in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint8_t Endpoint_Read_8(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_Read_8(void)
 			{
 				return UEDATX;
@@ -548,7 +548,7 @@
 			 *
 			 *  \param[in] Data  Data to write into the the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_8(const uint8_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_8(const uint8_t Data)
 			{
 				UEDATX = Data;
@@ -558,7 +558,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_AVR8
 			 */
-			static inline void Endpoint_Discard_8(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_8(void)
 			{
 				uint8_t Dummy;
@@ -575,7 +575,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_Read_16_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_Read_16_LE(void)
 			{
 				union
@@ -597,7 +597,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_Read_16_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_Read_16_BE(void)
 			{
 				union
@@ -619,7 +619,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_16_LE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_16_LE(const uint16_t Data)
 			{
 				UEDATX = (Data & 0xFF);
@@ -633,7 +633,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_16_BE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_16_BE(const uint16_t Data)
 			{
 				UEDATX = (Data >> 8);
@@ -644,7 +644,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_AVR8
 			 */
-			static inline void Endpoint_Discard_16(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_16(void)
 			{
 				uint8_t Dummy;
@@ -662,7 +662,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint32_t Endpoint_Read_32_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_Read_32_LE(void)
 			{
 				union
@@ -686,7 +686,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint32_t Endpoint_Read_32_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_Read_32_BE(void)
 			{
 				union
@@ -710,7 +710,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_32_LE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_32_LE(const uint32_t Data)
 			{
 				UEDATX = (Data &  0xFF);
@@ -726,7 +726,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_32_BE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_32_BE(const uint32_t Data)
 			{
 				UEDATX = (Data >> 24);
@@ -739,7 +739,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_AVR8
 			 */
-			static inline void Endpoint_Discard_32(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_32(void)
 			{
 				uint8_t Dummy;

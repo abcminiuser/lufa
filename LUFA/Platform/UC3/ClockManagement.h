@@ -154,7 +154,7 @@
 			 *
 			 *  \param[in] Channel  Index of the external oscillator to stop.
 			 */
-			static inline void UC3CLK_StopExternalOscillator(const uint8_t Channel) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void UC3CLK_StopExternalOscillator(const uint8_t Channel)
 			{
 				AVR32_PM.mcctrl &= ~(1 << (AVR32_PM_MCCTRL_OSC0EN_OFFSET + Channel));
@@ -207,7 +207,7 @@
 			 *
 			 *  \param[in] Channel  Index of the PLL to stop.
 			 */
-			static inline void UC3CLK_StopPLL(const uint8_t Channel) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void UC3CLK_StopPLL(const uint8_t Channel)
 			{
 				AVR32_PM.PLL[Channel].pllen = false;
@@ -272,7 +272,7 @@
 			 *
 			 *  \return Boolean \c true if the generic clock was successfully stopped, \c false if invalid parameters specified.
 			 */
-			static inline bool UC3CLK_StopGenericClock(const uint8_t Channel) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline bool UC3CLK_StopGenericClock(const uint8_t Channel)
 			{
 				if (Channel >= AVR32_PM_GCLK_NUM)

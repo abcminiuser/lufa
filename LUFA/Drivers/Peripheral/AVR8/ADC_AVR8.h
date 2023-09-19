@@ -365,7 +365,7 @@
 			 *  \return Boolean \c false if the reading is still taking place, or true if the conversion is
 			 *          complete and ready to be read out with \ref ADC_GetResult().
 			 */
-			static inline bool ADC_IsReadingComplete(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool ADC_IsReadingComplete(void)
 			{
 				return ((ADCSRA & (1 << ADIF)) ? true : false);
@@ -376,7 +376,7 @@
 			 *
 			 *  \return The result of the last ADC conversion as an unsigned value.
 			 */
-			static inline uint16_t ADC_GetResult(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t ADC_GetResult(void)
 			{
 				ADCSRA |= (1 << ADIF);
@@ -394,7 +394,7 @@
 			 *
 			 *  \return Converted ADC result for the given ADC channel.
 			 */
-			static inline uint16_t ADC_GetChannelReading(const uint16_t MUXMask) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint16_t ADC_GetChannelReading(const uint16_t MUXMask)
 			{
 				ADC_StartReading(MUXMask);
@@ -410,7 +410,7 @@
 			 *
 			 *  \param[in] Mode  Mask of ADC prescale and mode settings.
 			 */
-			static inline void ADC_Init(const uint8_t Mode) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void ADC_Init(const uint8_t Mode)
 			{
 				ADCSRA = ((1 << ADEN) | Mode);
@@ -419,7 +419,7 @@
 			/** Turns off the ADC. If this is called, any further ADC operations will require a call to
 			 *  \ref ADC_Init() before the ADC can be used again.
 			 */
-			static inline void ADC_Disable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void ADC_Disable(void)
 			{
 				ADCSRA = 0;
@@ -429,7 +429,7 @@
 			 *
 			 *  \return Boolean \c true if the ADC subsystem is currently enabled, \c false otherwise.
 			 */
-			static inline bool ADC_GetStatus(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool ADC_GetStatus(void)
 			{
 				return ((ADCSRA & (1 << ADEN)) ? true : false);

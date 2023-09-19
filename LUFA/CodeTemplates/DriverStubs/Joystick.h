@@ -86,7 +86,7 @@
 				// TODO: Clear the joystick pins as high impedance inputs here
 			}
 
-			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Joystick_GetStatus(void)
 			{
 				// TODO: Return current joystick position data which can be obtained by masking against the JOY_* macros

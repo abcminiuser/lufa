@@ -162,7 +162,7 @@
 			 *
 			 *  \return Current USB frame number from the USB controller.
 			 */
-			static inline uint16_t USB_Device_GetFrameNumber(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint16_t USB_Device_GetFrameNumber(void)
 			{
 				return UDFNUM;
@@ -175,7 +175,7 @@
 				 *
 				 *  \note This function is not available when the \c NO_SOF_EVENTS compile time token is defined.
 				 */
-				static inline void USB_Device_EnableSOFEvents(void) ATTR_ALWAYS_INLINE;
+				ATTR_ALWAYS_INLINE
 				static inline void USB_Device_EnableSOFEvents(void)
 				{
 					USB_INT_Enable(USB_INT_SOFI);
@@ -186,7 +186,7 @@
 				 *
 				 *  \note This function is not available when the \c NO_SOF_EVENTS compile time token is defined.
 				 */
-				static inline void USB_Device_DisableSOFEvents(void) ATTR_ALWAYS_INLINE;
+				ATTR_ALWAYS_INLINE
 				static inline void USB_Device_DisableSOFEvents(void)
 				{
 					USB_INT_Disable(USB_INT_SOFI);
@@ -197,26 +197,26 @@
 	#if !defined(__DOXYGEN__)
 		/* Inline Functions: */
 			#if defined(USB_DEVICE_OPT_LOWSPEED)
-			static inline void USB_Device_SetLowSpeed(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_SetLowSpeed(void)
 			{
 				UDCON |=  (1 << LSM);
 			}
 
-			static inline void USB_Device_SetFullSpeed(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_SetFullSpeed(void)
 			{
 				UDCON &= ~(1 << LSM);
 			}
 			#endif
 
-			static inline void USB_Device_SetDeviceAddress(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_SetDeviceAddress(const uint8_t Address)
 			{
 				UDADDR = (UDADDR & (1 << ADDEN)) | (Address & 0x7F);
 			}
 
-			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address)
 			{
 				(void)Address;
@@ -224,14 +224,14 @@
 				UDADDR |= (1 << ADDEN);
 			}
 
-			static inline bool USB_Device_IsAddressSet(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline bool USB_Device_IsAddressSet(void)
 			{
 				return (UDADDR & (1 << ADDEN));
 			}
 
 			#if (USE_INTERNAL_SERIAL != NO_DESCRIPTOR)
-			static inline void USB_Device_GetSerialString(uint16_t* const UnicodeString) ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_NON_NULL_PTR_ARG(1)
 			static inline void USB_Device_GetSerialString(uint16_t* const UnicodeString)
 			{
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();

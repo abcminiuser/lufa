@@ -173,8 +173,6 @@
 			 *  \param[in] DoubleSpeed  Enables double speed mode when set, halving the sample time to double the baud rate.
 			 */
 			static inline void Serial_Init(const uint32_t BaudRate,
-			                               const bool DoubleSpeed);
-			static inline void Serial_Init(const uint32_t BaudRate,
 			                               const bool DoubleSpeed)
 			{
 				UBRR1  = (DoubleSpeed ? SERIAL_2X_UBBRVAL(BaudRate) : SERIAL_UBBRVAL(BaudRate));
@@ -188,7 +186,6 @@
 			}
 
 			/** Turns off the USART driver, disabling and returning used hardware to their default configuration. */
-			static inline void Serial_Disable(void);
 			static inline void Serial_Disable(void)
 			{
 				UCSR1B = 0;
@@ -205,7 +202,7 @@
 			 *
 			 *  \return Boolean \c true if a character has been received, \c false otherwise.
 			 */
-			static inline bool Serial_IsCharReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Serial_IsCharReceived(void)
 			{
 				return ((UCSR1A & (1 << RXC1)) ? true : false);
@@ -216,7 +213,7 @@
 			 *
 			 *  \return Boolean \c true if a character can be queued for transmission immediately, \c false otherwise.
 			 */
-			static inline bool Serial_IsSendReady(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Serial_IsSendReady(void)
 			{
 				return ((UCSR1A & (1 << UDRE1)) ? true : false);
@@ -227,7 +224,7 @@
 			 *
 			 *  \return Boolean \c true if no characters are buffered for transmission, \c false otherwise.
 			 */
-			static inline bool Serial_IsSendComplete(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Serial_IsSendComplete(void)
 			{
 				return ((UCSR1A & (1 << TXC1)) ? true : false);
@@ -240,7 +237,7 @@
 			 *
 			 *  \param[in] DataByte  Byte to transmit through the USART.
 			 */
-			static inline void Serial_SendByte(const char DataByte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Serial_SendByte(const char DataByte)
 			{
 				while (!(Serial_IsSendReady()));
@@ -251,7 +248,7 @@
 			 *
 			 *  \return Next byte received from the USART, or a negative value if no byte has been received.
 			 */
-			static inline int16_t Serial_ReceiveByte(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline int16_t Serial_ReceiveByte(void)
 			{
 				if (!(Serial_IsCharReceived()))

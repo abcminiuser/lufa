@@ -214,14 +214,14 @@
 			/** Turns off the TWI driver hardware. If this is called, any further TWI operations will require a call to
 			 *  \ref TWI_Init() before the TWI can be used again.
 			 */
-			static inline void TWI_Disable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void TWI_Disable(void)
 			{
 				TWCR &= ~(1 << TWEN);
 			}
 
 			/** Sends a TWI STOP onto the TWI bus, terminating communication with the currently addressed device. */
-			static inline void TWI_StopTransmission(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void TWI_StopTransmission(void)
 			{
 				TWCR = ((1 << TWINT) | (1 << TWSTO) | (1 << TWEN));

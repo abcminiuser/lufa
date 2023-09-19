@@ -143,7 +143,7 @@
 				PINC  = (LEDMask & LEDS_PORTC_LEDS);
 			}
 
-			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
 				return ((PORTD & LEDS_PORTD_LEDS) | (PORTC & LEDS_PORTC_LEDS));

@@ -175,7 +175,7 @@
 			 *
 			 *  \param[in,out] SPI   Pointer to the base of the SPI peripheral within the device.
 			 */
-			static inline void SPI_Disable(SPI_t* const SPI) ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_NON_NULL_PTR_ARG(1)
 			static inline void SPI_Disable(SPI_t* const SPI)
 			{
 				SPI->CTRL &= ~SPI_ENABLE_bm;
@@ -187,7 +187,7 @@
 			 *
 			 *  \return \ref SPI_MODE_MASTER if the interface is currently in SPI Master mode, \ref SPI_MODE_SLAVE otherwise
 			 */
-			static inline uint8_t SPI_GetCurrentMode(SPI_t* const SPI) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline uint8_t SPI_GetCurrentMode(SPI_t* const SPI)
 			{
 				return (SPI->CTRL & SPI_MASTER_bm);
@@ -232,7 +232,7 @@
 			 *
 			 *  \return The response byte from the attached SPI device.
 			 */
-			static inline uint8_t SPI_ReceiveByte(SPI_t* const SPI) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 			static inline uint8_t SPI_ReceiveByte(SPI_t* const SPI)
 			{
 				SPI->DATA = 0;

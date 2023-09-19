@@ -186,7 +186,7 @@
 				_BOARD_BUTTON_PORT &= ~BUTTONS_BUTTON1;
 			}
 
-			static inline uint8_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Buttons_GetStatus(void)
 			{
 				return ((_BOARD_BUTTON_PIN & BUTTONS_BUTTON1) ^ BUTTONS_BUTTON1);

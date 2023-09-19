@@ -154,17 +154,20 @@
 			 *  \return Mask of the currently selected Dataflash chip, either \ref DATAFLASH_NO_CHIP if no chip is selected
 			 *  or a \c DATAFLASH_CHIPn mask (where n is the chip number).
 			 */
-			static inline uint8_t Dataflash_GetSelectedChip(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
+			static inline uint8_t Dataflash_GetSelectedChip(void);
 
 			/** Selects the given dataflash chip.
 			 *
 			 *  \param[in]  ChipMask  Mask of the Dataflash IC to select, in the form of a \c DATAFLASH_CHIPn mask (where n is
 			 *              the chip number).
 			 */
-			static inline void Dataflash_SelectChip(const uint8_t ChipMask) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
+			static inline void Dataflash_SelectChip(const uint8_t ChipMask);
 
 			/** Deselects the current dataflash chip, so that no dataflash is selected. */
-			static inline void Dataflash_DeselectChip(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
+			static inline void Dataflash_DeselectChip(void);
 
 			/** Selects a dataflash IC from the given page number, which should range from 0 to
 			 *  ((DATAFLASH_PAGES * DATAFLASH_TOTALCHIPS) - 1). For boards containing only one
@@ -202,19 +205,22 @@
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
-			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
+			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte);
 
 			/** Sends a byte to the currently selected dataflash IC, and ignores the next byte from the dataflash.
 			 *
 			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 */
-			static inline void Dataflash_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
+			static inline void Dataflash_SendByte(const uint8_t Byte);
 
 			/** Sends a dummy byte to the currently selected dataflash IC, and returns the next byte from the dataflash.
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
-			static inline uint8_t Dataflash_ReceiveByte(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
+			static inline uint8_t Dataflash_ReceiveByte(void);
 
 		/* Includes: */
 			#if (BOARD == BOARD_NONE)

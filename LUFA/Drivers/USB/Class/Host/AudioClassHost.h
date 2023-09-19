@@ -166,8 +166,7 @@
 			 *
 			 *  \param[in,out] AudioInterfaceInfo  Pointer to a structure containing an Audio Class host configuration and state.
 			 */
-			static inline void Audio_Host_USBTask(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                      ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline void Audio_Host_USBTask(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				(void)AudioInterfaceInfo;
@@ -183,8 +182,7 @@
 			 *
 			 *  \return Boolean \c true if the given Audio interface has a sample to be read, \c false otherwise.
 			 */
-			static inline bool Audio_Host_IsSampleReceived(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                               ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline bool Audio_Host_IsSampleReceived(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				if ((USB_HostState != HOST_STATE_Configured) || !(AudioInterfaceInfo->State.IsActive))
@@ -210,8 +208,7 @@
 			 *
 			 *  \return Boolean \c true if the given Audio interface is ready to accept the next sample, \c false otherwise.
 			 */
-			static inline bool Audio_Host_IsReadyForNextSample(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                                   ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline bool Audio_Host_IsReadyForNextSample(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				if ((USB_HostState != HOST_STATE_Configured) || !(AudioInterfaceInfo->State.IsActive))
@@ -230,8 +227,7 @@
 			 *
 			 *  \return  Signed 8-bit audio sample from the audio interface.
 			 */
-			static inline int8_t Audio_Host_ReadSample8(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                            ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline int8_t Audio_Host_ReadSample8(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				int8_t Sample;
@@ -259,8 +255,7 @@
 			 *
 			 *  \return  Signed 16-bit audio sample from the audio interface.
 			 */
-			static inline int16_t Audio_Host_ReadSample16(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                              ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline int16_t Audio_Host_ReadSample16(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				int16_t Sample;
@@ -288,8 +283,7 @@
 			 *
 			 *  \return Signed 24-bit audio sample from the audio interface.
 			 */
-			static inline int32_t Audio_Host_ReadSample24(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
-			                                              ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE
 			static inline int32_t Audio_Host_ReadSample24(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo)
 			{
 				int32_t Sample;
@@ -316,8 +310,7 @@
 			 *  \param[in,out] AudioInterfaceInfo  Pointer to a structure containing an Audio Class configuration and state.
 			 *  \param[in]     Sample              Signed 8-bit audio sample.
 			 */
-			static inline void Audio_Host_WriteSample8(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
-			                                           const int8_t Sample) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
 			static inline void Audio_Host_WriteSample8(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
 			                                           const int8_t Sample)
 			{
@@ -342,8 +335,7 @@
 			 *  \param[in,out] AudioInterfaceInfo  Pointer to a structure containing an Audio Class configuration and state.
 			 *  \param[in]     Sample              Signed 16-bit audio sample.
 			 */
-			static inline void Audio_Host_WriteSample16(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
-			                                            const int16_t Sample) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
 			static inline void Audio_Host_WriteSample16(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
 			                                            const int16_t Sample)
 			{
@@ -368,8 +360,7 @@
 			 *  \param[in,out] AudioInterfaceInfo  Pointer to a structure containing an Audio Class configuration and state.
 			 *  \param[in]     Sample              Signed 24-bit audio sample.
 			 */
-			static inline void Audio_Host_WriteSample24(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
-			                                            const int32_t Sample) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
 			static inline void Audio_Host_WriteSample24(USB_ClassInfo_Audio_Host_t* const AudioInterfaceInfo,
 			                                            const int32_t Sample)
 			{

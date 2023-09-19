@@ -138,7 +138,7 @@
 				AVR32_GPIO.port[LEDS_PORT].ovrt  = LEDMask;
 			}
 
-			static inline uint32_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint32_t LEDs_GetLEDs(void)
 			{
 				return (~AVR32_GPIO.port[LEDS_PORT].ovr & LEDS_ALL_LEDS);

@@ -79,7 +79,7 @@
 			/** Initiate a Host Negotiation Protocol request. This indicates to the other connected device
 			 *  that the device wishes to change device/host roles.
 			 */
-			static inline void USB_OTG_Device_RequestHNP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTG_Device_RequestHNP(void)
 			{
 				OTGCON |=  (1 << HNPREQ);
@@ -88,7 +88,7 @@
 			/** Cancel a Host Negotiation Protocol request. This stops a pending HNP request to the other
 			 *  connected device.
 			 */
-			static inline void USB_OTG_Device_CancelHNPRequest(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTG_Device_CancelHNPRequest(void)
 			{
 				OTGCON &= ~(1 << HNPREQ);
@@ -98,7 +98,7 @@
 			 *
 			 *  \return Boolean \c true if currently sending a HNP to the other connected device, \c false otherwise
 			 */
-			static inline bool USB_OTG_Device_IsSendingHNP(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_OTG_Device_IsSendingHNP(void)
 			{
 				return ((OTGCON & (1 << HNPREQ)) ? true : false);
@@ -114,7 +114,7 @@
 			 *  \param[in] SRPTypeMask  Mask indicating the type of SRP to use, either \ref USB_OTG_SRP_VBUS or
 			 *                          \ref USB_OTG_STP_DATA.
 			 */
-			static inline void USB_OTG_Device_InitiateSRP(const uint8_t SRPTypeMask) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTG_Device_InitiateSRP(const uint8_t SRPTypeMask)
 			{
 				OTGCON = ((OTGCON & ~(1 << SRPSEL)) | (SRPTypeMask | (1 << SRPREQ)));
@@ -123,7 +123,7 @@
 			/** Accepts a HNP from a connected device, indicating that both devices should exchange
 			 *  device/host roles.
 			 */
-			static inline void USB_OTG_Host_AcceptHNP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTG_Host_AcceptHNP(void)
 			{
 				OTGCON |=  (1 << HNPREQ);
@@ -132,7 +132,7 @@
 			/** Rejects a HNP from a connected device, indicating that both devices should remain in their
 			 *  current device/host roles.
 			 */
-			static inline void USB_OTG_Host_RejectHNP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTG_Host_RejectHNP(void)
 			{
 				OTGCON &= ~(1 << HNPREQ);
@@ -142,7 +142,7 @@
 			 *
 			 *  \return Boolean \c true if a HNP is currently being issued by the connected device, \c false otherwise.
 			 */
-			static inline bool USB_OTG_Host_IsHNPReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_OTG_Host_IsHNPReceived(void)
 			{
 				return ((OTGCON & (1 << HNPREQ)) ? true : false);

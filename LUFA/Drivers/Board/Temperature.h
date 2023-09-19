@@ -114,7 +114,7 @@
 			 *  \pre The ADC itself (not the ADC channel) must be configured separately before calling the
 			 *       temperature sensor functions.
 			 */
-			static inline void Temperature_Init(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Temperature_Init(void)
 			{
 				ADC_SetupChannel(TEMP_ADC_CHANNEL);
@@ -126,7 +126,8 @@
 			 *
 			 *  \return Signed temperature value in degrees Celsius.
 			 */
-			int8_t Temperature_GetTemperature(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
+			int8_t Temperature_GetTemperature(void);
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)

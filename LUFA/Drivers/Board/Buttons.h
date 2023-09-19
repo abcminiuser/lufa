@@ -95,7 +95,7 @@
 			#define BUTTONS_BUTTON1  0
 			static inline void       Buttons_Init(void) {}
 			static inline void       Buttons_Disable(void) {}
-			static inline uint_reg_t Buttons_GetStatus(void) { return 0; }
+			{ return 0 }
 		#elif (BOARD == BOARD_USBKEY)
 			#include "AVR8/USBKEY/Buttons.h"
 		#elif (BOARD == BOARD_STK525)
@@ -180,7 +180,8 @@
 		 *
 		 *  \return Mask of \c BUTTONS_BUTTON* constants indicating which board buttons are currently pressed.
 		 */
-		static inline uint_reg_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+		ATTR_WARN_UNUSED_RESULT
+		static inline uint8_t Buttons_GetStatus(void);
 	#endif
 
 #endif

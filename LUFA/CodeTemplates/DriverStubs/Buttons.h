@@ -74,7 +74,7 @@
 				// TODO: Clear the appropriate port pins as high impedance inputs here
 			}
 
-			static inline uint8_t Buttons_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Buttons_GetStatus(void)
 			{
 				// TODO: Return current button status here, debounced if required

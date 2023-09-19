@@ -143,7 +143,8 @@
 		 *
 		 *  \return Mask of \c JOYSTICK_* constants indicating the current joystick direction(s).
 		 */
-		static inline uint_reg_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+		ATTR_WARN_UNUSED_RESULT
+		static inline uint_reg_t Joystick_GetStatus(void);
 	#endif
 
 #endif

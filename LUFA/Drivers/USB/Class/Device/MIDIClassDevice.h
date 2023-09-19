@@ -158,7 +158,7 @@
 			 *
 			 *  \param[in,out] MIDIInterfaceInfo  Pointer to a structure containing a MIDI Class configuration and state.
 			 */
-			static inline void MIDI_Device_ProcessControlRequest(USB_ClassInfo_MIDI_Device_t* const MIDIInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_NON_NULL_PTR_ARG(1)
 			static inline void MIDI_Device_ProcessControlRequest(USB_ClassInfo_MIDI_Device_t* const MIDIInterfaceInfo)
 			{
 				(void)MIDIInterfaceInfo;

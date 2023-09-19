@@ -226,7 +226,7 @@
 			 *
 			 *  \return Total number of bytes in the currently selected Endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_BytesInEndpoint(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_BytesInEndpoint(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].byct;
@@ -236,7 +236,7 @@
 			 *
 			 *  \return The currently selected endpoint's direction, as a \c ENDPOINT_DIR_* mask.
 			 */
-			static inline uint32_t Endpoint_GetEndpointDirection(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_GetEndpointDirection(void)
 			{
 				return ((&AVR32_USBB.UECFG0)[USB_Endpoint_SelectedEndpoint].epdir ? ENDPOINT_DIR_IN : ENDPOINT_DIR_OUT);
@@ -248,7 +248,7 @@
 			 *
 			 *  \return Index of the currently selected endpoint.
 			 */
-			static inline uint8_t Endpoint_GetCurrentEndpoint(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_GetCurrentEndpoint(void)
 			{
 				return (USB_Endpoint_SelectedEndpoint | Endpoint_GetEndpointDirection());
@@ -261,7 +261,7 @@
 			 *
 			 *  \param[in] Address  Endpoint address to select.
 			 */
-			static inline void Endpoint_SelectEndpoint(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_SelectEndpoint(const uint8_t Address)
 			{
 				USB_Endpoint_SelectedEndpoint = (Address & ENDPOINT_EPNUM_MASK);
@@ -272,7 +272,7 @@
 			 *
 			 *  \param[in] Address  Endpoint number whose FIFO buffers are to be reset.
 			 */
-			static inline void Endpoint_ResetEndpoint(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetEndpoint(const uint8_t Address)
 			{
 				uint32_t EndpointNumber = (Address & ENDPOINT_EPNUM_MASK);
@@ -287,7 +287,7 @@
 			 *
 			 *  \note Endpoints must first be configured properly via \ref Endpoint_ConfigureEndpoint().
 			 */
-			static inline void Endpoint_EnableEndpoint(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_EnableEndpoint(void)
 			{
 				AVR32_USBB.uerst |=  (AVR32_USBB_EPEN0_MASK << USB_Endpoint_SelectedEndpoint);
@@ -296,7 +296,7 @@
 			/** Disables the currently selected endpoint so that data cannot be sent and received through it
 			 *  to and from a host.
 			 */
-			static inline void Endpoint_DisableEndpoint(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_DisableEndpoint(void)
 			{
 				AVR32_USBB.uerst &= ~(AVR32_USBB_EPEN0_MASK << USB_Endpoint_SelectedEndpoint);
@@ -306,7 +306,7 @@
 			 *
 			 * \return Boolean \c true if the currently selected endpoint is enabled, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsEnabled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsEnabled(void)
 			{
 				return ((AVR32_USBB.uerst & (AVR32_USBB_EPEN0_MASK << USB_Endpoint_SelectedEndpoint)) ? true : false);
@@ -320,7 +320,7 @@
 			 *
 			 *  \return Total number of busy banks in the selected endpoint.
 			 */
-			static inline uint8_t Endpoint_GetBusyBanks(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Endpoint_GetBusyBanks(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].nbusybk;
@@ -353,7 +353,7 @@
 			 *  \return Boolean \c true if the currently selected endpoint may be read from or written to, depending
 			 *          on its direction.
 			 */
-			static inline bool Endpoint_IsReadWriteAllowed(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsReadWriteAllowed(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].rwall;
@@ -363,7 +363,7 @@
 			 *
 			 *  \return Boolean \c true if the currently selected endpoint has been configured, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsConfigured(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsConfigured(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].cfgok;
@@ -375,7 +375,7 @@
 			 *
 			 *  \return Mask whose bits indicate which endpoints have interrupted.
 			 */
-			static inline uint32_t Endpoint_GetEndpointInterrupts(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_GetEndpointInterrupts(void)
 			{
 				return ((AVR32_USBB.udint & (AVR32_USBB_EP6INT_MASK | AVR32_USBB_EP5INT_MASK |
@@ -391,7 +391,7 @@
 			 *
 			 *  \return Boolean \c true if the specified endpoint has interrupted, \c false otherwise.
 			 */
-			static inline bool Endpoint_HasEndpointInterrupted(const uint8_t Address) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_HasEndpointInterrupted(const uint8_t Address)
 			{
 				return ((Endpoint_GetEndpointInterrupts() & (AVR32_USBB_EP0INT_MASK << (Address & ENDPOINT_EPNUM_MASK))) ? true : false);
@@ -403,7 +403,7 @@
 			 *
 			 *  \return Boolean \c true if the current endpoint is ready for an IN packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsINReady(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsINReady(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].txini;
@@ -415,7 +415,7 @@
 			 *
 			 *  \return Boolean \c true if current endpoint is has received an OUT packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsOUTReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsOUTReceived(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].rxouti;
@@ -427,7 +427,7 @@
 			 *
 			 *  \return Boolean \c true if the selected endpoint has received a SETUP packet, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsSETUPReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsSETUPReceived(void)
 			{
 				return (&AVR32_USBB.UESTA0)[USB_Endpoint_SelectedEndpoint].rxstpi;
@@ -440,7 +440,7 @@
 			 *
 			 *  \note This is not applicable for non CONTROL type endpoints.
 			 */
-			static inline void Endpoint_ClearSETUP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearSETUP(void)
 			{
 				(&AVR32_USBB.UESTA0CLR)[USB_Endpoint_SelectedEndpoint].rxstpic = true;
@@ -452,7 +452,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_UC3
 			 */
-			static inline void Endpoint_ClearIN(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearIN(void)
 			{
 				(&AVR32_USBB.UESTA0CLR)[USB_Endpoint_SelectedEndpoint].txinic   = true;
@@ -465,7 +465,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_UC3
 			 */
-			static inline void Endpoint_ClearOUT(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearOUT(void)
 			{
 				(&AVR32_USBB.UESTA0CLR)[USB_Endpoint_SelectedEndpoint].rxoutic  = true;
@@ -484,7 +484,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_UC3
 			 */
-			static inline void Endpoint_StallTransaction(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_StallTransaction(void)
 			{
 				(&AVR32_USBB.UECON0SET)[USB_Endpoint_SelectedEndpoint].stallrqs = true;
@@ -494,7 +494,7 @@
 			 *
 			 *  \ingroup Group_EndpointPacketManagement_UC3
 			 */
-			static inline void Endpoint_ClearStall(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearStall(void)
 			{
 				(&AVR32_USBB.UECON0CLR)[USB_Endpoint_SelectedEndpoint].stallrqc = true;
@@ -506,14 +506,14 @@
 			 *
 			 *  \return Boolean \c true if the currently selected endpoint is stalled, \c false otherwise.
 			 */
-			static inline bool Endpoint_IsStalled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsStalled(void)
 			{
 				return (&AVR32_USBB.UECON0)[USB_Endpoint_SelectedEndpoint].stallrq;
 			}
 
 			/** Resets the data toggle of the currently selected endpoint. */
-			static inline void Endpoint_ResetDataToggle(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetDataToggle(void)
 			{
 				(&AVR32_USBB.UECON0SET)[USB_Endpoint_SelectedEndpoint].rstdts = true;
@@ -523,7 +523,7 @@
 			 *
 			 *  \param[in] DirectionMask  New endpoint direction, as a \c ENDPOINT_DIR_* mask.
 			 */
-			static inline void Endpoint_SetEndpointDirection(const uint32_t DirectionMask) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_SetEndpointDirection(const uint32_t DirectionMask)
 			{
 				(&AVR32_USBB.UECFG0)[USB_Endpoint_SelectedEndpoint].epdir = (DirectionMask == ENDPOINT_DIR_IN);
@@ -535,7 +535,7 @@
 			 *
 			 *  \return Next byte in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint8_t Endpoint_Read_8(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Endpoint_Read_8(void)
 			{
 				return *(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++);
@@ -547,7 +547,7 @@
 			 *
 			 *  \param[in] Data  Data to write into the the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_8(const uint8_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_8(const uint8_t Data)
 			{
 				*(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++) = Data;
@@ -557,7 +557,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_UC3
 			 */
-			static inline void Endpoint_Discard_8(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_8(void)
 			{
 				uint8_t Dummy;
@@ -574,7 +574,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_Read_16_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_Read_16_LE(void)
 			{
 				uint16_t Byte0 = *(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++);
@@ -590,7 +590,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint16_t Endpoint_Read_16_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Endpoint_Read_16_BE(void)
 			{
 				uint16_t Byte0 = *(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++);
@@ -606,7 +606,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_16_LE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_16_LE(const uint16_t Data)
 			{
 				*(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++) = (Data & 0xFF);
@@ -620,7 +620,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_16_BE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_16_BE(const uint16_t Data)
 			{
 				*(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++) = (Data >> 8);
@@ -631,7 +631,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_UC3
 			 */
-			static inline void Endpoint_Discard_16(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_16(void)
 			{
 				uint8_t Dummy;
@@ -649,7 +649,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint32_t Endpoint_Read_32_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_Read_32_LE(void)
 			{
 				uint32_t Byte0 = *(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++);
@@ -667,7 +667,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected endpoint's FIFO buffer.
 			 */
-			static inline uint32_t Endpoint_Read_32_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Endpoint_Read_32_BE(void)
 			{
 				uint32_t Byte0 = *(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++);
@@ -685,7 +685,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_32_LE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_32_LE(const uint32_t Data)
 			{
 				*(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++) = (Data &  0xFF);
@@ -701,7 +701,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected endpoint's FIFO buffer.
 			 */
-			static inline void Endpoint_Write_32_BE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Write_32_BE(const uint32_t Data)
 			{
 				*(USB_Endpoint_FIFOPos[USB_Endpoint_SelectedEndpoint]++) = (Data >> 24);
@@ -714,7 +714,7 @@
 			 *
 			 *  \ingroup Group_EndpointPrimitiveRW_UC3
 			 */
-			static inline void Endpoint_Discard_32(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_Discard_32(void)
 			{
 				uint8_t Dummy;

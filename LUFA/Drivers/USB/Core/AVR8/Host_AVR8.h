@@ -135,7 +135,7 @@
 			 *
 			 *  \return Current USB frame number from the USB controller.
 			 */
-			static inline uint16_t USB_Host_GetFrameNumber(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t USB_Host_GetFrameNumber(void)
 			{
 				return UHFNUM;
@@ -148,7 +148,7 @@
 				 *
 				 *  \note This function is not available when the \c NO_SOF_EVENTS compile time token is defined.
 				 */
-				static inline void USB_Host_EnableSOFEvents(void) ATTR_ALWAYS_INLINE;
+				ATTR_ALWAYS_INLINE
 				static inline void USB_Host_EnableSOFEvents(void)
 				{
 					USB_INT_Enable(USB_INT_HSOFI);
@@ -159,7 +159,7 @@
 				 *
 				 *  \note This function is not available when the \c NO_SOF_EVENTS compile time token is defined.
 				 */
-				static inline void USB_Host_DisableSOFEvents(void) ATTR_ALWAYS_INLINE;
+				ATTR_ALWAYS_INLINE
 				static inline void USB_Host_DisableSOFEvents(void)
 				{
 					USB_INT_Disable(USB_INT_HSOFI);
@@ -172,7 +172,7 @@
 			 *  If the USB bus has been suspended prior to issuing a bus reset, the attached device will be
 			 *  woken up automatically and the bus resumed after the reset has been correctly issued.
 			 */
-			static inline void USB_Host_ResetBus(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_ResetBus(void)
 			{
 				UHCON |=  (1 << RESET);
@@ -183,7 +183,7 @@
 			 *
 			 *  \return Boolean \c true if no bus reset is currently being sent, \c false otherwise.
 			 */
-			static inline bool USB_Host_IsBusResetComplete(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_Host_IsBusResetComplete(void)
 			{
 				return ((UHCON & (1 << RESET)) ? false : true);
@@ -193,7 +193,7 @@
 			 *  of the 1MS Start Of Frame messages to the device. When resumed, USB communications between the
 			 *  host and attached device may occur.
 			 */
-			static inline void USB_Host_ResumeBus(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_ResumeBus(void)
 			{
 				UHCON |=  (1 << SOFEN);
@@ -206,7 +206,7 @@
 			 *  \attention While the USB bus is suspended, all USB interrupt sources are also disabled; this means that
 			 *             some events (such as device disconnections) will not fire until the bus is resumed.
 			 */
-			static inline void USB_Host_SuspendBus(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_SuspendBus(void)
 			{
 				UHCON &= ~(1 << SOFEN);
@@ -218,7 +218,7 @@
 			 *
 			 *  \return Boolean \c true if the bus is currently suspended, \c false otherwise.
 			 */
-			static inline bool USB_Host_IsBusSuspended(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_Host_IsBusSuspended(void)
 			{
 				return ((UHCON & (1 << SOFEN)) ? false : true);
@@ -229,7 +229,7 @@
 			 *
 			 *  \return Boolean \c true if the attached device is enumerated in Full Speed mode, \c false otherwise.
 			 */
-			static inline bool USB_Host_IsDeviceFullSpeed(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_Host_IsDeviceFullSpeed(void)
 			{
 				return ((USBSTA & (1 << SPEED)) ? true : false);
@@ -240,14 +240,14 @@
 			 *
 			 *  \return Boolean \c true if the attached device has sent a Remote Wakeup request, \c false otherwise.
 			 */
-			static inline bool USB_Host_IsRemoteWakeupSent(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_Host_IsRemoteWakeupSent(void)
 			{
 				return ((UHINT & (1 << RXRSMI)) ? true : false);
 			}
 
 			/** Clears the flag indicating that a Remote Wakeup request has been issued by an attached device. */
-			static inline void USB_Host_ClearRemoteWakeupSent(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_ClearRemoteWakeupSent(void)
 			{
 				UHINT &= ~(1 << RXRSMI);
@@ -257,7 +257,7 @@
 			 *  a device's Remote Wakeup request within 2ms for the request to be accepted and the bus to
 			 *  be resumed.
 			 */
-			static inline void USB_Host_ResumeFromWakeupRequest(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_ResumeFromWakeupRequest(void)
 			{
 				UHCON |=  (1 << RESUME);
@@ -268,7 +268,7 @@
 			 *
 			 *  \return Boolean \c true if no resume request is currently being sent, \c false otherwise.
 			 */
-			static inline bool USB_Host_IsResumeFromWakeupRequestSent(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_Host_IsResumeFromWakeupRequestSent(void)
 			{
 				return ((UHCON & (1 << RESUME)) ? false : true);
@@ -277,26 +277,26 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */
-			static inline void USB_Host_HostMode_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_HostMode_On(void)
 			{
 				USBCON |=  (1 << HOST);
 			}
 
-			static inline void USB_Host_HostMode_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_HostMode_Off(void)
 			{
 				USBCON &= ~(1 << HOST);
 			}
 
-			static inline void USB_Host_VBUS_Auto_Enable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Auto_Enable(void)
 			{
 				OTGCON &= ~(1 << VBUSHWC);
 				UHWCON |=  (1 << UVCONE);
 			}
 
-			static inline void USB_Host_VBUS_Manual_Enable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Manual_Enable(void)
 			{
 				OTGCON |=  (1 << VBUSHWC);
@@ -305,13 +305,13 @@
 				DDRE   |=  (1 << 7);
 			}
 
-			static inline void USB_Host_VBUS_Auto_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Auto_On(void)
 			{
 				OTGCON |=  (1 << VBUSREQ);
 			}
 
-			static inline void USB_Host_VBUS_Manual_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Manual_On(void)
 			{
 				#if defined(INVERTED_VBUS_ENABLE_LINE)
@@ -321,13 +321,13 @@
 				#endif
 			}
 
-			static inline void USB_Host_VBUS_Auto_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Auto_Off(void)
 			{
 				OTGCON |=  (1 << VBUSRQC);
 			}
 
-			static inline void USB_Host_VBUS_Manual_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_VBUS_Manual_Off(void)
 			{
 				#if defined(INVERTED_VBUS_ENABLE_LINE)
@@ -337,7 +337,7 @@
 				#endif
 			}
 
-			static inline void USB_Host_SetDeviceAddress(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Host_SetDeviceAddress(const uint8_t Address)
 			{
 				UHADDR  =  (Address & 0x7F);

@@ -246,7 +246,7 @@
 			 *
 			 *  \return Input data with the individual bits reversed (mirrored).
 			 */
-			static inline uint8_t BitReverse(uint8_t Byte) ATTR_WARN_UNUSED_RESULT ATTR_CONST;
+			ATTR_WARN_UNUSED_RESULT ATTR_CONST
 			static inline uint8_t BitReverse(uint8_t Byte)
 			{
 				Byte = (((Byte & 0xF0) >> 4) | ((Byte & 0x0F) << 4));
@@ -262,7 +262,7 @@
 			 *
 			 *  \param[in] Milliseconds  Number of milliseconds to delay
 			 */
-			static inline void Delay_MS(uint16_t Milliseconds) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Delay_MS(uint16_t Milliseconds)
 			{
 				#if (ARCH == ARCH_AVR8)
@@ -302,7 +302,7 @@
 			 *
 			 *  \return  Mask containing the current Global Interrupt Enable Mask bit(s).
 			 */
-			static inline uint_reg_t GetGlobalInterruptMask(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint_reg_t GetGlobalInterruptMask(void)
 			{
 				GCC_MEMORY_BARRIER();
@@ -324,7 +324,7 @@
 			 *
 			 *  \param[in] GlobalIntState  Global Interrupt Enable Mask value to use
 			 */
-			static inline void SetGlobalInterruptMask(const uint_reg_t GlobalIntState) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void SetGlobalInterruptMask(const uint_reg_t GlobalIntState)
 			{
 				GCC_MEMORY_BARRIER();
@@ -347,7 +347,7 @@
 			 *
 			 *  \ingroup Group_GlobalInt
 			 */
-			static inline void GlobalInterruptEnable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void GlobalInterruptEnable(void)
 			{
 				GCC_MEMORY_BARRIER();
@@ -367,7 +367,7 @@
 			 *
 			 *  \ingroup Group_GlobalInt
 			 */
-			static inline void GlobalInterruptDisable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void GlobalInterruptDisable(void)
 			{
 				GCC_MEMORY_BARRIER();

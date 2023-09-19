@@ -123,7 +123,7 @@
 			 *  \param[in] Address  Address to write to, a memory address protected by the CCP mechanism
 			 *  \param[in] Value    Value to write to the protected location
 			 */
-			static inline void XMEGACLK_CCP_Write(volatile void* Address, const uint8_t Value) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void XMEGACLK_CCP_Write(volatile void* Address, const uint8_t Value)
 			{
 				__asm__ __volatile__ (
@@ -158,7 +158,7 @@
 			}
 
 			/** Stops the external oscillator of the XMEGA microcontroller. */
-			static inline void XMEGACLK_StopExternalOscillator(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void XMEGACLK_StopExternalOscillator(void)
 			{
 				OSC.CTRL     &= ~OSC_XOSCEN_bm;
@@ -171,7 +171,7 @@
 			 *
 			 *  \return Boolean \c true if the internal oscillator was successfully started, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StartInternalOscillator(const uint8_t Source) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline bool XMEGACLK_StartInternalOscillator(const uint8_t Source)
 			{
 				switch (Source)
@@ -199,7 +199,7 @@
 			 *
 			 *  \return Boolean \c true if the internal oscillator was successfully stopped, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StopInternalOscillator(const uint8_t Source) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline bool XMEGACLK_StopInternalOscillator(const uint8_t Source)
 			{
 				switch (Source)
@@ -265,7 +265,7 @@
 			}
 
 			/** Stops the PLL of the XMEGA microcontroller. */
-			static inline void XMEGACLK_StopPLL(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void XMEGACLK_StopPLL(void)
 			{
 				OSC.CTRL &= ~OSC_PLLEN_bm;
@@ -324,7 +324,7 @@
 			 *
 			 *  \return Boolean \c true if the DFLL was successfully stopped, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StopDFLL(const uint8_t Source) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline bool XMEGACLK_StopDFLL(const uint8_t Source)
 			{
 				switch (Source)
@@ -349,7 +349,7 @@
 			 *
 			 *  \return Boolean \c true if the CPU core clock was successfully altered, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source)
 			{
 				uint8_t ClockSourceMask = 0;

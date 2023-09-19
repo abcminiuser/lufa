@@ -191,7 +191,7 @@
 			 *
 			 *  \return Total number of bytes in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint16_t Pipe_BytesInPipe(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Pipe_BytesInPipe(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].pbyct;
@@ -201,7 +201,7 @@
 			 *
 			 *  \return The currently selected pipe's direction, as a \c PIPE_DIR_* mask.
 			 */
-			static inline uint8_t Pipe_GetPipeDirection(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetPipeDirection(void)
 			{
 				return (((&AVR32_USBB.UPCFG0)[USB_Pipe_SelectedPipe].ptoken == PIPE_TOKEN_OUT) ? PIPE_DIR_OUT : PIPE_DIR_IN);
@@ -212,7 +212,7 @@
 			 *
 			 *  \return Index of the currently selected pipe.
 			 */
-			static inline uint8_t Pipe_GetCurrentPipe(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetCurrentPipe(void)
 			{
 				return (USB_Pipe_SelectedPipe | Pipe_GetPipeDirection());
@@ -223,7 +223,7 @@
 			 *
 			 *  \param[in] Address  Address of the pipe to select.
 			 */
-			static inline void Pipe_SelectPipe(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_SelectPipe(const uint8_t Address)
 			{
 				USB_Pipe_SelectedPipe = (Address & PIPE_EPNUM_MASK);
@@ -233,7 +233,7 @@
 			 *
 			 *  \param[in] Address  Index of the pipe to reset.
 			 */
-			static inline void Pipe_ResetPipe(const uint8_t Address) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ResetPipe(const uint8_t Address)
 			{
 				uint32_t PipeNumber = (Address & PIPE_EPNUM_MASK);
@@ -248,7 +248,7 @@
 			 *
 			 *  \pre The currently selected pipe must first be configured properly via \ref Pipe_ConfigurePipe().
 			 */
-			static inline void Pipe_EnablePipe(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_EnablePipe(void)
 			{
 				AVR32_USBB.uprst |=  (AVR32_USBB_PEN0_MASK << USB_Pipe_SelectedPipe);
@@ -257,7 +257,7 @@
 			/** Disables the currently selected pipe so that data cannot be sent and received through it to and
 			 *  from an attached device.
 			 */
-			static inline void Pipe_DisablePipe(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_DisablePipe(void)
 			{
 				AVR32_USBB.uprst &= ~(AVR32_USBB_PEN0_MASK << USB_Pipe_SelectedPipe);
@@ -267,7 +267,7 @@
 			 *
 			 * \return Boolean \c true if the currently selected pipe is enabled, \c false otherwise.
 			 */
-			static inline bool Pipe_IsEnabled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsEnabled(void)
 			{
 				return ((AVR32_USBB.uprst & (AVR32_USBB_PEN0_MASK << USB_Pipe_SelectedPipe)) ? true : false);
@@ -277,7 +277,7 @@
 			 *
 			 *  \return The current pipe token, as a \c PIPE_TOKEN_* mask.
 			 */
-			static inline uint8_t Pipe_GetPipeToken(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetPipeToken(void)
 			{
 				return (&AVR32_USBB.UPCFG0)[USB_Pipe_SelectedPipe].ptoken;
@@ -290,14 +290,14 @@
 			 *
 			 *  \param[in] Token  New pipe token to set the selected pipe to, as a \c PIPE_TOKEN_* mask.
 			 */
-			static inline void Pipe_SetPipeToken(const uint8_t Token) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_SetPipeToken(const uint8_t Token)
 			{
 				(&AVR32_USBB.UPCFG0)[USB_Pipe_SelectedPipe].ptoken = Token;
 			}
 
 			/** Configures the currently selected pipe to allow for an unlimited number of IN requests. */
-			static inline void Pipe_SetInfiniteINRequests(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_SetInfiniteINRequests(void)
 			{
 				(&AVR32_USBB.UPINRQ0)[USB_Pipe_SelectedPipe].inmode = true;
@@ -308,7 +308,7 @@
 			 *
 			 *  \param[in] TotalINRequests  Total number of IN requests that the pipe may receive before freezing.
 			 */
-			static inline void Pipe_SetFiniteINRequests(const uint8_t TotalINRequests) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_SetFiniteINRequests(const uint8_t TotalINRequests)
 			{
 				(&AVR32_USBB.UPINRQ0)[USB_Pipe_SelectedPipe].inmode = false;
@@ -319,7 +319,7 @@
 			 *
 			 *  \return Boolean \c true if the selected pipe is configured, \c false otherwise.
 			 */
-			static inline bool Pipe_IsConfigured(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsConfigured(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].cfgok;
@@ -330,7 +330,7 @@
 			 *
 			 *  \return Endpoint address the currently selected pipe is bound to.
 			 */
-			static inline uint8_t Pipe_GetBoundEndpointAddress(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetBoundEndpointAddress(void)
 			{
 				return ((&AVR32_USBB.UPCFG0)[USB_Pipe_SelectedPipe].pepnum |
@@ -341,7 +341,7 @@
 			 *
 			 *  \param[in] Milliseconds  Number of milliseconds between each pipe poll.
 			 */
-			static inline void Pipe_SetInterruptPeriod(const uint8_t Milliseconds) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_SetInterruptPeriod(const uint8_t Milliseconds)
 			{
 				(&AVR32_USBB.UPCFG0)[USB_Pipe_SelectedPipe].intfrq = Milliseconds;
@@ -352,7 +352,7 @@
 			 *
 			 *  \return Mask whose bits indicate which pipes have interrupted.
 			 */
-			static inline uint8_t Pipe_GetPipeInterrupts(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetPipeInterrupts(void)
 			{
 				return ((AVR32_USBB.uhint & (AVR32_USBB_P6INT_MASK | AVR32_USBB_P5INT_MASK |
@@ -368,21 +368,21 @@
 			 *
 			 *  \return Boolean \c true if the specified pipe has interrupted, \c false otherwise.
 			 */
-			static inline bool Pipe_HasPipeInterrupted(const uint8_t Address) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_HasPipeInterrupted(const uint8_t Address)
 			{
 				return ((AVR32_USBB.uhint & (AVR32_USBB_P0INTES_MASK << (Address & PIPE_EPNUM_MASK))) ? true : false);
 			}
 
 			/** Unfreezes the selected pipe, allowing it to communicate with an attached device. */
-			static inline void Pipe_Unfreeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Unfreeze(void)
 			{
 				(&AVR32_USBB.UPCON0CLR)[USB_Pipe_SelectedPipe].pfreezec = true;
 			}
 
 			/** Freezes the selected pipe, preventing it from communicating with an attached device. */
-			static inline void Pipe_Freeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Freeze(void)
 			{
 				(&AVR32_USBB.UPCON0SET)[USB_Pipe_SelectedPipe].pfreezes = true;
@@ -392,14 +392,14 @@
 			 *
 			 *  \return Boolean \c true if the currently selected pipe is frozen, \c false otherwise.
 			 */
-			static inline bool Pipe_IsFrozen(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsFrozen(void)
 			{
 				return (((&AVR32_USBB.UPCON0)[USB_Pipe_SelectedPipe].pfreeze) ? true : false);
 			}
 
 			/** Clears the error flags for the currently selected pipe. */
-			static inline void Pipe_ClearError(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearError(void)
 			{
 				(&AVR32_USBB.uperr0)[USB_Pipe_SelectedPipe] = 0;
@@ -413,7 +413,7 @@
 			 *
 			 *  \return Boolean \c true if an error has occurred on the selected pipe, \c false otherwise.
 			 */
-			static inline bool Pipe_IsError(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsError(void)
 			{
 				return (((&AVR32_USBB.upsta0)[USB_Pipe_SelectedPipe] &
@@ -425,7 +425,7 @@
 			 *
 			 *  \return  Mask comprising of \c PIPE_ERRORFLAG_* bits indicating what error has occurred on the selected pipe.
 			 */
-			static inline uint8_t Pipe_GetErrorFlags(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetErrorFlags(void)
 			{
 
@@ -445,7 +445,7 @@
 			 *
 			 *  \return Total number of busy banks in the selected pipe.
 			 */
-			static inline uint8_t Pipe_GetBusyBanks(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_GetBusyBanks(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].nbusybk;
@@ -464,7 +464,7 @@
 			 *  \return Boolean \c true if the currently selected pipe may be read from or written to, depending
 			 *          on its direction.
 			 */
-			static inline bool Pipe_IsReadWriteAllowed(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsReadWriteAllowed(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].rwall;
@@ -476,7 +476,7 @@
 			 *
 			 *  \return Boolean \c true if the current pipe has received an IN packet, \c false otherwise.
 			 */
-			static inline bool Pipe_IsINReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsINReceived(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].rxini;
@@ -488,7 +488,7 @@
 			 *
 			 *  \return Boolean \c true if the current pipe is ready for an OUT packet, \c false otherwise.
 			 */
-			static inline bool Pipe_IsOUTReady(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsOUTReady(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].txouti;
@@ -501,7 +501,7 @@
 			 *
 			 *  \return Boolean \c true if the current pipe is ready for a SETUP packet, \c false otherwise.
 			 */
-			static inline bool Pipe_IsSETUPSent(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsSETUPSent(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].txstpi;
@@ -511,7 +511,7 @@
 			 *
 			 *  \ingroup Group_PipePacketManagement_UC3
 			 */
-			static inline void Pipe_ClearSETUP(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearSETUP(void)
 			{
 				(&AVR32_USBB.UPSTA0CLR)[USB_Pipe_SelectedPipe].txstpic = true;
@@ -524,7 +524,7 @@
 			 *
 			 *  \ingroup Group_PipePacketManagement_UC3
 			 */
-			static inline void Pipe_ClearIN(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearIN(void)
 			{
 				(&AVR32_USBB.UPSTA0CLR)[USB_Pipe_SelectedPipe].rxinic   = true;
@@ -537,7 +537,7 @@
 			 *
 			 *  \ingroup Group_PipePacketManagement_UC3
 			 */
-			static inline void Pipe_ClearOUT(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearOUT(void)
 			{
 				(&AVR32_USBB.UPSTA0CLR)[USB_Pipe_SelectedPipe].txoutic  = true;
@@ -555,7 +555,7 @@
 			 *
 			 *  \return Boolean \c true if an NAK has been received on the current pipe, \c false otherwise.
 			 */
-			static inline bool Pipe_IsNAKReceived(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsNAKReceived(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].nakedi;
@@ -567,7 +567,7 @@
 			 *
 			 *  \see \ref Pipe_IsNAKReceived() for more details.
 			 */
-			static inline void Pipe_ClearNAKReceived(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearNAKReceived(void)
 			{
 				(&AVR32_USBB.UPSTA0CLR)[USB_Pipe_SelectedPipe].nakedic = true;
@@ -579,7 +579,7 @@
 			 *
 			 *  \return Boolean \c true if the current pipe has been stalled by the attached device, \c false otherwise.
 			 */
-			static inline bool Pipe_IsStalled(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Pipe_IsStalled(void)
 			{
 				return (&AVR32_USBB.UPSTA0)[USB_Pipe_SelectedPipe].rxstalldi;
@@ -590,7 +590,7 @@
 			 *
 			 *  \ingroup Group_PipePacketManagement_UC3
 			 */
-			static inline void Pipe_ClearStall(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_ClearStall(void)
 			{
 				(&AVR32_USBB.UPSTA0CLR)[USB_Pipe_SelectedPipe].rxstalldic = true;
@@ -603,7 +603,7 @@
 			 *
 			 *  \return Next byte in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint8_t Pipe_Read_8(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_Read_8(void)
 			{
 				return *(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++);
@@ -615,7 +615,7 @@
 			 *
 			 *  \param[in] Data  Data to write into the the currently selected pipe's FIFO buffer.
 			 */
-			static inline void Pipe_Write_8(const uint8_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Write_8(const uint8_t Data)
 			{
 				*(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++) = Data;
@@ -625,7 +625,7 @@
 			 *
 			 *  \ingroup Group_PipePrimitiveRW_UC3
 			 */
-			static inline void Pipe_Discard_8(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Discard_8(void)
 			{
 				uint8_t Dummy;
@@ -642,7 +642,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint16_t Pipe_Read_16_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Pipe_Read_16_LE(void)
 			{
 				uint16_t Byte0 = *(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++);
@@ -658,7 +658,7 @@
 			 *
 			 *  \return Next two bytes in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint16_t Pipe_Read_16_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint16_t Pipe_Read_16_BE(void)
 			{
 				uint16_t Byte0 = *(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++);
@@ -674,7 +674,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected pipe's FIFO buffer.
 			 */
-			static inline void Pipe_Write_16_LE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Write_16_LE(const uint16_t Data)
 			{
 				*(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++) = (Data & 0xFF);
@@ -688,7 +688,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected pipe's FIFO buffer.
 			 */
-			static inline void Pipe_Write_16_BE(const uint16_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Write_16_BE(const uint16_t Data)
 			{
 				*(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++) = (Data >> 8);
@@ -699,7 +699,7 @@
 			 *
 			 *  \ingroup Group_PipePrimitiveRW_UC3
 			 */
-			static inline void Pipe_Discard_16(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Discard_16(void)
 			{
 				uint8_t Dummy;
@@ -717,7 +717,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint32_t Pipe_Read_32_LE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Pipe_Read_32_LE(void)
 			{
 				uint32_t Byte0 = *(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++);
@@ -735,7 +735,7 @@
 			 *
 			 *  \return Next four bytes in the currently selected pipe's FIFO buffer.
 			 */
-			static inline uint32_t Pipe_Read_32_BE(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint32_t Pipe_Read_32_BE(void)
 			{
 				uint32_t Byte0 = *(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++);
@@ -753,7 +753,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected pipe's FIFO buffer.
 			 */
-			static inline void Pipe_Write_32_LE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Write_32_LE(const uint32_t Data)
 			{
 				*(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++) = (Data &  0xFF);
@@ -769,7 +769,7 @@
 			 *
 			 *  \param[in] Data  Data to write to the currently selected pipe's FIFO buffer.
 			 */
-			static inline void Pipe_Write_32_BE(const uint32_t Data) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Write_32_BE(const uint32_t Data)
 			{
 				*(USB_Pipe_FIFOPos[USB_Pipe_SelectedPipe]++) = (Data >> 24);
@@ -782,7 +782,7 @@
 			 *
 			 *  \ingroup Group_PipePrimitiveRW_UC3
 			 */
-			static inline void Pipe_Discard_32(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Pipe_Discard_32(void)
 			{
 				uint8_t Dummy;
@@ -894,7 +894,7 @@
 			#endif
 
 		/* Inline Functions: */
-			static inline uint8_t Pipe_BytesToEPSizeMask(const uint16_t Bytes) ATTR_WARN_UNUSED_RESULT ATTR_CONST ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_CONST ATTR_ALWAYS_INLINE
 			static inline uint8_t Pipe_BytesToEPSizeMask(const uint16_t Bytes)
 			{
 				uint8_t  MaskVal    = 0;

@@ -286,7 +286,7 @@
 			 *
 			 *  \param[in,out] SIInterfaceInfo  Pointer to a structure containing a Still Image Class host configuration and state.
 			 */
-			static inline void SI_Host_USBTask(USB_ClassInfo_SI_Host_t* const SIInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void SI_Host_USBTask(USB_ClassInfo_SI_Host_t* const SIInterfaceInfo)
 			{
 				(void)SIInterfaceInfo;

@@ -147,7 +147,7 @@
 			 *  attached host, ceasing USB communications. If no host is present, this prevents any host from
 			 *  enumerating the device once attached until \ref USB_Attach() is called.
 			 */
-			static inline void USB_Detach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Detach(void)
 			{
 				USB.CTRLB &= ~USB_ATTACH_bm;
@@ -161,7 +161,7 @@
 			 *  attachment of a device to the host. This is despite the bit being located in the device-mode
 			 *  register and despite the datasheet making no mention of its requirement in host mode.
 			 */
-			static inline void USB_Attach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Attach(void)
 			{
 				USB.CTRLB |= USB_ATTACH_bm;
@@ -281,19 +281,19 @@
 			#endif
 
 		/* Inline Functions: */
-			static inline void USB_Controller_Enable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Enable(void)
 			{
 				USB.CTRLA |=  USB_ENABLE_bm;
 			}
 
-			static inline void USB_Controller_Disable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Disable(void)
 			{
 				USB.CTRLA &= ~USB_ENABLE_bm;
 			}
 
-			static inline void USB_Controller_Reset(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Reset(void)
 			{
 				USB.CTRLA &= ~USB_ENABLE_bm;

@@ -199,7 +199,7 @@
 			 *
 			 *  \param[in,out] USART  Pointer to the base of the USART peripheral within the device.
 			 */
-			static inline void Serial_Disable(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline void Serial_Disable(USART_t* const USART)
 			{
 				USART->CTRLA = 0;
@@ -213,7 +213,7 @@
 			 *
 			 *  \return Boolean \c true if a character has been received, \c false otherwise.
 			 */
-			static inline bool Serial_IsCharReceived(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 			static inline bool Serial_IsCharReceived(USART_t* const USART)
 			{
 				return ((USART->STATUS & USART_RXCIF_bm) ? true : false);
@@ -226,7 +226,7 @@
 			 *
 			 *  \return Boolean \c true if a character can be queued for transmission immediately, \c false otherwise.
 			 */
-			static inline bool Serial_IsSendReady(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 			static inline bool Serial_IsSendReady(USART_t* const USART)
 			{
 				return (USART->STATUS & USART_DREIF_bm) ? true : false;
@@ -239,7 +239,7 @@
 			 *
 			 *  \return Boolean \c true if no characters are buffered for transmission, \c false otherwise.
 			 */
-			static inline bool Serial_IsSendComplete(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 			static inline bool Serial_IsSendComplete(USART_t* const USART)
 			{
 				return (USART->STATUS & USART_TXCIF_bm) ? true : false;
@@ -268,7 +268,7 @@
 			 *
 			 *  \return Next byte received from the USART, or a negative value if no byte has been received.
 			 */
-			static inline int16_t Serial_ReceiveByte(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline int16_t Serial_ReceiveByte(USART_t* const USART)
 			{
 				if (!(Serial_IsCharReceived(USART)))

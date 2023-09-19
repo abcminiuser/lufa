@@ -156,7 +156,7 @@
 				PINE  = ((LEDMask & LEDS_PORTE_LEDS) << LEDS_PORTE_MASK_SHIFT);
 			}
 
-			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
 				return (((PORTD & LEDS_LED1) | (~PORTD & LEDS_LED2)) |

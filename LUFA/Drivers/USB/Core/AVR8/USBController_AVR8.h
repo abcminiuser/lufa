@@ -173,7 +173,7 @@
 				 *
 				 *  \return Boolean \c true if the VBUS line is currently detecting power from a host, \c false otherwise.
 				 */
-				static inline bool USB_VBUS_GetStatus(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+				ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 				static inline bool USB_VBUS_GetStatus(void)
 				{
 					return ((USBSTA & (1 << VBUS)) ? true : false);
@@ -184,7 +184,7 @@
 			 *  attached host, ceasing USB communications. If no host is present, this prevents any host from
 			 *  enumerating the device once attached until \ref USB_Attach() is called.
 			 */
-			static inline void USB_Detach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Detach(void)
 			{
 				UDCON  |=  (1 << DETACH);
@@ -198,7 +198,7 @@
 			 *  attachment of a device to the host. This is despite the bit being located in the device-mode
 			 *  register and despite the datasheet making no mention of its requirement in host mode.
 			 */
-			static inline void USB_Attach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Attach(void)
 			{
 				UDCON  &= ~(1 << DETACH);
@@ -324,26 +324,26 @@
 			#endif
 
 		/* Inline Functions: */
-			static inline void USB_PLL_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_PLL_On(void)
 			{
 				PLLCSR = USB_PLL_PSC;
 				PLLCSR = (USB_PLL_PSC | (1 << PLLE));
 			}
 
-			static inline void USB_PLL_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_PLL_Off(void)
 			{
 				PLLCSR = 0;
 			}
 
-			static inline bool USB_PLL_IsReady(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_PLL_IsReady(void)
 			{
 				return ((PLLCSR & (1 << PLOCK)) ? true : false);
 			}
 
-			static inline void USB_REG_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_REG_On(void)
 			{
 			#if defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR)
@@ -353,7 +353,7 @@
 			#endif
 			}
 
-			static inline void USB_REG_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_REG_Off(void)
 			{
 			#if defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR)
@@ -364,44 +364,44 @@
 			}
 
 			#if defined(USB_SERIES_4_AVR) || defined(USB_SERIES_6_AVR) || defined(USB_SERIES_7_AVR)
-			static inline void USB_OTGPAD_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTGPAD_On(void)
 			{
 				USBCON |=  (1 << OTGPADE);
 			}
 
-			static inline void USB_OTGPAD_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTGPAD_Off(void)
 			{
 				USBCON &= ~(1 << OTGPADE);
 			}
 			#endif
 
-			static inline void USB_CLK_Freeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_CLK_Freeze(void)
 			{
 				USBCON |=  (1 << FRZCLK);
 			}
 
-			static inline void USB_CLK_Unfreeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_CLK_Unfreeze(void)
 			{
 				USBCON &= ~(1 << FRZCLK);
 			}
 
-			static inline void USB_Controller_Enable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Enable(void)
 			{
 				USBCON |=  (1 << USBE);
 			}
 
-			static inline void USB_Controller_Disable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Disable(void)
 			{
 				USBCON &= ~(1 << USBE);
 			}
 
-			static inline void USB_Controller_Reset(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Reset(void)
 			{
 				USBCON &= ~(1 << USBE);
@@ -409,7 +409,7 @@
 			}
 
 			#if defined(USB_CAN_BE_BOTH)
-			static inline uint8_t USB_GetUSBModeFromUID(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t USB_GetUSBModeFromUID(void)
 			{
 				if (USBSTA & (1 << ID))

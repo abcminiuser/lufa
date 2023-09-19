@@ -129,7 +129,7 @@
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
-			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline uint8_t Dataflash_TransferByte(const uint8_t Byte)
 			{
 				return SPI_TransferByte(Byte);
@@ -139,7 +139,7 @@
 			 *
 			 *  \param[in] Byte  Byte of data to send to the dataflash
 			 */
-			static inline void Dataflash_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Dataflash_SendByte(const uint8_t Byte)
 			{
 				SPI_SendByte(Byte);
@@ -149,7 +149,7 @@
 			 *
 			 *  \return Last response byte from the dataflash
 			 */
-			static inline uint8_t Dataflash_ReceiveByte(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Dataflash_ReceiveByte(void)
 			{
 				return SPI_ReceiveByte();
@@ -160,7 +160,7 @@
 			 *  \return Mask of the currently selected Dataflash chip, either \ref DATAFLASH_NO_CHIP if no chip is selected
 			 *          or a DATAFLASH_CHIPn mask (where n is the chip number).
 			 */
-			static inline uint8_t Dataflash_GetSelectedChip(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Dataflash_GetSelectedChip(void)
 			{
 				return (~DATAFLASH_CHIPCS_PORT & DATAFLASH_CHIPCS_MASK);
@@ -171,14 +171,14 @@
 			 *  \param[in]  ChipMask  Mask of the Dataflash IC to select, in the form of a \c DATAFLASH_CHIPn mask (where n is
 			 *              the chip number).
 			 */
-			static inline void Dataflash_SelectChip(const uint8_t ChipMask) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Dataflash_SelectChip(const uint8_t ChipMask)
 			{
 				DATAFLASH_CHIPCS_PORT = ((DATAFLASH_CHIPCS_PORT | DATAFLASH_CHIPCS_MASK) & ~ChipMask);
 			}
 
 			/** Deselects the current dataflash chip, so that no dataflash is selected. */
-			static inline void Dataflash_DeselectChip(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void Dataflash_DeselectChip(void)
 			{
 				Dataflash_SelectChip(DATAFLASH_NO_CHIP);

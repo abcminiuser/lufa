@@ -165,7 +165,6 @@
 			 *  \param[in] SPIOptions  SPI Options, a mask consisting of one of each of the \c SPI_SPEED_*,
 			 *                         \c SPI_SCK_*, \c SPI_SAMPLE_*, \c SPI_ORDER_* and \c SPI_MODE_* masks.
 			 */
-			static inline void SPI_Init(const uint8_t SPIOptions);
 			static inline void SPI_Init(const uint8_t SPIOptions)
 			{
 				/* Prevent high rise times on PB.0 (/SS) from forcing a change to SPI slave mode */
@@ -188,7 +187,6 @@
 			}
 
 			/** Turns off the SPI driver, disabling and returning used hardware to their default configuration. */
-			static inline void SPI_Disable(void);
 			static inline void SPI_Disable(void)
 			{
 				DDRB  &= ~((1 << 1) | (1 << 2));
@@ -202,7 +200,7 @@
 			 *
 			 *  \return \ref SPI_MODE_MASTER if the interface is currently in SPI Master mode, \ref SPI_MODE_SLAVE otherwise
 			 */
-			static inline uint8_t SPI_GetCurrentMode(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline uint8_t SPI_GetCurrentMode(void)
 			{
 				return (SPCR & SPI_MODE_MASTER);
@@ -214,7 +212,7 @@
 			 *
 			 *  \return Response byte from the attached SPI device.
 			 */
-			static inline uint8_t SPI_TransferByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline uint8_t SPI_TransferByte(const uint8_t Byte)
 			{
 				SPDR = Byte;
@@ -227,7 +225,7 @@
 			 *
 			 *  \param[in] Byte  Byte to send through the SPI interface.
 			 */
-			static inline void SPI_SendByte(const uint8_t Byte) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void SPI_SendByte(const uint8_t Byte)
 			{
 				SPDR = Byte;
@@ -239,7 +237,7 @@
 			 *
 			 *  \return The response byte from the attached SPI device.
 			 */
-			static inline uint8_t SPI_ReceiveByte(void) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t SPI_ReceiveByte(void)
 			{
 				SPDR = 0x00;

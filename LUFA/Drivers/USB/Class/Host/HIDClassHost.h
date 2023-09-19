@@ -283,7 +283,7 @@
 			 *
 			 *  \param[in,out] HIDInterfaceInfo  Pointer to a structure containing a HID Class host configuration and state.
 			 */
-			static inline void HID_Host_USBTask(USB_ClassInfo_HID_Host_t* const HIDInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_NON_NULL_PTR_ARG(1)
 			static inline void HID_Host_USBTask(USB_ClassInfo_HID_Host_t* const HIDInterfaceInfo)
 			{
 				(void)HIDInterfaceInfo;

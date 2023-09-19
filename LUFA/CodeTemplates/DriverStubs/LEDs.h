@@ -114,7 +114,7 @@
 				// TODO: Add code to toggle the Leds in the given LEDMask, ignoring all others
 			}
 
-			static inline uint8_t LEDs_GetLEDs(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
 				// TODO: Add code to return the current LEDs status' here which can be masked against LED_LED* macros

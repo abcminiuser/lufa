@@ -84,7 +84,7 @@
 			};
 
 		/* Inline Functions: */
-			static inline void USB_INT_Enable(const uint8_t Interrupt) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_INT_Enable(const uint8_t Interrupt)
 			{
 				switch (Interrupt)
@@ -144,7 +144,7 @@
 				}
 			}
 
-			static inline void USB_INT_Disable(const uint8_t Interrupt) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_INT_Disable(const uint8_t Interrupt)
 			{
 				switch (Interrupt)
@@ -204,7 +204,7 @@
 				}
 			}
 
-			static inline void USB_INT_Clear(const uint8_t Interrupt) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_INT_Clear(const uint8_t Interrupt)
 			{
 				switch (Interrupt)
@@ -264,7 +264,7 @@
 				}
 			}
 
-			static inline bool USB_INT_IsEnabled(const uint8_t Interrupt) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline bool USB_INT_IsEnabled(const uint8_t Interrupt)
 			{
 				switch (Interrupt)
@@ -310,7 +310,7 @@
 				}
 			}
 
-			static inline bool USB_INT_HasOccurred(const uint8_t Interrupt) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT;
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline bool USB_INT_HasOccurred(const uint8_t Interrupt)
 			{
 				switch (Interrupt)

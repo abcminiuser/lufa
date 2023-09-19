@@ -293,7 +293,7 @@
 			 *
 			 *  \param[in,out] MSInterfaceInfo  Pointer to a structure containing an Mass Storage Class host configuration and state.
 			 */
-			static inline void MS_Host_USBTask(USB_ClassInfo_MS_Host_t* const MSInterfaceInfo) ATTR_NON_NULL_PTR_ARG(1) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void MS_Host_USBTask(USB_ClassInfo_MS_Host_t* const MSInterfaceInfo)
 			{
 				(void)MSInterfaceInfo;

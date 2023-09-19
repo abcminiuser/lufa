@@ -133,7 +133,7 @@
 			 *
 			 *  \return Boolean \c true if the VBUS line is currently detecting power from a host, \c false otherwise.
 			 */
-			static inline bool USB_VBUS_GetStatus(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool USB_VBUS_GetStatus(void)
 			{
 				return AVR32_USBB.USBSTA.vbus;
@@ -143,7 +143,7 @@
 			 *  attached host, ceasing USB communications. If no host is present, this prevents any host from
 			 *  enumerating the device once attached until \ref USB_Attach() is called.
 			 */
-			static inline void USB_Detach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Detach(void)
 			{
 				AVR32_USBB.UDCON.detach = true;
@@ -157,7 +157,7 @@
 			 *  attachment of a device to the host. This is despite the bit being located in the device-mode
 			 *  register and despite the datasheet making no mention of its requirement in host mode.
 			 */
-			static inline void USB_Attach(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Attach(void)
 			{
 				AVR32_USBB.UDCON.detach = false;
@@ -286,43 +286,43 @@
 			#endif
 
 		/* Inline Functions: */
-			static inline void USB_OTGPAD_On(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTGPAD_On(void)
 			{
 				AVR32_USBB.USBCON.otgpade = true;
 			}
 
-			static inline void USB_OTGPAD_Off(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_OTGPAD_Off(void)
 			{
 				AVR32_USBB.USBCON.otgpade = false;
 			}
 
-			static inline void USB_CLK_Freeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_CLK_Freeze(void)
 			{
 				AVR32_USBB.USBCON.frzclk = true;
 			}
 
-			static inline void USB_CLK_Unfreeze(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_CLK_Unfreeze(void)
 			{
 				AVR32_USBB.USBCON.frzclk = false;
 			}
 
-			static inline void USB_Controller_Enable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Enable(void)
 			{
 				AVR32_USBB.USBCON.usbe = true;
 			}
 
-			static inline void USB_Controller_Disable(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Disable(void)
 			{
 				AVR32_USBB.USBCON.usbe = false;
 			}
 
-			static inline void USB_Controller_Reset(void) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Reset(void)
 			{
 				AVR32_USBB.USBCON.usbe = false;
@@ -330,7 +330,7 @@
 			}
 
 			#if defined(USB_CAN_BE_BOTH)
-			static inline uint8_t USB_GetUSBModeFromUID(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline uint8_t USB_GetUSBModeFromUID(void)
 			{
 				if (AVR32_USBB.USBSTA.id)

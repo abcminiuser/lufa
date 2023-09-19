@@ -112,7 +112,7 @@
 				PORTC &= ~JOY_CMASK;
 			}
 
-			static inline uint8_t Joystick_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Joystick_GetStatus(void)
 			{
 				return (((uint8_t)~PINF & JOY_FMASK) | (((uint8_t)~PINC & JOY_CMASK) >> JOY_PORTC_MASK_SHIFT));

@@ -198,7 +198,7 @@
 	   		 *
 			 *  \param[in] TWI  Pointer to the base of the TWI peripheral within the device.
 			 */
-			static inline void TWI_Disable(TWI_t* const TWI) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline void TWI_Disable(TWI_t* const TWI)
 			{
 				TWI->MASTER.CTRLA &= ~TWI_MASTER_ENABLE_bm;
@@ -208,7 +208,7 @@
 			 *
 			 *  \param[in] TWI  Pointer to the base of the TWI peripheral within the device.
 			 */
-			static inline void TWI_StopTransmission(TWI_t* const TWI) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline void TWI_StopTransmission(TWI_t* const TWI)
 			{
 				TWI->MASTER.CTRLC = TWI_MASTER_ACKACT_bm | TWI_MASTER_CMD_STOP_gc;

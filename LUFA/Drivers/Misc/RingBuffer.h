@@ -162,7 +162,7 @@
 		 *
 		 *  \return Number of bytes currently stored in the buffer.
 		 */
-		static inline uint16_t RingBuffer_GetCount(RingBuffer_t* const Buffer) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 		static inline uint16_t RingBuffer_GetCount(RingBuffer_t* const Buffer)
 		{
 			uint16_t Count;
@@ -188,7 +188,7 @@
 		 *
 		 *  \return Number of free bytes in the buffer.
 		 */
-		static inline uint16_t RingBuffer_GetFreeCount(RingBuffer_t* const Buffer) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 		static inline uint16_t RingBuffer_GetFreeCount(RingBuffer_t* const Buffer)
 		{
 			return (Buffer->Size - RingBuffer_GetCount(Buffer));
@@ -206,7 +206,7 @@
 		 *
 		 *  \return Boolean \c true if the buffer contains no free space, \c false otherwise.
 		 */
-		static inline bool RingBuffer_IsEmpty(RingBuffer_t* const Buffer) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 		static inline bool RingBuffer_IsEmpty(RingBuffer_t* const Buffer)
 		{
 			return (RingBuffer_GetCount(Buffer) == 0);
@@ -220,7 +220,7 @@
 		 *
 		 *  \return Boolean \c true if the buffer contains no free space, \c false otherwise.
 		 */
-		static inline bool RingBuffer_IsFull(RingBuffer_t* const Buffer) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 		static inline bool RingBuffer_IsFull(RingBuffer_t* const Buffer)
 		{
 			return (RingBuffer_GetCount(Buffer) == Buffer->Size);
@@ -265,7 +265,7 @@
 		 *
 		 *  \return Next data element stored in the buffer.
 		 */
-		static inline uint8_t RingBuffer_Remove(RingBuffer_t* Buffer) ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_NON_NULL_PTR_ARG(1)
 		static inline uint8_t RingBuffer_Remove(RingBuffer_t* Buffer)
 		{
 			GCC_FORCE_POINTER_ACCESS(Buffer);
@@ -291,7 +291,7 @@
 		 *
 		 *  \return Next data element stored in the buffer.
 		 */
-		static inline uint8_t RingBuffer_Peek(RingBuffer_t* const Buffer) ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+		ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 		static inline uint8_t RingBuffer_Peek(RingBuffer_t* const Buffer)
 		{
 			return *Buffer->Out;

@@ -91,7 +91,7 @@
 			 *
 			 *  \return A mask indicating which card lines are high or low
 			 */
-			static inline uint8_t Magstripe_GetStatus(void) ATTR_WARN_UNUSED_RESULT;
+			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t Magstripe_GetStatus(void)
 			{
 				/* Mag-stripe IOs are active low and must be inverted when read */

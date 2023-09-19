@@ -157,7 +157,7 @@
 			 *
 			 *  \return Mask of pending interrupt lines for the given interrupt group.
 			 */
-			static inline uint_reg_t INTC_GetGroupInterrupts(const uint16_t GroupNumber) ATTR_ALWAYS_INLINE;
+			ATTR_ALWAYS_INLINE
 			static inline uint_reg_t INTC_GetGroupInterrupts(const uint16_t GroupNumber)
 			{
 				return AVR32_INTC.irr[GroupNumber];

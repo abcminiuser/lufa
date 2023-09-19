@@ -148,7 +148,7 @@
 			 *
 			 *  \param[in,out] USART  Pointer to the base of the USART peripheral within the device.
 			 */
-			static inline void SerialSPI_Disable(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline void SerialSPI_Disable(USART_t* const USART)
 			{
 				USART->CTRLA = 0;
@@ -195,7 +195,7 @@
 			 *
 			 *  \return The response byte from the attached SPI device.
 			 */
-			static inline uint8_t SerialSPI_ReceiveByte(USART_t* const USART) ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1);
+			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT ATTR_NON_NULL_PTR_ARG(1)
 			static inline uint8_t SerialSPI_ReceiveByte(USART_t* const USART)
 			{
 				return SerialSPI_TransferByte(USART, 0);
