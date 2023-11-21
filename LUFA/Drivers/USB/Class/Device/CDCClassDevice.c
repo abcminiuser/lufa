@@ -134,7 +134,8 @@ bool CDC_Device_ConfigureEndpoints(USB_ClassInfo_CDC_Device_t* const CDCInterfac
 
 void CDC_Device_USBTask(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 {
-	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+		|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 	  return;
 
 	#if !defined(NO_CLASS_DRIVER_AUTOFLUSH)
@@ -148,7 +149,8 @@ void CDC_Device_USBTask(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 uint8_t CDC_Device_SendString(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
                               const char* const String)
 {
-	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+		|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 	  return ENDPOINT_RWSTREAM_DeviceDisconnected;
 
 	Endpoint_SelectEndpoint(CDCInterfaceInfo->Config.DataINEndpoint.Address);
@@ -159,7 +161,8 @@ uint8_t CDC_Device_SendData(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
                             const void* const Buffer,
                             const uint16_t Length)
 {
-	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+		|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 	  return ENDPOINT_RWSTREAM_DeviceDisconnected;
 
 	Endpoint_SelectEndpoint(CDCInterfaceInfo->Config.DataINEndpoint.Address);
@@ -170,7 +173,8 @@ uint8_t CDC_Device_SendData(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 	uint8_t CDC_Device_SendString_P(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 	                                const char* const String)
 	{
-		if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+		if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+			|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 		  return ENDPOINT_RWSTREAM_DeviceDisconnected;
 
 		Endpoint_SelectEndpoint(CDCInterfaceInfo->Config.DataINEndpoint.Address);
@@ -192,7 +196,8 @@ uint8_t CDC_Device_SendData(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 uint8_t CDC_Device_SendByte(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
                             const uint8_t Data)
 {
-	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+		|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 	  return ENDPOINT_RWSTREAM_DeviceDisconnected;
 
 	Endpoint_SelectEndpoint(CDCInterfaceInfo->Config.DataINEndpoint.Address);
@@ -213,7 +218,8 @@ uint8_t CDC_Device_SendByte(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 
 uint8_t CDC_Device_Flush(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo)
 {
-	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS))
+	if ((USB_DeviceState != DEVICE_STATE_Configured) || !(CDCInterfaceInfo->State.LineEncoding.BaudRateBPS) \
+		|| !(CDCInterfaceInfo->State.ControlLineStates.HostToDevice & CDC_CONTROL_LINE_OUT_DTR))
 	  return ENDPOINT_RWSTREAM_DeviceDisconnected;
 
 	uint8_t ErrorCode;
@@ -366,4 +372,3 @@ void CDC_Device_Event_Stub_2(USB_ClassInfo_CDC_Device_t* const CDCInterfaceInfo,
 }
 
 #endif
-
