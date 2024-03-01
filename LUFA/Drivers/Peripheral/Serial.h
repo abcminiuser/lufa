@@ -68,6 +68,8 @@
 			#include "AVR8/Serial_AVR8.h"
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/Serial_XMEGA.h"
+		#elif (ARCH == ARCH_AVRDX)
+			#include "AVR_Dx/Serial_AVR_Dx.h"
 		#else
 			#error The Serial peripheral driver is not currently available for your selected architecture.
 		#endif
