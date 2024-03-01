@@ -79,27 +79,6 @@
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			/** \name USB Device Mode Option Masks */
-			/**@{*/
-			/** Mask for the Options parameter of the \ref USB_Init() function. This indicates that the
-			 *  USB interface should be initialized in low speed (1.5Mb/s) mode.
-			 *
-			 *  \note Low Speed mode is not available on all USB AVR models.
-			 *        \n
-			 *
-			 *  \note Restrictions apply on the number, size and type of endpoints which can be used
-			 *        when running in low speed mode - refer to the USB 2.0 specification.
-			 */
-			#define USB_DEVICE_OPT_LOWSPEED        (1 << 0)
-
-			#if (F_USB > 6000000)
-				/** Mask for the Options parameter of the \ref USB_Init() function. This indicates that the
-				 *  USB interface should be initialized in full speed (12Mb/s) mode.
-				 */
-				#define USB_DEVICE_OPT_FULLSPEED   (0 << 0)
-			#endif
-			/**@}*/
-
 			#if (!defined(NO_INTERNAL_SERIAL) || defined(__DOXYGEN__))
 				/** String descriptor index for the device's unique serial number string descriptor within the device.
 				 *  This unique serial number is used by the host to associate resources to the device (such as drivers or COM port
@@ -117,12 +96,12 @@
 				/** Length of the device's unique internal serial number, in bits, if present on the selected microcontroller
 				 *  model.
 				 */
-				#define INTERNAL_SERIAL_LENGTH_BITS     (8 * (1 + (offsetof(NVM_PROD_SIGNATURES_t, COORDY1) - offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0))))
+				#define INTERNAL_SERIAL_LENGTH_BITS     (8 * (1 + (offsetof(SIGROW_t, SERNUM15) - offsetof(SIGROW_t, SERNUM0))))
 
 				/** Start address of the internal serial number, in the appropriate address space, if present on the selected microcontroller
 				 *  model.
 				 */
-				#define INTERNAL_SERIAL_START_ADDRESS   offsetof(NVM_PROD_SIGNATURES_t, LOTNUM0)
+				#define INTERNAL_SERIAL_START_ADDRESS   &SIGROW.SERNUM0
 			#else
 				#undef	USE_INTERNAL_SERIAL
 				#define USE_INTERNAL_SERIAL             NO_DESCRIPTOR
@@ -162,7 +141,7 @@
 			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline uint16_t USB_Device_GetFrameNumber(void)
 			{
-				return ((USB_EndpointTable_t*)USB.EPPTR)->FrameNum;
+				return ((USB_EndpointTable_t*)USB0.EPPTR)->FrameNum;
 			}
 
 			#if !defined(NO_SOF_EVENTS)
@@ -175,7 +154,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_EnableSOFEvents(void)
 			{
-				USB.INTCTRLA |=  USB_SOFIE_bm;
+				USB0.INTCTRLA |=  USB_SOF_bm;
 			}
 
 			/** Disables the device mode Start Of Frame events. When disabled, this stops the firing of the
@@ -186,7 +165,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_DisableSOFEvents(void)
 			{
-				USB.INTCTRLA &= ~USB_SOFIE_bm;
+				USB0.INTCTRLA &= ~USB_SOF_bm;
 			}
 			#endif
 
@@ -194,35 +173,21 @@
 	#if !defined(__DOXYGEN__)
 		/* Inline Functions: */
 			ATTR_ALWAYS_INLINE
-			static inline void USB_Device_SetLowSpeed(void)
-			{
-				USB.CTRLA &= ~USB_SPEED_bm;
-			}
-
-			ATTR_ALWAYS_INLINE
-			static inline void USB_Device_SetFullSpeed(void)
-			{
-				USB.CTRLA |=  USB_SPEED_bm;
-			}
-
-			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_SetDeviceAddress(const uint8_t Address)
 			{
-				(void)Address;
-
-				/* No implementation for AVR Dx architecture */
+				USB0.ADDR = Address;
 			}
 
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_EnableDeviceAddress(const uint8_t Address)
 			{
-				USB.ADDR = Address;
+				USB0.ADDR = Address;
 			}
 
 			ATTR_ALWAYS_INLINE ATTR_WARN_UNUSED_RESULT
 			static inline bool USB_Device_IsAddressSet(void)
 			{
-				return ((USB.ADDR != 0) ? true : false);
+				return ((USB0.ADDR != 0) ? true : false);
 			}
 
 			ATTR_NON_NULL_PTR_ARG(1)
@@ -231,15 +196,11 @@
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 				GlobalInterruptDisable();
 
-				uint8_t SigReadAddress = INTERNAL_SERIAL_START_ADDRESS;
+				uint8_t* SigReadAddress = INTERNAL_SERIAL_START_ADDRESS;
 
 				for (uint8_t SerialCharNum = 0; SerialCharNum < (INTERNAL_SERIAL_LENGTH_BITS / 4); SerialCharNum++)
 				{
-					uint8_t SerialByte;
-
-					NVM.CMD    = NVM_CMD_READ_CALIB_ROW_gc;
-					SerialByte = pgm_read_byte(SigReadAddress);
-					NVM.CMD    = 0;
+					uint8_t SerialByte = *SigReadAddress;
 
 					if (SerialCharNum & 0x01)
 					{
