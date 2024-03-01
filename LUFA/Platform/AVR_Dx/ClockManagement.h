@@ -82,38 +82,38 @@
 			/** Enum for the possible external oscillator frequency ranges. */
 			enum AVRDX_Extern_OSC_ClockFrequency_t
 			{
-				EXOSC_FREQ_2MHZ_MAX      = OSC_FRQRANGE_04TO2_gc,  /**< External crystal oscillator equal to or slower than 2MHz. */
-				EXOSC_FREQ_9MHZ_MAX      = OSC_FRQRANGE_2TO9_gc,   /**< External crystal oscillator equal to or slower than 9MHz. */
-				EXOSC_FREQ_12MHZ_MAX     = OSC_FRQRANGE_9TO12_gc,  /**< External crystal oscillator equal to or slower than 12MHz. */
-				EXOSC_FREQ_16MHZ_MAX     = OSC_FRQRANGE_12TO16_gc, /**< External crystal oscillator equal to or slower than 16MHz. */
+				EXOSC_FREQ_8MHZ_MAX      = CLKCTRL_FRQRANGE_8M_gc,  /**< External crystal oscillator equal to or slower than 8MHz. */
+				EXOSC_FREQ_16MHZ_MAX     = CLKCTRL_FRQRANGE_16M_gc, /**< External crystal oscillator equal to or slower than 16MHz. */
+				EXOSC_FREQ_24MHZ_MAX     = CLKCTRL_FRQRANGE_24M_gc, /**< External crystal oscillator equal to or slower than 24MHz. */
+				EXOSC_FREQ_32MHZ_MAX     = CLKCTRL_FRQRANGE_32M_gc, /**< External crystal oscillator equal to or slower than 32MHz. */
+				EXCLK     				 = CLKCTRL_SELHF_bm,        /**< External clock on XTALHF1 pin. */
 			};
 
-			/** Enum for the possible external oscillator startup times. */
+			/** Enum for the possible high-frequency external oscillator startup times. */
 			enum AVRDX_Extern_OSC_ClockStartup_t
 			{
-				EXOSC_START_6CLK         = OSC_XOSCSEL_EXTCLK_gc,      /**< Wait 6 clock cycles before startup (external clock). */
-				EXOSC_START_32KCLK       = OSC_XOSCSEL_32KHz_gc,       /**< Wait 32K clock cycles before startup (32.768KHz crystal). */
-				EXOSC_START_256CLK       = OSC_XOSCSEL_XTAL_256CLK_gc, /**< Wait 256 clock cycles before startup. */
-				EXOSC_START_1KCLK        = OSC_XOSCSEL_XTAL_1KCLK_gc,  /**< Wait 1K clock cycles before startup. */
-				EXOSC_START_16KCLK       = OSC_XOSCSEL_XTAL_16KCLK_gc, /**< Wait 16K clock cycles before startup. */
+				EXOSC_START_256CLK       = CLKCTRL_CSUTHF_256_gc,  /**< Wait 256 clock cycles before startup. */
+				EXOSC_START_1KCLK        = CLKCTRL_CSUTHF_1K_gc,  /**< Wait 1K clock cycles before startup. */
+				EXOSC_START_4KCLK        = CLKCTRL_CSUTHF_4K_gc,  /**< Wait 4K clock cycles before startup. */
 			};
 
 			/** Enum for the possible module clock sources. */
 			enum AVRDX_System_ClockSource_t
 			{
-				CLOCK_SRC_INT_RC2MHZ    = 0, /**< Clock sourced from the Internal 2MHz RC Oscillator clock. */
-				CLOCK_SRC_INT_RC32MHZ   = 1, /**< Clock sourced from the Internal 32MHz RC Oscillator clock. */
-				CLOCK_SRC_INT_RC32KHZ   = 2, /**< Clock sourced from the Internal 32KHz RC Oscillator clock. */
-				CLOCK_SRC_XOSC          = 3, /**< Clock sourced from the External Oscillator clock. */
-				CLOCK_SRC_PLL           = 4, /**< Clock sourced from the Internal PLL clock. */
+				CLOCK_SRC_INT_OSCHF    = 0, /**< Clock sourced from the Internal High-Frequency Oscillator clock. */
+				CLOCK_SRC_INT_32KHZ    = 1, /**< Clock sourced from the Internal 32KHz Oscillator clock. */
+				CLOCK_SRC_EXT_CLK    = 2, 	/**< Clock sourced from an external clock. */
+				CLOCK_SRC_EXT_OSC    = 3, 	/**< Clock sourced from an extental high-frequency oscillator. */
+				CLOCK_SRC_EXT_32KHZ    = 4, /**< Clock sourced from an extental 32KHz oscillator. */
 			};
 
-			/** Enum for the possible DFLL clock reference sources. */
-			enum AVRDX_System_DFLLReference_t
+			/** Enum for the possible OSCHF Autotune sources. */
+			enum AVRDX_System_OSCHFAutotune_t
 			{
-				DFLL_REF_INT_RC32KHZ   = 0, /**< Reference clock sourced from the Internal 32KHz RC Oscillator clock. */
-				DFLL_REF_EXT_RC32KHZ   = 1, /**< Reference clock sourced from the External 32KHz RC Oscillator clock connected to TOSC pins. */
-				DFLL_REF_INT_USBSOF    = 2, /**< Reference clock sourced from the USB Start Of Frame packets. */
+				AUTOTUNE_DISABLED   = CLKCTRL_AUTOTUNE_OFF_gc, /**< OSCHF Autotune disabled. */
+				AUTOTUNE_XOSC32K   	= CLKCTRL_AUTOTUNE_32K_gc, /**< OSCHF Autotune from the External 32KHz RC Oscillator clock . */
+				AUTOTUNE_SOF_BIN    = (CLKCTRL_AUTOTUNE_SOF_gc | CLKCTRL_ALGSEL_BIN_gc), /**< OSCHF Autotune with binary search from the USB Start Of Frame packets. */
+				AUTOTUNE_SOF_INCR   = (CLKCTRL_AUTOTUNE_SOF_gc | CLKCTRL_ALGSEL_INCR_gc), /**< OSCHF Autotune with incremental search from the USB Start Of Frame packets. */
 			};
 
 		/* Inline Functions: */
@@ -150,10 +150,9 @@
 			static inline bool AVRDXCLK_StartExternalOscillator(const uint8_t FreqRange,
 			                                                    const uint8_t Startup)
 			{
-				OSC.XOSCCTRL  = (FreqRange | ((Startup == EXOSC_START_32KCLK) ? OSC_X32KLPM_bm : 0) | Startup);
-				OSC.CTRL     |= OSC_XOSCEN_bm;
+				AVRDXCLK_CCP_Write(&CLKCTRL.XOSCHFCTRLA, FreqRange | Startup | CLKCTRL_ENABLE_bm);
 
-				while (!(OSC.STATUS & OSC_XOSCRDY_bm));
+				while (!(CLKCTRL.MCLKSTATUS & CLKCTRL_EXTS_bm));
 				return true;
 			}
 
@@ -161,186 +160,46 @@
 			ATTR_ALWAYS_INLINE
 			static inline void AVRDXCLK_StopExternalOscillator(void)
 			{
-				OSC.CTRL     &= ~OSC_XOSCEN_bm;
+				AVRDXCLK_CCP_Write(&CLKCTRL.XOSCHFCTRLA, 0);
 			}
 
-			/** Starts the given internal oscillator of the AVR Dx microcontroller, with the given options. This routine blocks until
-			 *  the oscillator is ready for use.
+			/** Configures the OSCHF of the AVR Dx microcontroller, with the given options. This routine blocks until the OSCHF is ready for use.
 			 *
-			 *  \param[in] Source  Internal oscillator to start, a value from \ref AVRDX_System_ClockSource_t.
+			 *  \attention The output frequency must be equal to or greater than 12 MHz.
 			 *
-			 *  \return Boolean \c true if the internal oscillator was successfully started, \c false if invalid parameters specified.
+			 *  \param[in] Frequency    Target frequency of the OSCHF's output.
+			 *  \param[in] Autotune     Autotune source for the OSCHF, a value from \ref AVRDX_System_OSCHFAutotune_t.
+			 *
+			 *  \return Boolean \c true if the OSCHF was successfully started, \c false if invalid parameters specified.
 			 */
-			ATTR_ALWAYS_INLINE
-			static inline bool AVRDXCLK_StartInternalOscillator(const uint8_t Source)
+			static inline bool AVRDXCLK_ConfigureOSCHF(const uint32_t Frequency, const uint8_t Autotune) ATTR_ALWAYS_INLINE;
+			static inline bool AVRDXCLK_ConfigureOSCHF(const uint32_t Frequency, const uint8_t Autotune)
 			{
-				switch (Source)
+				uint8_t ClockConfigMask = Autotune;
+				switch (Frequency)
 				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						OSC.CTRL |= OSC_RC2MEN_bm;
-						while (!(OSC.STATUS & OSC_RC2MRDY_bm));
-						return true;
-					case CLOCK_SRC_INT_RC32MHZ:
-						OSC.CTRL |= OSC_RC32MEN_bm;
-						while (!(OSC.STATUS & OSC_RC32MRDY_bm));
-						return true;
-					case CLOCK_SRC_INT_RC32KHZ:
-						OSC.CTRL |= OSC_RC32KEN_bm;
-						while (!(OSC.STATUS & OSC_RC32KRDY_bm));
-						return true;
-					default:
-						return false;
-				}
-			}
-
-			/** Stops the given internal oscillator of the AVR Dx microcontroller.
-			 *
-			 *  \param[in] Source  Internal oscillator to stop, a value from \ref AVRDX_System_ClockSource_t.
-			 *
-			 *  \return Boolean \c true if the internal oscillator was successfully stopped, \c false if invalid parameters specified.
-			 */
-			ATTR_ALWAYS_INLINE
-			static inline bool AVRDXCLK_StopInternalOscillator(const uint8_t Source)
-			{
-				switch (Source)
-				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						OSC.CTRL &= ~OSC_RC2MEN_bm;
-						return true;
-					case CLOCK_SRC_INT_RC32MHZ:
-						OSC.CTRL &= ~OSC_RC32MEN_bm;
-						return true;
-					case CLOCK_SRC_INT_RC32KHZ:
-						OSC.CTRL &= ~OSC_RC32KEN_bm;
-						return true;
-					default:
-						return false;
-				}
-			}
-
-			/** Starts the PLL of the AVR Dx microcontroller, with the given options. This routine blocks until the PLL is ready for use.
-			 *
-			 *  \attention The output frequency must be equal to or greater than the source frequency.
-			 *
-			 *  \param[in] Source       Clock source for the PLL, a value from \ref AVRDX_System_ClockSource_t.
-			 *  \param[in] SourceFreq   Frequency of the PLL's clock source, in Hz.
-			 *  \param[in] Frequency    Target frequency of the PLL's output.
-			 *
-			 *  \return Boolean \c true if the PLL was successfully started, \c false if invalid parameters specified.
-			 */
-			static inline bool AVRDXCLK_StartPLL(const uint8_t Source,
-			                                     const uint32_t SourceFreq,
-			                                     const uint32_t Frequency) ATTR_ALWAYS_INLINE;
-			static inline bool AVRDXCLK_StartPLL(const uint8_t Source,
-			                                     const uint32_t SourceFreq,
-			                                     const uint32_t Frequency)
-			{
-				uint8_t MulFactor = (Frequency / SourceFreq);
-
-				if (SourceFreq > Frequency)
-				  return false;
-
-				if (MulFactor > 31)
-				  return false;
-
-				switch (Source)
-				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						OSC.PLLCTRL = (OSC_PLLSRC_RC2M_gc  | MulFactor);
+					case 12000000ul:
+						ClockConfigMask |= CLKCTRL_FRQSEL_12M_gc;
 						break;
-					case CLOCK_SRC_INT_RC32MHZ:
-						OSC.PLLCTRL = (OSC_PLLSRC_RC32M_gc | MulFactor);
+					case 16000000ul:
+						ClockConfigMask |= CLKCTRL_FRQSEL_16M_gc;
 						break;
-					case CLOCK_SRC_XOSC:
-						OSC.PLLCTRL = (OSC_PLLSRC_XOSC_gc  | MulFactor);
+					case 20000000ul:
+						ClockConfigMask |= CLKCTRL_FRQSEL_20M_gc;
+						break;
+					case 24000000ul:
+						ClockConfigMask |= CLKCTRL_FRQSEL_24M_gc;
 						break;
 					default:
 						return false;
 				}
 
-				OSC.CTRL |= OSC_PLLEN_bm;
+				AVRDXCLK_CCP_Write(&CLKCTRL.OSCHFCTRLA, ClockConfigMask);
 
-				while (!(OSC.STATUS & OSC_PLLRDY_bm));
+				while (!(CLKCTRL.MCLKSTATUS & CLKCTRL_OSCHFS_bm));
 				return true;
 			}
 
-			/** Stops the PLL of the AVR Dx microcontroller. */
-			ATTR_ALWAYS_INLINE
-			static inline void AVRDXCLK_StopPLL(void)
-			{
-				OSC.CTRL &= ~OSC_PLLEN_bm;
-			}
-
-			/** Starts the DFLL of the AVR Dx microcontroller, with the given options.
-			 *
-			 *  \param[in] Source     RC Clock source for the DFLL, a value from \ref AVRDX_System_ClockSource_t.
-			 *  \param[in] Reference  Reference clock source for the DFLL, an value from \ref AVRDX_System_DFLLReference_t.
-			 *  \param[in] Frequency  Target frequency of the DFLL's output.
-			 *
-			 *  \return Boolean \c true if the DFLL was successfully started, \c false if invalid parameters specified.
-			 */
-			static inline bool AVRDXCLK_StartDFLL(const uint8_t Source,
-			                                      const uint8_t Reference,
-			                                      const uint32_t Frequency) ATTR_ALWAYS_INLINE;
-			static inline bool AVRDXCLK_StartDFLL(const uint8_t Source,
-			                                      const uint8_t Reference,
-			                                      const uint32_t Frequency)
-			{
-				uint16_t DFLLCompare = (Frequency / 1024);
-
-				switch (Source)
-				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						OSC.DFLLCTRL   |= (Reference << OSC_RC2MCREF_bp);
-						DFLLRC2M.COMP1  = (DFLLCompare & 0xFF);
-						DFLLRC2M.COMP2  = (DFLLCompare >> 8);
-						DFLLRC2M.CTRL   = DFLL_ENABLE_bm;
-						break;
-					case CLOCK_SRC_INT_RC32MHZ:
-						OSC.DFLLCTRL   |= (Reference << OSC_RC32MCREF_gp);
-						DFLLRC32M.COMP1 = (DFLLCompare & 0xFF);
-						DFLLRC32M.COMP2 = (DFLLCompare >> 8);
-
-						if (Reference == DFLL_REF_INT_USBSOF)
-						{
-							NVM.CMD        = NVM_CMD_READ_CALIB_ROW_gc;
-							DFLLRC32M.CALA = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, USBRCOSCA));
-							DFLLRC32M.CALB = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, USBRCOSC));
-							NVM.CMD        = 0;
-						}
-
-						DFLLRC32M.CTRL  = DFLL_ENABLE_bm;
-						break;
-					default:
-						return false;
-				}
-
-				return true;
-			}
-
-			/** Stops the given DFLL of the AVR Dx microcontroller.
-			 *
-			 *  \param[in] Source  RC Clock source for the DFLL to be stopped, a value from \ref AVRDX_System_ClockSource_t.
-			 *
-			 *  \return Boolean \c true if the DFLL was successfully stopped, \c false if invalid parameters specified.
-			 */
-			ATTR_ALWAYS_INLINE
-			static inline bool AVRDXCLK_StopDFLL(const uint8_t Source)
-			{
-				switch (Source)
-				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						DFLLRC2M.CTRL = 0;
-						break;
-					case CLOCK_SRC_INT_RC32MHZ:
-						DFLLRC32M.CTRL = 0;
-						break;
-					default:
-						return false;
-				}
-
-				return true;
-			}
 
 			/** Sets the clock source for the main microcontroller core. The given clock source should be configured
 			 *  and ready for use before this function is called.
@@ -356,20 +215,18 @@
 
 				switch (Source)
 				{
-					case CLOCK_SRC_INT_RC2MHZ:
-						ClockSourceMask = CLK_SCLKSEL_RC2M_gc;
+					case CLOCK_SRC_INT_OSCHF:
+						ClockSourceMask = CLKCTRL_CLKSEL_OSCHF_gc;
 						break;
-					case CLOCK_SRC_INT_RC32MHZ:
-						ClockSourceMask = CLK_SCLKSEL_RC32M_gc;
+					case CLOCK_SRC_INT_32KHZ:
+						ClockSourceMask = CLKCTRL_CLKSEL_OSC32K_gc;
 						break;
-					case CLOCK_SRC_INT_RC32KHZ:
-						ClockSourceMask = CLK_SCLKSEL_RC32K_gc;
+					case CLOCK_SRC_EXT_CLK:
+					case CLOCK_SRC_EXT_OSC:
+						ClockSourceMask = CLKCTRL_CLKSEL_EXTCLK_gc;
 						break;
-					case CLOCK_SRC_XOSC:
-						ClockSourceMask = CLK_SCLKSEL_XOSC_gc;
-						break;
-					case CLOCK_SRC_PLL:
-						ClockSourceMask = CLK_SCLKSEL_PLL_gc;
+					case CLOCK_SRC_EXT_32KHZ:
+						ClockSourceMask = CLKCTRL_CLKSEL_XOSC32K_gc;
 						break;
 					default:
 						return false;
@@ -378,12 +235,12 @@
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 				GlobalInterruptDisable();
 
-				AVRDXCLK_CCP_Write(&CLK.CTRL, ClockSourceMask);
+				AVRDXCLK_CCP_Write(&CLKCTRL.MCLKCTRLA, ClockSourceMask);
 
 				SetGlobalInterruptMask(CurrentGlobalInt);
 
-				Delay_MS(1);
-				return (CLK.CTRL == ClockSourceMask);
+				while (CLKCTRL.MCLKSTATUS & CLKCTRL_SOSC_bm);
+				return ((CLKCTRL.MCLKCTRLA & CLKCTRL_CLKSEL_gm) == ClockSourceMask);
 			}
 
 	/* Disable C linkage for C++ Compilers: */

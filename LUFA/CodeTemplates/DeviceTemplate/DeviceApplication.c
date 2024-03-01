@@ -80,13 +80,9 @@ void SetupHardware(void)
 		USB_Init(USB_OPT_RC32MCLKSRC | USB_OPT_BUSEVENT_PRIHIGH);
 
 	#elif (ARCH == ARCH_AVRDX)
-		/* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
-		AVRDXCLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
-		AVRDXCLK_SetCPUClockSource(CLOCK_SRC_PLL);
-
-		/* Start the 32MHz internal RC oscillator and start the DFLL to increase it to 48MHz using the USB SOF as a reference */
-		AVRDXCLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
-		AVRDXCLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+		/* Configure the OSCHF to run at F_CPU with SOF Autotune enabled */
+		AVRDXCLK_ConfigureOSCHF(F_CPU, AUTOTUNE_SOF_BIN);
+		AVRDXCLK_SetCPUClockSource(CLOCK_SRC_INT_OSCHF);
 
 		/* Hardware Initialization */
 		USB_Init(USB_OPT_RC32MCLKSRC | USB_OPT_BUSEVENT_PRIHIGH);
