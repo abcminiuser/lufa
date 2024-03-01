@@ -97,23 +97,14 @@
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
-			/** Macro for calculating the baud value from a given baud rate when the \c U2X (double speed) bit is
-			 *  not set.
+			/** Macro for calculating the baud value from a given baud rate.
 			 *
 			 *  \param[in] Baud  Target serial UART baud rate.
 			 *
-			 *  \return Closest UBRR register value for the given UART frequency.
+			 *  \return Closest register value for the given UART frequency.
 			 */
-			#define SERIAL_UBBRVAL(Baud)    ((((F_CPU / 16) + (Baud / 2)) / (Baud)) - 1)
+			#define SERIAL_BAUD(Baud)    ((F_CPU * 64) / (16 * Baud))
 
-			/** Macro for calculating the baud value from a given baud rate when the \c U2X (double speed) bit is
-			 *  set.
-			 *
-			 *  \param[in] Baud  Target serial UART baud rate.
-			 *
-			 *  \return Closest UBRR register value for the given UART frequency.
-			 */
-			#define SERIAL_2X_UBBRVAL(Baud) ((((F_CPU / 8) + (Baud / 2)) / (Baud)) - 1)
 
 		/* Function Prototypes: */
 			/** Transmits a given string located in program space (FLASH) through the USART.
@@ -186,13 +177,9 @@
 			                               const uint32_t BaudRate,
 			                               const bool DoubleSpeed)
 			{
-				uint16_t BaudValue = (DoubleSpeed ? SERIAL_2X_UBBRVAL(BaudRate) : SERIAL_UBBRVAL(BaudRate));
-
-				USART->BAUDCTRLB = (BaudValue >> 8);
-				USART->BAUDCTRLA = (BaudValue & 0xFF);
-
+				USART->BAUD = SERIAL_BAUD(BaudRate);
 				USART->CTRLC = (USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc | USART_CHSIZE_8BIT_gc);
-				USART->CTRLB = (USART_RXEN_bm | USART_TXEN_bm | (DoubleSpeed ? USART_CLK2X_bm : 0));
+				USART->CTRLB = (USART_RXEN_bm | USART_TXEN_bm);
 			}
 
 			/** Turns off the USART driver, disabling and returning used hardware to their default configuration.
@@ -259,7 +246,7 @@
 			                                   const char DataByte)
 			{
 				while (!(Serial_IsSendReady(USART)));
-				USART->DATA = DataByte;
+				USART->TXDATAL = DataByte;
 			}
 
 			/** Receives the next byte from the USART.
@@ -275,7 +262,7 @@
 				  return -1;
 
 				USART->STATUS = USART_RXCIF_bm;
-				return USART->DATA;
+				return USART->RXDATAL;
 			}
 
 	/* Disable C linkage for C++ Compilers: */

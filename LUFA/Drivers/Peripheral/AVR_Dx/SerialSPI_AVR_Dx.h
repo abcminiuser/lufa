@@ -91,7 +91,7 @@
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
-			#define SERIAL_SPI_UBBRVAL(Baud)       ((Baud < (F_CPU / 2)) ? ((F_CPU / (2 * Baud)) - 1) : 0)
+			#define SERIAL_SPI_BAUD(Baud)       ((Baud < (F_CPU / 2)) ? ((F_CPU / (2 * Baud)) - 1) : 0)
 	#endif
 
 	/* Public Interface - May be used in end-application: */
@@ -135,11 +135,7 @@
 			                                  const uint8_t SPIOptions,
 			                                  const uint32_t BaudRate)
 			{
-				uint16_t BaudValue = SERIAL_SPI_UBBRVAL(BaudRate);
-
-				USART->BAUDCTRLB = (BaudValue >> 8);
-				USART->BAUDCTRLA = (BaudValue & 0xFF);
-
+				USART->BAUD = SERIAL_SPI_BAUD(BaudRate);
 				USART->CTRLC = (USART_CMODE_MSPI_gc | SPIOptions);
 				USART->CTRLB = (USART_RXEN_bm | USART_TXEN_bm);
 			}
@@ -168,10 +164,10 @@
 			static inline uint8_t SerialSPI_TransferByte(USART_t* const USART,
 			                                             const uint8_t DataByte)
 			{
-				USART->DATA   = DataByte;
+				USART->TXDATAL   = DataByte;
 				while (!(USART->STATUS & USART_TXCIF_bm));
 				USART->STATUS = USART_TXCIF_bm;
-				return USART->DATA;
+				return USART->RXDATAL;
 			}
 
 			/** Sends a byte through the USART SPI interface, blocking until the transfer is complete. The response
