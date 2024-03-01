@@ -29,19 +29,19 @@
 */
 
 /** \file
- *  \brief SPI Peripheral Driver (XMEGA)
+ *  \brief SPI Peripheral Driver (AVR Dx)
  *
- *  On-chip SPI driver for the XMEGA microcontrollers.
+ *  On-chip SPI driver for the AVR Dx microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the SPI driver
  *        dispatch header located in LUFA/Drivers/Peripheral/SPI.h.
  */
 
 /** \ingroup Group_SPI
- *  \defgroup Group_SPI_XMEGA SPI Peripheral Driver (XMEGA)
+ *  \defgroup Group_SPI_AVRDX SPI Peripheral Driver (AVR Dx)
  *
- *  \section Sec_SPI_XMEGA_ModDescription Module Description
- *  Driver for the hardware SPI port(s) available on XMEGA AVR microcontroller models. This
+ *  \section Sec_SPI_AVRDX_ModDescription Module Description
+ *  Driver for the hardware SPI port(s) available on AVR Dx microcontroller models. This
  *  module provides an easy to use driver for the setup and transfer of data over the AVR's
  *  SPI ports.
  *
@@ -71,8 +71,8 @@
  *  @{
  */
 
-#ifndef __SPI_XMEGA_H__
-#define __SPI_XMEGA_H__
+#ifndef __SPI_AVRDX_H__
+#define __SPI_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"

@@ -29,24 +29,24 @@
 */
 
 /** \file
- *  \brief Master SPI Mode Serial USART Peripheral Driver (XMEGA)
+ *  \brief Master SPI Mode Serial USART Peripheral Driver (AVR Dx)
  *
- *  On-chip Master SPI mode USART driver for the XMEGA AVR microcontrollers.
+ *  On-chip Master SPI mode USART driver for the AVR Dx microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the SPI Master
  *        Mode USART driver dispatch header located in LUFA/Drivers/Peripheral/Serial.h.
  */
 
 /** \ingroup Group_SerialSPI
- *  \defgroup Group_SerialSPI_XMEGA Master SPI Mode Serial USART Peripheral Driver (XMEGA)
+ *  \defgroup Group_SerialSPI_AVRDX Master SPI Mode Serial USART Peripheral Driver (AVR Dx)
  *
- *  \section Sec_SerialSPI_XMEGA_ModDescription Module Description
- *  On-chip serial USART driver for the XMEGA AVR microcontrollers.
+ *  \section Sec_SerialSPI_AVRDX_ModDescription Module Description
+ *  On-chip serial USART driver for the AVR Dx microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the ADC driver
  *        dispatch header located in LUFA/Drivers/Peripheral/SerialSPI.h.
  *
- *  \section Sec_SerialSPI_XMEGA_ExampleUsage Example Usage
+ *  \section Sec_SerialSPI_AVRDX_ExampleUsage Example Usage
  *  The following snippet is an example of how this module may be used within a typical
  *  application.
  *
@@ -71,8 +71,8 @@
  *  @{
  */
 
-#ifndef __SERIAL_SPI_XMEGA_H__
-#define __SERIAL_SPI_XMEGA_H__
+#ifndef __SERIAL_SPI_AVRDX_H__
+#define __SERIAL_SPI_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"

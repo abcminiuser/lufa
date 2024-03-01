@@ -29,7 +29,7 @@
 */
 
 /** \file
- *  \brief USB Controller Interrupt definitions for the AVR XMEGA microcontrollers.
+ *  \brief USB Controller Interrupt definitions for the AVR Dx microcontrollers.
  *
  *  This file contains definitions required for the correct handling of low level USB service routine interrupts
  *  from the USB controller.
@@ -38,8 +38,8 @@
  *        dispatch header located in LUFA/Drivers/USB/USB.h.
  */
 
-#ifndef __USBINTERRUPT_XMEGA_H__
-#define __USBINTERRUPT_XMEGA_H__
+#ifndef __USBINTERRUPT_AVRDX_H__
+#define __USBINTERRUPT_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"

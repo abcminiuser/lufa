@@ -29,24 +29,24 @@
 */
 
 /** \file
- *  \brief USB Controller definitions for the AVR XMEGA microcontrollers.
- *  \copydetails Group_USBManagement_XMEGA
+ *  \brief USB Controller definitions for the AVR Dx microcontrollers.
+ *  \copydetails Group_USBManagement_AVRDX
  *
  *  \note This file should not be included directly. It is automatically included as needed by the USB driver
  *        dispatch header located in LUFA/Drivers/USB/USB.h.
  */
 
 /** \ingroup Group_USBManagement
- *  \defgroup Group_USBManagement_XMEGA USB Interface Management (XMEGA)
- *  \brief USB Controller definitions for the AVR XMEGA microcontrollers.
+ *  \defgroup Group_USBManagement_AVRDX USB Interface Management (AVR Dx)
+ *  \brief USB Controller definitions for the AVR Dx microcontrollers.
  *
  *  Functions, macros, variables, enums and types related to the setup and management of the USB interface.
  *
  *  @{
  */
 
-#ifndef __USBCONTROLLER_XMEGA_H__
-#define __USBCONTROLLER_XMEGA_H__
+#ifndef __USBCONTROLLER_AVRDX_H__
+#define __USBCONTROLLER_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"

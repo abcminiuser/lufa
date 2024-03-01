@@ -29,24 +29,24 @@
 */
 
 /** \file
- *  \brief USB Device definitions for the AVR XMEGA microcontrollers.
- *  \copydetails Group_Device_XMEGA
+ *  \brief USB Device definitions for the AVR Dx microcontrollers.
+ *  \copydetails Group_Device_AVRDX
  *
  *  \note This file should not be included directly. It is automatically included as needed by the USB driver
  *        dispatch header located in LUFA/Drivers/USB/USB.h.
  */
 
 /** \ingroup Group_Device
- *  \defgroup Group_Device_XMEGA Device Management (XMEGA)
- *  \brief USB Device definitions for the AVR XMEGA microcontrollers.
+ *  \defgroup Group_Device_AVRDX Device Management (AVR Dx)
+ *  \brief USB Device definitions for the AVR Dx microcontrollers.
  *
- *  Architecture specific USB Device definitions for the Atmel AVR XMEGA microcontrollers.
+ *  Architecture specific USB Device definitions for the Atmel AVR Dx microcontrollers.
  *
  *  @{
  */
 
-#ifndef __USBDEVICE_XMEGA_H__
-#define __USBDEVICE_XMEGA_H__
+#ifndef __USBDEVICE_AVRDX_H__
+#define __USBDEVICE_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"
@@ -210,7 +210,7 @@
 			{
 				(void)Address;
 
-				/* No implementation for XMEGA architecture */
+				/* No implementation for AVR Dx architecture */
 			}
 
 			ATTR_ALWAYS_INLINE

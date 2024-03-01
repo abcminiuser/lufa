@@ -29,45 +29,45 @@
 */
 
 /** \file
- *  \brief Module Clock Driver for the AVR USB XMEGA microcontrollers.
+ *  \brief Module Clock Driver for the AVR Dx USB microcontrollers.
  *
- *  Clock management driver for the AVR USB XMEGA microcontrollers. This driver allows for the configuration
+ *  Clock management driver for the AVR Dx USB microcontrollers. This driver allows for the configuration
  *  of the various clocks within the device to clock the various peripherals.
  */
 
-/** \ingroup Group_PlatformDrivers_XMEGA
- *  \defgroup Group_PlatformDrivers_XMEGAClocks Clock Management Driver - LUFA/Platform/XMEGA/ClockManagement.h
- *  \brief Module Clock Driver for the AVR USB XMEGA microcontrollers.
+/** \ingroup Group_PlatformDrivers_AVRDX
+ *  \defgroup Group_PlatformDrivers_AVRDXClocks Clock Management Driver - LUFA/Platform/AVR_Dx/ClockManagement.h
+ *  \brief Module Clock Driver for the AVR Dx USB microcontrollers.
  *
- *  \section Sec_PlatformDrivers_XMEGAClocks_Dependencies Module Source Dependencies
+ *  \section Sec_PlatformDrivers_AVRDXClocks_Dependencies Module Source Dependencies
  *  The following files must be built with any user project that uses this module:
  *    - None
  *
- *  \section Sec_PlatformDrivers_XMEGAClocks_ModDescription Module Description
- *  Clock management driver for the AVR USB XMEGA microcontrollers. This driver allows for the configuration
+ *  \section Sec_PlatformDrivers_AVRDXClocks_ModDescription Module Description
+ *  Clock management driver for the AVR Dx USB microcontrollers. This driver allows for the configuration
  *  of the various clocks within the device to clock the various peripherals.
  *
  *  Usage Example:
  *  \code
- *   	#include <LUFA/Platform/XMEGA/ClockManagement.h>
+ *   	#include <LUFA/Platform/AVR_Dx/ClockManagement.h>
  *
  *   	void main(void)
  *   	{
  *   		// Start the PLL to multiply the 2MHz RC oscillator to F_CPU and switch the CPU core to run from it
- *   		XMEGACLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
- *   		XMEGACLK_SetCPUClockSource(CLOCK_SRC_PLL);
+ *   		AVRDXCLK_StartPLL(CLOCK_SRC_INT_RC2MHZ, 2000000, F_CPU);
+ *   		AVRDXCLK_SetCPUClockSource(CLOCK_SRC_PLL);
  *
  *   		// Start the 32MHz internal RC oscillator and start the DFLL to increase it to F_USB using the USB SOF as a reference
- *   		XMEGACLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
- *   		XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
+ *   		AVRDXCLK_StartInternalOscillator(CLOCK_SRC_INT_RC32MHZ);
+ *   		AVRDXCLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
  *   	}
  *  \endcode
  *
  *  @{
  */
 
-#ifndef _XMEGA_CLOCK_MANAGEMENT_H_
-#define _XMEGA_CLOCK_MANAGEMENT_H_
+#ifndef _AVRDX_CLOCK_MANAGEMENT_H_
+#define _AVRDX_CLOCK_MANAGEMENT_H_
 
 	/* Includes: */
 		#include "../../Common/Common.h"
@@ -80,7 +80,7 @@
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** Enum for the possible external oscillator frequency ranges. */
-			enum XMEGA_Extern_OSC_ClockFrequency_t
+			enum AVRDX_Extern_OSC_ClockFrequency_t
 			{
 				EXOSC_FREQ_2MHZ_MAX      = OSC_FRQRANGE_04TO2_gc,  /**< External crystal oscillator equal to or slower than 2MHz. */
 				EXOSC_FREQ_9MHZ_MAX      = OSC_FRQRANGE_2TO9_gc,   /**< External crystal oscillator equal to or slower than 9MHz. */
@@ -89,7 +89,7 @@
 			};
 
 			/** Enum for the possible external oscillator startup times. */
-			enum XMEGA_Extern_OSC_ClockStartup_t
+			enum AVRDX_Extern_OSC_ClockStartup_t
 			{
 				EXOSC_START_6CLK         = OSC_XOSCSEL_EXTCLK_gc,      /**< Wait 6 clock cycles before startup (external clock). */
 				EXOSC_START_32KCLK       = OSC_XOSCSEL_32KHz_gc,       /**< Wait 32K clock cycles before startup (32.768KHz crystal). */
@@ -99,7 +99,7 @@
 			};
 
 			/** Enum for the possible module clock sources. */
-			enum XMEGA_System_ClockSource_t
+			enum AVRDX_System_ClockSource_t
 			{
 				CLOCK_SRC_INT_RC2MHZ    = 0, /**< Clock sourced from the Internal 2MHz RC Oscillator clock. */
 				CLOCK_SRC_INT_RC32MHZ   = 1, /**< Clock sourced from the Internal 32MHz RC Oscillator clock. */
@@ -109,7 +109,7 @@
 			};
 
 			/** Enum for the possible DFLL clock reference sources. */
-			enum XMEGA_System_DFLLReference_t
+			enum AVRDX_System_DFLLReference_t
 			{
 				DFLL_REF_INT_RC32KHZ   = 0, /**< Reference clock sourced from the Internal 32KHz RC Oscillator clock. */
 				DFLL_REF_EXT_RC32KHZ   = 1, /**< Reference clock sourced from the External 32KHz RC Oscillator clock connected to TOSC pins. */
@@ -117,14 +117,14 @@
 			};
 
 		/* Inline Functions: */
-			/** Write a value to a location protected by the XMEGA CCP protection mechanism. This function uses inline assembly to ensure that
+			/** Write a value to a location protected by the AVR Dx CCP protection mechanism. This function uses inline assembly to ensure that
 			 *  the protected address is written to within four clock cycles of the CCP key being written.
 			 *
 			 *  \param[in] Address  Address to write to, a memory address protected by the CCP mechanism
 			 *  \param[in] Value    Value to write to the protected location
 			 */
 			ATTR_ALWAYS_INLINE
-			static inline void XMEGACLK_CCP_Write(volatile void* Address, const uint8_t Value)
+			static inline void AVRDXCLK_CCP_Write(volatile void* Address, const uint8_t Value)
 			{
 				__asm__ __volatile__ (
 					"out %0, __zero_reg__" "\n\t" /* Zero RAMPZ using fixed zero value register */
@@ -137,17 +137,17 @@
 				);
 			}
 
-			/** Starts the external oscillator of the XMEGA microcontroller, with the given options. This routine blocks until
+			/** Starts the external oscillator of the AVR Dx microcontroller, with the given options. This routine blocks until
 			 *  the oscillator is ready for use.
 			 *
-			 *  \param[in] FreqRange  Frequency range of the external oscillator, a value from \ref XMEGA_Extern_OSC_ClockFrequency_t.
-			 *  \param[in] Startup    Startup time of the external oscillator, a value from \ref XMEGA_Extern_OSC_ClockStartup_t.
+			 *  \param[in] FreqRange  Frequency range of the external oscillator, a value from \ref AVRDX_Extern_OSC_ClockFrequency_t.
+			 *  \param[in] Startup    Startup time of the external oscillator, a value from \ref AVRDX_Extern_OSC_ClockStartup_t.
 			 *
 			 *  \return Boolean \c true if the external oscillator was successfully started, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StartExternalOscillator(const uint8_t FreqRange,
+			static inline bool AVRDXCLK_StartExternalOscillator(const uint8_t FreqRange,
 			                                                    const uint8_t Startup) ATTR_ALWAYS_INLINE;
-			static inline bool XMEGACLK_StartExternalOscillator(const uint8_t FreqRange,
+			static inline bool AVRDXCLK_StartExternalOscillator(const uint8_t FreqRange,
 			                                                    const uint8_t Startup)
 			{
 				OSC.XOSCCTRL  = (FreqRange | ((Startup == EXOSC_START_32KCLK) ? OSC_X32KLPM_bm : 0) | Startup);
@@ -157,22 +157,22 @@
 				return true;
 			}
 
-			/** Stops the external oscillator of the XMEGA microcontroller. */
+			/** Stops the external oscillator of the AVR Dx microcontroller. */
 			ATTR_ALWAYS_INLINE
-			static inline void XMEGACLK_StopExternalOscillator(void)
+			static inline void AVRDXCLK_StopExternalOscillator(void)
 			{
 				OSC.CTRL     &= ~OSC_XOSCEN_bm;
 			}
 
-			/** Starts the given internal oscillator of the XMEGA microcontroller, with the given options. This routine blocks until
+			/** Starts the given internal oscillator of the AVR Dx microcontroller, with the given options. This routine blocks until
 			 *  the oscillator is ready for use.
 			 *
-			 *  \param[in] Source  Internal oscillator to start, a value from \ref XMEGA_System_ClockSource_t.
+			 *  \param[in] Source  Internal oscillator to start, a value from \ref AVRDX_System_ClockSource_t.
 			 *
 			 *  \return Boolean \c true if the internal oscillator was successfully started, \c false if invalid parameters specified.
 			 */
 			ATTR_ALWAYS_INLINE
-			static inline bool XMEGACLK_StartInternalOscillator(const uint8_t Source)
+			static inline bool AVRDXCLK_StartInternalOscillator(const uint8_t Source)
 			{
 				switch (Source)
 				{
@@ -193,14 +193,14 @@
 				}
 			}
 
-			/** Stops the given internal oscillator of the XMEGA microcontroller.
+			/** Stops the given internal oscillator of the AVR Dx microcontroller.
 			 *
-			 *  \param[in] Source  Internal oscillator to stop, a value from \ref XMEGA_System_ClockSource_t.
+			 *  \param[in] Source  Internal oscillator to stop, a value from \ref AVRDX_System_ClockSource_t.
 			 *
 			 *  \return Boolean \c true if the internal oscillator was successfully stopped, \c false if invalid parameters specified.
 			 */
 			ATTR_ALWAYS_INLINE
-			static inline bool XMEGACLK_StopInternalOscillator(const uint8_t Source)
+			static inline bool AVRDXCLK_StopInternalOscillator(const uint8_t Source)
 			{
 				switch (Source)
 				{
@@ -218,20 +218,20 @@
 				}
 			}
 
-			/** Starts the PLL of the XMEGA microcontroller, with the given options. This routine blocks until the PLL is ready for use.
+			/** Starts the PLL of the AVR Dx microcontroller, with the given options. This routine blocks until the PLL is ready for use.
 			 *
 			 *  \attention The output frequency must be equal to or greater than the source frequency.
 			 *
-			 *  \param[in] Source       Clock source for the PLL, a value from \ref XMEGA_System_ClockSource_t.
+			 *  \param[in] Source       Clock source for the PLL, a value from \ref AVRDX_System_ClockSource_t.
 			 *  \param[in] SourceFreq   Frequency of the PLL's clock source, in Hz.
 			 *  \param[in] Frequency    Target frequency of the PLL's output.
 			 *
 			 *  \return Boolean \c true if the PLL was successfully started, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StartPLL(const uint8_t Source,
+			static inline bool AVRDXCLK_StartPLL(const uint8_t Source,
 			                                     const uint32_t SourceFreq,
 			                                     const uint32_t Frequency) ATTR_ALWAYS_INLINE;
-			static inline bool XMEGACLK_StartPLL(const uint8_t Source,
+			static inline bool AVRDXCLK_StartPLL(const uint8_t Source,
 			                                     const uint32_t SourceFreq,
 			                                     const uint32_t Frequency)
 			{
@@ -264,25 +264,25 @@
 				return true;
 			}
 
-			/** Stops the PLL of the XMEGA microcontroller. */
+			/** Stops the PLL of the AVR Dx microcontroller. */
 			ATTR_ALWAYS_INLINE
-			static inline void XMEGACLK_StopPLL(void)
+			static inline void AVRDXCLK_StopPLL(void)
 			{
 				OSC.CTRL &= ~OSC_PLLEN_bm;
 			}
 
-			/** Starts the DFLL of the XMEGA microcontroller, with the given options.
+			/** Starts the DFLL of the AVR Dx microcontroller, with the given options.
 			 *
-			 *  \param[in] Source     RC Clock source for the DFLL, a value from \ref XMEGA_System_ClockSource_t.
-			 *  \param[in] Reference  Reference clock source for the DFLL, an value from \ref XMEGA_System_DFLLReference_t.
+			 *  \param[in] Source     RC Clock source for the DFLL, a value from \ref AVRDX_System_ClockSource_t.
+			 *  \param[in] Reference  Reference clock source for the DFLL, an value from \ref AVRDX_System_DFLLReference_t.
 			 *  \param[in] Frequency  Target frequency of the DFLL's output.
 			 *
 			 *  \return Boolean \c true if the DFLL was successfully started, \c false if invalid parameters specified.
 			 */
-			static inline bool XMEGACLK_StartDFLL(const uint8_t Source,
+			static inline bool AVRDXCLK_StartDFLL(const uint8_t Source,
 			                                      const uint8_t Reference,
 			                                      const uint32_t Frequency) ATTR_ALWAYS_INLINE;
-			static inline bool XMEGACLK_StartDFLL(const uint8_t Source,
+			static inline bool AVRDXCLK_StartDFLL(const uint8_t Source,
 			                                      const uint8_t Reference,
 			                                      const uint32_t Frequency)
 			{
@@ -318,14 +318,14 @@
 				return true;
 			}
 
-			/** Stops the given DFLL of the XMEGA microcontroller.
+			/** Stops the given DFLL of the AVR Dx microcontroller.
 			 *
-			 *  \param[in] Source  RC Clock source for the DFLL to be stopped, a value from \ref XMEGA_System_ClockSource_t.
+			 *  \param[in] Source  RC Clock source for the DFLL to be stopped, a value from \ref AVRDX_System_ClockSource_t.
 			 *
 			 *  \return Boolean \c true if the DFLL was successfully stopped, \c false if invalid parameters specified.
 			 */
 			ATTR_ALWAYS_INLINE
-			static inline bool XMEGACLK_StopDFLL(const uint8_t Source)
+			static inline bool AVRDXCLK_StopDFLL(const uint8_t Source)
 			{
 				switch (Source)
 				{
@@ -345,12 +345,12 @@
 			/** Sets the clock source for the main microcontroller core. The given clock source should be configured
 			 *  and ready for use before this function is called.
 			 *
-			 *  \param[in] Source      Clock source for the CPU core, a value from \ref XMEGA_System_ClockSource_t.
+			 *  \param[in] Source      Clock source for the CPU core, a value from \ref AVRDX_System_ClockSource_t.
 			 *
 			 *  \return Boolean \c true if the CPU core clock was successfully altered, \c false if invalid parameters specified.
 			 */
 			ATTR_ALWAYS_INLINE
-			static inline bool XMEGACLK_SetCPUClockSource(const uint8_t Source)
+			static inline bool AVRDXCLK_SetCPUClockSource(const uint8_t Source)
 			{
 				uint8_t ClockSourceMask = 0;
 
@@ -378,7 +378,7 @@
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 				GlobalInterruptDisable();
 
-				XMEGACLK_CCP_Write(&CLK.CTRL, ClockSourceMask);
+				AVRDXCLK_CCP_Write(&CLK.CTRL, ClockSourceMask);
 
 				SetGlobalInterruptMask(CurrentGlobalInt);
 

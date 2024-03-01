@@ -29,14 +29,14 @@
 */
 
 #include "../../../../Common/Common.h"
-#if (ARCH == ARCH_XMEGA)
+#if (ARCH == ARCH_AVRDX)
 
 #define  __INCLUDE_FROM_USB_DRIVER
 #include "../USBMode.h"
 
 #if defined(USB_CAN_BE_DEVICE)
 
-#include "EndpointStream_XMEGA.h"
+#include "EndpointStream_AVRDX.h"
 
 #if !defined(CONTROL_ONLY_DEVICE)
 uint8_t Endpoint_Discard_Stream(uint16_t Length,

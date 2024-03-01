@@ -29,16 +29,16 @@
 */
 
 /** \file
- *  \brief Endpoint data stream transmission and reception management for the AVR XMEGA microcontrollers.
- *  \copydetails Group_EndpointStreamRW_XMEGA
+ *  \brief Endpoint data stream transmission and reception management for the AVR Dx microcontrollers.
+ *  \copydetails Group_EndpointStreamRW_AVRDX
  *
  *  \note This file should not be included directly. It is automatically included as needed by the USB driver
  *        dispatch header located in LUFA/Drivers/USB/USB.h.
  */
 
 /** \ingroup Group_EndpointStreamRW
- *  \defgroup Group_EndpointStreamRW_XMEGA Read/Write of Multi-Byte Streams (XMEGA)
- *  \brief Endpoint data stream transmission and reception management for the Atmel AVR XMEGA architecture.
+ *  \defgroup Group_EndpointStreamRW_AVRDX Read/Write of Multi-Byte Streams (AVR Dx)
+ *  \brief Endpoint data stream transmission and reception management for the Atmel AVR Dx architecture.
  *
  *  Functions, macros, variables, enums and types related to data reading and writing of data streams from
  *  and to endpoints.
@@ -46,8 +46,8 @@
  *  @{
  */
 
-#ifndef __ENDPOINT_STREAM_XMEGA_H__
-#define __ENDPOINT_STREAM_XMEGA_H__
+#ifndef __ENDPOINT_STREAM_AVRDX_H__
+#define __ENDPOINT_STREAM_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"

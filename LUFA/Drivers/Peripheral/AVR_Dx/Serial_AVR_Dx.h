@@ -29,24 +29,24 @@
 */
 
 /** \file
- *  \brief Serial USART Peripheral Driver (XMEGA)
+ *  \brief Serial USART Peripheral Driver (AVR Dx)
  *
- *  On-chip serial USART driver for the XMEGA AVR microcontrollers.
+ *  On-chip serial USART driver for the AVR Dx microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the USART driver
  *        dispatch header located in LUFA/Drivers/Peripheral/Serial.h.
  */
 
 /** \ingroup Group_Serial
- *  \defgroup Group_Serial_XMEGA Serial USART Peripheral Driver (XMEGA)
+ *  \defgroup Group_Serial_AVRDX Serial USART Peripheral Driver (AVR Dx)
  *
- *  \section Sec_Serial_XMEGA_ModDescription Module Description
- *  On-chip serial USART driver for the XMEGA AVR microcontrollers.
+ *  \section Sec_Serial_AVRDX_ModDescription Module Description
+ *  On-chip serial USART driver for the AVR Dx microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the USART driver
  *        dispatch header located in LUFA/Drivers/Peripheral/Serial.h.
  *
- *  \section Sec_Serial_XMEGA_ExampleUsage Example Usage
+ *  \section Sec_Serial_AVRDX_ExampleUsage Example Usage
  *  The following snippet is an example of how this module may be used within a typical
  *  application.
  *
@@ -64,8 +64,8 @@
  *  @{
  */
 
-#ifndef __SERIAL_XMEGA_H__
-#define __SERIAL_XMEGA_H__
+#ifndef __SERIAL_AVRDX_H__
+#define __SERIAL_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"

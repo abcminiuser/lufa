@@ -29,24 +29,24 @@
 */
 
 /** \file
- *  \brief TWI Peripheral Driver (XMEGA)
+ *  \brief TWI Peripheral Driver (AVR Dx)
  *
- *  On-chip TWI driver for the XMEGA Family of AVR microcontrollers.
+ *  On-chip TWI driver for the AVR Dx Family of AVR microcontrollers.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the TWI driver
  *        dispatch header located in LUFA/Drivers/Peripheral/TWI.h.
  */
 
 /** \ingroup Group_TWI
- *  \defgroup Group_TWI_XMEGA TWI Peripheral Driver (XMEGA)
+ *  \defgroup Group_TWI_AVRDX TWI Peripheral Driver (AVR Dx)
  *
- *  \section Sec_TWI_XMEGA_ModDescription Module Description
+ *  \section Sec_TWI_AVRDX_ModDescription Module Description
  *  Master mode TWI driver for the 8-bit AVR microcontrollers which contain a hardware TWI module.
  *
  *  \note This file should not be included directly. It is automatically included as needed by the TWI driver
  *        dispatch header located in LUFA/Drivers/Peripheral/TWI.h.
  *
- *  \section Sec_TWI_XMEGA_ExampleUsage Example Usage
+ *  \section Sec_TWI_AVRDX_ExampleUsage Example Usage
  *  The following snippet is an example of how this module may be used within a typical
  *  application.
  *
@@ -112,8 +112,8 @@
  *  @{
  */
 
-#ifndef __TWI_XMEGA_H__
-#define __TWI_XMEGA_H__
+#ifndef __TWI_AVRDX_H__
+#define __TWI_AVRDX_H__
 
 	/* Includes: */
 		#include "../../../Common/Common.h"
@@ -176,7 +176,7 @@
 			 *  The generated SCL frequency will be according to the formula <pre>F_CPU / (2 * (5 + (BAUD)))</pre>.
 			 *
 			 *  \attention The value of the \c BitLength parameter should not be set below 10 or invalid bus conditions may
-			 *             occur, as indicated in the XMEGA microcontroller datasheet.
+			 *             occur, as indicated in the AVR Dx microcontroller datasheet.
 			 *
 			 *  \param[in] TWI   Pointer to the base of the TWI peripheral within the device.
 			 *  \param[in] Baud  Value of the BAUD register of the TWI Master.
