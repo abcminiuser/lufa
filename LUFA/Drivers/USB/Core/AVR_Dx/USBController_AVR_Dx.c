@@ -69,27 +69,19 @@ void USB_Init(
 	uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 	GlobalInterruptDisable();
 
-	NVM.CMD  = NVM_CMD_READ_CALIB_ROW_gc;
-	USB.CAL0 = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, USBCAL0));
-	USB.CAL1 = pgm_read_byte(offsetof(NVM_PROD_SIGNATURES_t, USBCAL1));
-	NVM.CMD  = NVM_CMD_NO_OPERATION_gc;
-
 	/* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for the 8-bit AVR-GCC toolchain */
-	USB.EPPTR = ((intptr_t)&USB_EndpointTable[1] & ~(1 << 0));
-	USB.CTRLA = (USB_STFRNUM_bm | ((ENDPOINT_TOTAL_ENDPOINTS - 1) << USB_MAXEP_gp));
+	USB0.EPPTR = ((intptr_t)&USB_EndpointTable[1] & ~(1 << 0));
+	USB0.CTRLA = (USB_STFRNUM_bm | ((ENDPOINT_TOTAL_ENDPOINTS - 1) << USB_MAXEP_gp));
 
 	if ((USB_Options & USB_OPT_BUSEVENT_PRIHIGH) == USB_OPT_BUSEVENT_PRIHIGH)
-	  USB.INTCTRLA = (3 << USB_INTLVL_gp);
-	else if ((USB_Options & USB_OPT_BUSEVENT_PRIMED) == USB_OPT_BUSEVENT_PRIMED)
-	  USB.INTCTRLA = (2 << USB_INTLVL_gp);
+		CPUINT.LVL1VEC = USB0_BUSEVENT_vect_num;
+
+	if ((USB_Options & USB_OPT_USBVREG_ENABLE) == USB_OPT_USBVREG_ENABLE)
+	  SYSCFG.VUSBCTRL = SYSCFG_USBVREG_ENABLE_gc;
 	else
-	  USB.INTCTRLA = (1 << USB_INTLVL_gp);
+	  SYSCFG.VUSBCTRL = SYSCFG_USBVREG_DISABLE_gc;
 
 	SetGlobalInterruptMask(CurrentGlobalInt);
-
-	#if defined(USB_CAN_BE_BOTH)
-	USB_CurrentMode = Mode;
-	#endif
 
 	USB_IsInitialized = true;
 
@@ -109,31 +101,6 @@ void USB_Disable(void)
 
 void USB_ResetInterface(void)
 {
-	uint8_t PrescalerNeeded;
-
-	#if defined(USB_DEVICE_OPT_FULLSPEED)
-	if (USB_Options & USB_DEVICE_OPT_LOWSPEED)
-	  PrescalerNeeded = F_USB / 6000000;
-	else
-	  PrescalerNeeded = F_USB / 48000000;
-	#else
-	PrescalerNeeded = F_USB / 6000000;
-	#endif
-
-	uint8_t DividerIndex = 0;
-	while (PrescalerNeeded > 0)
-	{
-		DividerIndex++;
-		PrescalerNeeded >>= 1;
-	}
-
-	CLK.USBCTRL = (DividerIndex - 1) << CLK_USBPSDIV_gp;
-
-	if (USB_Options & USB_OPT_PLLCLKSRC)
-	  CLK.USBCTRL |= (CLK_USBSRC_PLL_gc   | CLK_USBSEN_bm);
-	else
-	  CLK.USBCTRL |= (CLK_USBSRC_RC32M_gc | CLK_USBSEN_bm);
-
 	USB_Device_SetDeviceAddress(0);
 
 	USB_INT_DisableAllInterrupts();

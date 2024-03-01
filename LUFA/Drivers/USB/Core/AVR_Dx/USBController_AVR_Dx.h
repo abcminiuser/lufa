@@ -97,12 +97,12 @@
 			#error Do not include this file directly. Include LUFA/Drivers/USB/USB.h instead.
 		#endif
 
-		#if !defined(F_USB)
-			#error F_USB is not defined. You must define F_USB to the frequency of the unprescaled USB controller clock in your project makefile.
+		#if !defined(F_CPU)
+			#error F_CPU is not defined. You must define F_CPU to a value greater than or equal to 12 MHz.
 		#endif
 
-		#if ((F_USB % 6000000) || (F_USB < 6000000))
-			#error Invalid F_USB specified. F_USB must be a multiple of 6MHz for USB Low Speed operation, and a multiple of 48MHz for Full Speed operation.
+		#if ((F_CPU < 12000000UL))
+			#error Invalid F_CPU specified. F_CPU must be greater than or equal to 12 MHz.
 		#endif
 
 	/* Public Interface - May be used in end-application: */
@@ -112,23 +112,19 @@
 			/** Sets the USB bus interrupt priority level to be low priority. The USB bus interrupt is used for Start of Frame events, bus suspend
 			 *  and resume events, bus reset events and other events related to the management of the USB bus.
 			 */
-			#define USB_OPT_BUSEVENT_PRILOW           ((0 << 2) | (0 << 1))
-
-			/** Sets the USB bus interrupt priority level to be medium priority. The USB bus interrupt is used for Start of Frame events, bus suspend
-			 *  and resume events, bus reset events and other events related to the management of the USB bus.
-			 */
-			#define USB_OPT_BUSEVENT_PRIMED           ((0 << 2) | (1 << 1))
+			#define USB_OPT_BUSEVENT_PRILOW           (0 << 0)
 
 			/** Sets the USB bus interrupt priority level to be high priority. The USB bus interrupt is used for Start of Frame events, bus suspend
 			 *  and resume events, bus reset events and other events related to the management of the USB bus.
 			 */
-			#define USB_OPT_BUSEVENT_PRIHIGH          ((1 << 2) | (0 << 1))
+			#define USB_OPT_BUSEVENT_PRIHIGH          (1 << 0)
 
-			/** Sets the USB controller to source its clock from the internal RC 32MHz clock, once it has been DFLL calibrated to 48MHz. */
-			#define USB_OPT_RC32MCLKSRC               (0 << 3)
+			/** Disables the internal 3.3V regulator for the VUSB pin. The VUSB pin must be regulated externally */
+			#define USB_OPT_USBVREG_DISABLE           (0 << 2)
 
-			/** Sets the USB controller to source its clock from the internal PLL. */
-			#define USB_OPT_PLLCLKSRC                 (1 << 3)
+			/** Enables the internal 3.3V regulator for the VUSB pin. The VCC must be above ~4V */
+			#define USB_OPT_USBVREG_ENABLE            (1 << 2)
+
 			/**@}*/
 
 			#if !defined(USB_STREAM_TIMEOUT_MS) || defined(__DOXYGEN__)
@@ -150,7 +146,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Detach(void)
 			{
-				USB.CTRLB &= ~USB_ATTACH_bm;
+				USB0.CTRLB &= ~USB_ATTACH_bm;
 			}
 
 			/** Attaches the device to the USB bus. This announces the device's presence to any attached
@@ -164,7 +160,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Attach(void)
 			{
-				USB.CTRLB |= USB_ATTACH_bm;
+				USB0.CTRLB |= USB_ATTACH_bm;
 			}
 
 		/* Function Prototypes: */
@@ -284,20 +280,20 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Enable(void)
 			{
-				USB.CTRLA |=  USB_ENABLE_bm;
+				USB0.CTRLA |=  USB_ENABLE_bm;
 			}
 
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Disable(void)
 			{
-				USB.CTRLA &= ~USB_ENABLE_bm;
+				USB0.CTRLA &= ~USB_ENABLE_bm;
 			}
 
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Controller_Reset(void)
 			{
-				USB.CTRLA &= ~USB_ENABLE_bm;
-				USB.CTRLA |=  USB_ENABLE_bm;
+				USB0.CTRLA &= ~USB_ENABLE_bm;
+				USB0.CTRLA |=  USB_ENABLE_bm;
 			}
 
 	#endif
