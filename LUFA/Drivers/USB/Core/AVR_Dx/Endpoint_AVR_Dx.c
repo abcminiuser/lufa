@@ -52,14 +52,14 @@ bool Endpoint_IsINReady(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint | ENDPOINT_DIR_IN);
 
-	return ((USB_Endpoint_SelectedHandle->STATUS & USB_EP_BUSNACK0_bm) ? true : false);
+	return ((USB_Endpoint_GetStatus() & USB_BUSNAK_bm) ? true : false);
 }
 
 bool Endpoint_IsOUTReceived(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN);
 
-	if (USB_Endpoint_SelectedHandle->STATUS & USB_EP_TRNCOMPL0_bm)
+	if (USB_Endpoint_GetStatus() & USB_TRNCOMPL_bm)
 	{
 		USB_Endpoint_SelectedFIFO->Length = USB_Endpoint_SelectedHandle->CNT;
 		return true;
@@ -72,7 +72,7 @@ bool Endpoint_IsSETUPReceived(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN);
 
-	if (USB_Endpoint_SelectedHandle->STATUS & USB_EP_SETUP_bm)
+	if (USB_Endpoint_GetStatus() & USB_SETUP_bm)
 	{
 		USB_Endpoint_SelectedFIFO->Length = USB_Endpoint_SelectedHandle->CNT;
 		return true;
@@ -84,36 +84,36 @@ bool Endpoint_IsSETUPReceived(void)
 void Endpoint_ClearSETUP(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN);
-	USB_Endpoint_SelectedHandle->STATUS &= ~(USB_EP_SETUP_bm | USB_EP_TRNCOMPL0_bm | USB_EP_BUSNACK0_bm | USB_EP_OVF_bm);
-	USB_Endpoint_SelectedHandle->STATUS |= USB_EP_TOGGLE_bm;
+	USB_Endpoint_ClearStatus(USB_SETUP_bm | USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
+	USB_Endpoint_SetStatus(USB_TOGGLE_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint | ENDPOINT_DIR_IN);
-	USB_Endpoint_SelectedHandle->STATUS |= USB_EP_TOGGLE_bm;
+	USB_Endpoint_SetStatus(USB_TOGGLE_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
 
 void Endpoint_ClearIN(void)
 {
 	USB_Endpoint_SelectedHandle->CNT     = USB_Endpoint_SelectedFIFO->Position;
-	USB_Endpoint_SelectedHandle->STATUS &= ~(USB_EP_TRNCOMPL0_bm | USB_EP_BUSNACK0_bm | USB_EP_OVF_bm);
+	USB_Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
 
 void Endpoint_ClearOUT(void)
 {
-	USB_Endpoint_SelectedHandle->STATUS &= ~(USB_EP_TRNCOMPL0_bm | USB_EP_BUSNACK0_bm | USB_EP_OVF_bm);
+	USB_Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
 
 void Endpoint_StallTransaction(void)
 {
-	USB_Endpoint_SelectedHandle->CTRL |= USB_EP_STALL_bm;
+	USB_Endpoint_SelectedHandle->CTRL |= USB_DOSTALL_bm;
 
-	if ((USB_Endpoint_SelectedHandle->CTRL & USB_EP_TYPE_gm) == USB_EP_TYPE_CONTROL_gc)
+	if ((USB_Endpoint_SelectedHandle->CTRL & USB_TYPE_gm) == USB_TYPE_CONTROL_gc)
 	{
 		Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint ^ ENDPOINT_DIR_IN);
-		USB_Endpoint_SelectedHandle->CTRL |= USB_EP_STALL_bm;
+		USB_Endpoint_SelectedHandle->CTRL |= USB_DOSTALL_bm;
 	}
 }
 
@@ -134,7 +134,7 @@ void Endpoint_SelectEndpoint(const uint8_t Address)
 	USB_Endpoint_SelectedEndpoint = Address;
 
 	Endpoint_FIFOPair_t* EndpointFIFOPair = &USB_Endpoint_FIFOs[EndpointNumber];
-	USB_EndpointTable_t* EndpointTable    = (USB_EndpointTable_t*)USB.EPPTR;
+	USB_EndpointTable_t* EndpointTable    = (USB_EndpointTable_t*)USB0.EPPTR;
 
 	if (Address & ENDPOINT_DIR_IN)
 	{
@@ -172,7 +172,9 @@ bool Endpoint_ConfigureEndpoint_PRV(const uint8_t Address,
 	Endpoint_SelectEndpoint(Address);
 
 	USB_Endpoint_SelectedHandle->CTRL    = 0;
-	USB_Endpoint_SelectedHandle->STATUS  = (Address & ENDPOINT_DIR_IN) ? USB_EP_BUSNACK0_bm : 0;
+	USB_Endpoint_ClearStatus(0xff);
+	if(Address & ENDPOINT_DIR_IN)
+		USB_Endpoint_SetStatus(USB_BUSNAK_bm);
 	USB_Endpoint_SelectedHandle->CTRL    = Config;
 	USB_Endpoint_SelectedHandle->CNT     = 0;
 	USB_Endpoint_SelectedHandle->DATAPTR = (intptr_t)USB_Endpoint_SelectedFIFO->Data;
@@ -187,8 +189,8 @@ void Endpoint_ClearEndpoints(void)
 {
 	for (uint8_t EPNum = 0; EPNum < ENDPOINT_TOTAL_ENDPOINTS; EPNum++)
 	{
-		((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EPNum].IN.CTRL  = 0;
-		((USB_EndpointTable_t*)USB.EPPTR)->Endpoints[EPNum].OUT.CTRL = 0;
+		((USB_EndpointTable_t*)USB0.EPPTR)->Endpoints[EPNum].IN.CTRL  = 0;
+		((USB_EndpointTable_t*)USB0.EPPTR)->Endpoints[EPNum].OUT.CTRL = 0;
 	}
 }
 

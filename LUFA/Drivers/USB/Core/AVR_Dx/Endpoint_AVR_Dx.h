@@ -106,6 +106,9 @@
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
+		/* Macros: */
+		#define Endpoint_waitForRMW()		while(USB0.INTFLAGSB & USB_RMWBUSY_bm)
+
 		/* Type Defines: */
 			typedef struct
 			{
@@ -135,13 +138,46 @@
 				uint8_t  MaskVal    = 0;
 				uint16_t CheckBytes = 8;
 
+				if (Bytes == 1023)
+					return USB_BUFSIZE_ISO_BUF1023_gc;
+
 				while (CheckBytes < Bytes)
 				{
 					MaskVal++;
 					CheckBytes <<= 1;
 				}
 
-				return (MaskVal << USB_EP_BUFSIZE_gp);
+				return (MaskVal << USB_BUFSIZE_DEFAULT_gp);
+			}
+
+			static inline uint8_t Endpoint_GetStatus(void) ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE;
+			static inline uint8_t Endpoint_GetStatus(void)
+			{
+				return USB_Endpoint_SelectedHandle->STATUS;
+			}
+
+			static inline void Endpoint_ClearStatus(const uint8_t Config) ATTR_CONST ATTR_ALWAYS_INLINE;
+			static inline void Endpoint_ClearStatus(const uint8_t Config)
+			{
+				Endpoint_waitForRMW();
+
+				if(USB_Endpoint_SelectedEndpoint & ENDPOINT_DIR_IN) {
+					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].INCLR = Config;
+				} else {
+					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].OUTCLR = Config;
+				}
+			}
+
+			static inline void Endpoint_SetStatus(const uint8_t Config) ATTR_CONST ATTR_ALWAYS_INLINE;
+			static inline void Endpoint_SetStatus(const uint8_t Config)
+			{
+				Endpoint_waitForRMW();
+
+				if(USB_Endpoint_SelectedEndpoint & ENDPOINT_DIR_IN) {
+					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].INSET = Config;
+				} else {
+					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].OUTSET = Config;
+				}
 			}
 
 		/* Function Prototypes: */
@@ -226,26 +262,25 @@
 			                                              const uint16_t Size,
 			                                              const uint8_t Banks)
 			{
-				uint8_t EPConfigMask = (USB_EP_INTDSBL_bm | ((Banks > 1) ? USB_EP_PINGPONG_bm : 0) | Endpoint_BytesToEPSizeMask(Size));
+				uint8_t EPConfigMask = (USB_TCDSBL_bm | Endpoint_BytesToEPSizeMask(Size));
 
 				if ((Address & ENDPOINT_EPNUM_MASK) >= ENDPOINT_TOTAL_ENDPOINTS)
 				  return false;
 
-				// TODO - Fix once limitations are lifted
-				EPConfigMask &= ~USB_EP_PINGPONG_bm;
+				// TODO - What about ISO1023?
 				if (Size > 64)
 				  return false;
 
 				switch (Type)
 				{
 					case EP_TYPE_CONTROL:
-						EPConfigMask |= USB_EP_TYPE_CONTROL_gc;
+						EPConfigMask |= USB_TYPE_CONTROL_gc;
 						break;
 					case EP_TYPE_ISOCHRONOUS:
-						EPConfigMask |= USB_EP_TYPE_ISOCHRONOUS_gc;
+						EPConfigMask |= USB_TYPE_ISO_gc;
 						break;
 					default:
-						EPConfigMask |= USB_EP_TYPE_BULK_gc;
+						EPConfigMask |= USB_TYPE_BULKINT_gc;
 						break;
 				}
 
@@ -315,7 +350,7 @@
 			 */
 			static inline void Endpoint_AbortPendingIN(void)
 			{
-				USB_Endpoint_SelectedHandle->STATUS |= USB_EP_BUSNACK0_bm;
+				USB_Endpoint_SelectedHandle->STATUS |= USB_BUSNAK_bm;
 			}
 
 			/** Determines if the currently selected endpoint may be read from (if data is waiting in the endpoint
@@ -342,7 +377,7 @@
 			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsConfigured(void)
 			{
-				return ((USB_Endpoint_SelectedHandle->CTRL & USB_EP_TYPE_gm) ? true : false);
+				return ((USB_Endpoint_SelectedHandle->CTRL & USB_TYPE_gm) ? true : false);
 			}
 
 			/** Determines if the selected IN endpoint is ready for a new packet to be sent to the host.
@@ -412,7 +447,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ClearStall(void)
 			{
-				USB_Endpoint_SelectedHandle->CTRL &= ~USB_EP_STALL_bm;
+				USB_Endpoint_SelectedHandle->CTRL &= ~USB_DOSTALL_bm;
 			}
 
 			/** Determines if the currently selected endpoint is stalled, \c false otherwise.
@@ -424,14 +459,14 @@
 			ATTR_WARN_UNUSED_RESULT ATTR_ALWAYS_INLINE
 			static inline bool Endpoint_IsStalled(void)
 			{
-				return ((USB_Endpoint_SelectedHandle->CTRL & USB_EP_STALL_bm) ? true : false);
+				return ((USB_Endpoint_SelectedHandle->CTRL & USB_DOSTALL_bm) ? true : false);
 			}
 
 			/** Resets the data toggle of the currently selected endpoint. */
 			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetDataToggle(void)
 			{
-				USB_Endpoint_SelectedHandle->STATUS &= ~USB_EP_TOGGLE_bm;
+				USB_Endpoint_ClearStatus(USB_TOGGLE_bm);
 			}
 
 			/** Determines the currently selected endpoint's direction.
