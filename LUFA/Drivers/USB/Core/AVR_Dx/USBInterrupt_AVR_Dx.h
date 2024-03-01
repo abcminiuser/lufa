@@ -73,10 +73,10 @@
 				switch (Interrupt)
 				{
 					case USB_INT_BUSEVENTI:
-						USB.INTCTRLA |= USB_BUSEVIE_bm;
+						USB0.INTCTRLA |= (USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm);
 						break;
 					case USB_INT_SOFI:
-						USB.INTCTRLA |= USB_SOFIE_bm;
+						USB0.INTCTRLA |= USB_SOF_bm;
 						break;
 					default:
 						break;
@@ -89,10 +89,10 @@
 				switch (Interrupt)
 				{
 					case USB_INT_BUSEVENTI:
-						USB.INTCTRLA &= ~USB_BUSEVIE_bm;
+						USB0.INTCTRLA &= ~(USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm);
 						break;
 					case USB_INT_SOFI:
-						USB.INTCTRLA &= ~USB_SOFIE_bm;
+						USB0.INTCTRLA &= ~USB_SOF_bm;
 						break;
 					default:
 						break;
@@ -105,16 +105,16 @@
 				switch (Interrupt)
 				{
 					case USB_INT_BUSEVENTI_Suspend:
-						USB.INTFLAGSACLR = USB_SUSPENDIF_bm;
+						USB0.INTFLAGSA = USB_SUSPEND_bm;
 						break;
 					case USB_INT_BUSEVENTI_Resume:
-						USB.INTFLAGSACLR = USB_RESUMEIF_bm;
+						USB0.INTFLAGSA = USB_RESUME_bm;
 						break;
 					case USB_INT_BUSEVENTI_Reset:
-						USB.INTFLAGSACLR = USB_RSTIF_bm;
+						USB0.INTFLAGSA = USB_RESET_bm;
 						break;
 					case USB_INT_SOFI:
-						USB.INTFLAGSACLR = USB_SOFIF_bm;
+						USB0.INTFLAGSA = USB_SOF_bm;
 						break;
 					default:
 						break;
@@ -127,9 +127,9 @@
 				switch (Interrupt)
 				{
 					case USB_INT_BUSEVENTI:
-						return ((USB.INTCTRLA & USB_BUSEVIE_bm) ? true : false);
+						return ((USB0.INTCTRLA & (USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm)) ? true : false);
 					case USB_INT_SOFI:
-						return ((USB.INTCTRLA & USB_SOFIE_bm) ? true : false);
+						return ((USB0.INTCTRLA & USB_SOF_bm) ? true : false);
 					default:
 						return false;
 				}
@@ -141,13 +141,13 @@
 				switch (Interrupt)
 				{
 					case USB_INT_BUSEVENTI_Suspend:
-						return ((USB.INTFLAGSACLR & USB_SUSPENDIF_bm) ? true : false);
+						return ((USB0.INTFLAGSA & USB_SUSPEND_bm) ? true : false);
 					case USB_INT_BUSEVENTI_Resume:
-						return ((USB.INTFLAGSACLR & USB_RESUMEIF_bm) ? true : false);
+						return ((USB0.INTFLAGSA & USB_RESUME_bm) ? true : false);
 					case USB_INT_BUSEVENTI_Reset:
-						return ((USB.INTFLAGSACLR & USB_RSTIF_bm) ? true : false);
+						return ((USB0.INTFLAGSA & USB_RESET_bm) ? true : false);
 					case USB_INT_SOFI:
-						return ((USB.INTFLAGSACLR & USB_SOFIF_bm) ? true : false);
+						return ((USB0.INTFLAGSA & USB_SOF_bm) ? true : false);
 					default:
 						return false;
 				}

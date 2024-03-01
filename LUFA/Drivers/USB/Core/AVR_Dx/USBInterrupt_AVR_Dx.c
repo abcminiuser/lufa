@@ -36,17 +36,17 @@
 
 void USB_INT_DisableAllInterrupts(void)
 {
-	USB.INTCTRLA    &= USB_INTLVL_gm;
-	USB.INTCTRLB     = 0;
+	USB0.INTCTRLA = 0;
+	USB0.INTCTRLB = 0;
 }
 
 void USB_INT_ClearAllInterrupts(void)
 {
-	USB.INTFLAGSACLR = 0xFF;
-	USB.INTFLAGSBCLR = 0xFF;
+	USB0.INTFLAGSA = 0xFF;
+	USB0.INTFLAGSB = 0xFF;
 }
 
-ISR(USB_BUSEVENT_vect)
+ISR(USB0_BUSEVENT_vect)
 {
 	#if !defined(NO_SOF_EVENTS)
 	if (USB_INT_HasOccurred(USB_INT_SOFI) && USB_INT_IsEnabled(USB_INT_SOFI))
