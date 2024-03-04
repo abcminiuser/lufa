@@ -104,19 +104,19 @@
 			#define SPI_SPEED_FCPU_DIV_4           0
 
 			/** SPI prescaler mask for \ref SPI_Init(). Divides the system clock by a factor of 8. */
-			#define SPI_SPEED_FCPU_DIV_8           (SPI_USE_DOUBLESPEED | (1 << SPI_PRESCALER_gp))
+			#define SPI_SPEED_FCPU_DIV_8           (SPI_USE_DOUBLESPEED | SPI_PRESC_DIV16_gc)
 
 			/** SPI prescaler mask for \ref SPI_Init(). Divides the system clock by a factor of 16. */
-			#define SPI_SPEED_FCPU_DIV_16          (1 << SPI_PRESCALER_gp)
+			#define SPI_SPEED_FCPU_DIV_16          SPI_PRESC_DIV16_gc
 
 			/** SPI prescaler mask for \ref SPI_Init(). Divides the system clock by a factor of 32. */
-			#define SPI_SPEED_FCPU_DIV_32          (SPI_USE_DOUBLESPEED | (2 << SPI_PRESCALER_gp))
+			#define SPI_SPEED_FCPU_DIV_32          (SPI_USE_DOUBLESPEED | SPI_PRESC_DIV64_gc)
 
 			/** SPI prescaler mask for \ref SPI_Init(). Divides the system clock by a factor of 64. */
-			#define SPI_SPEED_FCPU_DIV_64          (2 << SPI_PRESCALER_gp)
+			#define SPI_SPEED_FCPU_DIV_64          SPI_PRESC_DIV64_gc
 
 			/** SPI prescaler mask for \ref SPI_Init(). Divides the system clock by a factor of 128. */
-			#define SPI_SPEED_FCPU_DIV_128         (3 << SPI_PRESCALER_gp)
+			#define SPI_SPEED_FCPU_DIV_128         SPI_PRESC_DIV128_gc
 			/**@}*/
 
 			/** \name SPI SCK Polarity Configuration Masks */
@@ -125,7 +125,7 @@
 			#define SPI_SCK_LEAD_RISING            0
 
 			/** SPI clock polarity mask for \ref SPI_Init(). Indicates that the SCK should lead on the falling edge. */
-			#define SPI_SCK_LEAD_FALLING           SPI_MODE1_bm
+			#define SPI_SCK_LEAD_FALLING           SPI_MODE_1_bm
 			/**@}*/
 
 			/** \name SPI Sample Edge Configuration Masks */
@@ -134,7 +134,7 @@
 			#define SPI_SAMPLE_LEADING             0
 
 			/** SPI data sample mode mask for \ref SPI_Init(). Indicates that the data should be sampled on the trailing edge. */
-			#define SPI_SAMPLE_TRAILING            SPI_MODE0_bm
+			#define SPI_SAMPLE_TRAILING            SPI_MODE_0_bm
 			/**@}*/
 
 			/** \name SPI Data Ordering Configuration Masks */
@@ -168,7 +168,7 @@
 			static inline void SPI_Init(SPI_t* const SPI,
 			                            const uint8_t SPIOptions)
 			{
-				SPI->CTRL = (SPIOptions | SPI_ENABLE_bm);
+				SPI->CTRLA = (SPIOptions | SPI_ENABLE_bm);
 			}
 
 			/** Turns off the SPI driver, disabling and returning used hardware to their default configuration.
@@ -178,7 +178,7 @@
 			ATTR_NON_NULL_PTR_ARG(1)
 			static inline void SPI_Disable(SPI_t* const SPI)
 			{
-				SPI->CTRL &= ~SPI_ENABLE_bm;
+				SPI->CTRLA &= ~SPI_ENABLE_bm;
 			}
 
 			/** Retrieves the currently selected SPI mode, once the SPI interface has been configured.
@@ -190,7 +190,7 @@
 			ATTR_ALWAYS_INLINE ATTR_NON_NULL_PTR_ARG(1)
 			static inline uint8_t SPI_GetCurrentMode(SPI_t* const SPI)
 			{
-				return (SPI->CTRL & SPI_MASTER_bm);
+				return (SPI->CTRLA & SPI_MASTER_bm);
 			}
 
 			/** Sends and receives a byte through the SPI interface, blocking until the transfer is complete.
@@ -206,7 +206,7 @@
 			                                       const uint8_t Byte)
 			{
 				SPI->DATA = Byte;
-				while (!(SPI->STATUS & SPI_IF_bm));
+				while (!(SPI->INTFLAGS & SPI_IF_bm));
 				return SPI->DATA;
 			}
 
@@ -222,7 +222,7 @@
 			                                const uint8_t Byte)
 			{
 				SPI->DATA = Byte;
-				while (!(SPI->STATUS & SPI_IF_bm));
+				while (!(SPI->INTFLAGS & SPI_IF_bm));
 			}
 
 			/** Sends a dummy byte through the SPI interface, blocking until the transfer is complete. The response
@@ -236,7 +236,7 @@
 			static inline uint8_t SPI_ReceiveByte(SPI_t* const SPI)
 			{
 				SPI->DATA = 0;
-				while (!(SPI->STATUS & SPI_IF_bm));
+				while (!(SPI->INTFLAGS & SPI_IF_bm));
 				return SPI->DATA;
 			}
 
