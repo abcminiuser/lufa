@@ -29,32 +29,29 @@
 */
 
 /** \file
- *  \brief Board specific LED driver header for the Atmel XMEGA A3BU Xplained.
- *  \copydetails Group_LEDs_A3BU_XPLAINED
+ *  \brief Board specific LED driver header for the  Microchip AVR64DU32 Curiosity Nano.
+ *  \copydetails Group_LEDs_AVR64DU32_CNANO
  *
  *  \note This file should not be included directly. It is automatically included as needed by the LEDs driver
  *        dispatch header located in LUFA/Drivers/Board/LEDs.h.
  */
 
 /** \ingroup Group_LEDs
- *  \defgroup Group_LEDs_A3BU_XPLAINED A3BU_XPLAINED
- *  \brief Board specific LED driver header for the Atmel XMEGA A3BU Xplained.
+ *  \defgroup Group_LEDs_AVR64DU32_CNANO AVR64DU32_CNANO
+ *  \brief Board specific LED driver header for the  Microchip AVR64DU32 Curiosity Nano.
  *
- *  Board specific LED driver header for the Atmel XMEGA A3BU Xplained.
+ *  Board specific LED driver header for the  Microchip AVR64DU32 Curiosity Nano.
  *
  *  <table>
  *    <tr><th>Name</th><th>Color</th><th>Info</th><th>Active Level</th><th>Port Pin</th></tr>
- *    <tr><td>LEDS_LED1</td><td>Yellow</td><td>LED0 LED</td><td>Low</td><td>PORTR.0</td></tr>
- *    <tr><td>LEDS_LED2</td><td>Yellow</td><td>LED1 LED</td><td>Low</td><td>PORTR.1</td></tr>
- *    <tr><td>LEDS_LED3</td><td>Red</td><td>Status Bicolour Red LED</td><td>Low</td><td>PORTD.4</td></tr>
- *    <tr><td>LEDS_LED4</td><td>Green</td><td>Status Bicolour Green LED</td><td>High</td><td>PORTD.5</td></tr>
+ *    <tr><td>LEDS_LED1</td><td>Yellow</td><td>LED0 LED</td><td>Low</td><td>PORTF.2</td></tr>
  *  </table>
  *
  *  @{
  */
 
-#ifndef __LEDS_A3BU_XPLAINED_H__
-#define __LEDS_A3BU_XPLAINED_H__
+#ifndef __LEDS_AVR64DU32_CNANO_H__
+#define __LEDS_AVR64DU32_CNANO_H__
 
 	/* Includes: */
 		#include <avr/io.h>
@@ -72,26 +69,16 @@
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
 		/* Macros: */
-			#define LEDS_PORTR_LEDS       (LEDS_LED1 | LEDS_LED2)
-			#define LEDS_PORTD_LEDS       (LEDS_LED3 | LEDS_LED4)
+			#define LEDS_PORTF_LEDS       (LEDS_LED1)
 	#endif
 
 	/* Public Interface - May be used in end-application: */
 		/* Macros: */
 			/** LED mask for the first LED on the board. */
-			#define LEDS_LED1        (1 << 0)
-
-			/** LED mask for the second LED on the board. */
-			#define LEDS_LED2        (1 << 1)
-
-			/** LED mask for the third LED on the board. */
-			#define LEDS_LED3        (1 << 4)
-
-			/** LED mask for the fourth LED on the board. */
-			#define LEDS_LED4        (1 << 5)
+			#define LEDS_LED1        PIN2_bm
 
 			/** LED mask for all the LEDs on the board. */
-			#define LEDS_ALL_LEDS    (LEDS_LED1 | LEDS_LED2 | LEDS_LED3 | LEDS_LED4)
+			#define LEDS_ALL_LEDS    (LEDS_LED1)
 
 			/** LED mask for none of the board LEDs. */
 			#define LEDS_NO_LEDS     0
@@ -100,73 +87,54 @@
 		#if !defined(__DOXYGEN__)
 			static inline void LEDs_Init(void)
 			{
-				PORTR.DIRSET    = LEDS_PORTR_LEDS;
-				PORTR.OUTCLR    = LEDS_PORTR_LEDS;
+				PORTF.DIRSET    = LEDS_PORTF_LEDS;
+				PORTF.OUTCLR    = LEDS_PORTF_LEDS;
 
-				PORTCFG.MPCMASK = LEDS_PORTR_LEDS;
-				PORTR.PIN0CTRL  = PORT_INVEN_bm;
-
-				PORTD.DIRSET    = LEDS_PORTD_LEDS;
-				PORTD.OUTCLR    = LEDS_PORTD_LEDS;
-
-				PORTD.PIN4CTRL  = PORT_INVEN_bm;
+				PORTF.PIN2CTRL  = PORT_INVEN_bm;
 			}
 
 			static inline void LEDs_Disable(void)
 			{
-				PORTR.DIRCLR    = LEDS_PORTR_LEDS;
-				PORTR.OUTCLR    = LEDS_PORTR_LEDS;
+				PORTF.DIRCLR    = LEDS_PORTF_LEDS;
+				PORTF.OUTCLR    = LEDS_PORTF_LEDS;
 
-				PORTCFG.MPCMASK = 0;
-				PORTR.PIN0CTRL  = LEDS_PORTR_LEDS;
-
-				PORTD.DIRCLR    = LEDS_PORTD_LEDS;
-				PORTD.OUTCLR    = LEDS_PORTD_LEDS;
-
-				PORTD.PIN4CTRL  = 0;
+				PORTF.PIN2CTRL  = 0;
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTSET = LEDMask & LEDS_PORTR_LEDS;
-				PORTD_OUTSET = LEDMask & LEDS_PORTD_LEDS;
+				PORTF.OUTSET = LEDMask & LEDS_PORTF_LEDS;
 			}
 
 			static inline void LEDs_TurnOffLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTCLR = LEDMask & LEDS_PORTR_LEDS;
-				PORTD_OUTCLR = LEDMask & LEDS_PORTD_LEDS;
+				PORTF.OUTCLR = LEDMask & LEDS_PORTF_LEDS;
 			}
 
 			static inline void LEDs_SetAllLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTCLR = LEDS_PORTR_LEDS;
-				PORTD_OUTCLR = LEDS_PORTD_LEDS;
+				PORTF.OUTCLR = LEDS_PORTF_LEDS;
 
-				PORTR_OUTSET = (LEDMask & LEDS_PORTR_LEDS);
-				PORTD_OUTSET = (LEDMask & LEDS_PORTD_LEDS);
+				PORTF.OUTSET = (LEDMask & LEDS_PORTF_LEDS);
 			}
 
 			static inline void LEDs_ChangeLEDs(const uint8_t LEDMask,
 			                                   const uint8_t ActiveMask)
 			{
-				PORTR_OUTCLR = (LEDMask & LEDS_PORTR_LEDS);
-				PORTD_OUTCLR = (LEDMask & LEDS_PORTD_LEDS);
+				PORTF.OUTCLR = (LEDMask & LEDS_PORTF_LEDS);
 
-				PORTR_OUTSET = (ActiveMask & LEDS_PORTR_LEDS);
-				PORTD_OUTSET = (ActiveMask & LEDS_PORTD_LEDS);
+				PORTF.OUTSET = (ActiveMask & LEDS_PORTF_LEDS);
 			}
 
 			static inline void LEDs_ToggleLEDs(const uint8_t LEDMask)
 			{
-				PORTR_OUTTGL = (LEDMask & LEDS_PORTR_LEDS);
-				PORTD_OUTTGL = (LEDMask & LEDS_PORTD_LEDS);
+				PORTF.OUTTGL = (LEDMask & LEDS_PORTF_LEDS);
 			}
 
 			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
-				return ((PORTR_OUT & LEDS_PORTR_LEDS) | (PORTD_OUT & LEDS_PORTD_LEDS));
+				return (PORTF_OUT & LEDS_PORTF_LEDS);
 			}
 		#endif
 

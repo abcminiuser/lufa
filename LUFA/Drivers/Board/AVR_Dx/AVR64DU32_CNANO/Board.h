@@ -29,29 +29,28 @@
 */
 
 /** \file
- *  \brief Board specific information header for the Atmel XMEGA A3BU Xplained.
- *  \copydetails Group_BoardInfo_A3BU_XPLAINED
+ *  \brief Board specific information header for the x.
+ *  \copydetails Group_BoardInfo_AVR64DU32_CNANO
  *
  *  \note This file should not be included directly. It is automatically included as needed by the Board driver
  *        dispatch header located in LUFA/Drivers/Board/Board.h.
  */
 
 /** \ingroup Group_BoardInfo
- *  \defgroup Group_BoardInfo_A3BU_XPLAINED A3BU_XPLAINED
- *  \brief Board specific information header for the Atmel XMEGA A3BU Xplained.
+ *  \defgroup Group_BoardInfo_AVR64DU32_CNANO AVR64DU32_CNANO
+ *  \brief Board specific information header for the Microchip AVR64DU32 Curiosity Nano.
  *
- *  Board specific information header for the Atmel XMEGA A3BU Xplained.
+ *  Board specific information header for the Microchip AVR64DU32 Curiosity Nano.
  *
  *  @{
  */
 
-#ifndef __BOARD_A3BU_XPLAINED_H__
-#define __BOARD_A3BU_XPLAINED_H__
+#ifndef __BOARD_AVR64DU32_CNANO_H__
+#define __BOARD_AVR64DU32_CNANO_H__
 
 	/* Includes: */
 		#include "../../../../Common/Common.h"
 		#include "../../Buttons.h"
-		#include "../../Dataflash.h"
 		#include "../../LEDs.h"
 
 	/* Enable C linkage for C++ Compilers: */
@@ -68,9 +67,6 @@
 		/* Macros: */
 			/** Indicates the board has hardware Buttons mounted. */
 			#define BOARD_HAS_BUTTONS
-
-			/** Indicates the board has a hardware Dataflash mounted. */
-			#define BOARD_HAS_DATAFLASH
 
 			/** Indicates the board has hardware LEDs mounted. */
 			#define BOARD_HAS_LEDS
