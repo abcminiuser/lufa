@@ -40,23 +40,23 @@ uint8_t TWI_StartTransmission(TWI_t* const TWI,
 {
 	uint16_t TimeoutRemaining;
 
-	TWI->MASTER.ADDR = SlaveAddress;
+	TWI->MADDR = SlaveAddress;
 
 	TimeoutRemaining = (TimeoutMS * 100);
 	while (TimeoutRemaining)
 	{
-		uint8_t status = TWI->MASTER.STATUS;
+		uint8_t status = TWI->MSTATUS;
 
-		if ((status & (TWI_MASTER_WIF_bm | TWI_MASTER_ARBLOST_bm)) == (TWI_MASTER_WIF_bm | TWI_MASTER_ARBLOST_bm))
+		if ((status & (TWI_WIF_bm | TWI_ARBLOST_bm)) == (TWI_WIF_bm | TWI_ARBLOST_bm))
 		{
-			TWI->MASTER.ADDR = SlaveAddress;
+			TWI->MADDR = SlaveAddress;
 		}
-		else if ((status & (TWI_MASTER_WIF_bm | TWI_MASTER_RXACK_bm)) == (TWI_MASTER_WIF_bm | TWI_MASTER_RXACK_bm))
+		else if ((status & (TWI_WIF_bm | TWI_RXACK_bm)) == (TWI_WIF_bm | TWI_RXACK_bm))
 		{
 			TWI_StopTransmission(TWI);
 			return TWI_ERROR_SlaveResponseTimeout;
 		}
-		else if (status & (TWI_MASTER_WIF_bm | TWI_MASTER_RIF_bm))
+		else if (status & (TWI_WIF_bm | TWI_RIF_bm))
 		{
 			return TWI_ERROR_NoError;
 		}
@@ -66,7 +66,7 @@ uint8_t TWI_StartTransmission(TWI_t* const TWI,
 	}
 
 	if (!(TimeoutRemaining)) {
-		if (TWI->MASTER.STATUS & TWI_MASTER_CLKHOLD_bm) {
+		if (TWI->MSTATUS & TWI_CLKHOLD_bm) {
 			TWI_StopTransmission(TWI);
 		}
 	}
@@ -77,29 +77,29 @@ uint8_t TWI_StartTransmission(TWI_t* const TWI,
 bool TWI_SendByte(TWI_t* const TWI,
                   const uint8_t Byte)
 {
-	TWI->MASTER.DATA = Byte;
+	TWI->MDATA = Byte;
 
-	while (!(TWI->MASTER.STATUS & TWI_MASTER_WIF_bm));
+	while (!(TWI->MSTATUS & TWI_WIF_bm));
 
-	return (TWI->MASTER.STATUS & TWI_MASTER_WIF_bm) && !(TWI->MASTER.STATUS & TWI_MASTER_RXACK_bm);
+	return (TWI->MSTATUS & TWI_WIF_bm) && !(TWI->MSTATUS & TWI_RXACK_bm);
 }
 
 bool TWI_ReceiveByte(TWI_t* const TWI,
                      uint8_t* const Byte,
                      const bool LastByte)
 {
-	if ((TWI->MASTER.STATUS & (TWI_MASTER_BUSERR_bm | TWI_MASTER_ARBLOST_bm)) == (TWI_MASTER_BUSERR_bm | TWI_MASTER_ARBLOST_bm)) {
+	if ((TWI->MSTATUS & (TWI_BUSERR_bm | TWI_ARBLOST_bm)) == (TWI_BUSERR_bm | TWI_ARBLOST_bm)) {
 		return false;
 	}
 
-	while (!(TWI->MASTER.STATUS & TWI_MASTER_RIF_bm));
+	while (!(TWI->MSTATUS & TWI_RIF_bm));
 
-	*Byte = TWI->MASTER.DATA;
+	*Byte = TWI->MDATA;
 
 	if (LastByte)
-	  TWI->MASTER.CTRLC = TWI_MASTER_ACKACT_bm | TWI_MASTER_CMD_STOP_gc;
+	  TWI->MCTRLB = TWI_ACKACT_bm | TWI_MCMD_STOP_gc;
 	else
-	  TWI->MASTER.CTRLC = TWI_MASTER_CMD_RECVTRANS_gc;
+	  TWI->MCTRLB = TWI_MCMD_RECVTRANS_gc;
 
 	return true;
 }
