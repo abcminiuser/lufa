@@ -69,7 +69,7 @@
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/Serial_XMEGA.h"
 		#elif (ARCH == ARCH_AVRDX)
-			#include "AVR_Dx/Serial_AVR_Dx.h"
+			#include "AVRDX/Serial_AVRDX.h"
 		#else
 			#error The Serial peripheral driver is not currently available for your selected architecture.
 		#endif

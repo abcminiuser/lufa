@@ -118,7 +118,7 @@
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/Endpoint_XMEGA.h"
 		#elif (ARCH == ARCH_AVRDX)
-			#include "AVR_Dx/Endpoint_AVR_Dx.h"			
+			#include "AVRDX/Endpoint_AVRDX.h"			
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

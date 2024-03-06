@@ -147,7 +147,7 @@
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/Device_XMEGA.h"
 		#elif (ARCH == ARCH_AVRDX)
-			#include "AVR_Dx/Device_AVR_Dx.h"
+			#include "AVRDX/Device_AVRDX.h"
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

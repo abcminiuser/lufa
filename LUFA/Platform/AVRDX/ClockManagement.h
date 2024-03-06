@@ -36,7 +36,7 @@
  */
 
 /** \ingroup Group_PlatformDrivers_AVRDX
- *  \defgroup Group_PlatformDrivers_AVRDXClocks Clock Management Driver - LUFA/Platform/AVR_Dx/ClockManagement.h
+ *  \defgroup Group_PlatformDrivers_AVRDXClocks Clock Management Driver - LUFA/Platform/AVRDX/ClockManagement.h
  *  \brief Module Clock Driver for the AVR Dx USB microcontrollers.
  *
  *  \section Sec_PlatformDrivers_AVRDXClocks_Dependencies Module Source Dependencies
@@ -49,7 +49,7 @@
  *
  *  Usage Example:
  *  \code
- *   	#include <LUFA/Platform/AVR_Dx/ClockManagement.h>
+ *   	#include <LUFA/Platform/AVRDX/ClockManagement.h>
  *
  *   	void main(void)
  *   	{

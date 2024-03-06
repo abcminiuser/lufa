@@ -69,7 +69,7 @@
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/SerialSPI_XMEGA.h"
 		#elif (ARCH == ARCH_AVRDX)
-			#include "AVR_Dx/SerialSPI_AVR_Dx.h"
+			#include "AVRDX/SerialSPI_AVRDX.h"
 		#else
 			#error The Serial SPI Master Mode peripheral driver is not currently available for your selected architecture.
 		#endif

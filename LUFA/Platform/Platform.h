@@ -75,7 +75,7 @@
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/ClockManagement.h"
 		#elif (ARCH == ARCH_AVRDX)
-			#include "AVR_Dx/ClockManagement.h"
+			#include "AVRDX/ClockManagement.h"
 		#endif
 
 #endif
