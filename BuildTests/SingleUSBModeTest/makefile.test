@@ -23,6 +23,8 @@ else ifeq ($(ARCH), XMEGA)
   F_USB      = 48000000
 else ifeq ($(ARCH), UC3)
   F_USB      = 48000000
+else ifeq ($(ARCH), AVRDX)
+  F_USB      = 48000000
 endif
 
 OPTIMIZATION = 1
