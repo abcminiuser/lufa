@@ -196,7 +196,7 @@
 				uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 				GlobalInterruptDisable();
 
-				uint8_t* SigReadAddress = INTERNAL_SERIAL_START_ADDRESS;
+				uint8_t* SigReadAddress = (uint8_t *) INTERNAL_SERIAL_START_ADDRESS;
 
 				for (uint8_t SerialCharNum = 0; SerialCharNum < (INTERNAL_SERIAL_LENGTH_BITS / 4); SerialCharNum++)
 				{

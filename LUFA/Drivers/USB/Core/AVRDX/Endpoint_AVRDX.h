@@ -106,9 +106,6 @@
 
 	/* Private Interface - For use in library only: */
 	#if !defined(__DOXYGEN__)
-		/* Macros: */
-		#define Endpoint_waitForRMW()		while(USB0.INTFLAGSB & USB_RMWBUSY_bm)
-
 		/* Type Defines: */
 			typedef struct
 			{
@@ -159,7 +156,7 @@
 			static inline void Endpoint_ClearStatus(const uint8_t Config) ATTR_CONST ATTR_ALWAYS_INLINE;
 			static inline void Endpoint_ClearStatus(const uint8_t Config)
 			{
-				Endpoint_waitForRMW();
+				while(USB0.INTFLAGSB & USB_RMWBUSY_bm);
 
 				if(USB_Endpoint_SelectedEndpoint & ENDPOINT_DIR_IN) {
 					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].INCLR = Config;
@@ -171,7 +168,7 @@
 			static inline void Endpoint_SetStatus(const uint8_t Config) ATTR_CONST ATTR_ALWAYS_INLINE;
 			static inline void Endpoint_SetStatus(const uint8_t Config)
 			{
-				Endpoint_waitForRMW();
+				while(USB0.INTFLAGSB & USB_RMWBUSY_bm);
 
 				if(USB_Endpoint_SelectedEndpoint & ENDPOINT_DIR_IN) {
 					USB0.STATUS[USB_Endpoint_SelectedEndpoint & ENDPOINT_EPNUM_MASK].INSET = Config;
@@ -466,7 +463,7 @@
 			ATTR_ALWAYS_INLINE
 			static inline void Endpoint_ResetDataToggle(void)
 			{
-				USB_Endpoint_ClearStatus(USB_TOGGLE_bm);
+				Endpoint_ClearStatus(USB_TOGGLE_bm);
 			}
 
 			/** Determines the currently selected endpoint's direction.
