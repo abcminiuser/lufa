@@ -42,7 +42,7 @@ endif
 ifeq ($(ARCH), AVR8)
    ATPROGRAM_FLASH_FLAGS  := --chiperase --flash
    ATPROGRAM_EEPROM_FLAGS := --eeprom
-else ifeq ($(ARCH), XMEGA)
+else ifneq ($(findstring $(ARCH), XMEGA AVRDX),)
    ATPROGRAM_FLASH_FLAGS  := --erase --flash
    ATPROGRAM_EEPROM_FLAGS := --eeprom
 else ifeq ($(ARCH), UC3)

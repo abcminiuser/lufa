@@ -262,7 +262,7 @@
 				if ((Address & ENDPOINT_EPNUM_MASK) >= ENDPOINT_TOTAL_ENDPOINTS)
 				  return false;
 
-				// TODO - What about ISO1023?
+				// TODO - What about ISO?
 				if (Size > 64)
 				  return false;
 
@@ -345,7 +345,7 @@
 			 */
 			static inline void Endpoint_AbortPendingIN(void)
 			{
-				USB_Endpoint_SelectedHandle->STATUS |= USB_BUSNAK_bm;
+				Endpoint_SetStatus(USB_BUSNAK_bm);
 			}
 
 			/** Determines if the currently selected endpoint may be read from (if data is waiting in the endpoint

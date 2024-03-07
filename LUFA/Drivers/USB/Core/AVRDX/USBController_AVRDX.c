@@ -44,7 +44,7 @@ volatile uint8_t USB_Options;
 #endif
 
 /* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for the 8-bit AVR-GCC toolchain */
-uint8_t USB_EndpointTable[sizeof(USB_EndpointTable_t) + 1];
+uint8_t USB_EndpointTable[sizeof(USB_EndpointTable_t)] ATTR_ALIGNED(2);
 
 void USB_Init(
                #if defined(USB_CAN_BE_BOTH)
@@ -69,8 +69,7 @@ void USB_Init(
 	uint_reg_t CurrentGlobalInt = GetGlobalInterruptMask();
 	GlobalInterruptDisable();
 
-	/* Ugly workaround to ensure an aligned table, since __BIGGEST_ALIGNMENT__ == 1 for the 8-bit AVR-GCC toolchain */
-	USB0.EPPTR = ((intptr_t)&USB_EndpointTable[1] & ~(1 << 0));
+	USB0.EPPTR = ((intptr_t)&USB_EndpointTable[0]);
 	USB0.CTRLA = (USB_STFRNUM_bm | ((ENDPOINT_TOTAL_ENDPOINTS - 1) << USB_MAXEP_gp));
 
 	if ((USB_Options & USB_OPT_BUSEVENT_PRIHIGH) == USB_OPT_BUSEVENT_PRIHIGH)

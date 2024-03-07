@@ -75,6 +75,15 @@
 					case USB_INT_BUSEVENTI:
 						USB0.INTCTRLA |= (USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm);
 						break;
+					case USB_INT_BUSEVENTI_Suspend:
+						USB0.INTCTRLA |= USB_SUSPEND_bm;
+						break;
+					case USB_INT_BUSEVENTI_Resume:
+						USB0.INTCTRLA |= USB_RESUME_bm;
+						break;
+					case USB_INT_BUSEVENTI_Reset:
+						USB0.INTCTRLA |= USB_RESET_bm;
+						break;
 					case USB_INT_SOFI:
 						USB0.INTCTRLA |= USB_SOF_bm;
 						break;
@@ -90,6 +99,15 @@
 				{
 					case USB_INT_BUSEVENTI:
 						USB0.INTCTRLA &= ~(USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm);
+						break;
+					case USB_INT_BUSEVENTI_Suspend:
+						USB0.INTCTRLA &= ~USB_SUSPEND_bm;
+						break;
+					case USB_INT_BUSEVENTI_Resume:
+						USB0.INTCTRLA &= ~USB_RESUME_bm;
+						break;
+					case USB_INT_BUSEVENTI_Reset:
+						USB0.INTCTRLA &= ~USB_RESET_bm;
 						break;
 					case USB_INT_SOFI:
 						USB0.INTCTRLA &= ~USB_SOF_bm;
@@ -128,6 +146,12 @@
 				{
 					case USB_INT_BUSEVENTI:
 						return ((USB0.INTCTRLA & (USB_SUSPEND_bm | USB_RESUME_bm | USB_RESET_bm)) ? true : false);
+					case USB_INT_BUSEVENTI_Suspend:
+						return ((USB0.INTCTRLA & USB_SUSPEND_bm) ? true : false);
+					case USB_INT_BUSEVENTI_Resume:
+						return ((USB0.INTCTRLA & USB_RESUME_bm) ? true : false);
+					case USB_INT_BUSEVENTI_Reset:
+						return ((USB0.INTCTRLA & USB_RESET_bm) ? true : false);
 					case USB_INT_SOFI:
 						return ((USB0.INTCTRLA & USB_SOF_bm) ? true : false);
 					default:

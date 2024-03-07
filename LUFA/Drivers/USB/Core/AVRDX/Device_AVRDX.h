@@ -175,7 +175,9 @@
 			ATTR_ALWAYS_INLINE
 			static inline void USB_Device_SetDeviceAddress(const uint8_t Address)
 			{
-				USB0.ADDR = Address;
+				(void)Address;
+
+				/* Use USB_Device_EnableDeviceAddress for AVR Dx */
 			}
 
 			ATTR_ALWAYS_INLINE

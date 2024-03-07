@@ -61,17 +61,13 @@
 			#if defined(MAX_ENDPOINT_INDEX)
 				#define ENDPOINT_TABLE_COUNT  (MAX_ENDPOINT_INDEX + 1)
 			#else
-				#define ENDPOINT_TABLE_COUNT  16
+				#define ENDPOINT_TABLE_COUNT  USB_EP_NUM_MAX
 			#endif
 
 		/* Type Defines: */
 			typedef struct
 			{
-				struct
-				{
-					USB_EP_t OUT;
-					USB_EP_t IN;
-				} Endpoints[ENDPOINT_TABLE_COUNT];
+				USB_EP_PAIR_t Endpoints[ENDPOINT_TABLE_COUNT];
 				uint16_t FrameNum;
 			} ATTR_PACKED USB_EndpointTable_t;
 

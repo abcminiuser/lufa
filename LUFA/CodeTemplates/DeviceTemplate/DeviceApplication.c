@@ -85,7 +85,7 @@ void SetupHardware(void)
 		AVRDXCLK_SetCPUClockSource(CLOCK_SRC_INT_OSCHF);
 
 		/* Hardware Initialization */
-		USB_Init(USB_OPT_RC32MCLKSRC | USB_OPT_BUSEVENT_PRIHIGH);
+		USB_Init(USB_OPT_USBVREG_ENABLE | USB_OPT_BUSEVENT_PRIHIGH);
 	#endif
 }
 

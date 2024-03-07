@@ -72,7 +72,7 @@ bool Endpoint_IsSETUPReceived(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN);
 
-	if (Endpoint_GetStatus() & USB_SETUP_bm)
+	if (Endpoint_GetStatus() & USB_EPSETUP_bm)
 	{
 		USB_Endpoint_SelectedFIFO->Length = USB_Endpoint_SelectedHandle->CNT;
 		return true;
@@ -84,11 +84,12 @@ bool Endpoint_IsSETUPReceived(void)
 void Endpoint_ClearSETUP(void)
 {
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint & ~ENDPOINT_DIR_IN);
-	Endpoint_ClearStatus(USB_SETUP_bm | USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
+	Endpoint_ClearStatus(USB_EPSETUP_bm | USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_UNFOVF_bm);
 	Endpoint_SetStatus(USB_TOGGLE_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 
 	Endpoint_SelectEndpoint(USB_Endpoint_SelectedEndpoint | ENDPOINT_DIR_IN);
+	Endpoint_ClearStatus(USB_EPSETUP_bm);
 	Endpoint_SetStatus(USB_TOGGLE_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
@@ -96,13 +97,13 @@ void Endpoint_ClearSETUP(void)
 void Endpoint_ClearIN(void)
 {
 	USB_Endpoint_SelectedHandle->CNT     = USB_Endpoint_SelectedFIFO->Position;
-	Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
+	Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_UNFOVF_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
 
 void Endpoint_ClearOUT(void)
 {
-	Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_OVF_bm);
+	Endpoint_ClearStatus(USB_TRNCOMPL_bm | USB_BUSNAK_bm | USB_UNFOVF_bm);
 	USB_Endpoint_SelectedFIFO->Position  = 0;
 }
 
