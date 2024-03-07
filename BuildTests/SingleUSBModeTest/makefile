@@ -44,13 +44,13 @@ compile:
 	$(MAKE) -f makefile.test clean elf ARCH=UC3 MCU=uc3a0256 CC_FLAGS='-D USB_HOST_ONLY'
 
 	@echo Building SingleUSBModeTest for ARCH=AVRDX in device only mode...
-	$(MAKE) -f makefile.test clean elf ARCH=AVRDX MCU=avr64du32u CC_FLAGS='-D USB_DEVICE_ONLY'
+	$(MAKE) -f makefile.test clean elf ARCH=AVRDX MCU=avr64du32 CC_FLAGS='-D USB_DEVICE_ONLY'
 
 clean:
 	$(MAKE) -f makefile.test clean ARCH=AVR8 MCU=at90usb1287
 	$(MAKE) -f makefile.test clean ARCH=XMEGA MCU=atxmega128a1u
 	$(MAKE) -f makefile.test clean ARCH=UC3 MCU=uc3a0256
-	$(MAKE) -f makefile.test clean ARCH=AVRDX MCU=avr64du32u
+	$(MAKE) -f makefile.test clean ARCH=AVRDX MCU=avr64du32
 
 %:
 

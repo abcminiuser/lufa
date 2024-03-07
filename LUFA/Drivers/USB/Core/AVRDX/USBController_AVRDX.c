@@ -154,11 +154,6 @@ static void USB_Init_Device(void)
 	#endif
 	#endif
 
-	if (USB_Options & USB_DEVICE_OPT_LOWSPEED)
-	  USB_Device_SetLowSpeed();
-	else
-	  USB_Device_SetFullSpeed();
-
 	Endpoint_ConfigureEndpoint(ENDPOINT_CONTROLEP, EP_TYPE_CONTROL,
 							   USB_Device_ControlEndpointSize, 1);
 
