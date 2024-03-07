@@ -179,7 +179,7 @@
 			{
 				USART->BAUD = SERIAL_BAUD(BaudRate);
 				USART->CTRLC = (USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc | USART_CHSIZE_8BIT_gc);
-				USART->CTRLB = (USART_RXEN_bm | USART_TXEN_bm);
+				USART->CTRLB = (USART_RXEN_bm | USART_TXEN_bm | (DoubleSpeed ? USART_RXMODE_CLK2X_gc : USART_RXMODE_NORMAL_gc));
 			}
 
 			/** Turns off the USART driver, disabling and returning used hardware to their default configuration.
