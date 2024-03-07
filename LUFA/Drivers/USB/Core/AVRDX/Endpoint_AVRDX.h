@@ -252,12 +252,10 @@
 			 */
 			static inline bool Endpoint_ConfigureEndpoint(const uint8_t Address,
 			                                              const uint8_t Type,
-			                                              const uint16_t Size,
-			                                              const uint8_t Banks) ATTR_ALWAYS_INLINE;
+			                                              const uint16_t Size) ATTR_ALWAYS_INLINE;
 			static inline bool Endpoint_ConfigureEndpoint(const uint8_t Address,
 			                                              const uint8_t Type,
-			                                              const uint16_t Size,
-			                                              const uint8_t Banks)
+			                                              const uint16_t Size)
 			{
 				uint8_t EPConfigMask = (USB_TCDSBL_bm | Endpoint_BytesToEPSizeMask(Size));
 

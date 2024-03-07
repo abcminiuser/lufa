@@ -155,7 +155,7 @@ static void USB_Init_Device(void)
 	#endif
 
 	Endpoint_ConfigureEndpoint(ENDPOINT_CONTROLEP, EP_TYPE_CONTROL,
-							   USB_Device_ControlEndpointSize, 1);
+							   USB_Device_ControlEndpointSize);
 
 	USB_INT_Enable(USB_INT_BUSEVENTI);
 
