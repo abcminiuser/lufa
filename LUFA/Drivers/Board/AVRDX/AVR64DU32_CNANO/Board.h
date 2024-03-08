@@ -29,7 +29,7 @@
 */
 
 /** \file
- *  \brief Board specific information header for the x.
+ *  \brief Board specific information header for the Microchip AVR64DU32 Curiosity Nano.
  *  \copydetails Group_BoardInfo_AVR64DU32_CNANO
  *
  *  \note This file should not be included directly. It is automatically included as needed by the Board driver

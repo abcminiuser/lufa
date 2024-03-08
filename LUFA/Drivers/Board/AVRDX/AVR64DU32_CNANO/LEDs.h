@@ -90,7 +90,8 @@
 				PORTF.DIRSET    = LEDS_PORTF_LEDS;
 				PORTF.OUTCLR    = LEDS_PORTF_LEDS;
 
-				PORTF.PIN2CTRL  = PORT_INVEN_bm;
+				PORTF.PINCONFIG  = PORT_INVEN_bm;
+				PORTF.PINCTRLUPD = LEDS_PORTF_LEDS;
 			}
 
 			static inline void LEDs_Disable(void)
@@ -98,7 +99,8 @@
 				PORTF.DIRCLR    = LEDS_PORTF_LEDS;
 				PORTF.OUTCLR    = LEDS_PORTF_LEDS;
 
-				PORTF.PIN2CTRL  = 0;
+				PORTF.PINCONFIG  = 0;
+				PORTF.PINCTRLUPD = LEDS_PORTF_LEDS;
 			}
 
 			static inline void LEDs_TurnOnLEDs(const uint8_t LEDMask)
@@ -134,7 +136,7 @@
 			ATTR_WARN_UNUSED_RESULT
 			static inline uint8_t LEDs_GetLEDs(void)
 			{
-				return (PORTF_OUT & LEDS_PORTF_LEDS);
+				return (PORTF.OUT & LEDS_PORTF_LEDS);
 			}
 		#endif
 

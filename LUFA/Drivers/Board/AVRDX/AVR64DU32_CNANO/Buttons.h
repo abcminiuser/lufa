@@ -76,13 +76,15 @@
 			static inline void Buttons_Init(void)
 			{
 				PORTF.OUTCLR   = BUTTONS_BUTTON1;
-				PORTF.PIN6CTRL = (PORT_PULLUPEN_bm | PORT_INVEN_bm);
+				PORTF.PINCONFIG = (PORT_PULLUPEN_bm | PORT_INVEN_bm);
+				PORTF.PINCTRLUPD = BUTTONS_BUTTON1;
 			}
 
 			static inline void Buttons_Disable(void)
 			{
 				PORTF.OUTCLR   = BUTTONS_BUTTON1;
-				PORTF.PIN6CTRL = 0;
+				PORTF.PINCONFIG = 0;
+				PORTF.PINCTRLUPD = BUTTONS_BUTTON1;
 			}
 
 			ATTR_WARN_UNUSED_RESULT
