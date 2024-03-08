@@ -95,7 +95,7 @@
 			#define BUTTONS_BUTTON1  0
 			static inline void       Buttons_Init(void) {}
 			static inline void       Buttons_Disable(void) {}
-			{ return 0 }
+			static inline uint8_t    Buttons_GetStatus(void) { return 0; }
 		#elif (BOARD == BOARD_USBKEY)
 			#include "AVR8/USBKEY/Buttons.h"
 		#elif (BOARD == BOARD_STK525)
