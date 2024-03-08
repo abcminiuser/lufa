@@ -91,7 +91,7 @@
 	/* Includes: */
 		#include "../../Common/Common.h"
 
-		#if (BOARD == BOARD_NONE)
+		#if ((BOARD == BOARD_NONE) || !defined(BOARD_HAS_BUTTONS))
 			#define BUTTONS_BUTTON1  0
 			static inline void       Buttons_Init(void) {}
 			static inline void       Buttons_Disable(void) {}

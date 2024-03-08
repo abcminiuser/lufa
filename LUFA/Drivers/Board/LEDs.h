@@ -107,7 +107,7 @@
 	/* Includes: */
 		#include "../../Common/Common.h"
 
-		#if (BOARD == BOARD_NONE)
+		#if ((BOARD == BOARD_NONE) || !defined(BOARD_HAS_LEDS))
 			static inline void       LEDs_Init(void) {}
 			static inline void       LEDs_Disable(void) {}
 			static inline void       LEDs_TurnOnLEDs(const uint_reg_t LEDMask) {}
