@@ -99,7 +99,7 @@
 	/* Includes: */
 		#include "../../Common/Common.h"
 
-		#if ((BOARD == BOARD_NONE) || !defined(BOARD_HAS_JOYSTICK))
+		#if (BOARD == BOARD_NONE)
 			#define JOY_UP           0
 			#define JOY_DOWN         0
 			#define JOY_LEFT         0
