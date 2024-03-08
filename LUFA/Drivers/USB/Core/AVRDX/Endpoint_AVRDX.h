@@ -240,7 +240,8 @@
 			 *                        the endpoint's data direction). The bank size must indicate the maximum packet size
 			 *                        that the endpoint can handle.
 			 *
-			 *  \param[in] Banks      Number of hardware banks to use for the endpoint being configured.
+			 *  \param[in] Banks      Not implemented in AVR Dx architecture. (Number of hardware banks to use for the 
+			 *                        endpoint being configured).
 			 *
 			 *  \note The default control endpoint should not be manually configured by the user application, as
 			 *        it is automatically configured by the library internally.
@@ -252,11 +253,15 @@
 			 */
 			static inline bool Endpoint_ConfigureEndpoint(const uint8_t Address,
 			                                              const uint8_t Type,
-			                                              const uint16_t Size) ATTR_ALWAYS_INLINE;
+			                                              const uint16_t Size,
+			                                              const uint8_t Banks) ATTR_ALWAYS_INLINE;
 			static inline bool Endpoint_ConfigureEndpoint(const uint8_t Address,
 			                                              const uint8_t Type,
-			                                              const uint16_t Size)
+			                                              const uint16_t Size,
+			                                              const uint8_t Banks)
 			{
+				(void)Banks;
+								
 				uint8_t EPConfigMask = (USB_TCDSBL_bm | Endpoint_BytesToEPSizeMask(Size));
 
 				if ((Address & ENDPOINT_EPNUM_MASK) >= ENDPOINT_TOTAL_ENDPOINTS)

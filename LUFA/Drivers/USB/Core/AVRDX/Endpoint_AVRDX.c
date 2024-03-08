@@ -157,7 +157,7 @@ bool Endpoint_ConfigureEndpointTable(const USB_Endpoint_Table_t* const Table,
 		if (!(Table[i].Address))
 		  continue;
 
-		if (!(Endpoint_ConfigureEndpoint(Table[i].Address, Table[i].Type, Table[i].Size)))
+		if (!(Endpoint_ConfigureEndpoint(Table[i].Address, Table[i].Type, Table[i].Size, Table[i].Banks)))
 		{
 			return false;
 		}
