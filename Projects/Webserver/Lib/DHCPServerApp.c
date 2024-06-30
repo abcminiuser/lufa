@@ -39,7 +39,7 @@
 
 #if defined(ENABLE_DHCP_SERVER) || defined(__DOXYGEN__)
 
-struct uip_conn* BroadcastConnection;
+struct uip_udp_conn* BroadcastConnection;
 
 uint8_t LeasedIPs[255 / 8];
 
@@ -107,7 +107,7 @@ void DHCPServerApp_Callback(void)
 					                                sizeof(uip_ipaddr_t), &GatewayIPAddress);
 
 				/* Send the DHCP OFFER packet */
-				uip_poll_conn(BroadcastConnection);
+				uip_udp_periodic_conn(BroadcastConnection);
 				memcpy(&uip_udp_conn->ripaddr, &uip_broadcast_addr, sizeof(uip_ipaddr_t));
 				uip_udp_send(AppDataSize);
 
@@ -135,7 +135,7 @@ void DHCPServerApp_Callback(void)
 				}
 
 				/* Send the DHCP ACK or NAK packet */
-				uip_poll_conn(BroadcastConnection);
+				uip_udp_periodic_conn(BroadcastConnection);
 				memcpy(&uip_udp_conn->ripaddr, &uip_broadcast_addr, sizeof(uip_ipaddr_t));
 				uip_udp_send(AppDataSize);
 
