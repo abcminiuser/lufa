@@ -391,8 +391,8 @@ int soft_reboot(void)
 // http://msdn.microsoft.com/en-us/library/ms790932.aspx
 #include <windows.h>
 #include <setupapi.h>
-#include <ddk/hidsdi.h>
-#include <ddk/hidclass.h>
+#include <hidsdi.h>
+#include <hidclass.h>
 
 HANDLE open_usb_device(int vid, int pid)
 {
@@ -1078,7 +1078,7 @@ int printf_verbose(const char *format, ...)
 void delay(double seconds)
 {
 	#ifdef WIN32
-	Sleep(seconds * 1000.0);
+	Sleep((DWORD)(seconds * 1000.0));
 	#else
 	usleep(seconds * 1000000.0);
 	#endif
