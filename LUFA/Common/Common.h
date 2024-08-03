@@ -124,7 +124,7 @@
 			#define ARCH_BIG_ENDIAN
 
 			#include "Endianness.h"
-		#elif (ARCH == ARCH_XMEGA)
+		#elif ((ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 			#include <avr/io.h>
 			#include <avr/interrupt.h>
 			#include <avr/pgmspace.h>
@@ -281,7 +281,7 @@
 					__builtin_mtsr(AVR32_COUNT, 0);
 					while ((uint32_t)__builtin_mfsr(AVR32_COUNT) < (F_CPU / 1000));
 				}
-				#elif (ARCH == ARCH_XMEGA)
+				#elif ((ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 				if (GCC_IS_COMPILE_CONST(Milliseconds))
 				{
 					_delay_ms(Milliseconds);
@@ -307,12 +307,10 @@
 			{
 				GCC_MEMORY_BARRIER();
 
-				#if (ARCH == ARCH_AVR8)
+				#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 				return SREG;
 				#elif (ARCH == ARCH_UC3)
 				return __builtin_mfsr(AVR32_SR);
-				#elif (ARCH == ARCH_XMEGA)
-				return SREG;
 				#endif
 			}
 
@@ -329,15 +327,13 @@
 			{
 				GCC_MEMORY_BARRIER();
 
-				#if (ARCH == ARCH_AVR8)
+				#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 				SREG = GlobalIntState;
 				#elif (ARCH == ARCH_UC3)
 				if (GlobalIntState & AVR32_SR_GM)
 				  __builtin_ssrf(AVR32_SR_GM_OFFSET);
 				else
 				  __builtin_csrf(AVR32_SR_GM_OFFSET);
-				#elif (ARCH == ARCH_XMEGA)
-				SREG = GlobalIntState;
 				#endif
 
 				GCC_MEMORY_BARRIER();
@@ -352,12 +348,10 @@
 			{
 				GCC_MEMORY_BARRIER();
 
-				#if (ARCH == ARCH_AVR8)
+				#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 				sei();
 				#elif (ARCH == ARCH_UC3)
 				__builtin_csrf(AVR32_SR_GM_OFFSET);
-				#elif (ARCH == ARCH_XMEGA)
-				sei();
 				#endif
 
 				GCC_MEMORY_BARRIER();
@@ -372,12 +366,10 @@
 			{
 				GCC_MEMORY_BARRIER();
 
-				#if (ARCH == ARCH_AVR8)
+				#if ((ARCH == ARCH_AVR8) || (ARCH == ARCH_XMEGA) || (ARCH == ARCH_AVRDX))
 				cli();
 				#elif (ARCH == ARCH_UC3)
 				__builtin_ssrf(AVR32_SR_GM_OFFSET);
-				#elif (ARCH == ARCH_XMEGA)
-				cli();
 				#endif
 
 				GCC_MEMORY_BARRIER();

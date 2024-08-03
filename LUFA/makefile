@@ -19,7 +19,7 @@ version:
 	@echo "LUFA $(LUFA_VERSION_NUM)"
 
 LUFA_PATH               := .
-ARCH                    := {AVR8,UC3,XMEGA}
+ARCH                    := {AVR8,UC3,XMEGA,AVRDX}
 DOXYGEN_OVERRIDE_PARAMS := QUIET=YES PROJECT_NUMBER=$(LUFA_VERSION_NUM)
 
 # Remove all object and associated files from the LUFA library core

@@ -155,6 +155,11 @@
 		 */
 		#define USB_SERIES_C4_XMEGA
 
+		/** Indicates that the target AVR microcontroller belongs to the AVR DU Family USB controller
+		 *  (i.e. AVR**DU**) when defined.
+		 */
+		#define USB_SERIES_DU_AVR
+
 		/** Indicates that the target microcontroller and compilation settings allow for the
 		 *  target to be configured in USB Device mode when defined.
 		 */
@@ -244,6 +249,9 @@
 				#define USB_CAN_BE_DEVICE
 			#elif (defined(__AVR_ATxmega16C4__) || defined(__AVR_ATxmega32C4__))
 				#define USB_SERIES_C4_XMEGA
+				#define USB_CAN_BE_DEVICE
+			#elif (defined(__AVR_AVR64DU28__) || defined(__AVR_AVR64DU32__))
+				#define USB_SERIES_DU_AVR
 				#define USB_CAN_BE_DEVICE
 			#endif
 

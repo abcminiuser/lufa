@@ -35,6 +35,8 @@ ifeq ($(ARCH), XMEGA)
    $(warning The XMEGA device support is currently EXPERIMENTAL (incomplete and/or non-functional), and is included for preview purposes only.)
 else ifeq ($(ARCH), UC3)
    $(warning The UC3 device support is currently EXPERIMENTAL (incomplete and/or non-functional), and is included for preview purposes only.)
+else ifeq ($(ARCH), AVRDX)
+   $(warning The AVR Dx device support is currently EXPERIMENTAL (incomplete and/or non-functional), and is included for preview purposes only.)
 endif
 
 # Common LUFA C/C++ includes/definitions

@@ -59,6 +59,8 @@ else ifeq ($(ARCH), XMEGA)
    CROSS        := $(COMPILER_PATH)avr
 else ifeq ($(ARCH), UC3)
    CROSS        := $(COMPILER_PATH)avr32
+else ifeq ($(ARCH), AVRDX)
+   CROSS        := $(COMPILER_PATH)avr
 else
    $(error Unsupported architecture "$(ARCH)")
 endif
@@ -109,7 +111,7 @@ DEPENDENCY_FILES := $(OBJECT_FILES:%.o=%.d)
 
 # Create a list of common flags to pass to the compiler/linker/assembler
 BASE_CC_FLAGS    := -pipe -g$(DEBUG_FORMAT) -g$(DEBUG_LEVEL)
-ifneq ($(findstring $(ARCH), AVR8 XMEGA),)
+ifneq ($(findstring $(ARCH), AVR8 XMEGA AVRDX),)
    BASE_C_FLAGS += -fpack-struct
    BASE_CC_FLAGS += -mmcu=$(MCU) -fshort-enums -fno-inline-small-functions
 else ifneq ($(findstring $(ARCH), UC3),)
@@ -143,7 +145,7 @@ BASE_LD_FLAGS := -lm -Wl,-Map=$(TARGET).map,--cref -Wl,--gc-sections
 ifeq ($(LINKER_RELAXATIONS), Y)
    BASE_LD_FLAGS += -Wl,--relax
 endif
-ifneq ($(findstring $(ARCH), AVR8 XMEGA),)
+ifneq ($(findstring $(ARCH), AVR8 XMEGA AVRDX),)
    BASE_LD_FLAGS += -mmcu=$(MCU)
 else ifneq ($(findstring $(ARCH), UC3),)
    BASE_LD_FLAGS += -mpart=$(MCU:at32%=%) --rodata-writable --direct-data

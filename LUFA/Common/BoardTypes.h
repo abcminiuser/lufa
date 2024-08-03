@@ -252,6 +252,8 @@
 			/** Selects the Teensy version 2.x ++ specific board drivers, including the driver for the board LEDs. */
 			#define BOARD_TEENSY2PP            62
 
+			/** Selects the AVR64DU32 specific board drivers, including the Button and LED drivers. */
+			#define BOARD_AVR64DU32_CNANO      63
 
 			#if !defined(__DOXYGEN__)
 				#define BOARD_                 BOARD_NONE

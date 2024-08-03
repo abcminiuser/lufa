@@ -117,6 +117,8 @@
 			#include "UC3/Endpoint_UC3.h"
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/Endpoint_XMEGA.h"
+		#elif (ARCH == ARCH_AVRDX)
+			#include "AVRDX/Endpoint_AVRDX.h"			
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

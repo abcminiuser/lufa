@@ -59,6 +59,7 @@ clean:
 	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=AVR8 MCU=at90usb1287
 	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=XMEGA MCU=atxmega128a1u
 	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=UC3 MCU=uc3a0256
+	$(MAKE) -f makefile.test clean BOARD=NONE ARCH=AVRDX MCU=avr64du32
 
 %:
 
