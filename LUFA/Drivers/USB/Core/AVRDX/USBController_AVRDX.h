@@ -61,7 +61,7 @@
 			#if defined(MAX_ENDPOINT_INDEX)
 				#define ENDPOINT_TABLE_COUNT  (MAX_ENDPOINT_INDEX + 1)
 			#else
-				#define ENDPOINT_TABLE_COUNT  USB_EP_NUM_MAX
+				#define ENDPOINT_TABLE_COUNT  USB_MAX_ENDPOINTS
 			#endif
 
 		/* Type Defines: */
