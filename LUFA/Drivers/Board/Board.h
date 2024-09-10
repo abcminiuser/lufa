@@ -162,6 +162,8 @@
 			#include "AVR8/POLOLUMICRO/Board.h"
 		#elif (BOARD == BOARD_XPLAINED_MINI)
 			#include "AVR8/XPLAINED_MINI/Board.h"
+		#elif (BOARD == BOARD_AVR64DU32_CNANO)
+			#include "AVRDX/AVR64DU32_CNANO/Board.h"
 		#else
 			#include "Board/Board.h"
 		#endif

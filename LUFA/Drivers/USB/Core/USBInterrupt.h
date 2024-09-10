@@ -62,6 +62,8 @@
 			#include "UC3/USBInterrupt_UC3.h"
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/USBInterrupt_XMEGA.h"
+		#elif (ARCH == ARCH_AVRDX)
+			#include "AVRDX/USBInterrupt_AVRDX.h"
 		#endif
 
 	/* Disable C linkage for C++ Compilers: */

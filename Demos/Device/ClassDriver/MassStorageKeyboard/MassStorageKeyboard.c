@@ -123,6 +123,10 @@ void SetupHardware(void)
 	XMEGACLK_StartDFLL(CLOCK_SRC_INT_RC32MHZ, DFLL_REF_INT_USBSOF, F_USB);
 
 	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+#elif (ARCH == ARCH_AVRDX)
+	/* Configure the OSCHF to run at F_CPU with SOF Autotune enabled */
+	AVRDXCLK_ConfigureOSCHF(F_CPU, AUTOTUNE_SOF_BIN);
+	AVRDXCLK_SetCPUClockSource(CLOCK_SRC_INT_OSCHF);
 #endif
 
 	/* Hardware Initialization */
