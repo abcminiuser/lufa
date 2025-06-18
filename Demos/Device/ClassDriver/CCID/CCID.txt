@@ -31,10 +31,11 @@
  *    <td><b>USB Class:</b></td>
  *    <td>CCID Class</td>
  *   </tr>
-  *   <tr>
+ *   <tr>
  *    <td><b>USB Subclass:</b></td>
  *    <td>None</td>
  *   </tr>
+ *   <tr>
  *    <td><b>Relevant Standards:</b></td>
  *    <td>USB CCID 1.1 Specification for Integrated Circuit(s) Cards Interface Devices</td>
  *    <td>ISO 7816-3</td>
