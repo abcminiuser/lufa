@@ -96,5 +96,6 @@
  *    <td>AppConfig.h</td>
  *    <td>Configuration define, indicating if the disk should be write protected or not.</td>
  *   </tr>
+ *  </table>
  */
 
