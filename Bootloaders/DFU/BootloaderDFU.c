@@ -99,6 +99,11 @@ static uint16_t EndAddr = 0x0000;
  */
 uint16_t MagicBootKey ATTR_NO_INIT;
 
+/** Magic key allowing watchdog reset to bootloader from the application. If BOOTRST is programmed, the application can
+ *  set this to the value \ref MAGIC_LOAD_KEY, which will ensure the bootloader isn't skipped.
+ */
+uint16_t MagicLoadKey ATTR_NO_INIT;
+
 
 /** Special startup routine to check if the bootloader was started via a watchdog reset, and if the magic application
  *  start key has been loaded into \ref MagicBootKey. If the bootloader started via the watchdog and the key is valid,
@@ -135,12 +140,20 @@ void Application_Jump_Check(void)
 		/* Check if the device's BOOTRST fuse is set */
 		if (!(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & ~FUSE_BOOTRST))
 		{
-			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
-			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
-			  JumpToApplication = true;
+			/* If the reset source was not an external reset jump to the application */
+			if (!(MCUSR & (1 << EXTRF)))
+				JumpToApplication = true;
+			
+			/* If the reset source was a watchdog reset, and the MagicLoadKey is set, don't jump to the application*/
+			if ((MCUSR & (1 << WDRF)) && (MagicLoadKey == MAGIC_LOAD_KEY))
+				JumpToApplication = false;
+			
+			/* If the boot key is set, force the jump to the application */
+			if (MagicBootKey == MAGIC_BOOT_KEY)
+				JumpToApplication = true;
 
-			/* Clear reset source */
-			MCUSR &= ~(1 << EXTRF);
+			/* Clear reset sources */
+			MCUSR &= ~((1 << EXTRF) && (1 << WDRF));
 		}
 		else
 		{
