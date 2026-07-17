@@ -61,8 +61,7 @@ static bool RunBootloader = true;
  *  low when the application attempts to start via a watchdog reset, the bootloader will re-start. If set to the value
  *  \ref MAGIC_BOOT_KEY the special init function \ref Application_Jump_Check() will force the application to start.
  */
-uint16_t MagicBootKey ATTR_NO_INIT;
-
+#define MagicBootKey (*(uint16_t *)(RAMEND-1))
 
 /** Special startup routine to check if the bootloader was started via a watchdog reset, and if the magic application
  *  start key has been loaded into \ref MagicBootKey. If the bootloader started via the watchdog and the key is valid,
@@ -70,18 +69,50 @@ uint16_t MagicBootKey ATTR_NO_INIT;
  */
 void Application_Jump_Check(void)
 {
+	/* Turn off the watchdog */
+	uint8_t mcusr_state = MCUSR;
+	MCUSR = 0;
+	wdt_disable();
+
+	/* Don't run the user application if the reset vector is blank (no app loaded) */
+	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
+
 	bool JumpToApplication = false;
 
 	#if (BOARD == BOARD_LEONARDO)
-		/* Enable pull-up on the IO13 pin so we can use it to select the mode */
-		PORTC |= (1 << 7);
-		Delay_MS(10);
+		/* First case: external reset, bootKey NOT in memory. We'll put the bootKey in memory, then spin
+		 * our wheels for about 1000ms, then proceed to the sketch, if there is one. If, during that 1000ms,
+		 * another external reset occurs, on the next pass through this decision tree, execution will fall
+		 * through to the bootloader. */
+		if ((mcusr_state & (1 << EXTRF))) {
+			if (MagicBootKey != MAGIC_BOOT_KEY)
+			{
+				/* Set Bootkey and give the user a few ms to repress and enter bootloader mode */
+				MagicBootKey = MAGIC_BOOT_KEY;
 
-		/* If IO13 is not jumpered to ground, start the user application instead */
-		JumpToApplication = ((PINC & (1 << 7)) != 0);
+				/* Wait for a possible double tab */
+				_delay_ms(1000);
 
-		/* Disable pull-up after the check has completed */
-		PORTC &= ~(1 << 7);
+				/* User was too slow/normal reset, start sketch now */
+				MagicBootKey = 0;
+
+				/* Single rab reset, start sketch */
+				JumpToApplication = true;
+			}
+		}
+
+		/* On a power-on reset, we ALWAYS want to go to the sketch if there is one. */
+		else if (mcusr_state & (1 << PORF)) {
+			JumpToApplication = true;
+		}
+
+		/* On a watchdog reset, if the bootKey isn't set, and there's a sketch, we should just
+		 * go straight to the sketch. */
+		else if (mcusr_state & (1 << WDRF)) {
+			if(MagicBootKey != MAGIC_BOOT_KEY){
+				JumpToApplication = true;
+			}
+		}
 	#elif ((BOARD == BOARD_XPLAIN) || (BOARD == BOARD_XPLAIN_REV1))
 		/* Disable JTAG debugging */
 		JTAG_DISABLE();
@@ -99,39 +130,26 @@ void Application_Jump_Check(void)
 		/* Check if the device's BOOTRST fuse is set */
 		if (!(BootloaderAPI_ReadFuse(GET_HIGH_FUSE_BITS) & ~FUSE_BOOTRST))
 		{
-			/* If the reset source was not an external reset or the key is correct, clear it and jump to the application */
-			if (!(MCUSR & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
+			/* If the reset source was not an external reset or the key is correct, jump to the application */
+			if (!(mcusr_state & (1 << EXTRF)) || (MagicBootKey == MAGIC_BOOT_KEY))
 			  JumpToApplication = true;
-
-			/* Clear reset source */
-			MCUSR &= ~(1 << EXTRF);
 		}
 		else
 		{
-			/* If the reset source was the bootloader and the key is correct, clear it and jump to the application;
-			 * this can happen in the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
-			if ((MCUSR & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
+			/* If the reset source was the bootloader and the key is correct, jump to the application;
+			 * this can happen if the HWBE fuse is set, and the HBE pin is low during the watchdog reset */
+			if ((mcusr_state & (1 << WDRF)) && (MagicBootKey == MAGIC_BOOT_KEY))
 				JumpToApplication = true;
-
-			/* Clear reset source */
-			MCUSR &= ~(1 << WDRF);
 		}
 	#endif
 
-	/* Don't run the user application if the reset vector is blank (no app loaded) */
-	bool ApplicationValid = (pgm_read_word_near(0) != 0xFFFF);
-
 	/* If a request has been made to jump to the user application, honor it */
-	if (JumpToApplication && ApplicationValid)
+	if (ApplicationValid && JumpToApplication)
 	{
-		/* Turn off the watchdog */
-		MCUSR &= ~(1 << WDRF);
-		wdt_disable();
-
 		/* Clear the boot key and jump to the user application */
 		MagicBootKey = 0;
 
-		// cppcheck-suppress constStatement
+		/* cppcheck-suppress constStatement */
 		((void (*)(void))0x0000)();
 	}
 }
@@ -163,8 +181,10 @@ int main(void)
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
 	USB_Detach();
 
-	/* Unlock the forced application start mode of the bootloader if it is restarted */
-	MagicBootKey = MAGIC_BOOT_KEY;
+	#if (BOARD != BOARD_LEONARDO)
+		/* Unlock the forced application start mode of the bootloader if it is restarted */
+		MagicBootKey = MAGIC_BOOT_KEY;
+	#endif
 
 	/* Enable the watchdog and force a timeout to reset the AVR */
 	wdt_enable(WDTO_250MS);
@@ -175,10 +195,6 @@ int main(void)
 /** Configures all hardware required for the bootloader. */
 static void SetupHardware(void)
 {
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
-
 	/* Disable clock division */
 	clock_prescale_set(clock_div_1);
 

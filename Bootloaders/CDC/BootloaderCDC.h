@@ -76,7 +76,7 @@
 		#define SOFTWARE_IDENTIFIER          "LUFACDC"
 
 		/** Magic bootloader key to unlock forced application start mode. */
-		#define MAGIC_BOOT_KEY               0xDC42
+		#define MAGIC_BOOT_KEY               0x7777
 
 	/* Enums: */
 		/** Possible memory types that can be addressed via the bootloader. */
