@@ -70,6 +70,9 @@
 			/** Selects the Atmel XMEGA AVR (ATXMEGA* chips) architecture. */
 			#define ARCH_XMEGA          2
 
+			/** Selects the Microchip AVR Dx (AVR*D** chips) architecture. */
+			#define ARCH_AVRDX          3
+
 			#if !defined(__DOXYGEN__)
 				#define ARCH_           ARCH_AVR8
 

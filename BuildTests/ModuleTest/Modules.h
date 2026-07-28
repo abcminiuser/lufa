@@ -53,4 +53,9 @@
 	#include <LUFA/Drivers/Peripheral/SerialSPI.h>
 	#include <LUFA/Drivers/Peripheral/SPI.h>
 	#include <LUFA/Drivers/Peripheral/TWI.h>
+#elif (ARCH == ARCH_AVRDX)
+	#include <LUFA/Drivers/Peripheral/Serial.h>
+	#include <LUFA/Drivers/Peripheral/SerialSPI.h>
+	#include <LUFA/Drivers/Peripheral/SPI.h>
+	#include <LUFA/Drivers/Peripheral/TWI.h>
 #endif

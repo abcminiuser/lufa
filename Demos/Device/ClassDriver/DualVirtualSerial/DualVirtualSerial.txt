@@ -16,6 +16,7 @@
  *  \li Series AU XMEGA AVRs (ATXMEGAxxxAxU)
  *  \li Series B XMEGA AVRs (ATXMEGAxxxBx)
  *  \li Series C XMEGA AVRs (ATXMEGAxxxCx)
+ *  \li Series DU AVRs (AVRxxDUxx)
  *
  *  \section Sec_Info USB Information:
  *

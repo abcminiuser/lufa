@@ -68,6 +68,8 @@
 			#include "AVR8/TWI_AVR8.h"
 		#elif (ARCH == ARCH_XMEGA)
 			#include "XMEGA/TWI_XMEGA.h"
+		#elif (ARCH == ARCH_AVRDX)
+			#include "AVRDX/TWI_AVRDX.h"
 		#else
 			#error The TWI peripheral driver is not currently available for your selected architecture.
 		#endif
